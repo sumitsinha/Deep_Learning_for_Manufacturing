@@ -13,7 +13,7 @@ else:
         long_description = f.read()
 
 version = {}
-with open(os.path.join(_here, 'mdn', 'version.py')) as f:
+with open(os.path.join(_here, 'dlmf', 'version.py')) as f:
     exec(f.read(), version)
 
 with open('requirements.txt') as f:

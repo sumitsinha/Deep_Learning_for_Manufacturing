@@ -2,11 +2,11 @@ from keras.layers import Conv3D, MaxPool3D, Flatten, Dense
 
 class dlmf(object):
 	
-	def __init__(self, output_dimension,model_type):
+	def __init__(self, output_dimension,model_type='regression'):
 		self.output_dimension=output_dimension
 		self.model_type=model_type
 
-	def 3D_CNN_model(args):
+	def CNN_model_3D(args):
 		model = Sequential()
 		model.add(Conv3D(32, kernel_size=(5,5,5),strides=(2,2,2),activation='relu',input_shape=(x_dim,y_dim,z_dim,deviation_channels)))
 		model.add(Conv3D(32, kernel_size=(4,4,4),strides=(2,2,2),activation='relu'))

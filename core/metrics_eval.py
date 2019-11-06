@@ -1,6 +1,6 @@
 from sklearn import metrics
 
-def metrics_eval(predicted_y, test_y, kcc_dim):
+def metrics_eval(predicted_y, test_y, kcc_dim=test_y.shape[1]):
 
 	# Calculating Regression Based Evaluation Metrics
 	mae_KCCs=np.zeros((kcc_dim))

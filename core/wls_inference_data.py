@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-class get_data():
+class GetInferenceData():
 	
 	def get_dev_data(y1,y2,p):   
 	    if(abs(y1)>abs(y2)):
@@ -31,22 +31,21 @@ class get_data():
 
 		return measurement_data
 
-	def data_pre_processing(voxel_channels=1)
-		measurement_file_name="Check"
-		measurement_data=load_measurement_file(measurement_file_name)
+	def data_pre_processing(measurement_data,voxel_channels=1)
+		
 		measurement_data_subset=measurement_data.loc[(measurement_data['Name'].str[0:2] == 'SF')]
 		nominal_coordinates=measurement_data_subset.iloc[:,5:8]
 		actual_coordinates=measurement_data_subset.iloc[:,10:13]
 		deviations=actual_coordinates.values-nominal_coordinates.values
 		imputed_deviations= np.nan_to_num(deviations)
-		y_dev_data_filtered=imputed_deviations[:,1:2]
-		return y_dev_data_filtered
+		if(voxel_channels==1):
+			y_dev_data_filtered=imputed_deviations[:,1:2]
+		if(voxel_channels==3)
+		return y_dev_data_filtered=imputed_deviations[:,1:4]
 
-	def voxel_mapping(voxel_dim=64):
+	def voxel_mapping(y_dev_data_filtered,voxel_point_index,point_dim,voxel_dim=64):
 		
-		y_dev_data_filtered=data_pre_processing();
-		voxel_point_index=load_mapping_index();
-		voxel_dev_data=np.zeros((1,voxel_dim,voxel_dim,voxel_dim,1))    
+		voxel_dev_data=np.zeros((1,voxel_dim,voxel_dim,voxel_dim,voxel_channels))    
 
 		for p in range(point_dim):
 		    x_index=int(voxel_point_index[int(p),0])

@@ -21,6 +21,13 @@ class PartType(AssemblySystem):
 		nominal_cop=np.loadtxt(file_name)
 		return nominal_cop
 
+	def get_nominal_cop_database(self,conn_str,table_name):
+		engine = create_engine(conn_str)
+    	squery='select cox,coy,coz from ' + nominal_table
+    	df_nom = pd.read_sql_query(squery,con=engine)
+    	df_nom=df_nom.values
+    	return df_nom
+
 class VRMSimulationModel(PartType):
 
 	def __init__(self,assembly_type,assembly_kccs,assembly_kpis,part_name,voxel_dim,part_type,noise_level,noise_type,convergency_flag=1):

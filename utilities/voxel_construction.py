@@ -40,25 +40,8 @@ class VoxelConstruct:
 
 		point_dim=len(nominal_cop)
 
-		df_point_index=np.zeros((,3))
+		df_point_index=np.zeros((point_dim,3))
 
-		for p in tqdm(range(8047)):
-		        min_distance=10000
-		        for i in range(54):
-		            for j in range(127):
-		                for k in range(26):
-		                    distance=distance_func(array_locator[i,j,k,0],array_locator[i,j,k,1],array_locator[i,j,k,2],df_nom[p,2],df_nom[p,0],df_nom[p,1])         
-		                    if(distance<min_distance):
-		                        min_distance=distance
-		                        x_index=i
-		                        y_index=j
-		                        z_index=k
-		        df_point_index[p,0]=x_index
-		        df_point_index[p,1]=y_index
-		        df_point_index[p,2]=z_index
-
-
-#%%
 		x_cor_max=max(nominal_cop[]:,0)
 		y_cor_max=max(nominal_cop[]:,1)
 		z_cor_max=max(nominal_cop[]:,2)
@@ -73,15 +56,32 @@ class VoxelConstruct:
 
 		for i in range(self.x_dim):
 		    array_locator[i,:,:,0]=x_cor
-		    x_cor=x_cor-13
+		    x_cor=x_cor-voxel_unit_x
 
 		for j in range(self.y_dim):
 		    array_locator[:,j,:,1]=y_cor
-		    y_cor=y_cor-10
+		    y_cor=y_cor-voxel_unit_y
 
 		for k in range(self.z_dim):
 		    array_locator[:,:,k,2]=z_cor
-		    z_cor=z_cor-10
+		    z_cor=z_cor-voxel_unit_z
+
+		for p in tqdm(range(point_dim)):
+		        min_distance=10000
+		        for i in range(x_dim):
+		            for j in range(y_dim):
+		                for k in range(z_dim):
+		                    distance=distance_func(array_locator[i,j,k,0],array_locator[i,j,k,1],array_locator[i,j,k,2],df_nom[p,0],df_nom[p,1],df_nom[p,2])         
+		                    if(distance<min_distance):
+		                        min_distance=distance
+		                        x_index=i
+		                        y_index=j
+		                        z_index=k
+		        df_point_index[p,0]=x_index
+		        df_point_index[p,1]=y_index
+		        df_point_index[p,2]=z_index
+
+		return df_point_index
 
 if __name__ == '__main__':
 
@@ -133,10 +133,18 @@ if __name__ == '__main__':
 	#'postgresql://postgres:sumit123!@10.255.1.130:5432/IPQI'
 
 	#Read cop from csv file
-	vrm_system.get_nominal_cop(self,file_name)
+	nominal_cop=vrm_system.get_nominal_cop(self,file_name)
 
 	#Read cop from SQL database
-	vrm.get_nominal_cop_database(self,conn_string,table_name)
+	#nominal_cop=vrm.get_nominal_cop_database(self,conn_string,table_name)
+	
+	#Passing Voxel
+	voxel_construct=VoxelConstruct(voxel_dim,voxel_dim,voxel_dim)
+	df_point_index=voxel_construct.construct_voxel(nominal_cop)
+	
+	#Dump Voxel
+	name_cop=part_type+"_voxel_mapping.dat"
+	df_point_index.dump(name_cop)
 
 
 	

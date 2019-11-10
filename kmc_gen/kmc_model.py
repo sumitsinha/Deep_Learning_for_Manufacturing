@@ -1,35 +1,46 @@
-import numpy as np
-import pandas as pd
-import tensorflow as tf
-import dfml
-from keras.callbacks import ModelCheckpoint
-from keras.callbacks import TensorBoard
-from training_viz import training_plot
+import xgboost as xgb
+from sklearn importRandomForestRegressor
+from sklearn.model_selection import train_test_split
 
-class TrainModel():
+def kmc_model_build(point_data,selected_kcc,kcc_name):
 	
-	def __init__(self, batch_size=32,epochs=150):
-			self.batch_size=batch_size
-			self.epochs=epochs
+	train_X, test_X, train_y, test_y = train_test_split(point_data, selected_kcc, test_size = 0.2)
+	train=train_X
+    target=train_y
+    train.index=range(0,train.shape[0])
+    target.index=range(0,train.shape[0])
+    
+    #%%
+    print('KMC Generation for selected :', kcc_type[(i)])
+    #model=RandomForestRegressor(n_estimators=1000,max_depth=700,n_jobs=-1,verbose=True)
+    model=xgb.XGBRegressor(colsample_bytree=0.4,gamma=0.045,learning_rate=0.07,max_depth=500,min_child_weight=1.5,n_estimators=500,reg_alpha=0.65,reg_lambda=0.45,subsample=0.95,n_jobs=-1,verbose=True)
+    model.fit(train,target)
+    #%%
+    y_pred = model.predict(test_X)
+    mae=metrics.mean_absolute_error(test_y, y_pred)
+    
+    print('The Mae for feature selection....')
+    print(mae)
+    #filename = kcc_name+'_XGB_model.sav'
+    #joblib.dump(model, filename)
+    #print('Trained Model Saved to disk....')
+    
+    #%%
+    thresholds = model.feature_importances_
+    sorted_thresholds=np.sort(thresholds)
+    #%%
+    node_id=np.arange(point_dim)
+    node_IDs = pd.DataFrame(thresholds, index=node_id)
+    node_IDs.columns=['Feature_Importance']
+    node_IDs.index.name='node_ID'
+    #%%
+    node_IDs = node_IDs.sort_values('Feature_Importance', ascending=False)
+    filtered_nodeIDs=node_IDs.loc[node_IDs['Feature_Importance'] != 0]
+    node_ID_list = filtered_nodeIDs.index.tolist()
+    filename=kcc_name+'.csv'
+    print('Saving KMCs to disk...')
+    filtered_nodeIDs.to_csv(filename)
 
-	def run_train_model(self,model,X_in,Y_out,split_ratio=0.3):
-		
-		model_path='./model/CNN_model_3D.h5'
-		X_train, X_test, y_train, y_test = train_test_split(X_in, Y_out, test_size = split_ratio)
-
-		#Checkpointer to save the best model
-		checkpointer = ModelCheckpoint(,model_path verbose=1, save_best_only='mae')
-
-		#Activating Tensorboard for Vizvalization
-		tensorboard = TensorBoard(log_dir='./logs',histogram_freq=1, write_graph=True, write_images=True)
-		history=model.fit(X_train, y_train, validation_data=(X_test,y_test), epochs=self.epochs, batch_size=self.batch_size,callbacks=[tensorboard,checkpointer])
-
-		training_plot(history)
-		inference_model=load_model(model_path)
-		y_pred=inference_model.predict(y_test)
-
-		eval_metrics=MetricsEval.metrics_eval(y_pred,y_test)
-		return model,eval_metrics
 
 if __name__ == '__main__':
 
@@ -71,22 +82,16 @@ if __name__ == '__main__':
 	get_train_data=GetTrainData(vrm_system)
 	dataset=get_train_data.data_import(file_names)
 
-	input_conv_data, kcc_subset_dump=get_train_data.data_convert_voxel(dataset)
+	kcc_id=[]
+	point_data=dataset[:, 0:point_dim]
 
-	#%%
-	output_dimension=assembly_kccs
-	dl_model=DLModel(output_dimension)
-	model=dl_model.CNN_model_3D()
-
-	train_model=TrainModel()
-
-	trained_model,eval_metrics=train_model.run_train_model(model,input_conv_data,kcc_subset_dump)
+	for i in range(kcc_dim):
+		kcc_name="KMC_"+str(i+1)
+		kcc_id.append(kcc_name)
+		
+    	selected_kcc=dataset[:,point_dim:point_dim+i]
 
 
-
-	print("Model Training Complete..")
-	print("The Model Validation Metrics are ")
-	print(eval_metrics)
 
 
 

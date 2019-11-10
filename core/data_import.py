@@ -4,8 +4,27 @@ import tqdm
 
 class GetTrainData(VRMSimulationModel)
     
-    def data_import():
-        pass
+    def data_import(self,file_names):
+        
+        """
+        dataset_0 = pd.read_csv('./Data/car_halo_run1_ydev.csv',header=None)
+        dataset_1 = pd.read_csv('./Data/car_halo_run2_ydev.csv',header=None)
+        dataset_2 = pd.read_csv('./Data/car_halo_run3_ydev.csv',header=None)
+        dataset_3 = pd.read_csv('./Data/car_halo_run4_ydev.csv',header=None)
+        dataset_4 = pd.read_csv('./Data/car_halo_run5_ydev.csv',header=None)
+        dataset_5 = pd.read_csv('./Data/car_halo_run6_ydev.csv',header=None)
+        dataset_6 = pd.read_csv('./Data/car_halo_run7_ydev.csv',header=None)
+        dataset_7 = pd.read_csv('./Data/car_halo_run8_ydev.csv',header=None)
+        dataset = pd.concat([dataset_0, dataset_1,dataset_2,dataset_3,dataset_4,dataset_5,dataset_6,dataset_7], ignore_index=True)
+        
+        """
+
+        data_files=[]
+        for file in file_names:
+            data_files.append(pd.read_csv(file,header=None))
+        dataset = pd.concat(data_files, ignore_index=True)
+        return data_files
+
         
     def data_convert_voxel(self,dataset):
     	

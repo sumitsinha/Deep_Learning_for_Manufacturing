@@ -2,7 +2,7 @@ import xgboost as xgb
 from sklearn importRandomForestRegressor
 from sklearn.model_selection import train_test_split
 
-def kmc_model_build(point_data,selected_kcc,kcc_name):
+def kmc_model_build(point_data,selected_kcc,kcc_name,save_model=0):
 	
 	train_X, test_X, train_y, test_y = train_test_split(point_data, selected_kcc, test_size = 0.2)
 	train=train_X
@@ -11,7 +11,7 @@ def kmc_model_build(point_data,selected_kcc,kcc_name):
     target.index=range(0,train.shape[0])
     
     #%%
-    print('KMC Generation for selected :', kcc_type[(i)])
+    print('KMC Generation for selected :', kcc_name)
     #model=RandomForestRegressor(n_estimators=1000,max_depth=700,n_jobs=-1,verbose=True)
     model=xgb.XGBRegressor(colsample_bytree=0.4,gamma=0.045,learning_rate=0.07,max_depth=500,min_child_weight=1.5,n_estimators=500,reg_alpha=0.65,reg_lambda=0.45,subsample=0.95,n_jobs=-1,verbose=True)
     model.fit(train,target)
@@ -19,11 +19,13 @@ def kmc_model_build(point_data,selected_kcc,kcc_name):
     y_pred = model.predict(test_X)
     mae=metrics.mean_absolute_error(test_y, y_pred)
     
-    print('The Mae for feature selection....')
+    print('The MAE for feature selection for: ',kcc_name)
     print(mae)
-    #filename = kcc_name+'_XGB_model.sav'
-    #joblib.dump(model, filename)
-    #print('Trained Model Saved to disk....')
+    
+    if(save_model=1)
+        filename = kcc_name+'_XGB_model.sav'
+        joblib.dump(model, filename)
+        print('Trained Model Saved to disk....')
     
     #%%
     thresholds = model.feature_importances_
@@ -40,6 +42,13 @@ def kmc_model_build(point_data,selected_kcc,kcc_name):
     filename=kcc_name+'.csv'
     print('Saving KMCs to disk...')
     filtered_nodeIDs.to_csv(filename)
+    return filtered_nodeIDs
+
+def viz_kmc(kcc_name,copviz):    
+    filename=kcc_name+'.csv'
+    node_ids = pd.read_csv(filename)
+    stack=copviz.get_data_stacks(node_ids)
+    copviz.plot_multiple_stacks(stack)
 
 
 if __name__ == '__main__':
@@ -83,13 +92,25 @@ if __name__ == '__main__':
 	dataset=get_train_data.data_import(file_names)
 
 	kcc_id=[]
+    kmc_list=[]
 	point_data=dataset[:, 0:point_dim]
 
+    print('Generating KMC for all KCCs')
 	for i in range(kcc_dim):
-		kcc_name="KMC_"+str(i+1)
+		kcc_name="KCC_"+str(i+1)
 		kcc_id.append(kcc_name)
-		
     	selected_kcc=dataset[:,point_dim:point_dim+i]
+        kmc_list[i].append(kmc_model_build(point_data,selected_kcc,kcc_name))
+
+    plot_kmc=1;
+    kmc_tplot="KCC_1"
+    filename=+'.csv'
+    if(plot_kmc==1):
+        print("Plotting KMCs for: ",kmc_tplot)
+        print(print)
+        copviz=CopViz(vrm_system)
+        viz_kmc(filename,copviz)
+
 
 
 

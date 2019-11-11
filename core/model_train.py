@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import tensorflow as tf
-import dfml
+import dlmfg
 from keras.callbacks import ModelCheckpoint
 from keras.callbacks import TensorBoard
 from training_viz import training_plot
@@ -64,14 +64,15 @@ if __name__ == '__main__':
 	#Objects of Measurement System and Assembly System
 	measurement_system=HexagonWlsScanner(data_type,application, system_noise,part_type,data_format)
 	vrm_system=VRMSimulationModel(assembly_type,assembly_kccs,assembly_kpis,voxel_dim,point_dim,voxel_channels,noise_levels,noise_type)
-
+	get_data=GetInferenceData();
+	filename='Point_Mapping_Index'
 	print('Importing and preprocessing Cloud-of-Point Data')
 	
 	file_names=['car_halo_run1_ydev.csv','car_halo_run2_ydev.csv','car_halo_run3_ydev.csv','car_halo_run4_ydev.csv','car_halo_run5_ydev.csv']
 	get_train_data=GetTrainData(vrm_system)
 	dataset=get_train_data.data_import(file_names)
-
-	input_conv_data, kcc_subset_dump=get_train_data.data_convert_voxel(dataset)
+	point_index=load_mapping_index(filename)
+	input_conv_data, kcc_subset_dump=get_train_data.data_convert_voxel(dataset,point_index)
 
 	#%%
 	output_dimension=assembly_kccs

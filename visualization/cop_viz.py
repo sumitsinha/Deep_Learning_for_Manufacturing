@@ -3,7 +3,7 @@ from mpl_toolkits.mplot3d import Axes3D
 import plotly as py
 import plotly.graph_objs as go
 
-class CopViz:
+class CopViz(AssemblySystem):
 
 	def __init__(self,nominal_cop):
 
@@ -45,7 +45,7 @@ class CopViz:
 		return stack
 
 
-	def plot_multiple_stacks(self,stacks):
+	def plot_multiple_stacks(self,stack):
 
 		nominal_cop=self.nominal_cop
 
@@ -78,7 +78,7 @@ class CopViz:
 		    )
 		)
 
-		data = [trace1,,trace2]
+		data = [trace1,trace2]
 		layout = go.Layout(
 		    margin=dict(
 		        l=0,

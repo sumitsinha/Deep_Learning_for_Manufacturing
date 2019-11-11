@@ -17,7 +17,7 @@ def get_model(model_path='./trained_model/model_final.h5'):
 def model_inference(inference_data,inference_model):
 	result=inference_model.predict(inference_data)
 
-	description="The Process Parameters are inferred from the obtained meeasurement data and the trained CNN based model"
+	description="The Process Parameters variations are inferred from the obtained meeasurement data and the trained CNN based model"
 	print('The model estimates are: ')
 	print(result)
 

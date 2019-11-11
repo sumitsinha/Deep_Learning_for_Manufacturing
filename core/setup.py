@@ -31,7 +31,7 @@ setup(
     url="https://github.com/sumitsinha/Deep_Learning_for_Manufacturing",
     packages=find_packages(),
     license='MIT',
-    packages=['dlmf'],
+    packages=['dlmfg'],
     include_package_data=True,
     install_requires=required,
     classifiers=[

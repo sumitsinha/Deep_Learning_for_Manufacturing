@@ -1,3 +1,16 @@
+import os
+import sys
+current_path=os.path.dirname(__file__)
+parentdir = os.path.dirname(current_path)
+sys.path.append("../Vizvalization")
+sys.path.append("../utilities")
+sys.path.append("../datasets")
+sys.path.append("../trained_models")
+path_var=os.path.join(os.path.dirname(__file__),"../utilities")
+sys.path.append(path_var)
+sys.path.insert(0,parentdir) 
+
+
 import numpy as np
 import pandas as pd
 import tensorflow as tf
@@ -5,8 +18,9 @@ import dlmfg
 from keras.callbacks import ModelCheckpoint
 from keras.callbacks import TensorBoard
 from training_viz import training_plot
+from assemblyconfig import assembly_system
 
-class TrainModel():
+class TrainModel:
 	
 	def __init__(self, batch_size=32,epochs=150):
 			self.batch_size=batch_size
@@ -60,6 +74,19 @@ if __name__ == '__main__':
 	voxel_channels=argument.voxel_channels
 	noise_levels=argument.noise_levels
 	noise_type=argument.noise_type
+
+	data_type=assembly_system['data_type']
+	application=assembly_system['application']
+	part_type=assembly_system['part_type']
+	data_format=assembly_system['data_format']
+	assembly_type=assembly_system['assembly_type']
+	assembly_kccs=assembly_system['assembly_kccs']	
+	assembly_kpis=assembly_system['assembly_kpis']
+	voxel_dim=assembly_system['voxel_dim']
+	point_dim=assembly_system['point_dim']
+	voxel_channels=assembly_system['voxel_channels']
+	noise_levels=assembly_system['noise_levels']
+	noise_type=assembly_system['noise_type']
 
 	#Objects of Measurement System and Assembly System
 	measurement_system=HexagonWlsScanner(data_type,application, system_noise,part_type,data_format)

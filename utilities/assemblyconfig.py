@@ -13,6 +13,7 @@ assembly_system = {
         'voxel_channels':1,
         'noise_levels':0.1,
         'noise_type':'uniform'
+        'data_files':['car_halo_run1_ydev.csv','car_halo_run2_ydev.csv','car_halo_run3_ydev.csv','car_halo_run4_ydev.csv','car_halo_run5_ydev.csv']
         }
 
 preprocessing_queue = [preprocessing.scale_and_center,

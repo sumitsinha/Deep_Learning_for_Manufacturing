@@ -1,6 +1,6 @@
 from sklearn import metrics
 
-class MetricsEval(AssemblySystem):
+class MetricsEval(VrmSystem):
 	
 	def metrics_eval(predicted_y, test_y, kcc_dim=self.assembly_kccs):
 

@@ -1,6 +1,6 @@
 
+from assemblyconfig import assembly_systemf
 from sklearn.multioutput import MultiOutputRegressor
-from sklearn.model_selection import KFold
 from sklearn.model_selection import train_test_split
 
 import xgboost as xgb
@@ -11,12 +11,13 @@ from sklearn.linear_model import Ridge
 from sklearn.linear_model import Lasso
 from sklearn.neural_network import MLPRegressor
 
-def benchmarking_models(bench_mark='all'):
+def benchmarking_models(max_models):
 
-	bn_models=[None]*20
-	bn_models_name=[None]*20
-	model_name = type(model).__name__
-	#Add upto 20 models to bench mark with
+	#Add upto benchmark_max in 
+	bn_models=[None]*benchmark_max
+	bn_models_name=[None]*benchmark_max
+
+	
 	bn_models[0]=MultiOutputRegressor(xgb.XGBRegressor(colsample_bytree=0.4,gamma=0.045,learning_rate=0.07,max_depth=500,min_child_weight=1.5,n_estimators=500,reg_alpha=0.65,reg_lambda=0.45,subsample=0.95,n_jobs=-1,verbose=True))
 	bn_models_name[0] = type(bn_models[0]).__name__
 	bn_models[1]=MultiOutputRegressor(RandomForestRegressor(n_estimators=1000,max_depth=50,n_jobs=-1,verbose=True))
@@ -24,10 +25,10 @@ def benchmarking_models(bench_mark='all'):
 	bn_models[2]=MultiOutputRegressor(SVR(kernel='rbf', C=100, gamma=0.1, epsilon=.1))
 	bn_models_name[2] = type(bn_models[2]).__name__
 	bn_models[3]=MLPRegressor(hidden_layer_sizes=(512,256,),  activation='relu', solver='adam',    alpha=0.001,batch_size='auto',
-               learning_rate='constant', learning_rate_init=0.01, power_t=0.5, max_iter=1000, shuffle=True,
-               random_state=None, tol=0.0001, verbose=False, warm_start=False, momentum=0.9,
-               nesterovs_momentum=True, early_stopping=False, validation_fraction=0.1, beta_1=0.9, beta_2=0.999,
-               epsilon=1e-08)
+			   learning_rate='constant', learning_rate_init=0.01, power_t=0.5, max_iter=1000, shuffle=True,
+			   random_state=None, tol=0.0001, verbose=False, warm_start=False, momentum=0.9,
+			   nesterovs_momentum=True, early_stopping=False, validation_fraction=0.1, beta_1=0.9, beta_2=0.999,
+			   epsilon=1e-08)
 	bn_models_name[3] = type(bn_models[3]).__name__
 	bn_models[4]=MultiOutputRegressor(DecisionTreeRegressor(max_depth=10))
 	bn_models_name[4] = type(bn_models[4]).__name__
@@ -38,6 +39,7 @@ def benchmarking_models(bench_mark='all'):
 
 	bn_models=[x for x in bn_models if x is not None]
 	bn_models_name=[x for x in bn_models_name if x is not None]
+	
 	return bn_models,bn_models_name
 
 def benchmarking_models_eval(bn_models,point_data,kcc_data,metrics_eval):
@@ -56,12 +58,12 @@ def benchmarking_models_eval(bn_models,point_data,kcc_data,metrics_eval):
 		model.fit(X_train,y_train)
 		y_pred=model.predict(X_test,y_test)
 		eval_metrics=metrics_eval.metrics_eval(y_pred,y_test)
-    	bnoutput_mae[i,:]=eval_metrics["Mean Absolute Error"]
-    	bnoutput_mse[i,:]=eval_metrics["Mean Squared Error"]
-    	bnoutput_rmse[i,:]=eval_metrics["Root Mean Squared Error"]
-    	bnoutput_r2[i,:]=eval_metrics["R Squared"]
+		bnoutput_mae[i,:]=eval_metrics["Mean Absolute Error"]
+		bnoutput_mse[i,:]=eval_metrics["Mean Squared Error"]
+		bnoutput_rmse[i,:]=eval_metrics["Root Mean Squared Error"]
+		bnoutput_r2[i,:]=eval_metrics["R Squared"]
 
-    bneval_metrics= {
+	bneval_metrics= {
 			"Mean Absolute Error" : bnoutput_mae,
 			"Mean Squared Error" : bnoutput_mse,
 			"Root Mean Squared Error" : bnoutput_rmse,
@@ -71,33 +73,26 @@ def benchmarking_models_eval(bn_models,point_data,kcc_data,metrics_eval):
 
 if __name__ == '__main__':
 
-	parser = argparse.ArgumentParser(description="Arguments to initiate Measurement System Class and Assembly System Class")
-    parser.add_argument("-D", "--data_type", help = "Example: 3D Point Cloud Data", required = False, default = "3D Point Cloud Data")
-    parser.add_argument("-A", "--application", help = "Example: Inline Root Cause Analysis", required = False, default = "Inline Root Cause Analysis")
-    parser.add_argument("-P", "--part_type", help = "Example: Door Inner and Hinge Assembly", required = False, default = "Door Inner and Hinge Assembly")
-    parser.add_argument("-F", "--data_format", help = "Example: Complete vs Partial Data", required = False, default = "Complete")
-	parser.add_argument("-S", "--assembly_type", help = "Example: Multi-Stage vs Single-Stage", required = False, default = "Single-Stage")
-    parser.add_argument("-C", "--assembly_kccs", help = "Number of KCCs for the Assembly", required = False, default =15,type=int )
-    parser.add_argument("-I", "--assembly_kpis	", help = "Number of KPIs for the Assembly", required = False, default = 6,type=int)
-    parser.add_argument("-V", "--voxel_dim", help = "The Granularity of Voxels - 32 64 128", required = False, default = 64,type=int)
-    parser.add_argument("-P", "--point_dim", help = "Number of key Nodes", required = True, type=int)
-    parser.add_argument("-C", "--voxel_channels", help = "Number of Channels - 1 or 3", required = False, default = 1,type=int)
-    parser.add_argument("-N", "--noise_levels", help = "Amount of Artificial Noise to add while training", required = False, default = 0.1,type=float)
-    parser.add_argument("-T", "--noise_type", help = "Type of noise to be added uniform/Gaussian default uniform", required = False, default = "uniform")
+	parser = argparse.ArgumentParser(description="Arguments for Benchmarking against")
+	parser.add_argument("-N", "--number_of_runs", help = "Number of Benchmarking Runs", required = False, default = 20,type=int)
+	parser.add_argument("-M", "--max_models", help = "Maximum number of Models to Run Benchmarking", required = False, default = 10,type=int)
 	argument = parser.parse_args()
 	
-	data_type=argument.data_type
-	application=argument.application
-	part_type=argument.part_type
-	data_format=argument.data_format
-	assembly_type=argument.assembly_type	
-	assembly_kccs=argument.assembly_kccs	
-	assembly_kpis=argument.assembly_kpis
-	voxel_dim=argument.voxel_dim
-	point_dim=argument.point_dim
-	voxel_channels=argument.voxel_channels
-	noise_levels=argument.noise_levels
-	noise_type=argument.noise_type
+	number_of_runs=argument.number_of_runs
+	max_models=argument.max_models
+
+	data_type=assembly_system['data_type']
+	application=assembly_system['application']
+	part_type=assembly_system['part_type']
+	data_format=assembly_system['data_format']
+	assembly_type=assembly_system['assembly_type']
+	assembly_kccs=assembly_system['assembly_kccs']	
+	assembly_kpis=assembly_system['assembly_kpis']
+	voxel_dim=assembly_system['voxel_dim']
+	point_dim=assembly_system['point_dim']
+	voxel_channels=assembly_system['voxel_channels']
+	noise_levels=assembly_system['noise_levels']
+	noise_type=assembly_system['noise_type']
 
 	#Objects of Measurement System and Assembly System
 	measurement_system=HexagonWlsScanner(data_type,application, system_noise,part_type,data_format)
@@ -111,12 +106,11 @@ if __name__ == '__main__':
 
 	point_data=dataset[:, 0:point_dim]
 	kcc_data=dataset[:,point_dim:]
-	bn_models=benchmarking_models(point_data,kcc_data,bench_mark='all')
-    number_of_runs=20
-    print('Benchmarking for all Algorithims')
-    bn_models,bn_models_name=benchmarking_models()
+	
+	print('Benchmarking for all Algorithims')
+	bn_models,bn_models_name=benchmarking_models(max_models)
 
-    mr_bnoutput_mae=np.zeroes(number_of_runs,len(bn_models),metrics_eval.assembly_kccs)
+	mr_bnoutput_mae=np.zeroes(number_of_runs,len(bn_models),metrics_eval.assembly_kccs)
 	mr_bnoutput_mse=np.zeroes(number_of_runs,len(bn_models),metrics_eval.assembly_kccs)
 	mr_bnoutput_rmse=np.zeroes(number_of_runs,len(bn_models),metrics_eval.assembly_kccs)
 	mr_bnoutput_r2=np.zeroes(number_of_runs,len(bn_models),metrics_eval.assembly_kccs)
@@ -125,9 +119,9 @@ if __name__ == '__main__':
 		bneval_metrics=benchmarking_models(bn_models,point_data,kcc_data,metrics_eval)
 		mr_bnoutput_mae[i,:,:]=bneval_metrics["Mean Absolute Error"]
 		mr_bnoutput_mse[i,:,:]=bneval_metrics["Mean Squared Error"]
-    	mr_bnoutput_rmse[i,:,:]=bneval_metrics["Root Mean Squared Error"]
-    	mr_bnoutput_r2[i,:,:]=bneval_metrics["R Squared"]
-        
+		mr_bnoutput_rmse[i,:,:]=bneval_metrics["Root Mean Squared Error"]
+		mr_bnoutput_r2[i,:,:]=bneval_metrics["R Squared"]
+		
 
    avg_mrbn_mae=np.mean(mr_bnoutput_mae,axis=0)
    avg_mrbn_mse=np.mean(mr_bnoutput_mse,axis=0)
@@ -138,3 +132,24 @@ if __name__ == '__main__':
    std_mr_bn_mse=np.std(mr_bnoutput_mse,axis=0, ddof=1)
    std_mr_bn_rmse=np.std(mr_bnoutput_rmse,axis=0, ddof=1)
    std_mr_bn_r2=np.std(mr_bnoutput_r2,axis=0, ddof=1)
+
+   avg_kcc_mrbn_mae=np.mean(avg_mrbn_mae,axis=1)
+   avg_kcc_mrbn_mse=np.mean(avg_mrbn_mse,axis=1)
+   avg_kcc_mrbn_rmse=np.mean(avg_mrbn_rmse,axis=1)
+   avg_kcc_mrbn_mae=np.mean(avg_mrbn_r2,axis=1)
+
+   avg_std_kcc_mae=np.mean(std_mr_bn_mae,axis=1)
+   avg_std_kcc_mse=np.mean(std_mr_bn_mse,axis=1)
+   avg_std_kcc_mae=np.mean(std_mr_bn_rmse,axis=1)
+   avg_std_kcc_mae=np.mean(std_mr_bn_r2,axis=1)
+
+   print("Average performance considering all KCCs")
+   for i in range(len(bn_models_name)):
+		print(f'Name model: {bn_models_name[i]} ')
+		print(f'MAE: {avg_kcc_mrbn_mae[i]}, MAE Standard Deviation: {avg_std_kcc_mae[i]}')
+		print(f'MSE: {avg_kcc_mrbn_mse[i]}, MSE Standard Deviation: {avg_std_kcc_mse[i]}')
+		print(f'RMSE: {avg_kcc_mrbn_rmse[i]}, RMSE Standard Deviation: {avg_std_kcc_rmse[i]}')
+		print(f'R2: {avg_kcc_mrbn_mae[i]}, R2 Standard Deviation: {avg_std_kcc_mae[i]}')
+
+
+

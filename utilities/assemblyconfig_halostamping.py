@@ -1,13 +1,13 @@
 import preprocessing
 
-assembly_system = {
+assembly_system_Halo = {
 		'data_type': '3D Point Cloud Data',
         'application': 'Inline Root Cause Analysis',
-        'part_type': 'Door Inner and Hinge Assembly',
+        'part_type': 'Halo Stamping Patterns',
         'data_format': 'Complete',
         'assembly_type':"Single-Stage",
-        'assembly_kccs':15,
-        'assembly_kpis':6,
+        'assembly_kccs':5,
+        'assembly_kpis':0,
         'voxel_dim':64,
         'point_dim':8047,
         'voxel_channels':1,

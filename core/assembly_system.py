@@ -13,9 +13,9 @@ class AssemblySystem:
 		:type assembly_kpis: int (required) 
 	"""
 	def __init__(self,assembly_type,assembly_kccs,assembly_kpis):
-		assembly_type=self.assembly_type
-		assembly_kccs=self.assembly_kccs
-		assembly_kpis=self.assembly_kpis
+		self.assembly_type=assembly_type
+		self.assembly_kccs=assembly_kccs
+		self.assembly_kpis=assembly_kpis
 
 class PartType(AssemblySystem):
 	"""Part System Class, inherits the Assembly System Class, addtional parameters for this class include
@@ -31,11 +31,14 @@ class PartType(AssemblySystem):
 
 		The class containes two functions -  get_nominal_cop and get_nominal_cop_database
 	"""
-	def __init__(self,assembly_type,assembly_kccs,assembly_kpis,part_name,voxel_dim,point_dim,part_type):
+	def __init__(self,assembly_type,assembly_kccs,assembly_kpis,part_name,part_type,voxel_dim,voxel_channels,point_dim):
 		super().__init__(assembly_type,assembly_kccs,assembly_kpis)
-		self.voxel_dim=voxel_dim
-		self.voxel_channel=voxel_channel
+		self.part_name=part_name
 		self.part_type=part_type
+		self.voxel_dim=voxel_dim
+		self.voxel_channels=voxel_channels
+		self.point_dim=point_dim
+		
 
 	def get_nominal_cop(self,file_name):
 		"""Import nominal cloud-of-point of the assembly from a text/csv file
@@ -84,8 +87,8 @@ class VRMSimulationModel(PartType):
 		The class containe one function kpi_calculator that needs to be defined by the user depending on the assembly output
 
 	"""
-	def __init__(self,assembly_type,assembly_kccs,assembly_kpis,part_name,voxel_dim,part_type,noise_level,noise_type='uniform',convergency_flag=1):
-		super().__init__(assembly_type,assembly_kccs,assembly_kpis,part_name,voxel_dim,part_type)
+	def __init__(self,assembly_type,assembly_kccs,assembly_kpis,part_name,part_type,voxel_dim,voxel_channels,point_dim,noise_level,noise_type='uniform',convergency_flag=1):
+		super().__init__(assembly_type,assembly_kccs,assembly_kpis,part_name,part_type,voxel_dim,voxel_channels,point_dim)
 		self.noise_level=noise_level
 		self.noise_type=noise_type
 		self.convergency_flag=convergency_flag

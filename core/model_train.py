@@ -12,11 +12,9 @@ sys.path.insert(0,parentdir)
 
 import numpy as np
 import pandas as pd
-import tensorflow as tf
-import dlmfg
+#import tensorflow as tf
 from keras.callbacks import ModelCheckpoint
 from keras.callbacks import TensorBoard
-from training_viz import training_plot
 from assemblyconfig import assembly_system
 
 class TrainModel:
@@ -27,11 +25,11 @@ class TrainModel:
 
 	def run_train_model(self,model,X_in,Y_out,split_ratio=0.3):
 		
-		model_path='./model/CNN_model_3D.h5'
+		model_path='./trained_models/CNN_model_3D.h5'
 		X_train, X_test, y_train, y_test = train_test_split(X_in, Y_out, test_size = split_ratio)
 
 		#Checkpointer to save the best model
-		checkpointer = ModelCheckpoint(,model_path verbose=1, save_best_only='mae')
+		checkpointer = ModelCheckpoint(model_path, verbose=1, save_best_only='mae')
 
 		#Activating Tensorboard for Vizvalization
 		tensorboard = TensorBoard(log_dir='./logs',histogram_freq=1, write_graph=True, write_images=True)

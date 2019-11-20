@@ -22,7 +22,18 @@ class TransferLearning:
 		transfer_model=load_model(model_path)
 		return model
 
+	def tl_mode1(model):
+		
+		
+	def tl_mode2(model):
+
+	def tl_mode3(model):
+
+
+
+
 	return model
+
 if __name__ == '__main__':
 
 	#Parsing from Config File

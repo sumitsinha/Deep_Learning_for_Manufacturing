@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-import tqdm
+from tqdm import tqdm
 
 class GetTrainData():
 	
@@ -67,7 +67,7 @@ class GetTrainData():
 		kcc_dump=dataset.iloc[start_index:end_index, point_dim:point_dim+kcc_dim]
 		kpi_dump=dataset.iloc[start_index:end_index, point_dim+kcc_dim:point_dim+kcc_dim+kpi_dim]
 
-		for index in range(run_length):
+		for index in tqdm(range(run_length)):
 			y_point_data=dataset.iloc[index, 0:point_dim]
 			dev_data=y_point_data.values
 			if(noise_type=='uniform'):

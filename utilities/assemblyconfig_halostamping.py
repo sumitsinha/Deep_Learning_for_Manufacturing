@@ -1,8 +1,8 @@
 
-assembly_system = {
-		'data_type': '3D Point Cloud Data',
+assembly_system = {	
+        'data_type': '3D Point Cloud Data',
         'application': 'Inline Root Cause Analysis',
-        'part_type': 'Halo Stamping Patterns',
+        'part_type': 'Halo_Stamping_Patterns',
         'part_name':'Halo',
         'data_format': 'Complete',
         'assembly_type':"Single-Stage",
@@ -18,7 +18,7 @@ assembly_system = {
         'data_files':['car_halo_run1_ydev.csv']
         }
 
-
+#Assert that all config values conform to the libarary requirements
 assert type(assembly_system['assembly_kccs']) is int, "Assembly KCCs is not an integer: %r" %assembly_system[assembly_kccs]
 assert type(assembly_system['assembly_kpis']) is int, "Assembly KPIs is not an integer: %r" % assembly_system[assembly_kpis]
 assert type(assembly_system['voxel_dim']) is int, "Voxel Dim is not an integer: %r" % assembly_system[voxel_dim]

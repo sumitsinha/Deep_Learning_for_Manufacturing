@@ -2,18 +2,10 @@ import numpy as np
 import pandas as pd
 
 class GetInferenceData():
-	
-	def get_dev_data(y1,y2,p):   
-	    if(abs(y1)>abs(y2)):
-	        y_dev=y1
-	    else:
-	        y_dev=y2
-	    retval=y_dev
-	    return retval
 
-	def load_mapping_index(index_file):
+
+	def load_mapping_index(self,index_file):
 		
-		file_path='./utilities/'+index_file
 		try:
 			voxel_point_index = np.load(index_file)
 		except AssertionError as error:
@@ -22,17 +14,16 @@ class GetInferenceData():
 
 		return voxel_point_index
 
-	def load_measurement_file(measurement_file_name):
-		file_path="./Core_view_AM/"+measurement_file_name
+	def load_measurement_file(self,measurement_file_name):
 		try:
-			measurement_data=pd.read_csv(file_path,skiprows=25,low_memory=False,sep='\t', lineterminator='\r',error_bad_lines=False)
+			measurement_data=pd.read_csv(measurement_file_name,skiprows=25,low_memory=False,sep='\t', lineterminator='\r',error_bad_lines=False)
 		except AssertionError as error:
 			print(error)
 			print('Measurement data file not found !')
 
 		return measurement_data
 
-	def data_pre_processing(measurement_data,voxel_channels=1):
+	def data_pre_processing(self,measurement_data,voxel_channels=1):
 		
 		measurement_data_subset=measurement_data.loc[(measurement_data['Name'].str[0:2] == 'SF')]
 		nominal_coordinates=measurement_data_subset.iloc[:,5:8]
@@ -47,7 +38,16 @@ class GetInferenceData():
 		
 		return y_dev_data_filtered
 
-	def voxel_mapping(y_dev_data_filtered,voxel_point_index,point_dim,voxel_dim=64):
+	def voxel_mapping(self,y_dev_data_filtered,voxel_point_index,point_dim,voxel_dim,voxel_channels):
+		
+
+		def get_dev_data(y1,y2,p):   
+		    if(abs(y1)>abs(y2)):
+		        y_dev=y1
+		    else:
+		        y_dev=y2
+		    retval=y_dev
+		    return retval
 		
 		voxel_dev_data=np.zeros((1,voxel_dim,voxel_dim,voxel_dim,voxel_channels))    
 

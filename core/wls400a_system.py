@@ -1,4 +1,5 @@
 import numpy as np
+import sys
 import pandas as pd
 
 class GetInferenceData():
@@ -7,7 +8,7 @@ class GetInferenceData():
 	def load_mapping_index(self,index_file):
 		
 		try:
-			voxel_point_index = np.load(index_file)
+			voxel_point_index = np.load(index_file,allow_pickle=True)
 		except AssertionError as error:
 			print(error)
 			print('Voxel Mapping File not found !')
@@ -16,7 +17,7 @@ class GetInferenceData():
 
 	def load_measurement_file(self,measurement_file_name):
 		try:
-			measurement_data=pd.read_csv(measurement_file_name,skiprows=25,low_memory=False,sep='\t', lineterminator='\r',error_bad_lines=False)
+			measurement_data=pd.read_csv(measurement_file_name,delim_whitespace=True,skiprows=25,low_memory=False,error_bad_lines=False)
 		except AssertionError as error:
 			print(error)
 			print('Measurement data file not found !')

@@ -7,8 +7,8 @@ class TrainViz:
 
 		import matplotlib.pyplot as plt
 		#summarize history for Mean Absolute Error
-		plt.plot(history.history['mean_absolute_error'])
-		plt.plot(history.history['val_mean_absolute_error'])
+		plt.plot(history.history['mae'])
+		plt.plot(history.history['val_mae'])
 		plt.title('model MAE`')
 		plt.ylabel('MAE')
 		plt.xlabel('epoch')

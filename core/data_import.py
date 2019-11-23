@@ -30,7 +30,7 @@ class GetTrainData():
 		
 		file_path='../utilities/'+index_file
 		try:
-			voxel_point_index = np.load(file_path)
+			voxel_point_index = np.load(file_path,allow_pickle=True)
 		except AssertionError as error:
 			print(error)
 			print('Voxel Mapping File not found !')

@@ -37,7 +37,7 @@ from metrics_eval import MetricsEval
 
 class TrainModel:
 	
-	def __init__(self, batch_size=32,epochs=5):
+	def __init__(self, batch_size=32,epochs=30):
 			self.batch_size=batch_size
 			self.epochs=epochs
 

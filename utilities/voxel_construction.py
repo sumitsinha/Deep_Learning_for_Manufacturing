@@ -85,38 +85,29 @@ class VoxelConstruct:
 
 if __name__ == '__main__':
 
-	parser = argparse.ArgumentParser(description="Arguments to initiate Measurement System Class and Assembly System Class")
-    parser.add_argument("-D", "--data_type", help = "Example: 3D Point Cloud Data", required = False, default = "3D Point Cloud Data")
-    parser.add_argument("-A", "--application", help = "Example: Inline Root Cause Analysis", required = False, default = "Inline Root Cause Analysis")
-    parser.add_argument("-P", "--part_type", help = "Example: Door Inner and Hinge Assembly", required = False, default = "Door Inner and Hinge Assembly")
-    parser.add_argument("-F", "--data_format", help = "Example: Complete vs Partial Data", required = False, default = "Complete")
-	parser.add_argument("-S", "--assembly_type", help = "Example: Multi-Stage vs Single-Stage", required = False, default = "Single-Stage")
-    parser.add_argument("-C", "--assembly_kccs", help = "Number of KCCs for the Assembly", required = False, default =15,type=int )
-    parser.add_argument("-I", "--assembly_kpis	", help = "Number of KPIs for the Assembly", required = False, default = 6,type=int)
-    parser.add_argument("-V", "--voxel_dim", help = "The Granularity of Voxels - 32 64 128", required = False, default = 64,type=int)
-    parser.add_argument("-P", "--point_dim", help = "Number of key Nodes", required = True, type=int)
-    parser.add_argument("-C", "--voxel_channels", help = "Number of Channels - 1 or 3", required = False, default = 1,type=int)
-    parser.add_argument("-N", "--noise_levels", help = "Amount of Artificial Noise to add while training", required = False, default = 0.1,type=float)
-    parser.add_argument("-T", "--noise_type", help = "Type of noise to be added uniform/Gaussian default uniform", required = False, default = "uniform")
-	argument = parser.parse_args()
+	print('Parsing from Assembly Config File....')
+
+	data_type=config.assembly_system['data_type']
+	application=config.assembly_system['application']
+	part_type=config.assembly_system['part_type']
+	part_name=config.assembly_system['part_name']
+	data_format=config.assembly_system['data_format']
+	assembly_type=config.assembly_system['assembly_type']
+	assembly_kccs=config.assembly_system['assembly_kccs']	
+	assembly_kpis=config.assembly_system['assembly_kpis']
+	voxel_dim=config.assembly_system['voxel_dim']
+	point_dim=config.assembly_system['point_dim']
+	voxel_channels=config.assembly_system['voxel_channels']
+	noise_type=config.assembly_system['noise_type']
+	mapping_index=config.assembly_system['mapping_index']
+	file_names=config.assembly_system['data_files']
+	system_noise=config.assembly_system['system_noise']
+	aritifical_noise=config.assembly_system['aritifical_noise']
 	
-	data_type=argument.data_type
-	application=argument.application
-	part_type=argument.part_type
-	data_format=argument.data_format
-	assembly_type=argument.assembly_type	
-	assembly_kccs=argument.assembly_kccs	
-	assembly_kpis=argument.assembly_kpis
-	voxel_dim=argument.voxel_dim
-	point_dim=argument.point_dim
-	voxel_channels=argument.voxel_channels
-	noise_levels=argument.noise_levels
-	noise_type=argument.noise_type
-
-	#Objects of Measurement System and Assembly System
-	measurement_system=HexagonWlsScanner(data_type,application, system_noise,part_type,data_format)
-	vrm_system=VRMSimulationModel(assembly_type,assembly_kccs,assembly_kpis,voxel_dim,point_dim,voxel_channels,noise_levels,noise_type)
-
+	print('Intilizing the Assembly System and Measurement System....')
+	measurement_system=HexagonWlsScanner(data_type,application,system_noise,part_type,data_format)
+	vrm_system=VRMSimulationModel(assembly_type,assembly_kccs,assembly_kpis,part_name,part_type,voxel_dim,voxel_channels,point_dim,aritifical_noise)
+	
 	#Import from File
 	cop_file_name=''
 

@@ -12,11 +12,17 @@ The library consists of the following two key datasets:
 Models
 The 3D CNN model termed as PointDevNet has the following layers and Parameters. 
 model.add(Conv3D(32,kernel_size=(5,5,5),strides=(2,2,2),activation='relu',input_shape=(voxel_dim,voxel_dim,voxel_dim,deviation_channels)))
+
 model.add(Conv3D(32, kernel_size=(4,4,4),strides=(2,2,2),activation='relu'))
+
 model.add(Conv3D(32, kernel_size=(3,3,3),strides=(1,1,1),activation='relu'))
+
 model.add(MaxPool3D(pool_size=(2,2,2)))
+
 model.add(Flatten())
+
 model.add(Dense(128,kernel_regularizer=regularizers.l2(0.02),activation='relu'))
+
 model.add(Dense(self.output_dimension, activation=final_layer_avt))
 
 The model can be trained with different loss functions depending on system behaviour and application. The key loss functions are:

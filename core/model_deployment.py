@@ -9,6 +9,7 @@ sys.path.append("../visualization")
 sys.path.append("../utilities")
 sys.path.append("../datasets")
 sys.path.append("../trained_models")
+sys.path.append("../config")
 
 import numpy as np
 import pandas as pd

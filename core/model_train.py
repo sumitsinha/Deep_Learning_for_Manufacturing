@@ -9,7 +9,7 @@ sys.path.append("../visualization")
 sys.path.append("../utilities")
 sys.path.append("../datasets")
 sys.path.append("../trained_models")
-
+sys.path.append("../config")
 #path_var=os.path.join(os.path.dirname(__file__),"../utilities")
 #sys.path.append(path_var)
 #sys.path.insert(0,parentdir) 

@@ -1,3 +1,5 @@
+import numpy as np
+import pandas as pd
 """ Containts core classes and methods for intilillzing a Assembly System, the inputs are provided in assemblyconfig file in utilities"""
 
 class AssemblySystem:
@@ -49,8 +51,8 @@ class PartType(AssemblySystem):
 			:returns: numpy array of dim points * 3
 			:rtype: np_array [point_dim,3]
 		"""
-		file_name=self.file_name
-		nominal_cop=np.loadtxt(file_name)
+		df=pd.read_csv(file_name, sep=',',header=None)
+		nominal_cop=df.values
 		return nominal_cop
 
 	def get_nominal_cop_database(self,conn_str,table_name):

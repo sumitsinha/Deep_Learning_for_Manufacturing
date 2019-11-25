@@ -14,7 +14,7 @@ class GetTrainData():
 
 	def load_mapping_index(self,index_file):
 		
-		file_path='../utilities/'+index_file
+		file_path='../utilities/mapping_files'+index_file
 		try:
 			voxel_point_index = np.load(file_path,allow_pickle=True)
 		except AssertionError as error:

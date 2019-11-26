@@ -21,6 +21,6 @@ kcc_struct.append({'kcc_id':2,
                   'kcc_name':'pinslot_z',
                  'kcc_type':1,
                  'kcc_nominal':0,
-                 'kcc_max':3,
-                 'kcc_min':-3   
+                 'kcc_max':1,
+                 'kcc_min':-1   
         })

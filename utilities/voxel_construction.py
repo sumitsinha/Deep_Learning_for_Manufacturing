@@ -20,6 +20,7 @@ import voxel_config as vc
 #Importing required modules from the package
 from measurement_system import HexagonWlsScanner
 from assembly_system import VRMSimulationModel
+from cop_viz import CopViz
 
 
 class VoxelConstruct:
@@ -145,10 +146,17 @@ if __name__ == '__main__':
 	#conn_string=data_basetype+':'+username+':'+password+'@'+ip_address+':'+password+'/'+database_name
 	#'postgresql://postgres:sumit123!@10.255.1.130:5432/IPQI'
 
-	file_path='../resources/mapping_files'+cop_file_name
+	file_path='../resources/nominal_cop_files/'+cop_file_name
 	#Read cop from csv file
 	print('Importing Nominal COP')
 	nominal_cop=vrm_system.get_nominal_cop(file_path)
+
+	print('Vizvalizing COP')
+	
+	plot_file_name=part_name+'_nominal_cop.html'
+	copviz=CopViz(nominal_cop)
+	copviz.plot_cop(plot_file_name)
+
 
 	#Read cop from SQL database
 	#nominal_cop=vrm.get_nominal_cop_database(self,conn_string,table_name)

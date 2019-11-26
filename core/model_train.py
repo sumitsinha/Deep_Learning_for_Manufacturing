@@ -37,7 +37,7 @@ from metrics_eval import MetricsEval
 
 class TrainModel:
 	
-	def __init__(self, batch_size=32,epochs=30):
+	def __init__(self, batch_size=32,epochs=150):
 			self.batch_size=batch_size
 			self.epochs=epochs
 
@@ -50,13 +50,13 @@ class TrainModel:
 
 		model_file_path=model_path+'/trained_model.h5'
 		X_train, X_test, y_train, y_test = train_test_split(X_in, Y_out, test_size = split_ratio)
-
+		print("Data Split Completed")
 		#Checkpointer to save the best model
 		checkpointer = ModelCheckpoint(model_file_path, verbose=1, save_best_only='mae')
 
 		#Activating Tensorboard for Vizvalization
 		tensorboard = TensorBoard(log_dir=logs_path,histogram_freq=1, write_graph=True, write_images=True)
-		history=model.fit(X_train, y_train, validation_data=(X_test,y_test), epochs=self.epochs, batch_size=self.batch_size,callbacks=[tensorboard,checkpointer])
+		history=model.fit(X_train, y_train, validation_data=(X_test,y_test), epochs=self.epochs, batch_size=self.batch_size,callbacks=[checkpointer])
 		
 		trainviz=TrainViz()
 		trainviz.training_plot(history,plots_path)
@@ -88,9 +88,14 @@ if __name__ == '__main__':
 	voxel_channels=config.assembly_system['voxel_channels']
 	noise_type=config.assembly_system['noise_type']
 	mapping_index=config.assembly_system['mapping_index']
-	file_names=config.assembly_system['data_files']
+	file_names_x=config.assembly_system['data_files_x']
+	file_names_y=config.assembly_system['data_files_y']
+	file_names_z=config.assembly_system['data_files_z']
 	system_noise=config.assembly_system['system_noise']
 	aritifical_noise=config.assembly_system['aritifical_noise']
+	data_folder=config.assembly_system['data_folder']
+	kcc_folder=config.assembly_system['kcc_folder']
+	kcc_files=config.assembly_system['kcc_files']
 
 	print('Creating file Structure....')
 	folder_name=part_type
@@ -116,11 +121,17 @@ if __name__ == '__main__':
 	get_data=GetTrainData();
 
 	print('Importing and Preprocessing Cloud-of-Point Data')
-	dataset=get_data.data_import(file_names)
+	dataset=[]
+	dataset.append(get_data.data_import(file_names_x,data_folder))
+	dataset.append(get_data.data_import(file_names_y,data_folder))
+	dataset.append(get_data.data_import(file_names_z,data_folder))
 	point_index=get_data.load_mapping_index(mapping_index)
-	
-	input_conv_data, kcc_subset_dump,kpi_subset_dump=get_data.data_convert_voxel(vrm_system,dataset,point_index)
 
+	kcc_dataset=get_data.data_import(kcc_files,kcc_folder)
+	
+	input_conv_data, kcc_subset_dump,kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,dataset,point_index,kcc_dataset)
+
+	print(input_conv_data.shape,kcc_subset_dump.shape)
 	print('Building 3D CNN model')
 
 	output_dimension=assembly_kccs

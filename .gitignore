@@ -8,6 +8,13 @@ __pycache__/
 
 # Distribution / packaging
 .Python
+
+datasets/
+sample_input/
+Halo_Stamping_Patterns/
+Halo_debug_run/
+
+Release/
 build/
 develop-eggs/
 dist/

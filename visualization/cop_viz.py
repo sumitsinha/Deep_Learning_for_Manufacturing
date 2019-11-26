@@ -3,13 +3,13 @@ from mpl_toolkits.mplot3d import Axes3D
 import plotly as py
 import plotly.graph_objs as go
 
-class CopViz(AssemblySystem):
+class CopViz():
 
 	def __init__(self,nominal_cop):
 
-		nominal_cop=self.nominal_cop
+		self.nominal_cop=nominal_cop
 		
-	def plot_cop(self):
+	def plot_cop(self,plot_file_name):
 		
 		nominal_cop=self.nominal_cop
 
@@ -34,7 +34,7 @@ class CopViz(AssemblySystem):
 		    )
 		)
 		fig = go.Figure(data=data, layout=layout)
-		py.offline.plot(fig, filename='cop_plot')
+		py.offline.plot(fig, filename=plot_file_name)
 
 	def get_data_stacks(self,node_ids):
 		
@@ -89,3 +89,20 @@ class CopViz(AssemblySystem):
 		)
 		fig = go.Figure(data=data, layout=layout)
 		py.offline.plot(fig, filename='cop_stack_plots')
+
+		def plot_voxelized_data(slef,voxel_cop):
+
+			voxel_dim=len(voxel_cop)
+			grip_len=np.count_nonzero(voxel_cop)
+			grid_cop=np.zeros((grid_len,3))
+
+			for i in range(voxel_dim):
+			    for j in range(voxel_dim):
+			        for k in range(voxel_dim):
+			            if(cop_dev_data[i,j,k]!=0):
+			                grid_cop[index,0]=i
+			                grid_cop[index,1]=j
+			                grid_cop[index,2]=k
+			          
+			              
+

@@ -1,4 +1,4 @@
-import os
+cimport os
 import sys
 current_path=os.path.dirname(__file__)
 parentdir = os.path.dirname(current_path)

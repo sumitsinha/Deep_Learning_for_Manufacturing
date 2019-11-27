@@ -33,11 +33,11 @@ class adaptive_sampling():
 
 		samples =lhs(kcc_dim,samples=sample_dim,criterion='center')
 		initial_samples=np.zeros_like(samples)
-
 		index=0
 		for kcc in kcc_struct:   
 			if(sample_type=='uniform'):
-				initial_samples[:,index]=uniform.ppf(samples[:,index], loc=kcc['kcc_nominal'], scale=kcc['kcc_max']-kcc['kcc_min'])
+				#initial_samples[:,index]=uniform.ppf(samples[:,index], loc=kcc['kcc_nominal'], scale=kcc['kcc_max']-kcc['kcc_min'])
+				initial_samples[:,index]=samples[:,index]*(kcc['kcc_max']-kcc['kcc_min'])+kcc['kcc_min']
 			else:
 				initial_samples[:,index]=norm.ppf(samples[:,index], loc=(kcc['kcc_nominal']+kcc['kcc_max'])/2, scale=(kcc['kcc_max']-kcc['kcc_min'])/6)
 			index=index+1
@@ -68,7 +68,7 @@ if __name__ == '__main__':
 	print('Generating inital samples')
 	initial_samples=adaptive_sampling.inital_sampling(kcc_struct,sampling_config['sample_dim'])
 
-	file_name="initial_samples.csv"
+	file_name="initial_samples_data_check.csv"
 	file_path='./sample_input/'+file_name
 	np.savetxt(file_path, initial_samples, delimiter=",")
 

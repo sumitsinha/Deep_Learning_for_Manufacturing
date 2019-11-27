@@ -7,7 +7,7 @@ class DLModel:
 
 	def cnn_model_3d(self,voxel_dim,deviation_channels):
 		
-		from keras.layers import Conv3D, MaxPool3D, Flatten, Dense
+		from keras.layers import Conv3D, MaxPool3D, Flatten, Dense, Dropout
 		from keras.models import Sequential
 		from keras import regularizers
 
@@ -24,7 +24,7 @@ class DLModel:
 		model.add(MaxPool3D(pool_size=(2,2,2)))
 		model.add(Flatten())
 		model.add(Dense(128,kernel_regularizer=regularizers.l2(0.02),activation='relu'))
-		model.add(Dropout(0.2))
+		#model.add(Dropout(0.2))
 		model.add(Dense(self.output_dimension, activation=final_layer_avt))
 		model.compile(loss='mse', optimizer='adam', metrics=['mae'])
 

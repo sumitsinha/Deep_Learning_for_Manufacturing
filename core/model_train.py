@@ -41,7 +41,7 @@ class TrainModel:
 			self.batch_size=batch_size
 			self.epochs=epochs
 
-	def run_train_model(self,model,X_in,Y_out,model_path,logs_path,plots_path,split_ratio=0.3):
+	def run_train_model(self,model,X_in,Y_out,model_path,logs_path,plots_path,split_ratio=0.2):
 		
 		from sklearn.model_selection import train_test_split
 		from keras.models import load_model

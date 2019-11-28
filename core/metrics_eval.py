@@ -5,7 +5,7 @@ import math
 
 class MetricsEval:
 	
-	def metrics_eval_base(self,predicted_y, test_y,logs_path):
+	def metrics_eval_base(self,predicted_y, test_y,logs_path,run_id=0):
 
 		kcc_dim=test_y.shape[1]
 
@@ -35,8 +35,8 @@ class MetricsEval:
 		
 		accuracy_metrics_df=pd.DataFrame({'KCC_ID':kcc_id,'MAE':mae_KCCs,'MSE':mse_KCCs,'RMSE':rmse_KCCs,'R2':r2_KCCs})
 		accuracy_metrics_df.columns = ['KCC_ID','MAE','MSE','RMSE','R2']
-		accuracy_metrics_df.to_csv(logs_path+'/metrics.csv')
-		return eval_metrics
+		#accuracy_metrics_df.to_csv(logs_path+'/metrics.csv')
+		return eval_metrics,accuracy_metrics_df
 
 		def metrics_eval_aleatoric_model(self,predicted_y, test_y,logs_path):
 

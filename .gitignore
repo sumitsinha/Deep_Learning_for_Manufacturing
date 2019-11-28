@@ -10,6 +10,7 @@ __pycache__/
 .Python
 
 datasets/
+**/active_learning/sample_input/
 sample_input/
 Halo_Stamping_Patterns/
 Halo_debug_run/

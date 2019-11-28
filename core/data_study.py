@@ -20,6 +20,10 @@ import numpy as np
 import pandas as pd
 import tensorflow as tf
 from keras import backend as K
+from tqdm import tqdm
+import plotly as py
+import plotly.graph_objects as go
+import cufflinks as cf
 K.clear_session()
 
 #Importing Config files
@@ -34,43 +38,9 @@ from data_import import GetTrainData
 from core_model import DLModel
 from training_viz import TrainViz
 from metrics_eval import MetricsEval
+from model_train import TrainModel
 
-class TrainModel:
 	
-	def __init__(self, batch_size=32,epochs=150):
-			self.batch_size=batch_size
-			self.epochs=epochs
-
-	def run_train_model(self,model,X_in,Y_out,model_path,logs_path,plots_path,split_ratio=0.2,run_id=0):
-		
-		from sklearn.model_selection import train_test_split
-		from keras.models import load_model
-		from keras.callbacks import ModelCheckpoint
-		from keras.callbacks import TensorBoard
-
-		model_file_path=model_path+'/trained_model_'+str(run_id)+'.h5'
-		X_train, X_test, y_train, y_test = train_test_split(X_in, Y_out, test_size = split_ratio)
-		print("Data Split Completed")
-		#Checkpointer to save the best model
-		checkpointer = ModelCheckpoint(model_file_path, verbose=1, save_best_only='mae')
-
-		#Activating Tensorboard for Vizvalization
-		tensorboard = TensorBoard(log_dir=logs_path,histogram_freq=1, write_graph=True, write_images=True)
-		history=model.fit(X_train, y_train, validation_data=(X_test,y_test), epochs=self.epochs, batch_size=self.batch_size,callbacks=[checkpointer])
-		
-		trainviz=TrainViz()
-		trainviz.training_plot(history,plots_path,run_id)
-		
-		inference_model=load_model(model_file_path)
-		y_pred=inference_model.predict(X_test)
-
-		metrics_eval=MetricsEval();
-		eval_metrics,accuracy_metrics_df=metrics_eval.metrics_eval_base(y_pred,y_test,logs_path)
-		return model,eval_metrics,accuracy_metrics_df
-
-	def run_train_model_dynamic():
-		pass
-
 if __name__ == '__main__':
 
 	print('Parsing from Assembly Config File....')
@@ -96,6 +66,16 @@ if __name__ == '__main__':
 	data_folder=config.assembly_system['data_folder']
 	kcc_folder=config.assembly_system['kcc_folder']
 	kcc_files=config.assembly_system['kcc_files']
+
+
+	print('Parsing from Training Config File')
+
+	batch_size=cftrain.data_study_params['batch_size']
+	epocs=cftrain.data_study_params['epocs']
+	no_of_splits=cftrain.data_study_params['no_of_splits']
+	min_train_samples=cftrain.data_study_params['min_train_samples']
+	split_ratio=cftrain.data_study_params['split_ratio']
+
 
 	print('Creating file Structure....')
 	folder_name=part_type
@@ -130,27 +110,78 @@ if __name__ == '__main__':
 	kcc_dataset=get_data.data_import(kcc_files,kcc_folder)
 	
 	input_conv_data, kcc_subset_dump,kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,dataset,point_index,kcc_dataset)
-
-	print(input_conv_data.shape,kcc_subset_dump.shape)
-	print('Building 3D CNN model')
-
-	output_dimension=assembly_kccs
-	dl_model=DLModel(output_dimension)
-	model=dl_model.cnn_model_3d(voxel_dim,voxel_channels)
+	#print(input_conv_data.shape,kcc_subset_dump.shape)
 
 	print('Training 3D CNN model')
 	tensorboard_str='tensorboard' + '--logdir '+logs_path
 	print('Vizavlize at Tensorboard using ', tensorboard_str)
-	train_model=TrainModel()
-	trained_model,eval_metrics,accuracy_metrics_df=train_model.run_train_model(model,input_conv_data,kcc_subset_dump,model_path,logs_path,plots_path)
 	
-	accuracy_metrics_df.to_csv(logs_path+'/metrics_train.csv')
+	output_dimension=assembly_kccs
+	max_dim=len(input_conv_data)
+	div_dim=int((len(input_conv_data)-min_train_samples)/no_of_splits)
 
-	print("Model Training Complete..")
-	print("The Model Validation Metrics are ")
-	print(eval_metrics)
+	eval_metrics_type= ["Mean Absolute Error","Mean Squared Error","Root Mean Squared Error","R Squared"]
 
-	print('Training Completed Succssesfully')
+	kcc_id=[]
+
+	for i in range(assembly_kccs):  
+		kcc_name="KCC_"+str(i+1)
+		kcc_id.append(kcc_name)
+
+	datastudy_output=np.zeros((no_of_splits+1,(assembly_kccs+1)*len(eval_metrics_type)+1))
+	
+	for i in tqdm(range(no_of_splits+1)):
+		
+		run_id=i
+		train_dim=min_train_samples+(i*div_dim)
+		if(train_dim>max_dim):
+			train_dim=max_dim
+		
+		print("  Conducting datastudy study on :",train_dim, " samples")
+		train_model=TrainModel(batch_size,epocs)
+		input_conv_subset=input_conv_data[0:train_dim,:,:,:,:]
+		kcc_subset=kcc_subset_dump[0:train_dim,:]
+
+		print('Building 3D CNN model')
+
+	
+		dl_model=DLModel(output_dimension)
+		model=dl_model.cnn_model_3d(voxel_dim,voxel_channels)
+		
+		trained_model,eval_metrics,accuracy_metrics_df=train_model.run_train_model(model,input_conv_subset,kcc_subset,model_path,logs_path,plots_path,split_ratio,run_id)
 
 
+		datastudy_output[i,0]=train_dim
+		datastudy_output[i,1:assembly_kccs+1]=eval_metrics["Mean Absolute Error"]
+		datastudy_output[i,assembly_kccs+1:(2*assembly_kccs)+1]=eval_metrics["Mean Squared Error"]
+		datastudy_output[i,(2*assembly_kccs)+1:(3*assembly_kccs)+1]=eval_metrics["Root Mean Squared Error"]
+		datastudy_output[i,(3*assembly_kccs)+1:(4*assembly_kccs)+1]=eval_metrics["R Squared"]
+
+		file_name='metrics_data_study_'+str(train_dim)+'_.csv'
+		accuracy_metrics_df.to_csv(logs_path+'/'+file_name)
+		print("Model Training Complete on samples :",)
+		print("The Model Validation Metrics are ")
+		print(eval_metrics)
+		K.clear_session()
+
+	for i in range(len(eval_metrics_type)):
+		datastudy_output[:,(4*assembly_kccs)+i+1]=np.mean(datastudy_output[:,(i*assembly_kccs)+1:((i+1)*assembly_kccs)+1],axis=1)
+
+	#Gen Coloum Names
+
+	col_names=['Training_Samples']
+	for metric in eval_metrics_type:
+		for kcc in kcc_id:
+			col_names.append(str(metric)+'_'+str(kcc))
+
+	for metric in eval_metrics_type:
+	    col_names.append(str(metric)+"_avg")
+
+	ds_output_df=pd.DataFrame(data=datastudy_output,columns=col_names)
+	ds_output_df.to_csv(logs_path+'/'+'datastudy_output.csv')
+
+	print('Data Study Completed Succssesfully')
+
+	fig = ds_output_df.iplot(x='Training_Samples',asFigure=True)
+	py.offline.plot(fig,filename=logs_path+'/'+"data_study_plot.html")
 

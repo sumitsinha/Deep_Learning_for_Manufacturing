@@ -60,10 +60,10 @@ class GetTrainData():
 		#end_index=50000
 		run_length=end_index-start_index
 		input_conv_data=np.zeros((run_length,voxel_dim,voxel_dim,voxel_dim,dev_channel))
-		kcc_dump=kcc_data
+		kcc_dump=kcc_data.values
 		#kcc_dump=dataset.iloc[start_index:end_index, point_dim:point_dim+kcc_dim]
 		kpi_dump=dataset[0].iloc[start_index:end_index, point_dim:point_dim+kpi_dim]
-
+		kpi_dump=kpi_dump.values
 		not_convergent=0
 		for index in tqdm(range(run_length)):
 			x_point_data=dataset[0].iloc[index, 0:point_dim]

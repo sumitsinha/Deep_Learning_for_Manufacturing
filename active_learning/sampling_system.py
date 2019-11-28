@@ -68,7 +68,7 @@ if __name__ == '__main__':
 	print('Generating inital samples')
 	initial_samples=adaptive_sampling.inital_sampling(kcc_struct,sampling_config['sample_dim'])
 
-	file_name="initial_samples_data_check.csv"
+	file_name=sampling_config['output_file_name']
 	file_path='./sample_input/'+file_name
 	np.savetxt(file_path, initial_samples, delimiter=",")
 

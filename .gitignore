@@ -8,7 +8,8 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-
+.DS_Store
+.idea/
 datasets/
 **/active_learning/sample_input/
 sample_input/

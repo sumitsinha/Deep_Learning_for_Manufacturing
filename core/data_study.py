@@ -70,11 +70,18 @@ if __name__ == '__main__':
 
 	print('Parsing from Training Config File')
 
+	model_type=cftrain.model_parameters['model_type']
+	output_type=cftrain.model_parameters['output_type']
+	optimizer=cftrain.model_parameters['optimizer']
+	loss_func=cftrain.model_parameters['loss_func']
+	regularizer_coeff=cftrain.model_parameters['regularizer_coeff']
+	activate_tensorboard=cftrain.model_parameters['activate_tensorboard']
+
 	batch_size=cftrain.data_study_params['batch_size']
 	epocs=cftrain.data_study_params['epocs']
-	no_of_splits=cftrain.data_study_params['no_of_splits']
-	min_train_samples=cftrain.data_study_params['min_train_samples']
 	split_ratio=cftrain.data_study_params['split_ratio']
+	min_train_samples=cftrain.data_study_params['min_train_samples']
+	no_of_splits=cftrain.data_study_params['no_of_splits']
 
 
 	print('Creating file Structure....')
@@ -111,10 +118,11 @@ if __name__ == '__main__':
 	
 	input_conv_data, kcc_subset_dump,kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,dataset,point_index,kcc_dataset)
 	#print(input_conv_data.shape,kcc_subset_dump.shape)
-
-	print('Training 3D CNN model')
-	tensorboard_str='tensorboard' + '--logdir '+logs_path
-	print('Vizavlize at Tensorboard using ', tensorboard_str)
+		
+	if(activate_tensorboard==1):
+		tensorboard_str='tensorboard' + '--logdir '+logs_path
+		print('Vizavlize at Tensorboard using ', tensorboard_str)
+	
 	
 	output_dimension=assembly_kccs
 	max_dim=len(input_conv_data)
@@ -134,22 +142,22 @@ if __name__ == '__main__':
 		
 		run_id=i
 		train_dim=min_train_samples+(i*div_dim)
+		
 		if(train_dim>max_dim):
 			train_dim=max_dim
 		
-		print("  Conducting datastudy study on :",train_dim, " samples")
-		train_model=TrainModel(batch_size,epocs)
-		input_conv_subset=input_conv_data[0:train_dim,:,:,:,:]
-		kcc_subset=kcc_subset_dump[0:train_dim,:]
-
 		print('Building 3D CNN model')
 
 	
-		dl_model=DLModel(output_dimension)
+		dl_model=DLModel(model_type,output_dimension,optimizer,loss_func,regularizer_coeff,output_type)
 		model=dl_model.cnn_model_3d(voxel_dim,voxel_channels)
-		
-		trained_model,eval_metrics,accuracy_metrics_df=train_model.run_train_model(model,input_conv_subset,kcc_subset,model_path,logs_path,plots_path,split_ratio,run_id)
 
+		print("Conducting datastudy study on :",train_dim, " samples")
+		input_conv_subset=input_conv_data[0:train_dim,:,:,:,:]
+		kcc_subset=kcc_subset_dump[0:train_dim,:]
+
+		train_model=TrainModel(batch_size,epocs,split_ratio)
+		trained_model,eval_metrics,accuracy_metrics_df=train_model.run_train_model(model,input_conv_subset,kcc_subset,model_path,logs_path,plots_path,activate_tensorboard,run_id)
 
 		datastudy_output[i,0]=train_dim
 		datastudy_output[i,1:assembly_kccs+1]=eval_metrics["Mean Absolute Error"]
@@ -182,6 +190,7 @@ if __name__ == '__main__':
 
 	print('Data Study Completed Succssesfully')
 
+	print('Plotting Data Study Results: ')
 	fig = ds_output_df.iplot(x='Training_Samples',asFigure=True)
 	py.offline.plot(fig,filename=logs_path+'/'+"data_study_plot.html")
 

@@ -85,6 +85,7 @@ if __name__ == '__main__':
 	#Voxel Mapping File
 
 	get_data=GetTrainData();
+	
 	print('Importing and Preprocessing Cloud-of-Point Data')
 	dataset=[]
 	dataset.append(get_data.data_import(file_names_x,data_folder))
@@ -119,7 +120,10 @@ if __name__ == '__main__':
 	y_pred=model_inference(input_conv_data,inference_model);
 
 	metrics_eval=MetricsEval();
-	eval_metrics=metrics_eval.metrics_eval_base(y_pred,kcc_dataset,logs_path)
-	print('Evaluation Mterics: ',eval_metrics)
+	eval_metrics,accuracy_metrics_df=metrics_eval.metrics_eval_base(y_pred,kcc_dataset,logs_path)
+	
+	print('Evaluation Metrics: ',eval_metrics)
+	accuracy_metrics_df.to_csv(logs_path+'/metrics_test.csv')
+	
 	np.savetxt("predicted.csv", y_pred, delimiter=",")
 	print('Predicted Values saved to disk...')

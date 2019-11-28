@@ -37,11 +37,12 @@ from metrics_eval import MetricsEval
 
 class TrainModel:
 	
-	def __init__(self, batch_size=32,epochs=150):
+	def __init__(self,batch_size,epochs,split_ratio):
 			self.batch_size=batch_size
 			self.epochs=epochs
+			self.split_ratio=split_ratio
 
-	def run_train_model(self,model,X_in,Y_out,model_path,logs_path,plots_path,split_ratio=0.2,run_id=0):
+	def run_train_model(self,model,X_in,Y_out,model_path,logs_path,plots_path,activate_tensorboard=0,run_id=0):
 		
 		from sklearn.model_selection import train_test_split
 		from keras.models import load_model
@@ -49,14 +50,20 @@ class TrainModel:
 		from keras.callbacks import TensorBoard
 
 		model_file_path=model_path+'/trained_model_'+str(run_id)+'.h5'
-		X_train, X_test, y_train, y_test = train_test_split(X_in, Y_out, test_size = split_ratio)
+		X_train, X_test, y_train, y_test = train_test_split(X_in, Y_out, test_size = self.split_ratio)
 		print("Data Split Completed")
+		
 		#Checkpointer to save the best model
 		checkpointer = ModelCheckpoint(model_file_path, verbose=1, save_best_only='mae')
-
-		#Activating Tensorboard for Vizvalization
+		callbacks=[checkpointer]
+		
+		if(activate_tensorboard==1):
+			#Activating Tensorboard for Vizvalization
+			tensorboard = TensorBoard(log_dir=logs_path,histogram_freq=1, write_graph=True, write_images=True)
+			callbacks=[checkpointer,tensorboard]
+		
 		tensorboard = TensorBoard(log_dir=logs_path,histogram_freq=1, write_graph=True, write_images=True)
-		history=model.fit(X_train, y_train, validation_data=(X_test,y_test), epochs=self.epochs, batch_size=self.batch_size,callbacks=[checkpointer])
+		history=model.fit(X_train, y_train, validation_data=(X_test,y_test), epochs=self.epochs, batch_size=self.batch_size,callbacks=callbacks)
 		
 		trainviz=TrainViz()
 		trainviz.training_plot(history,plots_path,run_id)
@@ -97,7 +104,20 @@ if __name__ == '__main__':
 	kcc_folder=config.assembly_system['kcc_folder']
 	kcc_files=config.assembly_system['kcc_files']
 
+	print('Parsing from Training Config File')
+
+	model_type=cftrain.model_parameters['model_type']
+	output_type=cftrain.model_parameters['output_type']
+	batch_size=cftrain.model_parameters['batch_size']
+	epocs=cftrain.model_parameters['epocs']
+	split_ratio=cftrain.model_parameters['split_ratio']
+	optimizer=cftrain.model_parameters['optimizer']
+	loss_func=cftrain.model_parameters['loss_func']
+	regularizer_coeff=cftrain.model_parameters['regularizer_coeff']
+	activate_tensorboard=cftrain.model_parameters['activate_tensorboard']
+	
 	print('Creating file Structure....')
+	
 	folder_name=part_type
 	train_path='../trained_models/'+part_type
 	pathlib.Path(train_path).mkdir(parents=True, exist_ok=True) 
@@ -116,11 +136,26 @@ if __name__ == '__main__':
 
 	#Objects of Measurement System, Assembly System, Get Infrence Data
 	print('Intilizing the Assembly System and Measurement System....')
+	
 	measurement_system=HexagonWlsScanner(data_type,application,system_noise,part_type,data_format)
 	vrm_system=VRMSimulationModel(assembly_type,assembly_kccs,assembly_kpis,part_name,part_type,voxel_dim,voxel_channels,point_dim,aritifical_noise)
 	get_data=GetTrainData();
 
+	#print(input_conv_data.shape,kcc_subset_dump.shape)
+	print('Building 3D CNN model')
+
+	output_dimension=assembly_kccs
+	
+	dl_model=DLModel(model_type,output_dimension,optimizer,loss_func,regularizer_coeff,output_type)
+	model=dl_model.cnn_model_3d(voxel_dim,voxel_channels)
+
+	print('Training 3D CNN model')
+	
+	if(activate_tensorboard==1):
+		tensorboard_str='tensorboard' + '--logdir '+logs_path
+		print('Vizavlize at Tensorboard using ', tensorboard_str)
 	print('Importing and Preprocessing Cloud-of-Point Data')
+	
 	dataset=[]
 	dataset.append(get_data.data_import(file_names_x,data_folder))
 	dataset.append(get_data.data_import(file_names_y,data_folder))
@@ -128,21 +163,10 @@ if __name__ == '__main__':
 	point_index=get_data.load_mapping_index(mapping_index)
 
 	kcc_dataset=get_data.data_import(kcc_files,kcc_folder)
-	
 	input_conv_data, kcc_subset_dump,kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,dataset,point_index,kcc_dataset)
-
-	print(input_conv_data.shape,kcc_subset_dump.shape)
-	print('Building 3D CNN model')
-
-	output_dimension=assembly_kccs
-	dl_model=DLModel(output_dimension)
-	model=dl_model.cnn_model_3d(voxel_dim,voxel_channels)
-
-	print('Training 3D CNN model')
-	tensorboard_str='tensorboard' + '--logdir '+logs_path
-	print('Vizavlize at Tensorboard using ', tensorboard_str)
-	train_model=TrainModel()
-	trained_model,eval_metrics,accuracy_metrics_df=train_model.run_train_model(model,input_conv_data,kcc_subset_dump,model_path,logs_path,plots_path)
+	
+	train_model=TrainModel(batch_size,epocs,split_ratio)
+	trained_model,eval_metrics,accuracy_metrics_df=train_model.run_train_model(model,input_conv_data,kcc_subset_dump,model_path,logs_path,plots_path,activate_tensorboard)
 	
 	accuracy_metrics_df.to_csv(logs_path+'/metrics_train.csv')
 

@@ -17,11 +17,11 @@ assembly_system = {
         'mapping_index':'Halo_64_voxel_mapping.dat',
         'data_folder':'../datasets/halo_debug_run/',
         'kcc_folder':'../active_learning/sample_input/',
-        'kcc_files':['initial_samples_data_study.csv'],
+        'kcc_files':['input_X.csv'],
         'test_kcc_files':['input_X.csv'],
-        'data_files_x':['output_table_x_data_study.csv'],
-        'data_files_y':['output_table_y_data_study.csv'],
-        'data_files_z':['output_table_z_data_study.csv'],
+        'data_files_x':['test_output_table_x.csv'],
+        'data_files_y':['test_output_table_y.csv'],
+        'data_files_z':['test_output_table_z.csv'],
         'test_data_files_x':['test_output_table_x.csv'],
         'test_data_files_y':['test_output_table_y.csv'],
         'test_data_files_z':['test_output_table_z.csv']
@@ -32,5 +32,5 @@ assert type(assembly_system['assembly_kccs']) is int, "Assembly KCCs is not an i
 assert type(assembly_system['assembly_kpis']) is int, "Assembly KPIs is not an integer: %r" % assembly_system[assembly_kpis]
 assert type(assembly_system['voxel_dim']) is int, "Voxel Dim is not an integer: %r" % assembly_system[voxel_dim]
 assert type(assembly_system['point_dim']) is int, "Point Dim is not an integer: %r" % assembly_system[point_dim]
-#assert assembly_system['voxel_channels'] == 1, "Voxel Channels is not an 1 (Multi-Channel Support to be added): %r" % assembly_system[voxel_channels]
+assert type(assembly_system['voxel_channels']) is int, "Voxel Channels is not an integer: %r" % assembly_system[voxel_channels]
 assert type(assembly_system['system_noise']) is float, "Noise Level is not float: %r" % assembly_system[noise_levels]

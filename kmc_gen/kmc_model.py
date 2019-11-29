@@ -2,114 +2,157 @@ import xgboost as xgb
 from sklearn importRandomForestRegressor
 from sklearn.model_selection import train_test_split
 
-def kmc_model_build(point_data,selected_kcc,kcc_name,save_model=0):
+def kmc_model_build(tree_based_model,point_data,selected_kcc,kcc_name,split_ratio=0.2,save_model=0):
 	
 	train_X, test_X, train_y, test_y = train_test_split(point_data, selected_kcc, test_size = 0.2)
 	train=train_X
-    target=train_y
-    train.index=range(0,train.shape[0])
-    target.index=range(0,train.shape[0])
-    
-    #%%
-    print('KMC Generation for selected :', kcc_name)
-    #model=RandomForestRegressor(n_estimators=1000,max_depth=700,n_jobs=-1,verbose=True)
-    model=xgb.XGBRegressor(colsample_bytree=0.4,gamma=0.045,learning_rate=0.07,max_depth=500,min_child_weight=1.5,n_estimators=500,reg_alpha=0.65,reg_lambda=0.45,subsample=0.95,n_jobs=-1,verbose=True)
-    model.fit(train,target)
-    #%%
-    y_pred = model.predict(test_X)
-    mae=metrics.mean_absolute_error(test_y, y_pred)
-    
-    print('The MAE for feature selection for: ',kcc_name)
-    print(mae)
-    
-    if(save_model=1)
-        filename = kcc_name+'_XGB_model.sav'
-        joblib.dump(model, filename)
-        print('Trained Model Saved to disk....')
-    
-    #%%
-    thresholds = model.feature_importances_
-    sorted_thresholds=np.sort(thresholds)
-    #%%
-    node_id=np.arange(point_dim)
-    node_IDs = pd.DataFrame(thresholds, index=node_id)
-    node_IDs.columns=['Feature_Importance']
-    node_IDs.index.name='node_ID'
-    #%%
-    node_IDs = node_IDs.sort_values('Feature_Importance', ascending=False)
-    filtered_nodeIDs=node_IDs.loc[node_IDs['Feature_Importance'] != 0]
-    node_ID_list = filtered_nodeIDs.index.tolist()
-    filename=kcc_name+'.csv'
-    print('Saving KMCs to disk...')
-    filtered_nodeIDs.to_csv(filename)
-    return filtered_nodeIDs
+	target=train_y
+	train.index=range(0,train.shape[0])
+	target.index=range(0,train.shape[0])
+	
+	#%%
+	print('KMC Generation for selected :', kcc_name)
+
+	if(tree_based_model=='rf')
+		model=RandomForestRegressor(n_estimators=1000,max_depth=700,n_jobs=-1,verbose=True)
+	
+	if(tree_based_model=='xgb')
+		model=xgb.XGBRegressor(colsample_bytree=0.4,gamma=0.045,learning_rate=0.07,max_depth=500,min_child_weight=1.5,n_estimators=500,reg_alpha=0.65,reg_lambda=0.45,subsample=0.95,n_jobs=-1,verbose=True)
+	model.fit(train,target)
+	#%%
+	y_pred = model.predict(test_X)
+
+	mae=metrics.mean_absolute_error(test_y, y_pred)
+	
+	print('The MAE for feature selection for: ',kcc_name)
+	print(mae)
+	
+	if(save_model==1)
+		filename = kcc_name+'_XGB_model.sav'
+		joblib.dump(model, filename)
+		print('Trained Model Saved to disk....')
+	
+	thresholds = model.feature_importances_
+	node_id=np.arange(point_dim*3)
+
+	node_IDs = pd.DataFrame(thresholds, index=node_id)
+	node_IDs.columns=['Feature_Importance']
+	node_IDs.index.name='node_ID'
+
+	node_IDs = node_IDs.sort_values('Feature_Importance', ascending=False)
+	filtered_nodeIDs=node_IDs.loc[node_IDs['Feature_Importance'] != 0]
+	filtered_nodeIDs_x=filtered_nodeIDs.loc[filtered_nodeIDs['node_ID']<=len(point_data)/3]
+	filtered_nodeIDs_y=filtered_nodeIDs.loc[filtered_nodeIDs['node_ID']>len(point_data)/3 and filtered_nodeIDs['node_ID']<=len(point_data)*2/3]
+	filtered_nodeIDs_z=filtered_nodeIDs.loc[filtered_nodeIDs['node_ID']>len(point_data)*2/3 and filtered_nodeIDs['node_ID']<=len(point_data)]
+	
+	return filtered_nodeIDs_x, filtered_nodeIDs_y, filtered_nodeIDs_z
 
 def viz_kmc(kcc_name,copviz):    
-    filename=kcc_name+'.csv'
-    node_ids = pd.read_csv(filename)
-    stack=copviz.get_data_stacks(node_ids)
-    copviz.plot_multiple_stacks(stack)
+	filename=kcc_name+'.csv'
+	node_ids = pd.read_csv(filename)
+	stack=copviz.get_data_stacks(node_ids)
+	copviz.plot_multiple_stacks(stack)
 
 
 if __name__ == '__main__':
 
-	parser = argparse.ArgumentParser(description="Arguments to initiate Measurement System Class and Assembly System Class")
-    parser.add_argument("-D", "--data_type", help = "Example: 3D Point Cloud Data", required = False, default = "3D Point Cloud Data")
-    parser.add_argument("-A", "--application", help = "Example: Inline Root Cause Analysis", required = False, default = "Inline Root Cause Analysis")
-    parser.add_argument("-P", "--part_type", help = "Example: Door Inner and Hinge Assembly", required = False, default = "Door Inner and Hinge Assembly")
-    parser.add_argument("-F", "--data_format", help = "Example: Complete vs Partial Data", required = False, default = "Complete")
-	parser.add_argument("-S", "--assembly_type", help = "Example: Multi-Stage vs Single-Stage", required = False, default = "Single-Stage")
-    parser.add_argument("-C", "--assembly_kccs", help = "Number of KCCs for the Assembly", required = False, default =15,type=int )
-    parser.add_argument("-I", "--assembly_kpis	", help = "Number of KPIs for the Assembly", required = False, default = 6,type=int)
-    parser.add_argument("-V", "--voxel_dim", help = "The Granularity of Voxels - 32 64 128", required = False, default = 64,type=int)
-    parser.add_argument("-P", "--point_dim", help = "Number of key Nodes", required = True, type=int)
-    parser.add_argument("-C", "--voxel_channels", help = "Number of Channels - 1 or 3", required = False, default = 1,type=int)
-    parser.add_argument("-N", "--noise_levels", help = "Amount of Artificial Noise to add while training", required = False, default = 0.1,type=float)
-    parser.add_argument("-T", "--noise_type", help = "Type of noise to be added uniform/Gaussian default uniform", required = False, default = "uniform")
-	argument = parser.parse_args()
+	print('Parsing from Assembly Config File....')
+
+	data_type=config.assembly_system['data_type']
+	application=config.assembly_system['application']
+	part_type=config.assembly_system['part_type']
+	part_name=config.assembly_system['part_name']
+	data_format=config.assembly_system['data_format']
+	assembly_type=config.assembly_system['assembly_type']
+	assembly_kccs=config.assembly_system['assembly_kccs']   
+	assembly_kpis=config.assembly_system['assembly_kpis']
+	voxel_dim=config.assembly_system['voxel_dim']
+	point_dim=config.assembly_system['point_dim']
+	voxel_channels=config.assembly_system['voxel_channels']
+	noise_type=config.assembly_system['noise_type']
+	mapping_index=config.assembly_system['mapping_index']
+	file_names_x=config.assembly_system['data_files_x']
+	file_names_y=config.assembly_system['data_files_y']
+	file_names_z=config.assembly_system['data_files_z']
+	system_noise=config.assembly_system['system_noise']
+	aritifical_noise=config.assembly_system['aritifical_noise']
+	data_folder=config.assembly_system['data_folder']
+	kcc_folder=config.assembly_system['kcc_folder']
+	kcc_files=config.assembly_system['kcc_files']
+
+	print('Parsing from Training Config File')
+
+	tree_based_model=cftrain.kmc_params['tree_based_model']
+	importance_creteria=cftrain.kmc_params['importance_creteria']
+	save_model=cftrain.kmc_params['save_model']
+	split_ratio=cftrain.kmc_params['split_ratio']
+	plot_kmc=cftrain.kmc_params['plot_kmc']
+	kcc_tplot=cftrain.kmc_params['kcc_tplot']
+   
+	print('Creating file Structure....')
 	
-	data_type=argument.data_type
-	application=argument.application
-	part_type=argument.part_type
-	data_format=argument.data_format
-	assembly_type=argument.assembly_type	
-	assembly_kccs=argument.assembly_kccs	
-	assembly_kpis=argument.assembly_kpis
-	voxel_dim=argument.voxel_dim
-	point_dim=argument.point_dim
-	voxel_channels=argument.voxel_channels
-	noise_levels=argument.noise_levels
-	noise_type=argument.noise_type
+	folder_name=part_type
+	train_path='../trained_models/'+part_type
+	pathlib.Path(train_path).mkdir(parents=True, exist_ok=True)
 
-	#Objects of Measurement System and Assembly System
-	measurement_system=HexagonWlsScanner(data_type,application, system_noise,part_type,data_format)
-	vrm_system=VRMSimulationModel(assembly_type,assembly_kccs,assembly_kpis,voxel_dim,point_dim,voxel_channels,noise_levels,noise_type)
+	kmc_path=train_path+'/kmc'
+	pathlib.Path(kmc_path).mkdir(parents=True, exist_ok=True)
 
+	kmc_plot_path=kmc_path+'/plots'
+	pathlib.Path(kmc_plot_path).mkdir(parents=True, exist_ok=True)
+
+	print('Intilizing the Assembly System and Measurement System....')
+	
+	measurement_system=HexagonWlsScanner(data_type,application,system_noise,part_type,data_format)
+	vrm_system=VRMSimulationModel(assembly_type,assembly_kccs,assembly_kpis,part_name,part_type,voxel_dim,voxel_channels,point_dim,aritifical_noise)
+	get_data=GetTrainData();
+	
 	print('Importing and preprocessing Cloud-of-Point Data')
 	
-	file_names=['car_halo_run1_ydev.csv','car_halo_run2_ydev.csv','car_halo_run3_ydev.csv','car_halo_run4_ydev.csv','car_halo_run5_ydev.csv']
-	get_train_data=GetTrainData(vrm_system)
-	dataset=get_train_data.data_import(file_names)
+	dataset=[]
+	dataset.append(get_data.data_import(file_names_x,data_folder))
+	dataset.append(get_data.data_import(file_names_y,data_folder))
+	dataset.append(get_data.data_import(file_names_z,data_folder))
+	
+	kcc_dataset=get_data.data_import(kcc_files,kcc_folder)
 
+	point_data=pd.concat([dataset[0],dataset[1],dataset[2]], ignore_index=True)
+	
 	kcc_id=[]
-    kmc_list=[]
-	point_data=dataset[:, 0:point_dim]
+	kmc_list_x=[]
+	kmc_list_y=[]
+	kmc_list_z=[]
 
-    print('Generating KMC for all KCCs')
+	print('Generating KMC for all KCCs...')
+
 	for i in range(kcc_dim):
 		kcc_name="KCC_"+str(i+1)
 		kcc_id.append(kcc_name)
-    	selected_kcc=dataset[:,point_dim:point_dim+i]
-        kmc_list[i].append(kmc_model_build(point_data,selected_kcc,kcc_name))
+		selected_kcc=kcc_dataset[:,0:0+i]
+		filtered_nodeIDs_x,filtered_nodeIDs_y,filtered_nodeIDs_z=kmc_model_build(tree_based_model,point_data,selected_kcc,kcc_name,split_ratio,save_model)
+		
+		node_ID_list_x = filtered_nodeIDs_x.index.tolist()
+		node_ID_list_y = filtered_nodeIDs_y.index.tolist()
+		node_ID_list_z = filtered_nodeIDs_z.index.tolist()
+		
+		filename_x=kmc_path+'/'+kcc_name+'_x.csv'
+		filename_y=kmc_path+'/'+kcc_name+'_y.csv'
+		filename_z=kmc_path+'/'+kcc_name+'_z.csv'
 
-    plot_kmc=1;
-    kmc_tplot="KCC_1"
-    filename=+'.csv'
-    if(plot_kmc==1):
-        print("Plotting KMCs for: ",kmc_tplot)
-        print(print)
-        copviz=CopViz(vrm_system)
-        viz_kmc(filename,copviz)
+		print('Saving KMCs to disk...')
+		filtered_nodeIDs.to_csv(filename_x)
+		filtered_nodeIDs.to_csv(filename_y)
+		filtered_nodeIDs.to_csv(filename_z)
+
+	
+	filename=kmc_tplot+'.csv'
+	
+	if(plot_kmc==1):
+		for kcc in kcc_tplot:
+			filename=kmc_plot_path+'/'+kmc_tplot+'.csv'
+			print("Plotting KMCs for: ",kcc)
+			copviz=CopViz(vrm_system)
+			viz_kmc(filename,copviz)
 
 
 

@@ -18,3 +18,13 @@ data_study_params = {
 	'min_train_samples':50,
 	'split_ratio':0.2
 }
+
+kmc_params={
+        'tree_based_model':'xgb',
+        'importance_creteria':'gini',
+        'split_ratio':0.2,
+        'save_model':1,
+        'plot_kmc':1,
+        'kcc_tplot':['KCC_1','KCC_3']
+
+}

@@ -3,7 +3,7 @@ from mpl_toolkits.mplot3d import Axes3D
 import plotly as py
 import plotly.graph_objs as go
 
-class CopViz():
+class CopViz:
 
 	def __init__(self,nominal_cop):
 
@@ -36,16 +36,21 @@ class CopViz():
 		fig = go.Figure(data=data, layout=layout)
 		py.offline.plot(fig, filename=plot_file_name)
 
-	def get_data_stacks(self,node_ids):
+	def get_data_stacks(self,node_id_x,node_id_y,node_id_z):
 		
 		nominal_cop=self.nominal_cop
-		node_ids=node_ids[node_ids.Feature_Importance!=0]
-		selected_nodes=node_ids['node_ID'].tolist()
-		selected_points=df_nom[node_id_kcc,:]
-		return stack
+		selected_nodes_x=(node_id_x['node_id']-1).tolist()
+		selected_nodes_y=(node_id_y['node_id']-1).tolist()
+		selected_nodes_z=(node_id_z['node_id']-1).tolist()
+		
+		selected_points_x=nominal_cop[selected_nodes_x,:]
+		selected_points_y=nominal_cop[selected_nodes_y,:]
+		selected_points_z=nominal_cop[selected_nodes_z,:]
+
+		return [selected_points_x,selected_points_y,selected_points_z]
 
 
-	def plot_multiple_stacks(self,stack):
+	def plot_multiple_stacks(self,stack,plot_path):
 
 		nominal_cop=self.nominal_cop
 
@@ -62,9 +67,10 @@ class CopViz():
 
 
 		trace2 = go.Scatter3d(
-			x=stack[:,0],
-			y=stack[:,1],
-			z=stack[:,2],
+			
+			x=stack[0][:,0],
+			y=stack[0][:,1],
+			z=stack[0][:,2],
 			mode='markers',
 			marker=dict(
 				color='rgb(120, 0, 0)',
@@ -78,7 +84,45 @@ class CopViz():
 			)
 		)
 
-		data = [trace1,trace2]
+
+		trace3 = go.Scatter3d(
+			
+			x=stack[1][:,0],
+			y=stack[1][:,1],
+			z=stack[1][:,2],
+			mode='markers',
+			marker=dict(
+				color='rgb(0, 120, 0)',
+				size=8,
+				symbol='circle',
+				line=dict(
+					color='rgb(204, 204, 204)',
+					width=1
+				),
+				opacity=0.7
+			)
+		)
+
+
+		trace4 = go.Scatter3d(
+			
+			x=stack[2][:,0],
+			y=stack[2][:,1],
+			z=stack[2][:,2],
+			mode='markers',
+			marker=dict(
+				color='rgb(0, 0, 120)',
+				size=8,
+				symbol='circle',
+				line=dict(
+					color='rgb(204, 204, 204)',
+					width=1
+				),
+				opacity=0.7
+			)
+		)
+
+		data = [trace1,trace2,trace3,trace4]
 		layout = go.Layout(
 			margin=dict(
 				l=0,
@@ -88,7 +132,7 @@ class CopViz():
 			)
 		)
 		fig = go.Figure(data=data, layout=layout)
-		py.offline.plot(fig, filename='cop_stack_plots')
+		py.offline.plot(fig, filename=plot_path)
 
 		def plot_voxelized_data(self,voxel_data,nominal_cop,cop_mapping,plot_file_name):
 

@@ -28,23 +28,25 @@ from wls400a_system import GetInferenceData
 from metrics_eval import MetricsEval
 from data_import import GetTrainData
 
-def get_model(model_path):
+class DeployModel:
 
-	try:
-		inference_model=load_model(model_path)
-	except AssertionError as error:
-		print(error)
-		print('Model not found at this path ',model_path, ' Update path in config file if required')
+	def get_model(self,model_path):
 
-	return inference_model
+		try:
+			inference_model=load_model(model_path)
+		except AssertionError as error:
+			print(error)
+			print('Model not found at this path ',model_path, ' Update path in config file if required')
 
-def model_inference(inference_data,inference_model):
-	
-	result=inference_model.predict(inference_data)
-	description="The Process Parameters variations are inferred from the obtained meeasurement data and the trained CNN based model"
-	print('The model estimates are: ')
-	print(result)
-	return result
+		return inference_model
+
+	def model_inference(self,inference_data,inference_model):
+		
+		result=inference_model.predict(inference_data)
+		description="The Process Parameters variations are inferred from the obtained meeasurement data and the trained CNN based model"
+		print('The model estimates are: ')
+		print(result)
+		return result
 
 if __name__ == '__main__':
 	
@@ -72,9 +74,11 @@ if __name__ == '__main__':
 	kcc_folder=config.assembly_system['kcc_folder']
 	kcc_files=config.assembly_system['test_kcc_files']
 	
+
 	print('Intilizing the Assembly System and Measurement System....')
 	measurement_system=HexagonWlsScanner(data_type,application,system_noise,part_type,data_format)
 	vrm_system=VRMSimulationModel(assembly_type,assembly_kccs,assembly_kpis,part_name,part_type,voxel_dim,voxel_channels,point_dim,aritifical_noise)
+	deploy_model=DeployModel()
 	
 	#Generate Paths
 	train_path='../trained_models/'+part_type
@@ -111,13 +115,13 @@ if __name__ == '__main__':
 	#voxel_dev_data=get_data.voxel_mapping(y_dev_data_filtered,voxel_point_index,point_dim,voxel_dim,voxel_channels)
 	
 	#Infrence from simulated data
-	inference_model=get_model(model_path)
+	inference_model=deploy_model.get_model(model_path)
 
 	kcc_dataset=get_data.data_import(kcc_files,kcc_folder)
 
 	input_conv_data, kcc_subset_dump,kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,dataset,point_index,kcc_dataset)
 
-	y_pred=model_inference(input_conv_data,inference_model);
+	y_pred=deploy_model.model_inference(input_conv_data,inference_model);
 
 	metrics_eval=MetricsEval();
 	eval_metrics,accuracy_metrics_df=metrics_eval.metrics_eval_base(y_pred,kcc_dataset,logs_path)

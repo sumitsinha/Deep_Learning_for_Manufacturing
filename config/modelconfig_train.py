@@ -13,9 +13,10 @@ model_parameters = {
 
 data_study_params = {
 	'batch_size':32,
-	'epocs':5,
-	'no_of_splits':10,
-	'min_train_samples':50,
+	'epocs':50,
+	'no_of_splits':20,
+	'min_train_samples':100,
+        'max_train_samples':6000,
 	'split_ratio':0.2
 }
 

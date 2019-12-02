@@ -34,6 +34,26 @@ class DLModel:
 		print("3D CNN model succssesfully compiled")
 		return model
 
+	def cnn_model_3d_tl(self,voxel_dim,deviation_channels):
+
+		from keras.layers import Conv3D, MaxPool3D, Flatten, Dense, Dropout, Input
+		from keras.models import Model
+		from keras import regularizers
+
+		inputs = Input(shape=(None,None,None,3,))
+		cnn3d_1=Conv3D(32, kernel_size=(5,5,5),strides=(2,2,2),activation='relu')(inputs)
+		cnn3d_2=Conv3D(32, kernel_size=(4,4,4),strides=(2,2,2),activation='relu')(cnn3d_1)
+		cnn3d_3=Conv3D(32, kernel_size=(3,3,3),strides=(1,1,1),activation='relu')(cnn3d_2)
+		max_pool3d=MaxPool3D(pool_size=(2,2,2))(cnn3d_3)
+		pooled_layer=GlobalMaxPooling3D()(max_pool3d)
+		dense_1=Dense(128,kernel_regularizer=regularizers.l2(self.regularizer_coeff),activation='relu')(pooled_layer)
+		predictions=Dense(self.output_dimension, activation=final_layer_avt)(dense_1)
+		model = Model(inputs=inputs, outputs=predictions)
+
+		model.compile(loss=self.loss_function, optimizer=self.optimizer, metrics=['mae'])
+		
+		return model
+
 	def cnn_model_3d_aleatoric(self,voxel_dim=64,deviation_channels=1):
 
 		if(self.model_type=="regression"):

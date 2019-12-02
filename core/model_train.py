@@ -41,6 +41,7 @@ class TrainModel:
 			self.batch_size=batch_size
 			self.epochs=epochs
 			self.split_ratio=split_ratio
+			
 
 	def run_train_model(self,model,X_in,Y_out,model_path,logs_path,plots_path,activate_tensorboard=0,run_id=0):
 		

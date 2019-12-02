@@ -2,8 +2,8 @@
 model_parameters = {	
         'model_type':'3D Convolutional Neural Network',
         'output_type':'regression',
-        'batch_size': 32,
-        'epocs': 150,
+        'batch_size': 10,
+        'epocs': 20,
         'split_ratio': 0.3,
         'optimizer':'adam',
         'loss_func':'mse',
@@ -26,6 +26,15 @@ kmc_params={
         'split_ratio':0.2,
         'save_model':0,
         'plot_kmc':1,
-        'kcc_tplot':['KCC_1','KCC_3']
+}
 
+bm_params={
+        'max_models':10,
+        'runs':3
+}
+
+transfer_learning={
+        'tl_type':'full_fine_tune',
+        'tl_base':'model_pointnet_64.h5',
+        'tl_app':'regression' 
 }

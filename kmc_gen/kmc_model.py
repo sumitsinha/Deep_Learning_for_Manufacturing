@@ -114,7 +114,6 @@ if __name__ == '__main__':
 	save_model=cftrain.kmc_params['save_model']
 	split_ratio=cftrain.kmc_params['split_ratio']
 	plot_kmc=cftrain.kmc_params['plot_kmc']
-	kcc_tplot=cftrain.kmc_params['kcc_tplot']
    
 	print('Creating file Structure....')
 	
@@ -186,25 +185,6 @@ if __name__ == '__main__':
 		stack=copviz.get_data_stacks(filtered_nodeIDs_x,filtered_nodeIDs_y,filtered_nodeIDs_z)
 
 		copviz.plot_multiple_stacks(stack,kmc_plot_path+'/'+kcc_name)
-
-	
-	"""
-	filename=kmc_tplot+'.csv'
-	
-	def viz_kmc(kcc_name,copviz):    
-	filename=kcc_name+'.csv'
-	node_ids = pd.read_csv(filename)
-	stack=copviz.get_data_stacks(node_ids)
-	copviz.plot_multiple_stacks(stack)
-
-	if(plot_kmc==1):
-		for kcc in kcc_tplot:
-			filename=kmc_plot_path+'/'+kmc_tplot+'.csv'
-			print("Plotting KMCs for: ",kcc)
-		
-			viz_kmc(filename,copviz)
-
-	"""
 
 
 

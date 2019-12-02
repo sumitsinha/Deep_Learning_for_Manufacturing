@@ -16,7 +16,7 @@ version = {}
 with open(os.path.join(_here, 'dlmf', 'version.py')) as f:
     exec(f.read(), version)
 
-with open('requirements.txt') as f:
+with open('../requirements.txt') as f:
     required = f.read().splitlines()
 #requirements = ["ipython>=6"]
 

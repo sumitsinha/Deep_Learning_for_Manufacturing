@@ -40,12 +40,13 @@ class DeployModel:
 
 		return inference_model
 
-	def model_inference(self,inference_data,inference_model):
+	def model_inference(self,inference_data,inference_model,print_result=0):
 		
 		result=inference_model.predict(inference_data)
 		description="The Process Parameters variations are inferred from the obtained meeasurement data and the trained CNN based model"
 		print('The model estimates are: ')
-		print(result)
+		if(print_result==1):
+			print(result)
 		return result
 
 if __name__ == '__main__':

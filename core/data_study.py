@@ -88,8 +88,7 @@ if __name__ == '__main__':
 	split_ratio=cftrain.data_study_params['split_ratio']
 	min_train_samples=cftrain.data_study_params['min_train_samples']
 	max_train_samples=cftrain.data_study_params['max_train_samples']
-	no_of_splits=cftrain.data_study_params['no_of_splits']
-
+	train_increment=cftrain.data_study_params['train_increment']
 
 	print('Creating file Structure....')
 	folder_name=part_type
@@ -146,7 +145,7 @@ if __name__ == '__main__':
 	
 	output_dimension=assembly_kccs
 	max_dim=min(max_train_samples,len(input_conv_data))
-	div_dim=int((len(input_conv_data)-min_train_samples)/no_of_splits)
+	no_of_splits=int((max_dim-min_train_samples)/train_increment)
 
 	eval_metrics_type= ["Mean Absolute Error","Mean Squared Error","Root Mean Squared Error","R Squared"]
 
@@ -156,13 +155,13 @@ if __name__ == '__main__':
 		kcc_name="KCC_"+str(i+1)
 		kcc_id.append(kcc_name)
 
-	datastudy_output=np.zeros((no_of_splits+1,(assembly_kccs+1)*len(eval_metrics_type)+1))
-	datastudy_output_test=np.zeros((no_of_splits+1,(assembly_kccs+1)*len(eval_metrics_type)+1))
+	datastudy_output=np.zeros((no_of_splits,(assembly_kccs+1)*len(eval_metrics_type)+1))
+	datastudy_output_test=np.zeros((no_of_splits,(assembly_kccs+1)*len(eval_metrics_type)+1))
 
-	for i in tqdm(range(no_of_splits+1)):
+	train_dim=min_train_samples
+	for i in tqdm(range(no_of_splits)):
 		
 		run_id=i
-		train_dim=min_train_samples+(i*div_dim)
 		
 		if(train_dim>max_dim):
 			train_dim=max_dim
@@ -210,6 +209,7 @@ if __name__ == '__main__':
 		print("The Model Test Metrics are ")
 		print(eval_metrics_test)
 		K.clear_session()
+		train_dim=train_dim+train_increment
 
 	for i in range(len(eval_metrics_type)):
 		datastudy_output[:,(4*assembly_kccs)+i+1]=np.mean(datastudy_output[:,(i*assembly_kccs)+1:((i+1)*assembly_kccs)+1],axis=1)

@@ -17,14 +17,14 @@ assembly_system = {
         'mapping_index':'Halo_64_voxel_mapping.dat',
         'data_folder':'../datasets/halo_debug_run/',
         'kcc_folder':'../active_learning/sample_input/',
-        'kcc_files':['input_X.csv'],
+        'kcc_files':['initial_samples_data_study.csv'],
         'test_kcc_files':['input_X.csv'],
         'data_files_x':['test_output_table_x.csv'],
         'data_files_y':['test_output_table_x.csv'],
         'data_files_z':['test_output_table_x.csv'],
-        'test_data_files_x':['test_output_table_x.csv'],
-        'test_data_files_y':['test_output_table_y.csv'],
-        'test_data_files_z':['test_output_table_z.csv']
+        'test_data_files_x':['output_table_x.csv'],
+        'test_data_files_y':['output_table_y.csv'],
+        'test_data_files_z':['output_table_z.csv']
         }
 
 #Assert that all config values conform to the libarary requirements

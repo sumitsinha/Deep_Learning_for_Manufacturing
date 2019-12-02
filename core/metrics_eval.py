@@ -25,7 +25,6 @@ class MetricsEval:
 		r2_KCCs = metrics.r2_score(predicted_y, test_y,multioutput='raw_values')
 
 		rmse_KCCs=np.sqrt(mse_KCCs)
-
 		eval_metrics= {
 			"Mean Absolute Error" : mae_KCCs,
 			"Mean Squared Error" : mse_KCCs,

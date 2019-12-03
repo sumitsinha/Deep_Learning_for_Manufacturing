@@ -16,7 +16,7 @@ data_study_params = {
 	'epocs':50,
 	'min_train_samples':100,
         'train_increment':100,
-        'max_train_samples':2000,
+        'max_train_samples':3000,
 	'split_ratio':0.2
 }
 

@@ -83,7 +83,7 @@ if __name__ == '__main__':
 	
 	#Generate Paths
 	train_path='../trained_models/'+part_type
-	model_path=train_path+'/model'+'/trained_model.h5'
+	model_path=train_path+'/model'+'/trained_model_18.h5'
 	logs_path=train_path+'/logs'
 	deploy_path=train_path+'/deploy/'
 

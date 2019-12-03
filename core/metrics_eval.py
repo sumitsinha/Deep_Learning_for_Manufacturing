@@ -32,8 +32,7 @@ class MetricsEval:
 			"R Squared" : r2_KCCs
 		}
 		
-		accuracy_metrics_df=pd.DataFrame({'KCC_ID':kcc_id,'MAE':mae_KCCs,'MSE':mse_KCCs,'RMSE':rmse_KCCs,'R2':r2_KCCs})
-		accuracy_metrics_df.columns = ['KCC_ID','MAE','MSE','RMSE','R2']
+		accuracy_metrics_df=pd.DataFrame({'KCC_ID':kcc_id,'MAE':mae_KCCs,'MSE':mse_KCCs,'RMSE':rmse_KCCs,'R2':r2_KCCs},columns=['KCC_ID','MAE','MSE','RMSE','R2'])
 		#accuracy_metrics_df.to_csv(logs_path+'/metrics.csv') #moved to function call
 		return eval_metrics,accuracy_metrics_df
 

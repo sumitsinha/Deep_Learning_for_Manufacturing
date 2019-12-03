@@ -26,7 +26,7 @@ class adaptive_sampling():
 		self.adaptive_samples_dim=adaptive_samples_dim
 		self.adaptive_runs=adaptive_runs
 	
-	def inital_sampling(self,kcc_struct,sample_dim):
+	def inital_sampling_lhs(self,kcc_struct,sample_dim):
 
 		kcc_dim=len(kcc_struct)
 		sample_type=self.sample_type
@@ -44,6 +44,18 @@ class adaptive_sampling():
 
 		return initial_samples
 
+	def inital_sampling_uniform_random(self,kcc_struct,sample_dim):
+
+		kcc_dim=len(kcc_struct)
+		sample_type=self.sample_type
+		initial_samples=np.zeros((sample_dim,kcc_dim))
+		index=0
+		for kcc in kcc_struct:
+			initial_samples[:,index]=np.random.uniform(kcc['kcc_min'],kcc['kcc_max'],sample_dim)
+			index=index+1
+
+		return initial_samples
+	
 	def adpative_samples_gen(self,kcc_struct,run_id):
 		
 		adaptive_samples_dim=self.adaptive_samples_dim
@@ -66,7 +78,7 @@ if __name__ == '__main__':
 	adaptive_sampling=adaptive_sampling(sampling_config['sample_dim'],sampling_config['sample_type'],sampling_config['adaptive_sample_dim'],sampling_config['adaptive_runs'])
 
 	print('Generating inital samples')
-	initial_samples=adaptive_sampling.inital_sampling(kcc_struct,sampling_config['sample_dim'])
+	initial_samples=adaptive_sampling.inital_sampling_uniform_random(kcc_struct,sampling_config['sample_dim'])
 
 	file_name=sampling_config['output_file_name']
 	file_path='./sample_input/'+file_name

@@ -5,10 +5,15 @@
 
 ## Deep Learning for Manufacturing (dlmfg)
 
+
+
+
 [**Digital Lifecycle Management - In Process Quality Improvement (IPQI)**](https://warwick.ac.uk/fac/sci/wmg/research/digital/dlm/projects/ipqi_new)
 
 
 
+
+[![Generic badge](https://img.shields.io/badge/DOI-10.1117/12.2526062-blue.svg)](https://doi.org/10.1117/12.2526062) [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/) [![Website shields.io](https://img.shields.io/website-up-down-green-red/http/shields.io.svg)](https://warwick.ac.uk/fac/sci/wmg/research/digital/dlm/projects/ipqi_new/) [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/Naereen/StrapDown.js/graphs/commit-activity) [![PyPI status](https://img.shields.io/pypi/status/ansicolortags.svg)](https://pypi.python.org/pypi/ansicolortags/) [![Generic badge](https://img.shields.io/badge/Documentation-WIP-red.svg)]() [![Generic badge](https://img.shields.io/badge/PyPI-WIP-red.svg)]() [![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
 
 
 ***

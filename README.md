@@ -1,13 +1,14 @@
 ## Deep Learning for Manufacturing (dlmfg)
 
+[**Digital Lifecycle Management - In Process Quality Improvement (IPQI)**](https://warwick.ac.uk/fac/sci/wmg/research/digital/dlm/projects/ipqi_new)
 <a href="https://warwick.ac.uk/fac/sci/wmg/research/digital/dlm/" >
 <img align="right" src="http://www.thebiponline.co.uk/bip/wp-content/uploads/2013/08/University-of-Warwick-WMG.png" alt="WMG" width="100">
 </a>
 
-[**Digital Lifecycle Management - In Process Quality Improvement (IPQI)**](https://warwick.ac.uk/fac/sci/wmg/research/digital/dlm/projects/ipqi_new)
+
+
+
 ***
-
-
 ## Overview 
 The open source **Deep Learning for Manufacturing (dlmfg) Library** is built using a **TensorFlow** and **Keras** back end to build deep learning models such as **3D Convolutional Neural Network** to enable **root cause analysis** and **quality control** in Sheet Metal Assembly Manufacturing Systems. The library can be used across various domains such as assembly systems, stamping, additive manufacturing and milling where the key problem is **Object Error Detection and Estimation**. The library is build using Object Oriented Programming to enable extension and contribution from other related disciplines within the artificial intelligence community as well as the manufacturing community.
 

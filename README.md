@@ -1,4 +1,4 @@
-##Deep Learning for Manufacturing (dlmfg)
+## Deep Learning for Manufacturing (dlmfg)
 
 <a href="https://warwick.ac.uk/fac/sci/wmg/research/digital/dlm/" >
 <img align="right" src="http://www.thebiponline.co.uk/bip/wp-content/uploads/2013/08/University-of-Warwick-WMG.png" alt="WMG" width="100">
@@ -8,7 +8,7 @@
 ***
 
 
-##Overview 
+## Overview 
 The open source **Deep Learning for Manufacturing (dlmfg) Library** is built using a **TensorFlow** and **Keras** back end to build deep learning models such as **3D Convolutional Neural Network** to enable **root cause analysis** and **quality control** in Sheet Metal Assembly Manufacturing Systems. The library can be used across various domains such as assembly systems, stamping, additive manufacturing and milling where the key problem is **Object Error Detection and Estimation**. The library is build using Object Oriented Programming to enable extension and contribution from other related disciplines within the artificial intelligence community as well as the manufacturing community.
 
 The published work can be found here: [**3D convolutional neural networks to estimate assembly process parameters using 3D point-clouds**](http://wrap.warwick.ac.uk/120275/).
@@ -20,13 +20,13 @@ The library consists of the following items:
 1. **Datasets** -  Sheet Metal Assembly Datasets consisting of input i.e. Cloud of Point data with deviations of each node and output i.e. the process parameter variations for each of Cloud of Point. This open source dataset is the **first** dataset for sheet metal assembly manufacturing system and can be leveraged for building, training and benchmarking deep learning models for application in root cause analysis and quality control of manufacturing systems.
 2. **Library Modules** - Various python modules using a TensorFlow/Keras backend for model training, deployment, visualization, sampling, active learning, transfer learning, measurement characteristics generation. More details can be found in the documentation of the library. 
 
-##Installation
+## Installation
 The library can be cloned using: 
 
 
     Git clone https://github.com/sumitsinha/Deep_Learning_for_Manufacturing
 
-##Dataset Download
+## Dataset Download
 The datasets can be download by running the download_data.py file within the downloads file. The specifics of the download can be specified in the download\_config.py file.
 
 The library consists of the following two key datasets:
@@ -34,25 +34,20 @@ The library consists of the following two key datasets:
 1.	3D Cloud of Point data with node deviations and process parameters for Single Part Car Halo Reinforcement – Obtained due to variations in the Measurement Station locators and Stamping Process
 2.	3D Cloud of Point data with node deviations and process parameters for Two part assembly for Car Door Inner and Hinge Reinforcement – Obtained due to variations in the Assembly System locators and joining tools.
 
-##Model 
+## Model 
 
 The 3D CNN model termed as **PointDevNet** has the following layers and Parameters. 
 
 ```python
 
-> model.add(Conv3D(32,kernel\_size=(5,5,5),strides=(2,2,2),activation='relu',input\_shape=(voxel\_dim,voxe\l_dim,voxel\_dim,deviation\_channels)))
-> 
+> model.add(Conv3D(32,kernel_size=(5,5,5),strides=(2,2,2),activation='relu',input_shape=(voxel_dim,voxel_dim,voxel_dim,deviation_channels)))
 > model.add(Conv3D(32, kernel_size=(4,4,4),strides=(2,2,2),activation='relu'))
-> 
-> model.add(Conv3D(32, kernel_size=(3,3,3),strides=(1,1,1),activation='relu'))
-> 
+> model.add(Conv3D(32, kernel_size=(3,3,3),strides=(1,1,1),activation='relu')) 
 > model.add(MaxPool3D(pool_size=(2,2,2)))
-> 
 > model.add(Flatten())
-> 
 > model.add(Dense(128,kernel_regularizer=regularizers.l2(0.02),activation='relu'))
 > 
-> model.add(Dense(self.output_dimension, activation=final\_layer\_avt))
+> model.add(Dense(self.output_dimension, activation=final_layer_avt))
 
 ```
 
@@ -62,7 +57,7 @@ The model can be trained with different loss functions depending on system behav
 * **Aleatoric loss considering Heteroskedastic variance factor** - considering a different noise factor for each sample
 * **Mixture Density Network output consisting a likelihood function of a Gaussian Mixture Model** - considering a system with collinear output i.e. same input has multiple possible output
 
-##Modules
+## Modules
 The library consists of following key modules. More details about the classes, objects and methods can be found in the documentation:
 
 * **Core** - key functions for model training, testing, data study and model deployment
@@ -76,7 +71,7 @@ The library consists of following key modules. More details about the classes, o
 * **Pre-Trained Models** - Consists of state of the art pre-trained 3D CNN models such as Voxnet (Object Detection) and 3D U-Net (Medical Scan Segmentation)
 * **Configuration** - specify the configuration parameters for different case studies and other parametrized applications such as model training, model construction, Sampling for active learning, transfer learning etc.
 
-#####Please cite work as:
+##### Please cite work as:
 
 > S. Sinha, E. Glorieux, P. Franciosa, and D. Ceglarek, “3D convolutional neural networks to estimate assembly process parameters using 3D point-clouds,” in Multimodal Sensing: Technologies and Applications, 2019, p. 10.
 
@@ -84,6 +79,6 @@ The library consists of following key modules. More details about the classes, o
 <img src="https://is3-ssl.mzstatic.com/image/thumb/Purple123/v4/44/96/e5/4496e598-1b99-369a-cefe-cb347e538aa4/AppIcon-0-0-1x_U007emarketing-0-0-0-7-0-0-sRGB-0-0-0-GLES2_U002c0-512MB-85-220-0-0.png/1200x630wa.png" alt="WMG" width="100">
 </a>
 
-#####Collaboration:
+##### Collaboration:
 Please contact [**Sumit Sinha**](https://warwick.ac.uk/fac/sci/wmg/research/digital/dlm/people/sumit/) or [**Dr Pasquale Franciosa**](https://warwick.ac.uk/fac/sci/wmg/research/digital/dlm/people/p_franciosa) 
 in case of any clarifications or collaborative work with the [**Digital Lifecycle Management**](https://warwick.ac.uk/fac/sci/wmg/research/digital/dlm/) at [**WMG**](https://warwick.ac.uk/fac/sci/wmg/), [**University of Warwick**](https://warwick.ac.uk/)

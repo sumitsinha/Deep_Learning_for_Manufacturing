@@ -54,7 +54,6 @@ The 3D CNN model termed as **PointDevNet** has the following layers and Paramete
 > model.add(MaxPool3D(pool_size=(2,2,2)))
 > model.add(Flatten())
 > model.add(Dense(128,kernel_regularizer=regularizers.l2(0.02),activation='relu'))
-> 
 > model.add(Dense(self.output_dimension, activation=final_layer_avt))
 
 ```

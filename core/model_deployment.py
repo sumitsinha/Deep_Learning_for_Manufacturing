@@ -131,5 +131,5 @@ if __name__ == '__main__':
 	print('Evaluation Metrics: ',eval_metrics)
 	accuracy_metrics_df.to_csv(logs_path+'/metrics_test.csv')
 	
-	np.savetxt("predicted.csv", y_pred, delimiter=",")
+	np.savetxt((deploy_path+"predicted.csv"), y_pred, delimiter=",")
 	print('Predicted Values saved to disk...')

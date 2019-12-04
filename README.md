@@ -2,7 +2,7 @@
 <img align="right" src="http://www.thebiponline.co.uk/bip/wp-content/uploads/2013/08/University-of-Warwick-WMG.png" alt="WMG" width="100">
 </a>
 
-## Deep Learning for Manufacturing (dlmfg)
+# Deep Learning for Manufacturing (dlmfg)
 
 
 

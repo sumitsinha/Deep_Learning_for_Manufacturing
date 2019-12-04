@@ -54,7 +54,6 @@ The 3D CNN model termed as **PointDevNet** has the following layers and Paramete
 > model.add(MaxPool3D(pool_size=(2,2,2)))
 > model.add(Flatten())
 > model.add(Dense(128,kernel_regularizer=regularizers.l2(0.02),activation='relu'))
-> 
 > model.add(Dense(self.output_dimension, activation=final_layer_avt))
 
 ```
@@ -89,4 +88,4 @@ The library consists of following key modules. More details about the classes, o
 
 ##### Collaboration:
 Please contact [**Sumit Sinha**](https://warwick.ac.uk/fac/sci/wmg/research/digital/dlm/people/sumit/) or [**Dr Pasquale Franciosa**](https://warwick.ac.uk/fac/sci/wmg/research/digital/dlm/people/p_franciosa) 
-in case of any clarifications or collaborative work with the [**Digital Lifecycle Management**](https://warwick.ac.uk/fac/sci/wmg/research/digital/dlm/) at [**WMG**](https://warwick.ac.uk/fac/sci/wmg/), [**University of Warwick**](https://warwick.ac.uk/)
+in case of any clarifications or collaborative work with the [**Digital Lifecycle Management**](https://warwick.ac.uk/fac/sci/wmg/research/digital/dlm/) group at [**WMG**](https://warwick.ac.uk/fac/sci/wmg/), [**University of Warwick**](https://warwick.ac.uk/)

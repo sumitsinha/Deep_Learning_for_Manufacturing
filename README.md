@@ -80,7 +80,17 @@ The library consists of following key modules. More details about the classes, o
 
 ##### Please cite work as:
 
-> S. Sinha, E. Glorieux, P. Franciosa, and D. Ceglarek, “3D convolutional neural networks to estimate assembly process parameters using 3D point-clouds,” in Multimodal Sensing: Technologies and Applications, 2019, p. 10.
+> @inproceedings{Sinha2019,
+> author = {Sinha, Sumit and Glorieux, Emile and Franciosa, Pasquale and Ceglarek, Dariusz},
+> booktitle = {Multimodal Sensing: Technologies and Applications},
+> doi = {10.1117/12.2526062},
+> month = {jun},
+> pages = {10},
+> publisher = {SPIE},
+> title = {{3D convolutional neural networks to estimate assembly process parameters using 3D point-clouds}},
+> year = {2019}
+}
+
 
 <a href="https://doi.org/10.1117/12.2526062" >
 <img src="https://is3-ssl.mzstatic.com/image/thumb/Purple123/v4/44/96/e5/4496e598-1b99-369a-cefe-cb347e538aa4/AppIcon-0-0-1x_U007emarketing-0-0-0-7-0-0-sRGB-0-0-0-GLES2_U002c0-512MB-85-220-0-0.png/1200x630wa.png" alt="WMG" width="100">

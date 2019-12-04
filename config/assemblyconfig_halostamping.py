@@ -24,7 +24,7 @@ assembly_system = {
         'data_files_z':['output_table_z_train_set.csv'],
         'test_data_files_x':['output_table_x_test_set.csv'],
         'test_data_files_y':['output_table_y_test_set.csv'],
-        'test_data_files_z':['output_table_x_test_set.csv']
+        'test_data_files_z':['output_table_z_test_set.csv']
         }
 
 #Assert that all config values conform to the libarary requirements

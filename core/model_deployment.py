@@ -34,6 +34,7 @@ class DeployModel:
 
 		try:
 			inference_model=load_model(model_path)
+			print('Model found and loaded')
 		except AssertionError as error:
 			print(error)
 			print('Model not found at this path ',model_path, ' Update path in config file if required')
@@ -83,7 +84,7 @@ if __name__ == '__main__':
 	
 	#Generate Paths
 	train_path='../trained_models/'+part_type
-	model_path=train_path+'/model'+'/trained_model_18.h5'
+	model_path=train_path+'/model'+'/trained_model_28.h5'
 	logs_path=train_path+'/logs'
 	deploy_path=train_path+'/deploy/'
 

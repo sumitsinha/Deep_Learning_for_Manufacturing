@@ -1,0 +1,22 @@
+download_params={
+	   'mapping_index':'Halo_64_voxel_mapping.dat',
+	   'nominal_cop_filename':'halo_nominal_cop.csv',
+	   'kcc_files':['input_X.csv'],
+	   'test_kcc_files':['input_X.csv'],
+	   'data_files_x':['test_output_table_x.csv'],
+	   'data_files_y':['test_output_table_y.csv'],
+	   'data_files_z':['test_output_table_z.csv'],
+	   'test_data_files_x':['test_output_table_x.csv'],
+	   'test_data_files_y':['test_output_table_y.csv'],
+	   'test_data_files_z':['test_output_table_z.csv'],
+	   'id_kcc_files':['1yjDnSjyjw6-RYcrb7xtpedwnvMzAOo9V'],
+	   'id_test_kcc_files':['1yjDnSjyjw6-RYcrb7xtpedwnvMzAOo9V'],
+	   'id_data_files_x':['nXi2N2cFpF_mXirqUrxzfBCWMy537h'],
+	   'id_data_files_y':['1sUfusVW7119DgdlZylZH2jEyBXXtVVcs'],
+	   'id_data_files_z':['1MHhk9Xn7r7S0_PbA-QAKlEp5n0tFfKl_'],
+	   'id_test_data_files_x':['nXi2N2cFpF_mXirqUrxzfBCWMy537h'],
+	   'id_test_data_files_y':['1sUfusVW7119DgdlZylZH2jEyBXXtVVcs'],
+	   'id_test_data_files_z':['1MHhk9Xn7r7S0_PbA-QAKlEp5n0tFfKl_'],
+	   'id_mapping_index':['1yELJOyzgDOsrP5pP6xAy-LifC7gd2aqb'],
+	   'id_nominal_cop':['1m2FWTnZ70_fftrG-APs9DZR-NuC73AQW']
+}

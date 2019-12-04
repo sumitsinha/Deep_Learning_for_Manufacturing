@@ -15,6 +15,7 @@ from pyDOE import lhs
 from scipy.stats import uniform,norm
 import numpy as np
 
+#Importing Config Files
 import kcc_config as kcc_config
 import sampling_config as sampling_config
 
@@ -70,6 +71,10 @@ class adaptive_sampling():
 
 		return adaptive_samples
 
+	def get_uncertaninity(self,kcc_struct,model,samples)
+		pass
+
+
 if __name__ == '__main__':
 	
 	kcc_struct=kcc_config.kcc_struct
@@ -86,6 +91,7 @@ if __name__ == '__main__':
 
 	print('Inital Samples Saved to path: ',file_path)
 
+	#WIP to integrate adaptive sampling from VRM Oracle
 	#@Run VRM Oracle on initial samples
 	#@Train Model on initial samples
 

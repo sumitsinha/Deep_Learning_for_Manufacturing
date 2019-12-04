@@ -1,3 +1,4 @@
+#Model training config parameters
 
 model_parameters = {	
         'model_type':'3D Convolutional Neural Network',
@@ -35,6 +36,6 @@ bm_params={
 
 transfer_learning={
         'tl_type':'full_fine_tune',
-        'tl_base':'model_pointnet_64.h5',
+        'tl_base':'unet_3d.h5',
         'tl_app':'regression' 
 }

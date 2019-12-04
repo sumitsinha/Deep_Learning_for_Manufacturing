@@ -1,5 +1,7 @@
+#Voxel system parameters
+
 voxel_parameters = {	
-        'voxel_size':'64',
+        'voxel_size':64,
         'nominal_cop_filename':'halo_nominal_cop.csv',
         'table_name':'car_door_halo_nominal_cop',
 		'database_type':'postgresql://',

@@ -157,7 +157,6 @@ if __name__ == '__main__':
 	copviz=CopViz(nominal_cop)
 	copviz.plot_cop(plot_file_name)
 
-
 	#Read cop from SQL database
 	#nominal_cop=vrm.get_nominal_cop_database(self,conn_string,table_name)
 	

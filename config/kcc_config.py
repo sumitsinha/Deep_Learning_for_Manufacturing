@@ -1,3 +1,4 @@
+#Config File to parametrize the KCCs of the system
 
 kcc_struct=[]
 

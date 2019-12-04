@@ -1,3 +1,5 @@
+#Dynamic data generator, To be used if memory is small and the model is unable to load data samples
+
 import numpy as np
 import keras
 

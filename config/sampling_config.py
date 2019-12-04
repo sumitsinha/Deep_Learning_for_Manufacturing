@@ -1,3 +1,4 @@
+#Sampling Config Parameters
 
 sampling_config={'sample_dim':3000,
 		'adaptive_sample_dim':2000,

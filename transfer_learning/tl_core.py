@@ -10,9 +10,7 @@ sys.path.append("../utilities")
 sys.path.append("../datasets")
 sys.path.append("../trained_models")
 sys.path.append("../config")
-#path_var=os.path.join(os.path.dirname(__file__),"../utilities")
-#sys.path.append(path_var)
-#sys.path.insert(0,parentdir) 
+
 
 #Importing Required Modules
 import pathlib
@@ -21,6 +19,8 @@ import pandas as pd
 import tensorflow as tf
 from keras import backend as K
 from keras.models import load_model
+from keras_contrib.layers.normalization.instancenormalization import InstanceNormalization
+from keras.utils import plot_model
 K.clear_session()
 
 #Importing Config files
@@ -51,8 +51,30 @@ class TransferLearning:
 		self.output_type=output_type
 	
 	def get_trained_model(self):
+		
+		def weighted_dice_coefficient(y_true, y_pred, axis=(-3, -2, -1), smooth=0.00001):
+		    """
+		    Weighted dice coefficient. Default axis assumes a "channels first" data structure
+		    :param smooth:
+		    :param y_true:
+		    :param y_pred:
+		    :param axis:
+		    :return:
+		    """
+		    return K.mean(2. * (K.sum(y_true * y_pred,
+		                              axis=axis) + smooth/2)/(K.sum(y_true,
+		                                                            axis=axis) + K.sum(y_pred,
+		                                                                               axis=axis) + smooth))
+
+		def weighted_dice_coefficient_loss(y_true, y_pred):
+		    return -weighted_dice_coefficient(y_true, y_pred)
+
 		model_path='../pre_trained_models/'+self.tl_base
-		base_model=load_model(model_path)
+		
+		if(self.tl_base=='unet_3d.h5')
+			base_model=load_model(model_path,custom_objects={'InstanceNormalization': InstanceNormalization,'weighted_dice_coefficient_loss':weighted_dice_coefficient_loss})
+		else
+			base_model=load_model(model_path)
 		return base_model
 
 	def build_transfer_model(self,model):
@@ -159,6 +181,7 @@ if __name__ == '__main__':
 	
 	measurement_system=HexagonWlsScanner(data_type,application,system_noise,part_type,data_format)
 	vrm_system=VRMSimulationModel(assembly_type,assembly_kccs,assembly_kpis,part_name,part_type,voxel_dim,voxel_channels,point_dim,aritifical_noise)
+	
 	get_data=GetTrainData();
 	point_index=get_data.load_mapping_index(mapping_index)
 
@@ -182,14 +205,15 @@ if __name__ == '__main__':
 	base_model=transfer_learning.get_trained_model()
 	
 	print(base_model.summary())
+	
+	#plot_model(base_model, to_file='model.png')
+
 	transfer_model=transfer_learning.build_transfer_model(base_model)
 	print(transfer_model.summary())
 
 	feature_transfer_model=transfer_learning.set_train_params(transfer_model)
 	
-
 	train_model=TrainModel(batch_size,epocs,split_ratio)
-
 	trained_model,eval_metrics,accuracy_metrics_df=train_model.run_train_model(feature_transfer_model,input_conv_data[:,:,:,:,1:2],kcc_subset_dump,model_path,logs_path,plots_path,activate_tensorboard)
 
 	accuracy_metrics_df.to_csv(logs_path+'/tl_metrics.csv')

@@ -1,11 +1,13 @@
 
 #tensorbaord is added as call back to model training
 #start tensorboard from terminal/cmd window using tensorboard --logdir ./logs
+
 class TrainViz:
 
 	def training_plot(self, history,plots_path,run_id=0):
 
 		import matplotlib.pyplot as plt
+		
 		#summarize history for Mean Absolute Error
 		# plt.plot(history.history['mae'])
 		# plt.plot(history.history['val_mae'])

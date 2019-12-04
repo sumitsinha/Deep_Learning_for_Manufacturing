@@ -1,3 +1,4 @@
+#Config File to parametrize the assembly system
 
 assembly_system = {	
         'data_type': '3D Point Cloud Data',
@@ -15,16 +16,17 @@ assembly_system = {
         'aritifical_noise':0.0,
         'noise_type':'uniform',
         'mapping_index':'Halo_64_voxel_mapping.dat',
+        'nominal_cop_filename':'halo_nominal_cop.csv',
         'data_folder':'../datasets/halo_debug_run/',
-        'kcc_folder':'../active_learning/sample_input/',
-        'kcc_files':['initial_samples_train_set.csv'],
-        'test_kcc_files':['initial_samples_test_set.csv'],
-        'data_files_x':['output_table_x_train_set.csv'],
-        'data_files_y':['output_table_y_train_set.csv'],
-        'data_files_z':['output_table_z_train_set.csv'],
-        'test_data_files_x':['output_table_x_test_set.csv'],
-        'test_data_files_y':['output_table_y_test_set.csv'],
-        'test_data_files_z':['output_table_z_test_set.csv']
+        'kcc_folder':'../active_learning/sample_input/halo_debug_run',
+        'kcc_files':['input_X.csv'],
+        'test_kcc_files':['input_X.csv'],
+        'data_files_x':['test_output_table_x.csv'],
+        'data_files_y':['test_output_table_y.csv'],
+        'data_files_z':['test_output_table_z.csv'],
+        'test_data_files_x':['test_output_table_x.csv'],
+        'test_data_files_y':['test_output_table_y.csv'],
+        'test_data_files_z':['test_output_table_z.csv'],
         }
 
 #Assert that all config values conform to the libarary requirements

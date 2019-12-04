@@ -19,7 +19,7 @@
 ## Overview 
 The open source **Deep Learning for Manufacturing (dlmfg) Library** is built using a **TensorFlow** and **Keras** back end to build deep learning models such as **3D Convolutional Neural Network** to enable **root cause analysis** and **quality control** in Sheet Metal Assembly Manufacturing Systems. The library can be used across various domains such as assembly systems, stamping, additive manufacturing and milling where the key problem is **Object Error Detection and Estimation**. The library is build using Object Oriented Programming to enable extension and contribution from other related disciplines within the artificial intelligence community as well as the manufacturing community.
 
-The published work can be found here: [**3D convolutional neural networks to estimate assembly process parameters using 3D point-clouds**](http://wrap.warwick.ac.uk/120275/).
+The published work can be found here: [**3D convolutional neural networks to estimate assembly process parameters using 3D point-clouds**](https://www.researchgate.net/publication/333942071_3D_convolutional_neural_networks_to_estimate_assembly_process_parameters_using_3D_point-clouds).
 
 
 

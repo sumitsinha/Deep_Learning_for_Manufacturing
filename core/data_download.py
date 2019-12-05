@@ -19,9 +19,20 @@ import gdown
 import assemblyconfig_halostamping as config
 import download_config as downloadconfig
 
-url = 'https://drive.google.com/uc?id=1--nXi2N2cFpF_mXirqUrxzfBCWMy537h'
-output = '../datasets/check.csv'
-gdown.download(url, output, quiet=False)
+class DataDownload:
+
+	def __init__(self,base_url,download_type,download_flag=0):
+			self.base_url=base_url
+			self.download_type=download_type
+			self.download_flag=download_flag
+			
+	def google_drive_downloader(self,file_id,output):
+		
+		print('Attempting download from ', self.download_type, ' for output: ',output)
+		url=self.base_url+file_id
+		gdown.download(url, output, quiet=False)
+		print('Download Comleted for: ',output)
+		self.download_flag=self.download_flag+1
 
 
 if __name__ == '__main__':
@@ -35,52 +46,78 @@ if __name__ == '__main__':
 	data_format=config.assembly_system['data_format']
 	
 	mapping_index=config.assembly_system['mapping_index']
+	nominal_cop_filename=config.assembly_system['nominal_cop_filename']
+
 	file_names_x=config.assembly_system['data_files_x']
 	file_names_y=config.assembly_system['data_files_y']
 	file_names_z=config.assembly_system['data_files_z']
-	system_noise=config.assembly_system['system_noise']
-	
-	data_folder=config.assembly_system['data_folder']
-	kcc_folder=config.assembly_system['kcc_folder']
 	kcc_files=config.assembly_system['kcc_files']
 
+	data_folder=config.assembly_system['data_folder']
+	kcc_folder=config.assembly_system['kcc_folder']
+	
+	test_file_names_x=config.assembly_system['test_data_files_x']
+	test_file_names_y=config.assembly_system['test_data_files_y']
+	test_file_names_z=config.assembly_system['test_data_files_z']
+	test_kcc_files=config.assembly_system['test_kcc_files']
+	
 	print('Parsing from Download Config File')
 
-	mapping_index=downloadconfig.download_params['mapping_index']
-	nominal_cop_filename=downloadconfig.download_params['nominal_cop_filename']
-	file_names_x=downloadconfig.download_params['data_files_x']
-	file_names_y=downloadconfig.download_params['data_files_y']
-	file_names_z=downloadconfig.download_params['data_files_z']
-	kcc_files=downloadconfig.download_params['kcc_files']
+	id_kcc_files=downloadconfig.download_params['id_kcc_files']
+	id_test_kcc_files=downloadconfig.download_params['id_test_kcc_files']
+	
+	id_data_files_x=downloadconfig.download_params['id_data_files_x']
+	id_data_files_y=downloadconfig.download_params['id_data_files_y']
+	id_data_files_z=downloadconfig.download_params['id_data_files_z']
+	
+	id_test_data_files_x=downloadconfig.download_params['id_test_data_files_x']
+	id_test_data_files_y=downloadconfig.download_params['id_test_data_files_y']
+	id_test_data_files_z=downloadconfig.download_params['id_test_data_files_z']
+	   
+	id_mapping_index=downloadconfig.download_params['id_mapping_index']
+	id_nominal_cop=downloadconfig.download_params['id_nominal_cop']
+	
+	download_type=downloadconfig.download_params['download_type']
+	base_url=downloadconfig.download_params['base_url']
 
-	test_file_names_x=downloadconfig.download_params['test_data_files_x']
-	test_file_names_y=downloadconfig.download_params['test_data_files_y']
-	test_file_names_z=downloadconfig.download_params['test_data_files_z']
-	test_kcc_files=downloadconfig.download_params['test_kcc_files']
+	print('Creating file Structure for downloaded files....')
 	
-	id_kcc_files=downloadconfig.download_params['id_kcc_files'],
-	id_test_kcc_files=downloadconfig.download_params[]
-	   'id_data_files_x':['nXi2N2cFpF_mXirqUrxzfBCWMy537h'],
-	   'id_data_files_y':['1sUfusVW7119DgdlZylZH2jEyBXXtVVcs'],
-	   'id_data_files_z':['1MHhk9Xn7r7S0_PbA-QAKlEp5n0tFfKl_'],
-	   'id_test_data_files_x':['nXi2N2cFpF_mXirqUrxzfBCWMy537h'],
-	   'id_test_data_files_y':['1sUfusVW7119DgdlZylZH2jEyBXXtVVcs'],
-	   'id_test_data_files_z':['1MHhk9Xn7r7S0_PbA-QAKlEp5n0tFfKl_'],
-	   'id_mapping_index':['1yELJOyzgDOsrP5pP6xAy-LifC7gd2aqb'],
-	   'id_nominal_cop':['1m2FWTnZ70_fftrG-APs9DZR-NuC73AQW']
-	
-	print('Creating file Structure....')
-	
-	folder_name=part_type
-	train_path='../datasets/'+part_type
-	pathlib.Path(train_path).mkdir(parents=True, exist_ok=True) 
+	pathlib.Path(data_folder).mkdir(parents=True, exist_ok=True)
+	pathlib.Path(kcc_folder).mkdir(parents=True, exist_ok=True)
 
 	nominal_cop_path='../resources/nominal_cop_files'
-	pathlib.Path(train_path).mkdir(parents=True, exist_ok=True) 
+	pathlib.Path(nominal_cop_path).mkdir(parents=True, exist_ok=True) 
 	
 	mapping_files_path='../resources/mapping_files'
-	pathlib.Path(train_path).mkdir(parents=True, exist_ok=True) 
+	pathlib.Path(mapping_files_path).mkdir(parents=True, exist_ok=True)
 
-	kcc_files_path='../active_learning/sample_input/'+part_type
-	pathlib.Path(train_path).mkdir(parents=True, exist_ok=True)
+	data_download=DataDownload(base_url,download_type)
 
+	data_download.google_drive_downloader(id_mapping_index,(mapping_files_path+'/'+mapping_index))
+	data_download.google_drive_downloader(id_nominal_cop,(nominal_cop_path+'/'+nominal_cop_filename))
+
+	for i, file in enumerate(file_names_x):
+		data_download.google_drive_downloader(id_data_files_x[i],(data_folder+'/'+file))
+
+	for i, file in enumerate(file_names_y):
+		data_download.google_drive_downloader(id_data_files_y[i],(data_folder+'/'+file))
+
+	for i, file in enumerate(file_names_z):
+		data_download.google_drive_downloader(id_data_files_z[i],(data_folder+'/'+file))
+
+	for i, file in enumerate(kcc_files):
+		data_download.google_drive_downloader(id_kcc_files[i],(kcc_folder+'/'+file))
+	
+	for i, file in enumerate(test_file_names_x):
+		data_download.google_drive_downloader(id_test_data_files_x[i],(data_folder+'/'+file))
+
+	for i, file in enumerate(test_file_names_y):
+		data_download.google_drive_downloader(id_test_data_files_y[i],(data_folder+'/'+file))
+
+	for i, file in enumerate(test_file_names_z):
+		data_download.google_drive_downloader(id_test_data_files_z[i],(data_folder+'/'+file))
+
+	for i, file in enumerate(test_kcc_files):
+		data_download.google_drive_downloader(id_test_kcc_files[i],(kcc_folder+'/'+file))
+
+	print('File Structure built and Download completed for a no of file: ',data_download.download_flag)	

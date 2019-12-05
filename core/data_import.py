@@ -7,7 +7,7 @@ class GetTrainData():
 	def data_import(self,file_names,data_folder):
 		data_files=[]
 		for file in file_names:
-			file_path=data_folder+file
+			file_path=data_folder+'/'+file
 			data_files.append(pd.read_csv(file_path,header=None))
 		dataset = pd.concat(data_files, ignore_index=True)
 		return dataset

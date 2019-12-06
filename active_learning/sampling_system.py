@@ -71,7 +71,7 @@ class adaptive_sampling():
 
 		return adaptive_samples
 
-	def get_uncertaninity(self,kcc_struct,model,samples)
+	def get_uncertaninity(self,kcc_struct,model,samples):
 		pass
 
 

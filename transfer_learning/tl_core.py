@@ -71,10 +71,11 @@ class TransferLearning:
 
 		model_path='../pre_trained_models/'+self.tl_base
 		
-		if(self.tl_base=='unet_3d.h5')
+		if(self.tl_base=='unet_3d.h5'):
 			base_model=load_model(model_path,custom_objects={'InstanceNormalization': InstanceNormalization,'weighted_dice_coefficient_loss':weighted_dice_coefficient_loss})
-		else
+		else:
 			base_model=load_model(model_path)
+		
 		return base_model
 
 	def build_transfer_model(self,model):

@@ -1,9 +1,21 @@
 import numpy as np
 import sys
 import pandas as pd
+""" Contains classes and methods to import reuired files to import measurement data """
 
 class GetInferenceData():
 
+	"""Infrence Data Class
+
+		:param data_type: Type data obtained from the measurment system, Cloud-of-Point/Image/Point based
+		:type assembly_system: str (required)
+
+		:param application: Application of the measuremnt system, 
+		:type application: str (required)
+
+		:param system_noise: Noise level of the measurement system
+		:type system_noise: float (required) 
+	"""
 
 	def load_mapping_index(self,index_file):
 		

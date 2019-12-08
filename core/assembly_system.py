@@ -6,7 +6,7 @@ class AssemblySystem:
 	"""Assembly System Class
 
 		:param assembly_type: Type of assembly Single-Station/Multi-Station
-		:type assembly_system: int (required)
+		:type assembly_system: str (required)
 
 		:param assembly_kccs: Number of KCCs for the assembly
 		:type assembly_kccs: int (required)

@@ -13,6 +13,15 @@ class GetInferenceData():
 
 	def load_mapping_index(self,index_file):
 		
+		"""Import mapping index used to map nodes to voxel locations from the file structure 
+			
+			:param index_file: Path to the index file and the index file name
+			:type conn_str: str (required)
+
+			:returns: numpy array of voxel mapping index for each node
+			:rtype: np_array [point_dim,3]
+		"""
+
 		try:
 			voxel_point_index = np.load(index_file,allow_pickle=True)
 		except AssertionError as error:

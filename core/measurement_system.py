@@ -37,6 +37,3 @@ class HexagonWlsScanner(MeasurementSystem):
 		super(HexagonWlsScanner,self).__init__(data_type,application,system_noise)
 		self.part_type=part_type
 		self.data_format=data_format
-
-	def get_data(self):
-		inference_data=get_WLS_data();

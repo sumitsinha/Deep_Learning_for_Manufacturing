@@ -15,11 +15,11 @@ class DLModel:
 		:param loss_function: The loss function to be optimized by training the model, refer: https://keras.io/losses/ for more information
 		:type loss_function: keras.losses (required)
 
-		:param regularizer_coeff: The L2 norm regularisation coefficient value used in the fully connected layer of the model, refer: https://keras.io/regularizers/ for more information
+		:param regularizer_coeff: The L2 norm regularisation coefficient value used in the penultimate fully connected layer of the model, refer: https://keras.io/regularizers/ for more information
 		:type regularizer_coeff: float (required)
 
-		:param output_type: The L2 norm regularisation coefficient value, refer: https://keras.io/regularizers/ for more information
-		:type output_type: float (required)		
+		:param output_type: The output type of the model which can be regression or classification, this is used to define the output layer of the model, defaults to regression (classification: softmax, regression: linear)
+		:type output_type: str		
 
 	"""
 	def __init__(self,model_type,output_dimension,optimizer,loss_function,regularizer_coeff,output_type='regression'):
@@ -31,7 +31,14 @@ class DLModel:
 		self.output_type=output_type
 
 	def cnn_model_3d(self,voxel_dim,deviation_channels):
-		
+		"""Build the 3D Model using the speficied loss function, the inputs are parsed from the assemblyconfig_<case_study_name>.py file
+
+			:param voxel_dim: The voxel dimension of the input, reuired to build input to the 3D CNN model
+			:type voxel_dim: int (required)
+
+			:param voxel_channels: The number of voxel channels in the input structure, reuired to build input to the 3D CNN model
+			:type voxel_channels: int (required)
+		"""
 		from keras.layers import Conv3D, MaxPool3D, Flatten, Dense, Dropout
 		from keras.models import Sequential
 		from keras import regularizers
@@ -57,7 +64,14 @@ class DLModel:
 		return model
 
 	def cnn_model_3d_tl(self,voxel_dim,deviation_channels):
+		"""Build the 3D Model with GlobalMAxPooling3D instead of flatten, this enables input for different voxel dimensions, to be used when the model needs to be leveraged for transfer learning with different size input
 
+			:param voxel_dim: The voxel dimension of the input, reuired to build input to the 3D CNN model
+			:type voxel_dim: int (required)
+
+			:param voxel_channels: The number of voxel channels in the input structure, reuired to build input to the 3D CNN model
+			:type voxel_channels: int (required)
+		"""
 		from keras.layers import Conv3D, MaxPool3D, Flatten, Dense, Dropout, Input
 		from keras.models import Model
 		from keras import regularizers
@@ -77,7 +91,14 @@ class DLModel:
 		return model
 
 	def cnn_model_3d_aleatoric(self,voxel_dim,deviation_channels):
+		"""Build the 3D Model with a heteroeskedastic aleatoric loss, this enables different standard deviation of each predicted value, to be used when the expected sensor noise is heteroskedastic
 
+			:param voxel_dim: The voxel dimension of the input, reuired to build input to the 3D CNN model
+			:type voxel_dim: int (required)
+
+			:param voxel_channels: The number of voxel channels in the input structure, reuired to build input to the 3D CNN model
+			:type voxel_channels: int (required)
+		"""
 		if(self.model_type=="regression"):
 			final_layer_avt='linear'
 
@@ -108,8 +129,26 @@ class DLModel:
 		return model
 
 	def cnn_model_3d_mdn(self,voxel_dim,deviation_channels,num_of_mixtures=5):
-		
+		"""Build the 3D Model with a Mixture Density Network output the gives paramaters of a Gaussian Mixture Model as output, to be used if the system is expected to be collinear (Multi-Stage Assembly Systems) i.e. a single input can have multiple outputs
+			Functions for predicting and sampling from a MDN.py need to used when deploying a MDN based model
+			refer https://publications.aston.ac.uk/id/eprint/373/1/NCRG_94_004.pdf for more details on the working of a MDN model
+			refer https://arxiv.org/pdf/1709.02249.pdf to understand how a MDN model can be leveraged to estimate the epistemic and aleatoric unceratninty present in manufacturing ssytems based on the data collected
+
+			:param voxel_dim: The voxel dimension of the input, reuired to build input to the 3D CNN model
+			:type voxel_dim: int (required)
+
+			:param voxel_channels: The number of voxel channels in the input structure, reuired to build input to the 3D CNN model
+			:type voxel_channels: int (required)
+
+			:param number_of_mixtures: The number of mixtures in the Gaussian Mixture Model output, defaults to 5, can be increased if higher collinearity is expected
+			:type number_of_mixtures: int
+		"""
+
 		assert self.model_type=="regression","Mixture Density Network Should be a Regression Model"
+		
+		from keras.layers import Conv3D, MaxPool3D, Flatten, Dense
+		from keras.models import Sequential
+		import mdn
 
 		model = Sequential()
 		model.add(Conv3D(32, kernel_size=(5,5,5),strides=(2,2,2),activation='relu',input_shape=(voxel_dim,voxel_dim,voxel_dim,deviation_channels)))

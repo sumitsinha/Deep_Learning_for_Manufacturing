@@ -1,3 +1,6 @@
+""" The model deploy file is used to leverage a trained model to perform infrence on unknown set of node deviations.
+"""
+
 import os
 import sys
 current_path=os.path.dirname(__file__)
@@ -29,8 +32,15 @@ from metrics_eval import MetricsEval
 from data_import import GetTrainData
 
 class DeployModel:
+	"""The Deploy Model class is used to import a trained model and use it to infer on unknown data
 
+	"""
 	def get_model(self,model_path):
+		"""get_model method is is used to retrieve the trained model from a given path
+				
+				:param model_path: Path to the trained model, ideally it should be same as the train model path output
+				:type model_path: str (required)
+		"""
 
 		try:
 			inference_model=load_model(model_path)
@@ -42,7 +52,18 @@ class DeployModel:
 		return inference_model
 
 	def model_inference(self,inference_data,inference_model,print_result=0):
-		
+		"""model_inference method is used to infer from unknown sample(s) using the trained model 
+				
+				:param inference_data: Unknown dataset having same structure as the train dataset
+				:type inference_data: numpy.array [samples*voxel_dim*voxel_dim*voxel_dim*deviation_channels] (required) (required)
+
+				:param inference_model: Trained model
+				:type inference_model: keras.model (required)
+				
+				:param print_result: Flag to indicate if the result needs to be printed, 0 by default, change to 1 in case the results need to be printed on the console
+				:type print_result: int
+
+		"""		
 		result=inference_model.predict(inference_data)
 		description="The Process Parameters variations are inferred from the obtained meeasurement data and the trained CNN based model"
 		print('The model estimates are: ')

@@ -1,3 +1,9 @@
+""" Containts classes and methods to create the input file structure and download the reuired data
+	The program parses from the download_config.py file
+	Currently leverages gdown library (https://pypi.org/project/gdown/) to download large files from google drive
+	Main Function parses from the download_config.py file and downloads the input, output and support files for the corresponding case study and then places them in a pre-specified file sturture to be used for model training, deployment and data study
+"""
+
 import os
 import sys
 current_path=os.path.dirname(__file__)
@@ -20,6 +26,17 @@ import assemblyconfig_halostamping as config
 import download_config as downloadconfig
 
 class DataDownload:
+	"""Data Download Class
+
+		:param base_url: consists of the base URL of the server file location
+		:type base_url: str (required)
+
+		:param download_type: Type of download, currently google drive is used host the datafiles
+		:type download_type: str (required)
+
+		:param download_flag: used to store the number of downloads done using one instance of the Data Download class, can be used to ensure Quality Checks on the downloaded data
+		:type download_flag: int 
+	"""
 
 	def __init__(self,base_url,download_type,download_flag=0):
 			self.base_url=base_url
@@ -27,7 +44,14 @@ class DataDownload:
 			self.download_flag=download_flag
 			
 	def google_drive_downloader(self,file_id,output):
-		
+		"""google_drive_downloader combines object initilization with the file ID to download to the desired output file
+
+			:param file_id: Server file ID of the file to be downloaded
+			:type file_id: str (required)
+
+			:param output: output path of the downloaded file
+			:type output: str (required)
+		"""
 		print('Attempting download from ', self.download_type, ' for output: ',output)
 		url=self.base_url+file_id
 		gdown.download(url, output, quiet=False)
@@ -36,6 +60,7 @@ class DataDownload:
 
 
 if __name__ == '__main__':
+	""" Main Function parses from the download_config.py file and downloads the input, output and support files for the corresponding case study and then places them in a pre-specified file sturture to be used for model training, deployment and data study"""
 
 	print('Parsing from Assembly Config File....')
 

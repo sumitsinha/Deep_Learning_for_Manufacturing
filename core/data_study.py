@@ -1,3 +1,9 @@
+""" The data study file is used to study the training data requirement for convergence, the file trains the model incrementaly (training size is increased) based on the parameters specified in the modelconfig_train.py file and simulatanously
+tests the trained model at each step to estimate the optiminum number of training samples required. The file also generates combined html based plots (using plotly and cufflinks), trained model, accuracy metrics and training plotsfor each iteration
+within the file structure 
+"""
+
+
 import os
 import sys
 current_path=os.path.dirname(__file__)

@@ -1,5 +1,27 @@
-class DLModel:	
+""" Containts core classes and methods for intilillzing the deep learning 3D CNN model with different variants of the loss function, inputs are provided from the modelconfig_train.py file"""
 
+class DLModel:	
+	""" Deep Learning Model Class
+
+		:param model_type: Type of model to be used for training 3D CNN with MSE loss, 3D CNN with hetreoskedastic aleatoric loss, 3D CNN with a mixture density network (GMM) output
+		:type model_type: str (required)
+
+		:param output_dimension: Number of output nodes for the network equal to number of KCCs for the assembly in case MSE is used as loss function
+		:type output_dimension: int (required)
+
+		:param optimizer: The optimizer to be used while model training, refer: https://keras.io/optimizers/ for more information
+		:type optimizer: keras.optimizer (required) 
+
+		:param loss_function: The loss function to be optimized by training the model, refer: https://keras.io/losses/ for more information
+		:type loss_function: keras.losses (required)
+
+		:param regularizer_coeff: The L2 norm regularisation coefficient value used in the fully connected layer of the model, refer: https://keras.io/regularizers/ for more information
+		:type regularizer_coeff: float (required)
+
+		:param output_type: The L2 norm regularisation coefficient value, refer: https://keras.io/regularizers/ for more information
+		:type output_type: float (required)		
+
+	"""
 	def __init__(self,model_type,output_dimension,optimizer,loss_function,regularizer_coeff,output_type='regression'):
 		self.output_dimension=output_dimension
 		self.model_type=model_type
@@ -54,7 +76,7 @@ class DLModel:
 		
 		return model
 
-	def cnn_model_3d_aleatoric(self,voxel_dim=64,deviation_channels=1):
+	def cnn_model_3d_aleatoric(self,voxel_dim,deviation_channels):
 
 		if(self.model_type=="regression"):
 			final_layer_avt='linear'
@@ -85,7 +107,7 @@ class DLModel:
 		print("3D CNN model Aleatoric succssesfully compiled")
 		return model
 
-	def cnn_model_3d_mdn(self,voxel_dim=64,deviation_channels=1,num_of_mixtures=5):
+	def cnn_model_3d_mdn(self,voxel_dim,deviation_channels,num_of_mixtures=5):
 		
 		assert self.model_type=="regression","Mixture Density Network Should be a Regression Model"
 
@@ -105,4 +127,4 @@ class DLModel:
 		return model
 
 if (__name__=="__main__"):
-	print('Model Build')
+	print('Model Deep Learning Class')

@@ -8,6 +8,7 @@ class GetInferenceData():
 	"""Infrence Data Class
 
 		Import required files to deploy model on measurment systems
+		
 	"""
 
 	def load_mapping_index(self,index_file):

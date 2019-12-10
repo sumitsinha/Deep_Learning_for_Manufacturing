@@ -24,8 +24,8 @@ from keras.utils import plot_model
 K.clear_session()
 
 #Importing Config files
-import assemblyconfig_halostamping as config
-import modelconfig_train as cftrain
+import assembly_config as config
+import model_config as cftrain
 
 #Importing required modules from the package
 from measurement_system import HexagonWlsScanner

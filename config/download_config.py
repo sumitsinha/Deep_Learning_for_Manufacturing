@@ -1,8 +1,45 @@
+"""The download config file consists of paramaters required to download files
+		
+	:param download_params['download_type']: Server name of the file location, currently supports Google Drive 
+	:type download_params['download_type']: str (required)
+
+	:param download_params['base_url']: base url of the server 
+	:type download_params['base_url']: str (required)
+
+	:param download_params['id_kcc_files']: List of KCC file IDs on the server, minimum one file id in the list is required
+	:type download_params['id_kcc_files']: list (required)
+
+	:param download_params['id_test_kcc_files']: List of test KCC file IDs on the server, minimum one file id in the list is required
+	:type download_params['id_test_kcc_files']: list (required)
+
+	:param download_params['id_data_files_x']: List of data files IDs consiting of x-deviation of nodes on the server, minimum one file id in the list is required
+	:type download_params['id_data_files_x']: list (required)
+
+	:param download_params['id_data_files_y']: List of data files IDs consiting of y-deviation of nodes on the serve, minimum one file id in the list is required
+	:type download_params['id_data_files_y']: list (required)
+
+	:param download_params['id_data_files_z']: List of data files IDs consiting of z-deviation of nodes on the serve, minimum one file id in the list is required
+	:type download_params['id_data_files_z']: list (required)
+
+	:param download_params['id_test_data_files_x']: List of test data files IDs consiting of x-deviation of nodes on the server, minimum one file id in the list is required
+	:type download_params['id_test_data_files_x']: list (required)
+
+	:param download_params['id_test_data_files_y']: List of test data files IDs consiting of y-deviation of nodes on the serve, minimum one file id in the list is required
+	:type download_params['id_test_data_files_y']: list (required)
+
+	:param download_params['id_test_data_files_z']: List of test data files IDs consiting of z-deviation of nodes on the serve, minimum one file id in the list is required
+	:type download_params['id_test_data_files_z']: list (required)
+
+	:param download_params['id_mapping_index']: Mapping File ID
+	:type download_params['id_mapping_index']: str (required)
+
+	:param download_params['id_nominal_cop']: Nominal COP file ID
+	:type download_params['id_nominal_cop']: str (required)
+"""
+
 download_params={
 	   'download_type':'google_drive',
 	   'base_url':'https://drive.google.com/uc?id',
-	   'mapping_index':'Halo_64_voxel_mapping.dat',
-	   'nominal_cop_filename':'halo_nominal_cop.csv',
 	   'id_kcc_files':['1yjDnSjyjw6-RYcrb7xtpedwnvMzAOo9V'],
 	   'id_test_kcc_files':['1yjDnSjyjw6-RYcrb7xtpedwnvMzAOo9V'],
 	   'id_data_files_x':['nXi2N2cFpF_mXirqUrxzfBCWMy537h'],

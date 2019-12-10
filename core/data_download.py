@@ -22,7 +22,7 @@ import pathlib
 import gdown
 
 #Importing Config files
-import assemblyconfig_halostamping as config
+import assembly_config as config
 import download_config as downloadconfig
 
 class DataDownload:

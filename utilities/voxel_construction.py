@@ -14,7 +14,7 @@ import numpy as np
 from tqdm import tqdm
 
 #Importing Config files
-import assemblyconfig_halostamping as config
+import assembly_config as config
 import voxel_config as vc
 
 #Importing required modules from the package

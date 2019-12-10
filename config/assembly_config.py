@@ -30,9 +30,17 @@
         :param assembly_system['point_dim']: The number of nodes in the input mesh of the assembly 
         :type assembly_system['point_dim']: int (required)
 
+        :param assembly_system['system_noise']: Noise parameter for the system, used to make model training more robust to actual system noise
+        :type assembly_system['system_noise']: int (required)
+
+        :param assembly_system['aritifical_noise']: Noise parameter for the model, used to make model training more robust to actual system noise (usually same as system noise)
+        :type assembly_system['aritifical_noise']: int (required)
+
+        :param assembly_system['noise_type']: The number of data channels/features in each voxel, currently defaults to 3 consiting of x_deviations, y_deviations and z_deviations 
+        :type assembly_system['noise_type']: int (required)
+
         :param assembly_system['voxel_channels']: The number of data channels/features in each voxel, currently defaults to 3 consiting of x_deviations, y_deviations and z_deviations 
         :type assembly_system['voxel_channels']: int (required)
-
 """
 
 assembly_system = {	

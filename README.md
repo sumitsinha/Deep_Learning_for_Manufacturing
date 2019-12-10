@@ -96,6 +96,10 @@ The library consists of following key modules. More details about the classes, o
 <img src="https://is3-ssl.mzstatic.com/image/thumb/Purple123/v4/44/96/e5/4496e598-1b99-369a-cefe-cb347e538aa4/AppIcon-0-0-1x_U007emarketing-0-0-0-7-0-0-sRGB-0-0-0-GLES2_U002c0-512MB-85-220-0-0.png/1200x630wa.png" alt="WMG" width="100">
 </a>
 
+##### Data generation has been done using a Multi-fidelity CAE simulation software known as VRM :
+
+    Franciosa, P., Palit, A., Gerbino, S., & Ceglarek, D. (2019). A novel hybrid shell element formulation (QUAD+ and TRIA+): A benchmarking and comparative study. Finite Elements in Analysis and Design, 166, 103319.
+
 ##### Collaboration:
 Please contact [**Sumit Sinha**](https://warwick.ac.uk/fac/sci/wmg/research/digital/dlm/people/sumit/), [**Dr Emile Glorieux**](https://warwick.ac.uk/fac/sci/wmg/research/digital/dlm/people/emileglorieux), [**Dr Pasquale Franciosa**](https://warwick.ac.uk/fac/sci/wmg/research/digital/dlm/people/p_franciosa) 
 in case of any clarifications or collaborative work with the [**Digital Lifecycle Management**](https://warwick.ac.uk/fac/sci/wmg/research/digital/dlm/) group at [**WMG**](https://warwick.ac.uk/fac/sci/wmg/), [**University of Warwick**](https://warwick.ac.uk/)

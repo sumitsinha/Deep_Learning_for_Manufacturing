@@ -36,11 +36,44 @@
         :param assembly_system['aritifical_noise']: Noise parameter for the model, used to make model training more robust to actual system noise (usually same as system noise)
         :type assembly_system['aritifical_noise']: int (required)
 
-        :param assembly_system['noise_type']: The number of data channels/features in each voxel, currently defaults to 3 consiting of x_deviations, y_deviations and z_deviations 
-        :type assembly_system['noise_type']: int (required)
+        :param assembly_system['noise_type']: The distribution of the noise , defaults to uniform random value between +- system noise, in case of gaussian it corresponds to the standard deviation (mean is zero)
+        :type assembly_system['noise_type']: float (required)
 
-        :param assembly_system['voxel_channels']: The number of data channels/features in each voxel, currently defaults to 3 consiting of x_deviations, y_deviations and z_deviations 
-        :type assembly_system['voxel_channels']: int (required)
+        :param assembly_system['mapping_index']: File name of the mapping index, after download is complete the file is saved with this name
+        :type assembly_system['mapping_index']: str (required)
+
+        :param assembly_system['nominal_cop_filename']: File name of the nominal cop, after download is complete the file is saved with this name
+        :type assembly_system['nominal_cop_filename']: str (required)
+
+        :param assembly_system['data_folder']: Path to input data location
+        :type assembly_system['data_folder']: str (required)
+
+        :param assembly_system['kcc_folder']: Path to Output data/KCC location
+        :type assembly_system['kcc_folder']: str (required)
+
+        :param assembly_system['kcc_files']: List of kcc files, after download is complete the file is saved with this name
+        :type assembly_system['kcc_files']: str (required)
+
+        :param assembly_system['test_kcc_files']: List of test kcc files, after download is complete the file is saved with this name
+        :type assembly_system['test_kcc_files']: str (required)
+
+        :param assembly_system['data_files_x']: List of x deviation input files, after download is complete the file is saved with this name
+        :type assembly_system['data_files_x']: str (required)
+
+        :param assembly_system['data_files_y']: List of y deviation input files, after download is complete the file is saved with this name
+        :type assembly_system['data_files_y']: str (required)
+
+        :param assembly_system['data_files_z']: List of z deviation input files, after download is complete the file is saved with this name
+        :type assembly_system['data_files_z']: str (required)
+
+        :param assembly_system['test_data_files_x']: List of x deviation test input files, after download is complete the file is saved with this name
+        :type assembly_system['test_data_files_x']: str (required)
+
+        :param assembly_system['test_data_files_y']: List of y deviation test input files, after download is complete the file is saved with this name
+        :type assembly_system['test_data_files_y']: str (required)
+
+        :param assembly_system['test_data_files_z']: List of z deviation test input files, after download is complete the file is saved with this name
+        :type assembly_system['test_data_files_z']: str (required)
 """
 
 assembly_system = {	

@@ -1,4 +1,26 @@
-#Config File to parametrize the KCCs of the system
+"""The Process Parameter/KCC configuration file consists of parameters of each KCC of the assembly system. This is required for sampling/active learning strategy. Each KCC is appended as a dictionary in a list of KCCs. Each KCC has the following parameters
+                
+        :param kcc_struct[index]['kcc_id']: Unigue identifier for the KCC
+        :type kcc_struct[index]['kcc_id']: int (required)
+
+        :param kcc_struct[index]['kcc_name']: The name/description of the KCC
+        :type kcc_struct[index]['kcc_name']: str (required)
+
+        :param kcc_struct[index]['kcc_id']: Unigue identifier for the KCC
+        :type kcc_struct[index]['kcc_id']: int (required)
+
+        :param kcc_struct[index]['kcc_type']: The type of the KCC, see below for more details
+        :type kcc_struct[index]['kcc_type']: int (required)
+
+        :param kcc_struct[index]['kcc_nominal']: The nominal value of the KCC
+        :type kcc_struct[index]['kcc_nominal']: float (required)
+
+        :param kcc_struct[index]['kcc_max']: The maximum value of the KCC
+        :type kcc_struct[index]['kcc_max']: float (required)
+
+        :param kcc_struct[index]['kcc_min']: The minimum value of the KCC
+        :type kcc_struct[index]['kcc_min']: float (required)
+"""
 
 kcc_struct=[]
 

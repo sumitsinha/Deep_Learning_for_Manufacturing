@@ -1,3 +1,5 @@
+""" Contains core classes and methods for initializing a Transfer Learning Class and running transfer learning using a pre-trained model and a small training dataset, the inputs are provided in assemblyconfig file in utilities"""
+
 import os
 import sys
 current_path=os.path.dirname(__file__)
@@ -38,7 +40,36 @@ from metrics_eval import MetricsEval
 from model_train import TrainModel
 
 class TransferLearning:
+	"""Transfer Learning Class
 
+		:param tl_type: Type of transfer learning to be done, full fine-tune, partial fine-tune, feature extraction
+		:type tl_type: str (required)
+
+		:param tl_base: The base model to be used for model
+		:type tl_base: str (required)
+
+		:param tl_app: The application for transfer learning
+		:type tl_app: str (required)
+
+		:param model_type: The type of model, regression or classification
+		:type model_type: str (required)
+
+		:param output_dimension: The number of KCCs for the case study to which the pre-trained model is to be transfered, to be used to reinitialize the last layer
+		:type output_dimension: int (required)
+
+		:param optimizer: The optimizer to be used for model training (https://keras.io/optimizers/)
+		:type optimizer: keras.optimizer (required)
+
+		:param loss_function: The loss function to be used for model training (https://keras.io/losses/)
+		:type loss_function: keras.losses (required)
+
+		:param regularizer_coeff: The regularization coefficient for L2 norm regularization of the fully connected layer (https://keras.io/regularizers/)
+		:type regularizer_coeff: float (required)
+
+		:param output_type: The type of model, regression or classification
+		:type output_type: str (required)
+
+	"""
 	def __init__(self, tl_type,tl_base,tl_app,model_type,output_dimension,optimizer,loss_function,regularizer_coeff,output_type):
 		self.tl_type=tl_type
 		self.tl_base=tl_base
@@ -53,14 +84,7 @@ class TransferLearning:
 	def get_trained_model(self):
 		
 		def weighted_dice_coefficient(y_true, y_pred, axis=(-3, -2, -1), smooth=0.00001):
-		    """
-		    Weighted dice coefficient. Default axis assumes a "channels first" data structure
-		    :param smooth:
-		    :param y_true:
-		    :param y_pred:
-		    :param axis:
-		    :return:
-		    """
+		 
 		    return K.mean(2. * (K.sum(y_true * y_pred,
 		                              axis=axis) + smooth/2)/(K.sum(y_true,
 		                                                            axis=axis) + K.sum(y_pred,
@@ -177,8 +201,8 @@ if __name__ == '__main__':
 	deployment_path=tl_path+'/deploy'
 	pathlib.Path(tl_app).mkdir(parents=True, exist_ok=True)
 
-	#Objects of Measurement System, Assembly System, Get Infrence Data
-	print('Intilizing the Assembly System and Measurement System....')
+	#Objects of Measurement System, Assembly System, Get Inference Data
+	print('Initializing the Assembly System and Measurement System....')
 	
 	measurement_system=HexagonWlsScanner(data_type,application,system_noise,part_type,data_format)
 	vrm_system=VRMSimulationModel(assembly_type,assembly_kccs,assembly_kpis,part_name,part_type,voxel_dim,voxel_channels,point_dim,aritifical_noise)
@@ -190,7 +214,7 @@ if __name__ == '__main__':
 	
 	if(activate_tensorboard==1):
 		tensorboard_str='tensorboard' + '--logdir '+logs_path
-		print('Vizavlize at Tensorboard using ', tensorboard_str)
+		print('Visualize at Tensorboard using ', tensorboard_str)
 	print('Importing and Preprocessing Cloud-of-Point Data')
 	
 	dataset=[]

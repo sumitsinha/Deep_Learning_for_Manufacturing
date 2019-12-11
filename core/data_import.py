@@ -53,7 +53,7 @@ class GetTrainData():
 		kcc_dim=vrm_system.assembly_kccs
 		kpi_dim=vrm_system.assembly_kpis
 
-		#Declaring the variables for intilizing input data structure intilization  
+		#Declaring the variables for initializing input data structure initialization  
 		start_index=0
 		end_index=len(dataset[0])
 		
@@ -124,7 +124,7 @@ class GetTrainData():
 			kcc_dim=vrm_system.assembly_kccs
 			kpi_dim=vrm_system.assembly_kpis
 
-			#Declaring the variables for intilizing input data structure intilization  
+			#Declaring the variables for initializing input data structure initialization  
 			start_index=0
 			end_index=len(dataset)
 			

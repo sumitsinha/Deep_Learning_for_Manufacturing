@@ -1,3 +1,8 @@
+
+""" Contains classes and methods to construct voxels based on a nominal cloud of point and given resolution, this can be used to construct cubical or cuboid voxels. By default no voxel is needed as each case study 
+a mapping file considering a 64*64*64 voxel resolution.
+"""
+
 import os
 import sys
 current_path=os.path.dirname(__file__)
@@ -24,37 +29,55 @@ from cop_viz import CopViz
 
 
 class VoxelConstruct:
+	"""Voxel Construction Class, for cubical voxel construction resolution in all three directions should be equal
 
+		:param x_dim: The voxel resolution in x-direction
+		:type x_dim: int (required)
+
+		:param y_dim: The voxel resolution in y-direction
+		:type y_dim: int (required)
+
+		:param z_dim: The voxel resolution in z-direction
+		:type z_dim: int (required) 
+	"""
 	def __init__(self,x_dim,y_dim,z_dim):
 		self.x_dim=x_dim
 		self.y_dim=y_dim
 		self.z_dim=z_dim
 	
 
-	def get_dev_data(self,x1,y1,z1,x2,y2,z2):   
-		if(abs(x1)>abs(x2)):
-			x_dev=x1
-		else:
-			x_dev=x2
-		if(abs(y1)>abs(y2)):
-			y_dev=y1
-		else:
-			y_dev=y2    
-		if(abs(z1)>abs(z2)):
-			z_dev=z1
-		else:
-			z_dev=z2
-		
-		retval=[x_dev,y_dev,z_dev]
-		return retval
+
 
 	def construct_voxel(self,nominal_cop):
-		
+		"""Construct voxel method takes nominal cop as input and based on the object initialization build a mapping index for each node in the nominal cloud of point
+
+			:param nominal_cop: The nominal cloud of point with x,y and z co-ordinates
+			:type x_dim: numpy.array (required)
+
+			:returns: mapping index (i,j,k) for numpy array of dim points * 3
+			:rtype: numpy.array [point_dim,3]
+		"""
 		def distance_func(x1,y1,z1,x2,y2,z2):
 			import math
 			dist = math.sqrt((x1-x2)**2 + (y1-y2)**2+(z1-z2)**2)
 			return dist
 
+		def get_dev_data(self,x1,y1,z1,x2,y2,z2):   
+			if(abs(x1)>abs(x2)):
+				x_dev=x1
+			else:
+				x_dev=x2
+			if(abs(y1)>abs(y2)):
+				y_dev=y1
+			else:
+				y_dev=y2    
+			if(abs(z1)>abs(z2)):
+				z_dev=z1
+			else:
+				z_dev=z2
+		
+		retval=[x_dev,y_dev,z_dev]
+		return retval
 		x_dim=self.x_dim
 		y_dim=self.y_dim
 		z_dim=self.z_dim
@@ -127,7 +150,7 @@ if __name__ == '__main__':
 	system_noise=config.assembly_system['system_noise']
 	aritifical_noise=config.assembly_system['aritifical_noise']
 	
-	print('Intilizing the Assembly System and Measurement System....')
+	print('Initializing the Assembly System and Measurement System....')
 	measurement_system=HexagonWlsScanner(data_type,application,system_noise,part_type,data_format)
 	vrm_system=VRMSimulationModel(assembly_type,assembly_kccs,assembly_kpis,part_name,part_type,voxel_dim,voxel_channels,point_dim,aritifical_noise)
 	#Import from File

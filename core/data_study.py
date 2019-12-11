@@ -1,5 +1,5 @@
-""" The data study file is used to study the training data requirement for convergence, the file trains the model incrementaly (training size is increased) based on the parameters specified in the modelconfig_train.py file and simulatanously
-tests the trained model at each step to estimate the optiminum number of training samples required. The file also generates combined html based plots (using plotly and cufflinks), trained model, accuracy metrics and training plotsfor each iteration
+""" The data study file is used to study the training data requirement for convergence, the file trains the model incrementally (training size is increased) based on the parameters specified in the modelconfig_train.py file and simultaneously
+tests the trained model at each step to estimate the optimum number of training samples required. The file also generates combined html based plots (using plotly and cufflinks), trained model, accuracy metrics and training plots for each iteration
 within the file structure 
 """
 
@@ -113,8 +113,8 @@ if __name__ == '__main__':
 	deployment_path=train_path+'/deploy'
 	pathlib.Path(deployment_path).mkdir(parents=True, exist_ok=True)
 
-	#Objects of Measurement System, Assembly System, Get Infrence Data
-	print('Intilizing the Assembly System and Measurement System....')
+	#Objects of Measurement System, Assembly System, Get Inference Data
+	print('Initializing the Assembly System and Measurement System....')
 	measurement_system=HexagonWlsScanner(data_type,application,system_noise,part_type,data_format)
 	vrm_system=VRMSimulationModel(assembly_type,assembly_kccs,assembly_kpis,part_name,part_type,voxel_dim,voxel_channels,point_dim,aritifical_noise)
 	get_data=GetTrainData();
@@ -146,7 +146,7 @@ if __name__ == '__main__':
 		
 	if(activate_tensorboard==1):
 		tensorboard_str='tensorboard' + '--logdir '+logs_path
-		print('Vizavlize at Tensorboard using ', tensorboard_str)
+		print('Visualize at Tensorboard using ', tensorboard_str)
 	
 	
 	output_dimension=assembly_kccs
@@ -178,7 +178,7 @@ if __name__ == '__main__':
 		dl_model=DLModel(model_type,output_dimension,optimizer,loss_func,regularizer_coeff,output_type)
 		model=dl_model.cnn_model_3d(voxel_dim,voxel_channels)
 
-		print("Conducting datastudy study on :",train_dim, " samples")
+		print("Conducting data study study on :",train_dim, " samples")
 		input_conv_subset=input_conv_data[0:train_dim,:,:,:,:]
 		kcc_subset=kcc_subset_dump[0:train_dim,:]
 
@@ -197,7 +197,7 @@ if __name__ == '__main__':
 		print("The Model Validation Metrics are ")
 		print(eval_metrics)
 
-		#Infering on test dataset
+		#Inferring on test dataset
 		model_test_path=train_path+'/model'+'/trained_model_'+str(run_id)+'.h5'
 		inference_model=deploy_model.get_model(model_test_path)
 		y_pred=deploy_model.model_inference(input_conv_data_test,inference_model);
@@ -221,7 +221,7 @@ if __name__ == '__main__':
 		datastudy_output[:,(4*assembly_kccs)+i+1]=np.mean(datastudy_output[:,(i*assembly_kccs)+1:((i+1)*assembly_kccs)+1],axis=1)
 		datastudy_output_test[:,(4*assembly_kccs)+i+1]=np.mean(datastudy_output_test[:,(i*assembly_kccs)+1:((i+1)*assembly_kccs)+1],axis=1)
 
-	#Gen Coloum Names
+	#Gen Column Names
 
 	col_names=['Training_Samples']
 	for metric in eval_metrics_type:
@@ -237,7 +237,7 @@ if __name__ == '__main__':
 	ds_output_df_test=pd.DataFrame(data=datastudy_output_test,columns=col_names)
 	ds_output_df_test.to_csv(logs_path+'/'+'datastudy_output_test.csv')
 	
-	print('Data Study Completed Succssesfully')
+	print('Data Study Completed Successfully')
 
 	print('Plotting Data Study Validation Results: ')
 	fig = ds_output_df.iplot(x='Training_Samples',asFigure=True)

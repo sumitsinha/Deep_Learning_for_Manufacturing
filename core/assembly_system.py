@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-""" Containts core classes and methods for intilillzing a Assembly System, the inputs are provided in assemblyconfig file in utilities"""
+""" Contains core classes and methods for initializing a Assembly System, the inputs are provided in assemblyconfig file in utilities"""
 
 class AssemblySystem:
 	"""Assembly System Class
@@ -20,7 +20,7 @@ class AssemblySystem:
 		self.assembly_kpis=assembly_kpis
 
 class PartType(AssemblySystem):
-	"""Part System Class, inherits the Assembly System Class, addtional parameters for this class include
+	"""Part System Class, inherits the Assembly System Class, additional parameters for this class include
 		
 		:param voxel_dim: Dimension of the voxel
 		:type assembly_system: int (required)
@@ -31,7 +31,7 @@ class PartType(AssemblySystem):
 		:param voxel_dim: Dimension of the voxel
 		:type assembly_system: int (required)
 
-		The class containes two functions -  get_nominal_cop and get_nominal_cop_database
+		The class contains two functions -  get_nominal_cop and get_nominal_cop_database
 	"""
 	def __init__(self,assembly_type,assembly_kccs,assembly_kpis,part_name,part_type,voxel_dim,voxel_channels,point_dim):
 		super().__init__(assembly_type,assembly_kccs,assembly_kpis)
@@ -49,14 +49,14 @@ class PartType(AssemblySystem):
 			:type file_name: str (required)
 
 			:returns: numpy array of dim points * 3
-			:rtype: np_array [point_dim,3]
+			:rtype: numpy.array[point_dim,3]
 		"""
 		df=pd.read_csv(file_name, sep=',',header=None)
 		nominal_cop=df.values
 		return nominal_cop
 
 	def get_nominal_cop_database(self,conn_str,table_name):
-		"""Import nominal cloud-of-point of the assembly from a SQL database assumes the table only contains three coloumns of the noinal COPs in order of the Node IDs		
+		"""Import nominal cloud-of-point of the assembly from a SQL database assumes the table only contains three columns of the nominal COPs in order of the Node IDs		
 			
 			:param conn_str: Connection String for Database
 			:type conn_str: str (required)
@@ -65,7 +65,7 @@ class PartType(AssemblySystem):
 			:type table_name: str (required)
 
 			:returns: numpy array of dim points * 3
-			:rtype: np_array [point_dim,3]
+			:rtype: numpy.array [point_dim,3]
 		"""
 		engine = create_engine(conn_str)
 		squery ='select * from '+table_name
@@ -77,16 +77,16 @@ class VRMSimulationModel(PartType):
 	
 	"""VRM Simulation Model class inherits the part type class, additional parameters of this class include
 
-		:param noise_level: The level of aritifical noise to be added to simulated data, typically set to 0.1 mm from the measurment system class depending on the scanner
+		:param noise_level: The level of artificial noise to be added to simulated data, typically set to 0.1 mm from the measurement system class depending on the scanner
 		:type noise_level: float (required)
 
-		:param noise_type: The type of noise to be added, can be gaussin or uniform , for gaussian noise_level is set as standard deviation and mean as zero for uniform the min and max are set -noise_level and +noise_level respectively
+		:param noise_type: The type of noise to be added, can be Gaussian or uniform , for Gaussian noise_level is set as standard deviation and mean as zero for uniform the min and max are set -noise_level and +noise_level respectively
 		:type noise_type: str (optional)
 
 		:param convergency_flag: Flag to denote if the simulation model had converged while simulating, is set to 1 by default
 		:type convergency_flag: int (optional)
 
-		The class containe one function kpi_calculator that needs to be defined by the user depending on the assembly output
+		The class contains one function kpi_calculator that needs to be defined by the user depending on the assembly output
 
 	"""
 	def __init__(self,assembly_type,assembly_kccs,assembly_kpis,part_name,part_type,voxel_dim,voxel_channels,point_dim,noise_level,noise_type='uniform',convergency_flag=1):

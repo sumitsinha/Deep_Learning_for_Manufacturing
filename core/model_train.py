@@ -1,4 +1,4 @@
-""" The model train file trains the model on the download dataset and other parameters specidfied in the assemblyconfig file
+""" The model train file trains the model on the download dataset and other parameters specified in the assemblyconfig file
 The main function runs the training and populates the created file structure with the trained model, logs and plots
 """
 
@@ -40,7 +40,7 @@ from training_viz import TrainViz
 from metrics_eval import MetricsEval
 
 class TrainModel:
-	"""Train Model Class, the initlization parameters are parsed from modelconfig_train.py file
+	"""Train Model Class, the initialization parameters are parsed from modelconfig_train.py file
 		
 		:param batch_size: mini batch size while training the model 
 		:type batch_size: int (required)
@@ -51,7 +51,7 @@ class TrainModel:
 		:param split_ratio: train and validation split for the model
 		:type assembly_system: float (required)
 
-		The class containes run_train_model method
+		The class contains run_train_model method
 	"""	
 	def __init__(self,batch_size,epochs,split_ratio):
 			self.batch_size=batch_size
@@ -60,12 +60,12 @@ class TrainModel:
 			
 
 	def run_train_model(self,model,X_in,Y_out,model_path,logs_path,plots_path,activate_tensorboard=0,run_id=0):
-		"""run_train_model function trains the model on the dataset and saves the trained model,logs and plots within the file structure, the function prints the training evaulation metrics
+		"""run_train_model function trains the model on the dataset and saves the trained model,logs and plots within the file structure, the function prints the training evaluation metrics
 			
 			:param model: 3D CNN model compiled within the Deep Learning Class, refer https://keras.io/models/model/ for more information 
 			:type model: keras.models (required)
 
-			:param X_in: Train dataset input (predictor variables), 3D Voxel representaion of the cloud of point and node deviation data obtained from the VRM software based on the sampling input
+			:param X_in: Train dataset input (predictor variables), 3D Voxel representation of the cloud of point and node deviation data obtained from the VRM software based on the sampling input
 			:type X_in: numpy.array [samples*voxel_dim*voxel_dim*voxel_dim*deviation_channels] (required)
 			
 			:param Y_out: Train dataset output (variables to predict), Process Parameters/KCCs obtained from sampling
@@ -80,7 +80,7 @@ class TrainModel:
 			:param plots_path: plots path where model training loss convergence plot is saved
 			:type plots_path: str (required)
 
-			:param activate_tensorboard: flag to indicate if tensorboard should be added in model callbacks for better vizvalization, 0 by default, set to 1 to activate tensorboard
+			:param activate_tensorboard: flag to indicate if tensorboard should be added in model callbacks for better visualization, 0 by default, set to 1 to activate tensorboard
 			:type activate_tensorboard: int
 
 			:param run_id: Run id index used in data study to conduct multiple training runs with different dataset sizes, defaults to 0
@@ -100,7 +100,7 @@ class TrainModel:
 		callbacks=[checkpointer]
 		
 		if(activate_tensorboard==1):
-			#Activating Tensorboard for Vizvalization
+			#Activating Tensorboard for Visualization
 			tensorboard = TensorBoard(log_dir=logs_path,histogram_freq=1, write_graph=True, write_images=True)
 			callbacks=[checkpointer,tensorboard]
 		
@@ -176,8 +176,8 @@ if __name__ == '__main__':
 	deployment_path=train_path+'/deploy'
 	pathlib.Path(deployment_path).mkdir(parents=True, exist_ok=True)
 
-	#Objects of Measurement System, Assembly System, Get Infrence Data
-	print('Intilizing the Assembly System and Measurement System....')
+	#Objects of Measurement System, Assembly System, Get Inference Data
+	print('Initializing the Assembly System and Measurement System....')
 	
 	measurement_system=HexagonWlsScanner(data_type,application,system_noise,part_type,data_format)
 	vrm_system=VRMSimulationModel(assembly_type,assembly_kccs,assembly_kpis,part_name,part_type,voxel_dim,voxel_channels,point_dim,aritifical_noise)
@@ -216,7 +216,7 @@ if __name__ == '__main__':
 	print("The Model Validation Metrics are ")
 	print(eval_metrics)
 
-	print('Training Completed Succssesfully')
+	print('Training Completed Successfully')
 
 
 

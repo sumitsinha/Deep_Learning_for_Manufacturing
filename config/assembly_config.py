@@ -3,13 +3,13 @@
         :param assembly_system['data_type']: The incoming data type from the assembly/VRM system, currently defaults to 3D point cloud data 
         :type assembly_system['data_type']: str (required)
 
-        :param assembly_system['application']: The application for which the libraray is being used, currently defaults to Inline Root Cause Analysis 
+        :param assembly_system['application']: The application for which the library is being used, currently defaults to In line Root Cause Analysis 
         :type assembly_system['application']: str (required)
 
-        :param assembly_system['part_type']: The typre pf the part within the assembly, used to create the file structure within trained_models and active_learning 
+        :param assembly_system['part_type']: The type of the part within the assembly, used to create the file structure within trained_models and active_learning 
         :type assembly_system['part_type']: str (required)
 
-        :param assembly_system['part_name']: Name of the part, to be exteded to a list when used for multi-stage systems
+        :param assembly_system['part_name']: Name of the part, to be extended to a list when used for multi-stage systems
         :type assembly_system['part_name']: str (required)
 
         :param assembly_system['data_format']: The data format currently defaults to complete, to be extended to partial data input refer: https://github.com/manojkumrb/spaceTimeV2 for more details 
@@ -21,10 +21,10 @@
         :param assembly_system['assembly_kccs']: The number of kccs in the assembly system used to determine the number of output neurons for the system
         :type assembly_system['assembly_kccs']: int (required)
 
-        :param assembly_system['assembly_kpis']: the number of asembly KPIs in the system (the first KPI is convergency flag to incidate if the VRM simulation has converged), minimum value should be 1
+        :param assembly_system['assembly_kpis']: the number of assembly KPIs in the system (the first KPI is convergence flag to indicate if the VRM simulation has converged), minimum value should be 1
         :type assembly_system['assembly_kpis']: int (required)
 
-        :param assembly_system['voxel_dim']: The dimension/resolution of the voxel required to initlize the input to the model currently defaults to 64
+        :param assembly_system['voxel_dim']: The dimension/resolution of the voxel required to initialize the input to the model currently defaults to 64
         :type assembly_system['voxel_dim']: int (required)
 
         :param assembly_system['point_dim']: The number of nodes in the input mesh of the assembly 
@@ -36,7 +36,7 @@
         :param assembly_system['aritifical_noise']: Noise parameter for the model, used to make model training more robust to actual system noise (usually same as system noise)
         :type assembly_system['aritifical_noise']: int (required)
 
-        :param assembly_system['noise_type']: The distribution of the noise , defaults to uniform random value between +- system noise, in case of gaussian it corresponds to the standard deviation (mean is zero)
+        :param assembly_system['noise_type']: The distribution of the noise , defaults to uniform random value between +- system noise, in case of Gaussian it corresponds to the standard deviation (mean is zero)
         :type assembly_system['noise_type']: float (required)
 
         :param assembly_system['mapping_index']: File name of the mapping index, after download is complete the file is saved with this name

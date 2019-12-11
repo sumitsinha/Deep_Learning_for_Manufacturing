@@ -1,4 +1,4 @@
-""" The model deploy file is used to leverage a trained model to perform infrence on unknown set of node deviations.
+""" The model deploy file is used to leverage a trained model to perform inference on unknown set of node deviations.
 """
 
 import os
@@ -22,6 +22,7 @@ from keras.models import load_model
 #Importing Config files
 import assembly_config as config
 import model_config as cftrain
+import measurement_config as mscofig
 
 #Importing required modules from the package
 from measurement_system import HexagonWlsScanner
@@ -65,7 +66,7 @@ class DeployModel:
 
 		"""		
 		result=inference_model.predict(inference_data)
-		description="The Process Parameters variations are inferred from the obtained meeasurement data and the trained CNN based model"
+		description="The Process Parameters variations are inferred from the obtained measurement data and the trained CNN based model"
 		print('The model estimates are: ')
 		if(print_result==1):
 			print(result)
@@ -120,24 +121,13 @@ if __name__ == '__main__':
 	dataset.append(get_data.data_import(file_names_z,data_folder))
 	point_index=get_data.load_mapping_index(mapping_index)
 
-	#Make an Object of the Measurment System Class
+	#Make an Object of the Measurement System Class
 	measurement_system=HexagonWlsScanner(data_type,application, system_noise,part_type,data_format)
 	#Make an Object of the Assembly System Class
 	assembly_system=PartType(assembly_type,assembly_kccs,assembly_kpis,part_name,part_type,voxel_dim,voxel_channels,point_dim)
 
-	#Infrence from Measurement Data
-
-	#measurement_file='MC1.txt'
-	#measurement_path=deploy_path+measurement_file
-	#Make an object of Get Data Class
-	#get_data=GetInferenceData();
-	#Call functions of the get Data Class
-	#measurement_data=get_data.load_measurement_file(measurement_path)
-	#voxel_point_index=get_data.load_mapping_index(voxel_path)
-	#y_dev_data_filtered=get_data.data_pre_processing(measurement_data,voxel_channels)
-	#voxel_dev_data=get_data.voxel_mapping(y_dev_data_filtered,voxel_point_index,point_dim,voxel_dim,voxel_channels)
 	
-	#Infrence from simulated data
+	#Inference from simulated data
 	inference_model=deploy_model.get_model(model_path)
 
 	kcc_dataset=get_data.data_import(kcc_files,kcc_folder)
@@ -154,3 +144,21 @@ if __name__ == '__main__':
 	
 	np.savetxt((deploy_path+"predicted.csv"), y_pred, delimiter=",")
 	print('Predicted Values saved to disk...')
+
+	#Inference from Measurement Data
+
+	#measurement_files=mscofig.ms_parameters['measurement_files']
+	
+	#Make an object of Get Data Class
+	#get_data=GetInferenceData();
+	
+	#Call functions of the get Data Class
+	#for measurement_file in measurement_files:	
+		#measurement_path=deploy_path+measurement_file
+		#measurement_data=get_data.load_measurement_file(measurement_path)
+		#voxel_point_index=get_data.load_mapping_index(voxel_path)
+		#y_dev_data_filtered=get_data.data_pre_processing(measurement_data,voxel_channels)
+		#input_conv_data=get_data.voxel_mapping(y_dev_data_filtered,voxel_point_index,point_dim,voxel_dim,voxel_channels)
+		#y_pred=deploy_model.model_inference(input_conv_data,inference_model);
+		#print('KCCs for: ',measurement_file)
+		#print(y_pred)

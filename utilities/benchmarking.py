@@ -1,3 +1,5 @@
+"""Benchmarking is used to test the 3D CNN model with standard machine learning models. The utility comes with existing models but the user can add, remove or tweak models based on his requirement. Refer scikit learn for more information about the models: https://scikit-learn.org/stable/supervised_learning.html#supervised-learning"""
+
 import os
 import sys
 import pathlib
@@ -16,6 +18,7 @@ import numpy as np
 import pandas as pd
 import xgboost as xgb
 from sklearn.multioutput import MultiOutputRegressor
+
 from sklearn.model_selection import train_test_split
 
 from sklearn.ensemble import RandomForestRegressor
@@ -36,8 +39,18 @@ from data_import import GetTrainData
 from metrics_eval import MetricsEval
 
 def benchmarking_models(max_models):
+	"""benchmarking_models returns a list of models and model names less that or equal to max_models
+		
+		:param max_models: maximum number of models
+		:type max_models: int (required)
 
-	#Add upto benchmark_max in 
+		:returns: bn_models: list of models used for benchmarking
+		:rtype: list
+
+		:returns: bn_models_name: list of model names used for benchmarking 
+		:rtype: list
+
+	"""
 	bn_models=[None]*max_models
 	bn_models_name=[None]*max_models
 
@@ -65,7 +78,31 @@ def benchmarking_models(max_models):
 	bn_models_name=[x for x in bn_models_name if x is not None]
 	return bn_models,bn_models_name
 
-def benchmarking_models_eval(bn_models,point_data,kcc_dataset,assembly_kccs,bm_path,test_size = 0.2):
+def benchmarking_models_eval(bn_models,point_data,kcc_dataset,assembly_kccs,bm_path,test_size):
+	"""benchmarking_models_evals trains each of the model based on the dataset and returns 
+		
+		:param bn_models: list of models to be benchmarked
+		:type bn_model: list (required)
+
+		:param point_data: input data consisting of node deviations
+		:type point_data: numpy.array (samples*nodes) (required)
+
+		:param kcc_dataset: output data consisting of process parameters/KCCs
+		:type kcc_dataset: numpy.array (samples*kccs) (required)
+
+		:param assembly_kccs: number of assembly KCCs
+		:type assembly_kccs: int (required)
+
+		:param bm_path: Benchmarking path to save benchmarking results
+		:type bm_path: str (required)
+
+		:param test_size: The test size split
+		:type assembly_kccs: float (required)
+
+		:returns: bn_metrics_eval: Benchmarking metrics 
+		:rtype: numpy.array [bn_models*kccs*metrics]
+
+	"""
 
 	X_train, X_test, y_train, y_test = train_test_split(point_data, kcc_dataset, test_size=test_size)
 	bnoutput_mae=np.zeros((len(bn_models),assembly_kccs))
@@ -121,7 +158,8 @@ if __name__ == '__main__':
 
 	max_models=cftrain.bm_params['max_models']
 	runs=cftrain.bm_params['runs']
-   
+	split_ratio=cftrain.bm_params['split_ratio']
+
 	print('Creating file Structure....')
 	
 	folder_name=part_type
@@ -131,7 +169,7 @@ if __name__ == '__main__':
 	bm_path=train_path+'/benchmarking'
 	pathlib.Path(bm_path).mkdir(parents=True, exist_ok=True)
 
-	print('Intilizing the Assembly System and Measurement System....')
+	print('Initializing the Assembly System and Measurement System....')
 	
 	measurement_system=HexagonWlsScanner(data_type,application,system_noise,part_type,data_format)
 	vrm_system=VRMSimulationModel(assembly_type,assembly_kccs,assembly_kpis,part_name,part_type,voxel_dim,voxel_channels,point_dim,aritifical_noise)
@@ -157,7 +195,7 @@ if __name__ == '__main__':
 	mr_bnoutput_r2=np.zeros((runs,len(bn_models),assembly_kccs))
 
 	for i in range(runs):
-		bneval_metrics=benchmarking_models_eval(bn_models,point_data,kcc_dataset,assembly_kccs,bm_path)
+		bneval_metrics=benchmarking_models_eval(bn_models,point_data,kcc_dataset,assembly_kccs,bm_path,split_ratio)
 		mr_bnoutput_mae[i,:,:]=bneval_metrics["Mean Absolute Error"]
 		mr_bnoutput_mse[i,:,:]=bneval_metrics["Mean Squared Error"]
 		mr_bnoutput_rmse[i,:,:]=bneval_metrics["Root Mean Squared Error"]

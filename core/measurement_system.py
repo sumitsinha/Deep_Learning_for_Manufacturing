@@ -1,13 +1,13 @@
-""" Contains core classes to initlize the measurment system class """
+""" Contains core classes to initialize the measurement system class """
 
 class MeasurementSystem:
 	
 	"""Measurement System Class
 
-		:param data_type: Type data obtained from the measurment system, Cloud-of-Point/Image/Point based
+		:param data_type: Type data obtained from the measurement system, Cloud-of-Point/Image/Point based
 		:type assembly_system: str (required)
 
-		:param application: Application of the measuremnt system, 
+		:param application: Application of the measurement system, 
 		:type application: str (required)
 
 		:param system_noise: Noise level of the measurement system
@@ -23,10 +23,10 @@ class HexagonWlsScanner(MeasurementSystem):
 	
 	"""Hexagon WLS System Class
 
-		:param data_type: Type data obtained from the measurment system, Cloud-of-Point/Image/Point based
+		:param data_type: Type data obtained from the measurement system, Cloud-of-Point/Image/Point based
 		:type assembly_system: str (required)
 
-		:param application: Application of the measuremnt system, 
+		:param application: Application of the measurement system, 
 		:type application: str (required)
 
 		:param system_noise: Noise level of the measurement system

@@ -1,7 +1,7 @@
-""" Containts classes and methods to create the input file structure and download the reuired data
+""" Contains classes and methods to create the input file structure and download the required data
 	The program parses from the download_config.py file
-	Currently leverages gdown library (https://pypi.org/project/gdown/) to download large files from google drive
-	Main Function parses from the download_config.py file and downloads the input, output and support files for the corresponding case study and then places them in a pre-specified file sturture to be used for model training, deployment and data study
+	Currently leverages gdown library (https://pypi.org/project/gdown/) to download large files from Google drive
+	Main Function parses from the download_config.py file and downloads the input, output and support files for the corresponding case study and then places them in a pre-specified file structure to be used for model training, deployment and data study
 """
 
 import os
@@ -31,7 +31,7 @@ class DataDownload:
 		:param base_url: consists of the base URL of the server file location
 		:type base_url: str (required)
 
-		:param download_type: Type of download, currently google drive is used host the datafiles
+		:param download_type: Type of download, currently Google drive is used host the data files
 		:type download_type: str (required)
 
 		:param download_flag: used to store the number of downloads done using one instance of the Data Download class, can be used to ensure Quality Checks on the downloaded data
@@ -44,7 +44,7 @@ class DataDownload:
 			self.download_flag=download_flag
 			
 	def google_drive_downloader(self,file_id,output):
-		"""google_drive_downloader combines object initilization with the file ID to download to the desired output file
+		"""google_drive_downloader combines object initialization with the file ID to download to the desired output file
 
 			:param file_id: Server file ID of the file to be downloaded
 			:type file_id: str (required)
@@ -55,12 +55,12 @@ class DataDownload:
 		print('Attempting download from ', self.download_type, ' for output: ',output)
 		url=self.base_url+file_id
 		gdown.download(url, output, quiet=False)
-		print('Download Comleted for: ',output)
+		print('Download Completed for: ',output)
 		self.download_flag=self.download_flag+1
 
 
 if __name__ == '__main__':
-	""" Main Function parses from the download_config.py file and downloads the input, output and support files for the corresponding case study and then places them in a pre-specified file sturture to be used for model training, deployment and data study"""
+	""" Main Function parses from the download_config.py file and downloads the input, output and support files for the corresponding case study and then places them in a pre-specified file structure to be used for model training, deployment and data study"""
 
 	print('Parsing from Assembly Config File....')
 

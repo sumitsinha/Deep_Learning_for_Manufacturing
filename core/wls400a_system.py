@@ -1,13 +1,13 @@
 import numpy as np
 import sys
 import pandas as pd
-""" Contains classes and methods to import reuired files to process measurement data """
+""" Contains classes and methods to import required files to process measurement data """
 
 class GetInferenceData():
 
-	"""Infrence Data Class
+	"""Inference Data Class
 
-		Import required files to deploy model on measurment systems
+		Import required files to deploy model on measurement systems
 		
 	"""
 

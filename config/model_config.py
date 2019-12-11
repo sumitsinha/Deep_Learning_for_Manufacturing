@@ -1,9 +1,98 @@
-#Model training config parameters
+"""The Model Configuration file contains configuration for training the model, conducting data study, KMC Generation, Benchmarking and Transfer Learning
+        
+        Model Training Parameters
+                
+        :param model_parameters['model_type']: The type of model to be used for training, currently defaults to 3D CNN  
+        :type model_parameters['model_type']: str (required)
+
+        :param model_parameters['output_type']: (regression, classification) The output type of the model used to initialize the output layer, currently defaults to regression  
+        :type model_parameters['output_type']: str (required)
+
+        :param model_parameters['batch_size']: The batch size while training, can be tuned based on the hardware specifications, currently defaults to 32  
+        :type model_parameters['batch_size']: int (required)
+
+        :param model_parameters['epocs']: The number of epocs the model is to be trained for, currently defaults to 150  
+        :type model_parameters['epocs']: int (required)
+
+        :param model_parameters['split_ratio']: Split Ratio for train and validation  
+        :type model_parameters['split_ratio']: float (required)
+
+        :param model_parameters['optimizer']: The optimizer to be used for model training, refer https://keras.io/optimizers/ for more information, currently defaults to adam  
+        :type model_parameters['optimizer']: keras.optimizer (required)
+
+        :param model_parameters['loss_func']: The loss function to be optimized while model training, refer https://keras.io/losses/ for more information, currently defaults to Mean Squared Error (MSE)
+        :type model_parameters['loss_func']: keras.losses (required)
+
+        :param model_parameters['regularizer_coeff']: The regularizing coefficient to be used for L2 norm regularization of the fully connected layer, refer https://keras.io/regularizers/ for more information currently defaults to 0.1 
+        :type model_parameters['regularizer_coeff']: float (required)
+
+        :param model_parameters['activate_tensorboard']: Tensorboard activation flag https://www.tensorflow.org/tensorboard, currently set to 0, changes to 1 for activating tensorbiard, Warning: There can be some compatibility issues with different Tensorflow and Cuda Toolkit Versions
+        :type model_parameters['loss_func']: int (required)
+
+        Data Study Parameters
+
+        :param data_study_params['batch_size']: The batch size while conducting data study, can be tuned based on the hardware specifications, currently defaults to 32  
+        :type data_study_params['batch_size']: int (required)
+
+        :param data_study_params['epocs']: The number of epocs the model is to be trained for, currently defaults to 50  
+        :type data_study_params['epocs']: int (required)
+
+        :param data_study_params['split_ratio']: Split Ratio for train and validation during data study
+        :type data_study_params['split_ratio']: float (required)
+
+        :param data_study_params['min_train_samples']: Minimum train Samples for data study, currently defaults to 100
+        :type data_study_params['min_train_samples']: int (required)
+
+        :param data_study_params['max_train_samples']: Maximum train samples for data study, dataset size is the maximum value
+        :type data_study_params['max_train_samples']: int (required)
+
+        :param data_study_params['train_increment']: Increment in the train size with each iteration, currently defaults to 100
+        :type data_study_params['train_increment']: int (required)
+        
+        Key Measurment Characteristics Generation Parameters
+
+        :param kmc_params['tree_based_model']: The model to be used while generating feature importance, refer: https://xgboost.readthedocs.io/en/latest/R-package/discoverYourData.html#measure-feature-importance for more details, currently defaults to xgb, random forests can also be used
+        :type kmc_params['tree_based_model']: str (required)
+        
+        :param kmc_params['tree_based_model']: The importance criteria to be used, currently defaults to gini index
+        :type kmc_params['tree_based_model']: str (required)
+
+        :param kmc_params['split_ratio']: Split Ratio for train and validation during data study
+        :type kmc_params['split_ratio']: float (required)
+
+        :param kmc_params['save_model']: Flag to save the model, Currently defaults to 0, change to 1 if model needs to be saved
+        :type kmc_params['save_model']: int (required)
+
+        :param kmc_params['plot_kmc']: Flag to plot the KMC, Currently defaults to 1, change to 0 if no plotting is required
+        :type kmc_params['plot_kmc']: int (required)
+
+        Benchmarking Parameters
+
+        :param bm_params['max_models']: The maximum number of models to be used for benchmarking, currently defaults to 10
+        :type bm_params['max_models']: int (required)
+
+        :param bm_params['runs']: Number of benchmarking runs to be conducted
+        :type bm_params['runs']: int (required)
+
+        Transfer Learning Parameters
+
+        :param transfer_learning['tl_type']: The type of transfer learning to be used (full_fine_tune, feature_extractor, partial_tuning), currently defaults to full_fine_tune
+        :type transfer_learning['tl_type']: str (required)
+
+        :param transfer_learning['tl_base']: The type of base model (3D CNN Architecture) to be used (pointdevnet, voxnet, 3d-UNet), currently defaults to PointdevNet
+        :type transfer_learning['tl_base']: str (required)
+
+        :param transfer_learning['tl_app']: The application of the transfer learning model (classification, regression), currently defaults to regression
+        :type transfer_learning['tl_app']: str (required)
+
+        
+"""
+
 
 model_parameters = {	
         'model_type':'3D Convolutional Neural Network',
         'output_type':'regression',
-        'batch_size': 10,
+        'batch_size': 32,
         'epocs': 20,
         'split_ratio': 0.3,
         'optimizer':'adam',
@@ -36,6 +125,6 @@ bm_params={
 
 transfer_learning={
         'tl_type':'full_fine_tune',
-        'tl_base':'unet_3d.h5',
+        'tl_base':'model_pointnet_64.h5',
         'tl_app':'regression' 
 }

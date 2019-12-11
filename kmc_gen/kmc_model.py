@@ -1,3 +1,6 @@
+""" Feature importance of ensemble models such as Gradient Boosted Trees or Random Forests is used in determining KMCs for each KCC
+"""
+
 import os
 import sys
 current_path=os.path.dirname(__file__)
@@ -34,7 +37,35 @@ from cop_viz import CopViz
 
 
 def kmc_model_build(tree_based_model,point_data,selected_kcc,kcc_name,split_ratio=0.2,save_model=0):
-	
+	"""kmc_model_build function inputs model_type and data to generate KMC for each KCC
+
+		:param tree_based_model: Type of model to be used for feature importance 
+		:type tree_based_model: str (required)
+
+		:param point_data: input data consisting of node deviations
+		:type point_data: numpy.array (samples*nodes) (required)
+
+		:param selected_kcc: output data consisting of selected process parameter/KCC
+		:type selected_kcc: numpy.array (samples*1) (required)
+
+		:param kcc_name: unique identifier for the KCC
+		:type kcc_name: str (required)
+
+		:param split_ratio: test data split
+		:type split_ratio: float
+
+		:param save_model: Save model flag, set to 1 to save model
+		:type save_model: int
+
+		:returns: filtered_nodeIDs_x, node ids for which x-deviation is significant given the kcc
+		:rtype: numpy.array [kmcs*1]
+
+		:returns: filtered_nodeIDs_y, node ids for which y-deviation is significant given the kcc
+		:rtype: numpy.array [kmcs*1]
+
+		:returns: filtered_nodeIDs_z, node ids for which z-deviation is significant given the kcc
+		:rtype: numpy.array [kmcs*1]
+	"""
 	train_X, test_X, train_y, test_y = train_test_split(point_data, selected_kcc, test_size = 0.2)
 	train=train_X
 	target=train_y
@@ -127,7 +158,7 @@ if __name__ == '__main__':
 	kmc_plot_path=kmc_path+'/plots'
 	pathlib.Path(kmc_plot_path).mkdir(parents=True, exist_ok=True)
 
-	print('Intilizing the Assembly System and Measurement System....')
+	print('Initializing the Assembly System and Measurement System....')
 	
 	measurement_system=HexagonWlsScanner(data_type,application,system_noise,part_type,data_format)
 	vrm_system=VRMSimulationModel(assembly_type,assembly_kccs,assembly_kpis,part_name,part_type,voxel_dim,voxel_channels,point_dim,aritifical_noise)

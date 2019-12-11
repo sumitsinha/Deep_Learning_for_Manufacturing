@@ -1,4 +1,4 @@
-""" Containts core classes and methods for intilillzing the deep learning 3D CNN model with different variants of the loss function, inputs are provided from the modelconfig_train.py file"""
+""" Contains core classes and methods for initializing the deep learning 3D CNN model with different variants of the loss function, inputs are provided from the modelconfig_train.py file"""
 
 class DLModel:	
 	""" Deep Learning Model Class
@@ -15,7 +15,7 @@ class DLModel:
 		:param loss_function: The loss function to be optimized by training the model, refer: https://keras.io/losses/ for more information
 		:type loss_function: keras.losses (required)
 
-		:param regularizer_coeff: The L2 norm regularisation coefficient value used in the penultimate fully connected layer of the model, refer: https://keras.io/regularizers/ for more information
+		:param regularizer_coeff: The L2 norm regularization coefficient value used in the penultimate fully connected layer of the model, refer: https://keras.io/regularizers/ for more information
 		:type regularizer_coeff: float (required)
 
 		:param output_type: The output type of the model which can be regression or classification, this is used to define the output layer of the model, defaults to regression (classification: softmax, regression: linear)
@@ -31,12 +31,12 @@ class DLModel:
 		self.output_type=output_type
 
 	def cnn_model_3d(self,voxel_dim,deviation_channels):
-		"""Build the 3D Model using the speficied loss function, the inputs are parsed from the assemblyconfig_<case_study_name>.py file
+		"""Build the 3D Model using the specified loss function, the inputs are parsed from the assemblyconfig_<case_study_name>.py file
 
-			:param voxel_dim: The voxel dimension of the input, reuired to build input to the 3D CNN model
+			:param voxel_dim: The voxel dimension of the input, required to build input to the 3D CNN model
 			:type voxel_dim: int (required)
 
-			:param voxel_channels: The number of voxel channels in the input structure, reuired to build input to the 3D CNN model
+			:param voxel_channels: The number of voxel channels in the input structure, required to build input to the 3D CNN model
 			:type voxel_channels: int (required)
 		"""
 		from keras.layers import Conv3D, MaxPool3D, Flatten, Dense, Dropout
@@ -60,16 +60,16 @@ class DLModel:
 		model.add(Dense(self.output_dimension, activation=final_layer_avt))
 		model.compile(loss=self.loss_function, optimizer=self.optimizer, metrics=['mae'])
 
-		print("3D CNN model succssesfully compiled")
+		print("3D CNN model successfully compiled")
 		return model
 
 	def cnn_model_3d_tl(self,voxel_dim,deviation_channels):
 		"""Build the 3D Model with GlobalMAxPooling3D instead of flatten, this enables input for different voxel dimensions, to be used when the model needs to be leveraged for transfer learning with different size input
 
-			:param voxel_dim: The voxel dimension of the input, reuired to build input to the 3D CNN model
+			:param voxel_dim: The voxel dimension of the input, required to build input to the 3D CNN model
 			:type voxel_dim: int (required)
 
-			:param voxel_channels: The number of voxel channels in the input structure, reuired to build input to the 3D CNN model
+			:param voxel_channels: The number of voxel channels in the input structure, required to build input to the 3D CNN model
 			:type voxel_channels: int (required)
 		"""
 		from keras.layers import Conv3D, MaxPool3D, Flatten, Dense, Dropout, Input
@@ -93,10 +93,10 @@ class DLModel:
 	def cnn_model_3d_aleatoric(self,voxel_dim,deviation_channels):
 		"""Build the 3D Model with a heteroeskedastic aleatoric loss, this enables different standard deviation of each predicted value, to be used when the expected sensor noise is heteroskedastic
 
-			:param voxel_dim: The voxel dimension of the input, reuired to build input to the 3D CNN model
+			:param voxel_dim: The voxel dimension of the input, required to build input to the 3D CNN model
 			:type voxel_dim: int (required)
 
-			:param voxel_channels: The number of voxel channels in the input structure, reuired to build input to the 3D CNN model
+			:param voxel_channels: The number of voxel channels in the input structure, required to build input to the 3D CNN model
 			:type voxel_channels: int (required)
 		"""
 		if(self.model_type=="regression"):
@@ -125,19 +125,19 @@ class DLModel:
 		model.add(Dense(self.output_dimension, activation=final_layer_avt))
 		model.compile(loss=myloss, optimizer='adam', metrics=['mae'])
 
-		print("3D CNN model Aleatoric succssesfully compiled")
+		print("3D CNN model Aleatoric successfully compiled")
 		return model
 
 	def cnn_model_3d_mdn(self,voxel_dim,deviation_channels,num_of_mixtures=5):
-		"""Build the 3D Model with a Mixture Density Network output the gives paramaters of a Gaussian Mixture Model as output, to be used if the system is expected to be collinear (Multi-Stage Assembly Systems) i.e. a single input can have multiple outputs
+		"""Build the 3D Model with a Mixture Density Network output the gives parameters of a Gaussian Mixture Model as output, to be used if the system is expected to be collinear (Multi-Stage Assembly Systems) i.e. a single input can have multiple outputs
 			Functions for predicting and sampling from a MDN.py need to used when deploying a MDN based model
 			refer https://publications.aston.ac.uk/id/eprint/373/1/NCRG_94_004.pdf for more details on the working of a MDN model
-			refer https://arxiv.org/pdf/1709.02249.pdf to understand how a MDN model can be leveraged to estimate the epistemic and aleatoric unceratninty present in manufacturing ssytems based on the data collected
+			refer https://arxiv.org/pdf/1709.02249.pdf to understand how a MDN model can be leveraged to estimate the epistemic and aleatoric unceratninty present in manufacturing sytems based on the data collected
 
 			:param voxel_dim: The voxel dimension of the input, reuired to build input to the 3D CNN model
 			:type voxel_dim: int (required)
 
-			:param voxel_channels: The number of voxel channels in the input structure, reuired to build input to the 3D CNN model
+			:param voxel_channels: The number of voxel channels in the input structure, required to build input to the 3D CNN model
 			:type voxel_channels: int (required)
 
 			:param number_of_mixtures: The number of mixtures in the Gaussian Mixture Model output, defaults to 5, can be increased if higher collinearity is expected
@@ -162,7 +162,7 @@ class DLModel:
 		model.add(mdn.MDN(self.output_dimension, num_of_mixtures))
 		model.compile(loss=mdn.get_mixture_loss_func(self.output_dimension,num_of_mixtures), optimizer='adam')
 
-		print("3D CNN Mixture Density Network model succssesfully compiled")
+		print("3D CNN Mixture Density Network model successfully compiled")
 		return model
 
 if (__name__=="__main__"):

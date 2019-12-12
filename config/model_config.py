@@ -76,7 +76,7 @@
 
         Transfer Learning Parameters
 
-        :param transfer_learning['tl_type']: The type of transfer learning to be used (full_fine_tune, feature_extractor, partial_tuning), currently defaults to full_fine_tune
+        :param transfer_learning['tl_type']: The type of transfer learning to be used (full_fine_tune,  variable_lr, feature_extractor,) currently defaults to full_fine_tune
         :type transfer_learning['tl_type']: str (required)
 
         :param transfer_learning['tl_base']: The type of base model (3D CNN Architecture) to be used (pointdevnet, voxnet, 3d-UNet), currently defaults to PointdevNet
@@ -124,7 +124,9 @@ bm_params={
 }
 
 transfer_learning={
-        'tl_type':'full_fine_tune',
+        'tl_type':'variable_lr', #Other options 'variable_lr', 'feature_extractor'
         'tl_base':'model_pointnet_64.h5',
-        'tl_app':'regression' 
+        'tl_app':'halo_deploy',
+        'conv_layer_m':0.5,
+        'dense_layer_m':1, 
 }

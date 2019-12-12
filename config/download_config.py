@@ -39,13 +39,13 @@
 
 download_params={
 	   'download_type':'google_drive',
-	   'base_url':'https://drive.google.com/uc?id',
+	   'base_url':'https://drive.google.com/uc?id=',
 	   'id_kcc_files':['1yjDnSjyjw6-RYcrb7xtpedwnvMzAOo9V'],
 	   'id_test_kcc_files':['1yjDnSjyjw6-RYcrb7xtpedwnvMzAOo9V'],
-	   'id_data_files_x':['nXi2N2cFpF_mXirqUrxzfBCWMy537h'],
+	   'id_data_files_x':['14NvGKB2eYLagkINPaMqio4ylxmK2qj4L'],
 	   'id_data_files_y':['1sUfusVW7119DgdlZylZH2jEyBXXtVVcs'],
 	   'id_data_files_z':['1MHhk9Xn7r7S0_PbA-QAKlEp5n0tFfKl_'],
-	   'id_test_data_files_x':['nXi2N2cFpF_mXirqUrxzfBCWMy537h'],
+	   'id_test_data_files_x':['1--nXi2N2cFpF_mXirqUrxzfBCWMy537h'],
 	   'id_test_data_files_y':['1sUfusVW7119DgdlZylZH2jEyBXXtVVcs'],
 	   'id_test_data_files_z':['1MHhk9Xn7r7S0_PbA-QAKlEp5n0tFfKl_'],
 	   'id_mapping_index':'1yELJOyzgDOsrP5pP6xAy-LifC7gd2aqb',

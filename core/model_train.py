@@ -38,6 +38,7 @@ from data_import import GetTrainData
 from core_model import DLModel
 from training_viz import TrainViz
 from metrics_eval import MetricsEval
+from keras_lr_multiplier import LRMultiplier
 
 class TrainModel:
 	"""Train Model Class, the initialization parameters are parsed from modelconfig_train.py file
@@ -59,7 +60,7 @@ class TrainModel:
 			self.split_ratio=split_ratio
 			
 
-	def run_train_model(self,model,X_in,Y_out,model_path,logs_path,plots_path,activate_tensorboard=0,run_id=0):
+	def run_train_model(self,model,X_in,Y_out,model_path,logs_path,plots_path,activate_tensorboard=0,run_id=0,tl_type='full_fine_tune'):
 		"""run_train_model function trains the model on the dataset and saves the trained model,logs and plots within the file structure, the function prints the training evaluation metrics
 			
 			:param model: 3D CNN model compiled within the Deep Learning Class, refer https://keras.io/models/model/ for more information 
@@ -110,7 +111,11 @@ class TrainModel:
 		trainviz=TrainViz()
 		trainviz.training_plot(history,plots_path,run_id)
 		
-		inference_model=load_model(model_file_path)
+		if(tl_type=='variable_lr'):
+			inference_model=load_model(model_file_path, custom_objects={'LRMultiplier': LRMultiplier})
+		else:
+			inference_model=load_model(model_file_path)
+			
 		y_pred=inference_model.predict(X_test)
 
 		metrics_eval=MetricsEval();
@@ -208,7 +213,7 @@ if __name__ == '__main__':
 	input_conv_data, kcc_subset_dump,kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,dataset,point_index,kcc_dataset)
 	
 	train_model=TrainModel(batch_size,epocs,split_ratio)
-	trained_model,eval_metrics,accuracy_metrics_df=train_model.run_train_model(model,input_conv_data,kcc_subset_dump,model_path,logs_path,plots_path,activate_tensorboard)
+	trained_model,eval_metrics,accuracy_metrics_df=train_model.run_train_model(model,input_conv_data,kcc_subset_dump,model_path,logs_path,plots_path,activate_tensorboard,tf_fl)
 	
 	accuracy_metrics_df.to_csv(logs_path+'/metrics_train.csv')
 

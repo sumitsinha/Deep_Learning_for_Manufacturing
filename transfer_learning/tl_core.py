@@ -22,6 +22,7 @@ import tensorflow as tf
 from keras import backend as K
 from keras.models import load_model
 from keras_contrib.layers.normalization.instancenormalization import InstanceNormalization
+from keras_lr_multiplier import LRMultiplier
 from keras.utils import plot_model
 K.clear_session()
 
@@ -82,16 +83,20 @@ class TransferLearning:
 		self.output_type=output_type
 	
 	def get_trained_model(self):
-		
+		"""Imports the pre-trained model based on the object initialization, currently supports Keras modelname.h5 format (refer https://keras.io/models/model/ for more information on keras model)
+
+			:returns: Pre-trained model with weights
+			:rtype: keras.model
+		"""
 		def weighted_dice_coefficient(y_true, y_pred, axis=(-3, -2, -1), smooth=0.00001):
 		 
-		    return K.mean(2. * (K.sum(y_true * y_pred,
-		                              axis=axis) + smooth/2)/(K.sum(y_true,
-		                                                            axis=axis) + K.sum(y_pred,
-		                                                                               axis=axis) + smooth))
+			return K.mean(2. * (K.sum(y_true * y_pred,
+									  axis=axis) + smooth/2)/(K.sum(y_true,
+																	axis=axis) + K.sum(y_pred,
+																					   axis=axis) + smooth))
 
 		def weighted_dice_coefficient_loss(y_true, y_pred):
-		    return -weighted_dice_coefficient(y_true, y_pred)
+			return -weighted_dice_coefficient(y_true, y_pred)
 
 		model_path='../pre_trained_models/'+self.tl_base
 		
@@ -103,7 +108,11 @@ class TransferLearning:
 		return base_model
 
 	def build_transfer_model(self,model):
-		
+		"""The build_transfer_function takes the pre-trained model removes the final layer and adds another layer based on the new case study parameters, which is trained on a small dataset obtained from the new case study
+
+			:returns: Updated model with new final layer
+			:rtype: keras.model
+		"""
 		from keras.layers import Conv3D, MaxPool3D, Flatten, Dense, Dropout
 		from keras.models import Model
 		
@@ -123,13 +132,40 @@ class TransferLearning:
 		
 		return transfer_model
 		
-	def set_train_params(self,model):
-		
+	def set_fixed_train_params(self,model):
+		"""The set_train_params function is used to freeze the weights of the convolution layer if the initial part of the network is to be used only as a feature extractor
+
+			:returns: Updated model with non trainable convolution layers
+			:rtype: keras.model
+		"""
 		for layer in model.layers:
 			if('conv'in layer.name):	
 				layer.trainable = False
 
 		model.compile(loss=self.loss_function, optimizer=self.optimizer, metrics=['mae'])
+
+		return model
+
+	def set_variable_learning_rates(self,model,conv_layer_m,dense_layer_m):
+		
+		lr_dict={}
+
+		for layer in model.layers:
+			if('conv'in layer.name):	
+				lr_dict.update({layer.name : conv_layer_m})
+			if('dense' in layer.name):
+				lr_dict.update({layer.name : dense_layer_m})
+
+		key='conv3d_1_input'
+		
+		if key in lr_dict:
+			del lr_dict[key]
+
+		#print(lr_dict)
+
+		variable_optimizer=LRMultiplier(self.optimizer,lr_dict)
+
+		model.compile(loss=self.loss_function, optimizer=variable_optimizer, metrics=['mae'])
 		return model
 
 
@@ -179,7 +215,9 @@ if __name__ == '__main__':
 	tl_type=cftrain.transfer_learning['tl_type']
 	tl_base=cftrain.transfer_learning['tl_base']
 	tl_app=cftrain.transfer_learning['tl_app']
-	
+	conv_layer_m=cftrain.transfer_learning['conv_layer_m']
+	dense_layer_m=cftrain.transfer_learning['dense_layer_m']
+
 	print('Creating file Structure....')
 	
 	folder_name=part_type
@@ -199,7 +237,7 @@ if __name__ == '__main__':
 	pathlib.Path(plots_path).mkdir(parents=True, exist_ok=True)
 
 	deployment_path=tl_path+'/deploy'
-	pathlib.Path(tl_app).mkdir(parents=True, exist_ok=True)
+	pathlib.Path(deployment_path).mkdir(parents=True, exist_ok=True)
 
 	#Objects of Measurement System, Assembly System, Get Inference Data
 	print('Initializing the Assembly System and Measurement System....')
@@ -234,12 +272,19 @@ if __name__ == '__main__':
 	#plot_model(base_model, to_file='model.png')
 
 	transfer_model=transfer_learning.build_transfer_model(base_model)
-	print(transfer_model.summary())
 
-	feature_transfer_model=transfer_learning.set_train_params(transfer_model)
+	if(tl_type=='full_fine_tune'):
+		model=transfer_model
+
+	if(tl_type=='variable_lr'):
+		model=transfer_learning.set_variable_learning_rates(transfer_model,conv_layer_m,dense_layer_m)
+
+	if(tl_type=='feature_extractor'):
+		model=transfer_learning.set_fixed_train_params(transfer_model)
+
 	
 	train_model=TrainModel(batch_size,epocs,split_ratio)
-	trained_model,eval_metrics,accuracy_metrics_df=train_model.run_train_model(feature_transfer_model,input_conv_data[:,:,:,:,1:2],kcc_subset_dump,model_path,logs_path,plots_path,activate_tensorboard)
+	trained_model,eval_metrics,accuracy_metrics_df=train_model.run_train_model(model,input_conv_data[:,:,:,:,1:2],kcc_subset_dump,model_path,logs_path,plots_path,activate_tensorboard,tl_type=tl_type)
 
 	accuracy_metrics_df.to_csv(logs_path+'/tl_metrics.csv')
 	print("Transfer Learning Based Model Training Complete..")

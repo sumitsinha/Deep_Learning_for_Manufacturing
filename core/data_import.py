@@ -1,10 +1,26 @@
+""" Contains classes and methods to process the VRM data and convert it to the format as required by the 3D CNN model"""
+
 import pandas as pd
 import numpy as np
 from tqdm import tqdm
 
 class GetTrainData():
-	
+	"""GetTrainData Class (No initialization parameter)
+
+	"""	
 	def data_import(self,file_names,data_folder):
+		"""data import used to import all files within the given folder and concatenate them into one dataframe
+
+			:param file_names: List of the input files
+			:type file_name: list (required)
+
+			:param data_folder: data folder name
+			:type data_folder: str (required)
+
+			:returns: dataframe of concatenated data from each file within the list
+			:rtype: pandas.dataframe [samples,point_dim]
+		"""
+
 		data_files=[]
 		for file in file_names:
 			file_path=data_folder+'/'+file
@@ -13,7 +29,14 @@ class GetTrainData():
 		return dataset
 
 	def load_mapping_index(self,index_file):
-		
+		"""load_mapping_index is used to import the mapping index 
+
+			:param index_file: index file name
+			:type index_file: str (required)
+
+			:returns: array of mapping index (i,j,k) for each node (x,y,z)
+			:rtype: numpy.array [point_dim*3]
+		"""
 		file_path='../resources/mapping_files/'+index_file
 		try:
 			voxel_point_index = np.load(file_path,allow_pickle=True)
@@ -24,7 +47,30 @@ class GetTrainData():
 		return voxel_point_index
 
 	def data_convert_voxel_mc(self,vrm_system,dataset,point_index,kcc_data):
-		
+		"""data converts the node deviations to voxelized output 
+
+			:param vrm_system: Object of the VRM System class
+			:type file_name: object(VRM_System class) (required)
+
+			:param dataset: list of concatenated dataset consisting of x,y,z deviations for each node
+			:type dataset: list (required)
+
+			:param point_index: mapping index
+			:type point_index: numpy.array [nodes*3] (required)
+
+			:param kcc_data: Process parameter data
+			:type kcc_data: numpy.array [samples*kcc_dim] (required)
+
+			:returns: input_conv_data, voxelized data for model input
+			:rtype: numpy.array [samples*voxel_dim*voxel_dim*voxel_dim*3]
+
+			:returns: kcc_data_dump, process/parameter data for model output
+			:rtype: numpy.array [samples*kcc_dim]
+
+			:returns: kpi_data_dump, KPI data (if any) for each sample, convergence flag (convergence of simulation model) is always the first KPI
+			:rtype: numpy.array [samples*kpi_dim]
+
+		"""
 		def get_dev_data(x1,x2,y1,y2,z1,z2):   
 			
 			if(abs(x1)>abs(x2)):

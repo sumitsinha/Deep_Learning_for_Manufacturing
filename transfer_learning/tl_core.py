@@ -110,6 +110,9 @@ class TransferLearning:
 	def build_transfer_model(self,model):
 		"""The build_transfer_function takes the pre-trained model removes the final layer and adds another layer based on the new case study parameters, which is trained on a small dataset obtained from the new case study
 
+			:param model: keras model with preset parameters
+			:type model: keras.model (required)
+
 			:returns: Updated model with new final layer
 			:rtype: keras.model
 		"""
@@ -133,7 +136,10 @@ class TransferLearning:
 		return transfer_model
 		
 	def set_fixed_train_params(self,model):
-		"""The set_train_params function is used to freeze the weights of the convolution layer if the initial part of the network is to be used only as a feature extractor
+		"""The set_fixed_params function is used to freeze the weights of the convolution layer, hence the initial part of the network is to be used only as a feature extractor
+
+			:param model: keras model with preset parameters
+			:type model: keras.model (required)
 
 			:returns: Updated model with non trainable convolution layers
 			:rtype: keras.model
@@ -147,7 +153,20 @@ class TransferLearning:
 		return model
 
 	def set_variable_learning_rates(self,model,conv_layer_m,dense_layer_m):
-		
+		"""The set_fixed_params function is used to freeze the weights of the convolution layer if the initial part of the network is to be used only as a feature extractor
+
+			:param model: keras model with preset parameters
+			:type model: keras.model (required)
+
+			:param conv_layer_m: Learning rate multiplier for convolution layer
+			:type conv_layer_m: float(required)
+
+			:param dense_layer_m: Learning rate multiplier for dense layer
+			:type dense_layer_m: float(required)
+
+			:returns: Updated model with variable learning rates
+			:rtype: keras.model
+		"""
 		lr_dict={}
 
 		for layer in model.layers:

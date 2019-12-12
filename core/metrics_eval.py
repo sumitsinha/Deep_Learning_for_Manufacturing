@@ -1,11 +1,33 @@
+""" Contains classes and methods to obtain various regression based metrics to evaluate"""
 from sklearn import metrics
 import numpy as np
 import pandas as pd
 import math
 
 class MetricsEval:
-	
+	"""MetricsEval Class
+
+		Evaluate metrics to evaluate model performance
+		
+	"""	
 	def metrics_eval_base(self,predicted_y, test_y,logs_path,run_id=0):
+		"""Get predicted and actual value for all KCCs and return regression metrics namely: Mean Absolute Error, Mean Squared Error, Root Mean Squared Error, R-Squared Value
+			
+			:param predicted_y: predicted values for the process parameters 
+			:type conn_str: numpy.array [test_samples*kccs] (required)
+
+			:param predicted_y: actual values for the process parameters 
+			:type conn_str: numpy.array [test_samples*kccs] (required)
+
+			:param logs_path: Logs path to save the evaluation metrics
+			:type logs_path: str (required)
+
+			:returns: dictionary of all metrics for each KCC
+			:rtype: dict
+
+			:returns: dataframe of all metrics for each KCC
+			:rtype: pandas.dataframe
+		"""
 
 		kcc_dim=test_y.shape[1]
 

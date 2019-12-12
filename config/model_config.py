@@ -76,7 +76,7 @@
 
         Transfer Learning Parameters
 
-        :param transfer_learning['tl_type']: The type of transfer learning to be used (full_fine_tune,  variable_lr, feature_extractor,) currently defaults to full_fine_tune
+        :param transfer_learning['tl_type']: The type of transfer learning to be used (full_fine_tune,  variable_lr, feature_extractor) currently defaults to full_fine_tune
         :type transfer_learning['tl_type']: str (required)
 
         :param transfer_learning['tl_base']: The type of base model (3D CNN Architecture) to be used (pointdevnet, voxnet, 3d-UNet), currently defaults to PointdevNet
@@ -84,6 +84,12 @@
 
         :param transfer_learning['tl_app']: The application of the transfer learning model (classification, regression), currently defaults to regression
         :type transfer_learning['tl_app']: str (required)
+
+        :param transfer_learning['conv_layer_m']: The learning rate multiplier for convolution layers (only needed when tl_type is variable_lr), defaults to 0.1 (10% of the network Learning Rate)
+        :type transfer_learning['conv_layer_m']: float (required)
+
+        :param transfer_learning['dense_layer_m']: The learning rate multiplier for dense layers (only needed when tl_type is variable_lr), defaults to 1 (100% of the network Learning Rate)
+        :type transfer_learning['dense_layer_m']: float (required)
 
         
 """
@@ -124,9 +130,9 @@ bm_params={
 }
 
 transfer_learning={
-        'tl_type':'variable_lr', #Other options 'variable_lr', 'feature_extractor'
+        'tl_type':'full_fine_tune', #options 'full_fine_tune', variable_lr', 'feature_extractor'
         'tl_base':'model_pointnet_64.h5',
         'tl_app':'halo_deploy',
-        'conv_layer_m':0.5,
+        'conv_layer_m':0.1,
         'dense_layer_m':1, 
 }

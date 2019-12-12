@@ -224,11 +224,11 @@ if __name__ == '__main__':
 	print("Average performance considering all KCCs...")
 
 	for i in range(len(bn_models_name)):
-		print(f'Name model: {bn_models_name[i]} ')
-		print(f'MAE: {avg_kcc_mrbn_mae[i]}, MAE Standard Deviation: {avg_std_kcc_mae[i]}')
-		print(f'MSE: {avg_kcc_mrbn_mse[i]}, MSE Standard Deviation: {avg_std_kcc_mse[i]}')
-		print(f'RMSE: {avg_kcc_mrbn_rmse[i]}, RMSE Standard Deviation: {avg_std_kcc_rmse[i]}')
-		print(f'R2: {avg_kcc_mrbn_r2[i]}, R2 Standard Deviation: {avg_std_kcc_r2[i]}')
+		print('Name model: ', bn_models_name[i])
+		print('MAE: ', avg_kcc_mrbn_mae[i], ' MAE Standard Deviation: ' , avg_std_kcc_mae[i])
+		print('MSE: ', avg_kcc_mrbn_mse[i], ' MSE Standard Deviation: ',avg_std_kcc_mse[i])
+		print('RMSE: ', avg_kcc_mrbn_rmse[i],' RMSE Standard Deviation: ', avg_std_kcc_rmse[i])
+		print('R2: ', avg_kcc_mrbn_r2[i], ' R2 Standard Deviation: ', avg_std_kcc_r2[i])
 
 
 

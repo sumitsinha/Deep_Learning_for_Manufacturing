@@ -20,6 +20,7 @@ Contents
    utilities
    transfer_learning
    active_learning
+   viz
    case_study_halo
    refrences
 

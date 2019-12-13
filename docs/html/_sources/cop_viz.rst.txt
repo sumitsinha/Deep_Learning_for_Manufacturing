@@ -1,0 +1,12 @@
+Point Cloud Visualization
+============================
+
+The module consists of classes and functions to plot cloud of point data, voxels and KMCs
+
+.. figure:: combined.png
+   :align:   center
+
+   *Fig 1: Cloud of Point with KMCs*
+
+.. automodule:: dlmfg.visualization.cop_viz
+ :members:

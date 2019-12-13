@@ -1,0 +1,10 @@
+Visualization
+============================
+
+The module consists of classes and functions to plot cloud of point based data and model training logs.
+
+.. toctree::
+   :maxdepth: 2
+
+   cop_viz
+   train_viz

@@ -1,16 +1,28 @@
+""" Contains classes and methods for visualizing the cloud of point data, the KMCs and the voxelized cloud of point data"""
+
 from matplotlib import pyplot
 from mpl_toolkits.mplot3d import Axes3D
 import plotly as py
 import plotly.graph_objs as go
 
 class CopViz:
+	"""Cop Visualization class methods and objects to visualize different forms of COP data  
 
+		:param nominal_cop: nominal_cop [nodes*3]
+		:type assembly_system: numpy.array (required)
+
+	"""
 	def __init__(self,nominal_cop):
 
 		self.nominal_cop=nominal_cop
 		
 	def plot_cop(self,plot_file_name):
-		
+		"""used to plot the COP data using plotly library
+
+			:param plot_file_name: filename with which the plot is saved 
+			:type assembly_system: str (required)
+
+		"""
 		nominal_cop=self.nominal_cop
 
 		trace1 = go.Scatter3d(
@@ -37,6 +49,21 @@ class CopViz:
 		py.offline.plot(fig, filename=plot_file_name)
 
 	def get_data_stacks(self,node_id_x,node_id_y,node_id_z):
+		"""used to obtain co-ordinates for selected node IDs for each axis
+
+			:param node_id_x: List of KMC node_ids considering x deviations 
+			:type node_id_x: list (required)
+
+			:param node_id_y: List of KMC node_ids considering y deviations 
+			:type node_id_y: list (required)
+			
+			:param node_id_z: List of KMC node_ids considering z deviations 
+			:type node_id_z: list (required)
+
+			:returns: list of KMCs for three axis
+			:rtype: list 
+
+		"""
 		
 		nominal_cop=self.nominal_cop
 		selected_nodes_x=(node_id_x['node_id']-1).tolist()
@@ -51,7 +78,15 @@ class CopViz:
 
 
 	def plot_multiple_stacks(self,stack,plot_path):
+		"""used to plot all the KMCs as overlay on cloud of point data
 
+			:param stack: List of list of KMCs for three axis
+			:type stack: list (required)
+
+			:param plot_path: plot path to save all the KMCs 
+			:type plot_path: str (required)
+
+		"""
 		nominal_cop=self.nominal_cop
 
 		trace1 = go.Scatter3d(
@@ -134,9 +169,21 @@ class CopViz:
 		fig = go.Figure(data=data, layout=layout)
 		py.offline.plot(fig, filename=plot_path)
 
-		def plot_voxelized_data(self,voxel_data,nominal_cop,cop_mapping,plot_file_name):
+		def plot_voxelized_data(self,voxel_data,cop_mapping,plot_file_name):
+			"""used to plot the voxelized cloud-of-point data
 
-			#Working with y_deviations
+				:param voxel_data: voxelized COP data 
+				:type voxel_data: numpy.array (required)
+				
+				:param cop_mapping: cop to voxel mapping file 
+				:type cop_mapping: numpy.array (required)
+				
+				:param plot_file_name: File name to save plot file 
+				:type cop_mapping: str (required)
+				
+
+			"""
+			nominal_cop=self.nominal_cop
 			voxel_dim=len(voxel_cop[:,:,:,1])
 			grip_len=np.count_nonzero(voxel_cop)
 			grid_cop=np.zeros((grid_len,3))

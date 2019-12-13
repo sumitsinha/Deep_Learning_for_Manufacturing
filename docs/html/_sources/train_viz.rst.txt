@@ -1,0 +1,7 @@
+Training Visualization
+============================
+
+The module consists of classes and functions to plot model training metrics. Additional tensorboard can be activated in model configuration for more detailed visualization
+
+.. automodule:: dlmfg.visualization.training_viz
+ :members:

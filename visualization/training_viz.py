@@ -1,11 +1,24 @@
-
-#tensorbaord is added as call back to model training
-#start tensorboard from terminal/cmd window using tensorboard --logdir ./logs
-
+"""
+Generate Plot for model loss while training
+tensorbaord is added as call back to model training
+start tensorboard from terminal/cmd window using tensorboard --logdir ./logs
+"""
 class TrainViz:
-
+	"""contains method to generate loss convergence plot
+	"""
 	def training_plot(self, history,plots_path,run_id=0):
+		"""plot and save the training loss
 
+			:param history:keras model training output dictionary
+			:type history: dict (required)
+
+			:param plots_path:plot path to save plot file
+			:type plots_path: dict (required)
+
+			:param run_id:Run identifier used in data study to id the training
+			:type file_name: int
+
+		"""
 		import matplotlib.pyplot as plt
 		
 		#summarize history for Mean Absolute Error

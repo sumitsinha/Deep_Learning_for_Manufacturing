@@ -1,0 +1,199 @@
+
+
+<!doctype html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>dlmfg.core.assembly_system &#8212; Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    <script type="text/javascript" src="../../../_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for dlmfg.core.assembly_system</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="sd">&quot;&quot;&quot; Contains core classes and methods for initializing a Assembly System, the inputs are provided in assemblyconfig file in utilities&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="AssemblySystem"><a class="viewcode-back" href="../../../assembly_system.html#dlmfg.core.assembly_system.AssemblySystem">[docs]</a><span class="k">class</span> <span class="nc">AssemblySystem</span><span class="p">:</span>
+	<span class="sd">&quot;&quot;&quot;Assembly System Class</span>
+
+<span class="sd">		:param assembly_type: Type of assembly Single-Station/Multi-Station</span>
+<span class="sd">		:type assembly_system: str (required)</span>
+
+<span class="sd">		:param assembly_kccs: Number of KCCs for the assembly</span>
+<span class="sd">		:type assembly_kccs: int (required)</span>
+
+<span class="sd">		:param assembly_kpis: Number of Kpis for the assembly</span>
+<span class="sd">		:type assembly_kpis: int (required) </span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">assembly_type</span><span class="p">,</span><span class="n">assembly_kccs</span><span class="p">,</span><span class="n">assembly_kpis</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">assembly_type</span><span class="o">=</span><span class="n">assembly_type</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">assembly_kccs</span><span class="o">=</span><span class="n">assembly_kccs</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">assembly_kpis</span><span class="o">=</span><span class="n">assembly_kpis</span></div>
+
+<div class="viewcode-block" id="PartType"><a class="viewcode-back" href="../../../assembly_system.html#dlmfg.core.assembly_system.PartType">[docs]</a><span class="k">class</span> <span class="nc">PartType</span><span class="p">(</span><span class="n">AssemblySystem</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Part System Class, inherits the Assembly System Class, additional parameters for this class include</span>
+<span class="sd">		</span>
+<span class="sd">		:param voxel_dim: Dimension of the voxel</span>
+<span class="sd">		:type assembly_system: int (required)</span>
+
+<span class="sd">		:param voxel_dim: Dimension of the voxel Channel, single channel output - 1 or multi channel - 2,3 (use 1 for deviations in one direction, 2 or 3 if data for multiple deviation directions are present)</span>
+<span class="sd">		:type assembly_system: int (required)</span>
+
+<span class="sd">		:param voxel_dim: Dimension of the voxel</span>
+<span class="sd">		:type assembly_system: int (required)</span>
+
+<span class="sd">		The class contains two functions -  get_nominal_cop and get_nominal_cop_database</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">assembly_type</span><span class="p">,</span><span class="n">assembly_kccs</span><span class="p">,</span><span class="n">assembly_kpis</span><span class="p">,</span><span class="n">part_name</span><span class="p">,</span><span class="n">part_type</span><span class="p">,</span><span class="n">voxel_dim</span><span class="p">,</span><span class="n">voxel_channels</span><span class="p">,</span><span class="n">point_dim</span><span class="p">):</span>
+		<span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">assembly_type</span><span class="p">,</span><span class="n">assembly_kccs</span><span class="p">,</span><span class="n">assembly_kpis</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">part_name</span><span class="o">=</span><span class="n">part_name</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">part_type</span><span class="o">=</span><span class="n">part_type</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">voxel_dim</span><span class="o">=</span><span class="n">voxel_dim</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">voxel_channels</span><span class="o">=</span><span class="n">voxel_channels</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">point_dim</span><span class="o">=</span><span class="n">point_dim</span>
+		
+
+<div class="viewcode-block" id="PartType.get_nominal_cop"><a class="viewcode-back" href="../../../assembly_system.html#dlmfg.core.assembly_system.PartType.get_nominal_cop">[docs]</a>	<span class="k">def</span> <span class="nf">get_nominal_cop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">file_name</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Import nominal cloud-of-point of the assembly from a text/csv file</span>
+
+<span class="sd">			:param file_name: Name of the input file</span>
+<span class="sd">			:type file_name: str (required)</span>
+
+<span class="sd">			:returns: numpy array of nominal COP</span>
+<span class="sd">			:rtype: numpy.array [point_dim,3]</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">df</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+		<span class="n">nominal_cop</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">values</span>
+		<span class="k">return</span> <span class="n">nominal_cop</span></div>
+
+<div class="viewcode-block" id="PartType.get_nominal_cop_database"><a class="viewcode-back" href="../../../assembly_system.html#dlmfg.core.assembly_system.PartType.get_nominal_cop_database">[docs]</a>	<span class="k">def</span> <span class="nf">get_nominal_cop_database</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">conn_str</span><span class="p">,</span><span class="n">table_name</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Import nominal cloud-of-point of the assembly from a SQL database assumes the table only contains three columns of the nominal COPs in order of the Node IDs		</span>
+<span class="sd">			</span>
+<span class="sd">			:param conn_str: Connection String for Database</span>
+<span class="sd">			:type conn_str: str (required)</span>
+
+<span class="sd">			:param table_name: Name of table in the database</span>
+<span class="sd">			:type table_name: str (required)</span>
+
+<span class="sd">			:returns: numpy array of dim points * 3</span>
+<span class="sd">			:rtype: numpy.array [point_dim,3]</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">conn_str</span><span class="p">)</span>
+		<span class="n">squery</span> <span class="o">=</span><span class="s1">&#39;select * from &#39;</span><span class="o">+</span><span class="n">table_name</span>
+		<span class="n">df_nom</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="n">squery</span><span class="p">,</span><span class="n">con</span><span class="o">=</span><span class="n">engine</span><span class="p">)</span>
+		<span class="n">df_nom</span> <span class="o">=</span> <span class="n">df_nom</span><span class="o">.</span><span class="n">values</span>
+		<span class="k">return</span> <span class="n">df_nom</span></div></div>
+
+<div class="viewcode-block" id="VRMSimulationModel"><a class="viewcode-back" href="../../../assembly_system.html#dlmfg.core.assembly_system.VRMSimulationModel">[docs]</a><span class="k">class</span> <span class="nc">VRMSimulationModel</span><span class="p">(</span><span class="n">PartType</span><span class="p">):</span>
+	
+	<span class="sd">&quot;&quot;&quot;VRM Simulation Model class inherits the part type class, additional parameters of this class include</span>
+
+<span class="sd">		:param noise_level: The level of artificial noise to be added to simulated data, typically set to 0.1 mm from the measurement system class depending on the scanner</span>
+<span class="sd">		:type noise_level: float (required)</span>
+
+<span class="sd">		:param noise_type: The type of noise to be added, can be Gaussian or uniform , for Gaussian noise_level is set as standard deviation and mean as zero for uniform the min and max are set -noise_level and +noise_level respectively</span>
+<span class="sd">		:type noise_type: str (optional)</span>
+
+<span class="sd">		:param convergency_flag: Flag to denote if the simulation model had converged while simulating, is set to 1 by default</span>
+<span class="sd">		:type convergency_flag: int (optional)</span>
+
+<span class="sd">		The class contains one function kpi_calculator that needs to be defined by the user depending on the assembly output</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">assembly_type</span><span class="p">,</span><span class="n">assembly_kccs</span><span class="p">,</span><span class="n">assembly_kpis</span><span class="p">,</span><span class="n">part_name</span><span class="p">,</span><span class="n">part_type</span><span class="p">,</span><span class="n">voxel_dim</span><span class="p">,</span><span class="n">voxel_channels</span><span class="p">,</span><span class="n">point_dim</span><span class="p">,</span><span class="n">noise_level</span><span class="p">,</span><span class="n">noise_type</span><span class="o">=</span><span class="s1">&#39;uniform&#39;</span><span class="p">,</span><span class="n">convergency_flag</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+		<span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">assembly_type</span><span class="p">,</span><span class="n">assembly_kccs</span><span class="p">,</span><span class="n">assembly_kpis</span><span class="p">,</span><span class="n">part_name</span><span class="p">,</span><span class="n">part_type</span><span class="p">,</span><span class="n">voxel_dim</span><span class="p">,</span><span class="n">voxel_channels</span><span class="p">,</span><span class="n">point_dim</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">noise_level</span><span class="o">=</span><span class="n">noise_level</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">noise_type</span><span class="o">=</span><span class="n">noise_type</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">convergency_flag</span><span class="o">=</span><span class="n">convergency_flag</span>
+
+<div class="viewcode-block" id="VRMSimulationModel.kpi_calculator"><a class="viewcode-back" href="../../../assembly_system.html#dlmfg.core.assembly_system.VRMSimulationModel.kpi_calculator">[docs]</a>	<span class="k">def</span> <span class="nf">kpi_calculator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">cop_data</span><span class="p">,</span><span class="n">kpi_params</span><span class="o">=</span><span class="p">[]):</span>
+		<span class="sd">&quot;&quot;&quot; User defined function to calculate KPI from Cloud of Point Data [KPI]=f(Cop)</span>
+
+<span class="sd">			:param cop_data: CoP data for a given sample</span>
+<span class="sd">			:type cop_data: np_array [point_dim,3] (required)</span>
+
+<span class="sd">			:param kpi_params: Various parameters required to calculate the KPI, can be blank if no parameters are required to calculate KPI from CoP</span>
+<span class="sd">			:type kpi_params: list (optional)</span>
+
+<span class="sd">			:returns: list of multivariate KPIs for the given CoP</span>
+<span class="sd">			:rtype: list</span>
+
+<span class="sd">		&quot;&quot;&quot;</span>
+		
+		<span class="n">kpi</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">assembly_kpis</span>
+
+		<span class="c1">#define function here </span>
+		<span class="k">return</span> <span class="n">kpi</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Sumit Sinha.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.2.
+    </div>
+  </body>
+</html>

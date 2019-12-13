@@ -1,0 +1,192 @@
+
+
+<!doctype html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Data Processing (VRM) &#8212; Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Data Processing (Measurement System)" href="real_data_process.html" />
+    <link rel="prev" title="Data Files" href="data_files.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="real_data_process.html" title="Data Processing (Measurement System)"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="data_files.html" title="Data Files"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="data_description.html" accesskey="U">Data Description &amp; Processing</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="data_files.html"
+                        title="previous chapter">Data Files</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="real_data_process.html"
+                        title="next chapter">Data Processing (Measurement System)</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/sim_data_process.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="data-processing-vrm">
+<h1>Data Processing (VRM)<a class="headerlink" href="#data-processing-vrm" title="Permalink to this headline">¶</a></h1>
+<p>The data obtained from the multi-fidelity simulation software (VRM) consists of node deviations, these need to be processed and mapped to the corresponding voxel location as voxel features using the mapping index for the nominal cloud of point (comes with the downloaded files for the case study with 64*64*64 resolution, different resolution mapping index can be generated using the voxelization utility).</p>
+<span class="target" id="module-dlmfg.core.data_import"></span><p>Contains classes and methods to process the VRM data and convert it to the format as required by the 3D CNN model</p>
+<dl class="class">
+<dt id="dlmfg.core.data_import.GetTrainData">
+<em class="property">class </em><code class="sig-prename descclassname">dlmfg.core.data_import.</code><code class="sig-name descname">GetTrainData</code><a class="reference internal" href="_modules/dlmfg/core/data_import.html#GetTrainData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dlmfg.core.data_import.GetTrainData" title="Permalink to this definition">¶</a></dt>
+<dd><p>GetTrainData Class (No initialization parameter)</p>
+<dl class="method">
+<dt id="dlmfg.core.data_import.GetTrainData.data_convert_voxel_mc">
+<code class="sig-name descname">data_convert_voxel_mc</code><span class="sig-paren">(</span><em class="sig-param">vrm_system</em>, <em class="sig-param">dataset</em>, <em class="sig-param">point_index</em>, <em class="sig-param">kcc_data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dlmfg/core/data_import.html#GetTrainData.data_convert_voxel_mc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dlmfg.core.data_import.GetTrainData.data_convert_voxel_mc" title="Permalink to this definition">¶</a></dt>
+<dd><p>data converts the node deviations to voxelized output</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vrm_system</strong> – Object of the VRM System class</p></li>
+<li><p><strong>dataset</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em> (</em><em>required</em><em>)</em>) – list of concatenated dataset consisting of x,y,z deviations for each node</p></li>
+<li><p><strong>point_index</strong> (<em>numpy.array</em><em> [</em><em>nodes*3</em><em>] </em><em>(</em><em>required</em><em>)</em>) – mapping index</p></li>
+<li><p><strong>kcc_data</strong> (<em>numpy.array</em><em> [</em><em>samples*kcc_dim</em><em>] </em><em>(</em><em>required</em><em>)</em>) – Process parameter data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>input_conv_data, voxelized data for model input</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.array [samples*voxel_dim*voxel_dim*voxel_dim*3]</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>kcc_data_dump, process/parameter data for model output</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.array [samples*kcc_dim]</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>kpi_data_dump, KPI data (if any) for each sample, convergence flag (convergence of simulation model) is always the first KPI</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.array [samples*kpi_dim]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="dlmfg.core.data_import.GetTrainData.data_import">
+<code class="sig-name descname">data_import</code><span class="sig-paren">(</span><em class="sig-param">file_names</em>, <em class="sig-param">data_folder</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dlmfg/core/data_import.html#GetTrainData.data_import"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dlmfg.core.data_import.GetTrainData.data_import" title="Permalink to this definition">¶</a></dt>
+<dd><p>data import used to import all files within the given folder and concatenate them into one dataframe</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_names</strong> – List of the input files</p></li>
+<li><p><strong>data_folder</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – data folder name</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dataframe of concatenated data from each file within the list</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.dataframe [samples,point_dim]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="dlmfg.core.data_import.GetTrainData.load_mapping_index">
+<code class="sig-name descname">load_mapping_index</code><span class="sig-paren">(</span><em class="sig-param">index_file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dlmfg/core/data_import.html#GetTrainData.load_mapping_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dlmfg.core.data_import.GetTrainData.load_mapping_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>load_mapping_index is used to import the mapping index</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>index_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – index file name</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>array of mapping index (i,j,k) for each node (x,y,z)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.array [point_dim*3]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="real_data_process.html" title="Data Processing (Measurement System)"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="data_files.html" title="Data Files"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="data_description.html" >Data Description &amp; Processing</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Sumit Sinha.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.2.
+    </div>
+  </body>
+</html>

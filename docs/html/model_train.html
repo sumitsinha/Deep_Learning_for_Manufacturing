@@ -1,0 +1,151 @@
+
+
+<!doctype html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Model Training &#8212; Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Model Deployment" href="deploy_model.html" />
+    <link rel="prev" title="Data Download" href="download.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="deploy_model.html" title="Model Deployment"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="download.html" title="Data Download"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="installation.html" accesskey="U">Installation and Implementation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="download.html"
+                        title="previous chapter">Data Download</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="deploy_model.html"
+                        title="next chapter">Model Deployment</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/model_train.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-dlmfg.core.model_train">
+<span id="model-training"></span><h1>Model Training<a class="headerlink" href="#module-dlmfg.core.model_train" title="Permalink to this headline">¶</a></h1>
+<p>The model train file trains the model on the download dataset and other parameters specified in the assemblyconfig file
+The main function runs the training and populates the created file structure with the trained model, logs and plots</p>
+<dl class="class">
+<dt id="dlmfg.core.model_train.TrainModel">
+<em class="property">class </em><code class="sig-prename descclassname">dlmfg.core.model_train.</code><code class="sig-name descname">TrainModel</code><span class="sig-paren">(</span><em class="sig-param">batch_size</em>, <em class="sig-param">epochs</em>, <em class="sig-param">split_ratio</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dlmfg/core/model_train.html#TrainModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dlmfg.core.model_train.TrainModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Train Model Class, the initialization parameters are parsed from modelconfig_train.py file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – mini batch size while training the model</p></li>
+<li><p><strong>epochs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – no of epochs to conduct training</p></li>
+<li><p><strong>split_ratio</strong> – train and validation split for the model</p></li>
+</ul>
+</dd>
+</dl>
+<p>The class contains run_train_model method</p>
+<dl class="method">
+<dt id="dlmfg.core.model_train.TrainModel.run_train_model">
+<code class="sig-name descname">run_train_model</code><span class="sig-paren">(</span><em class="sig-param">model</em>, <em class="sig-param">X_in</em>, <em class="sig-param">Y_out</em>, <em class="sig-param">model_path</em>, <em class="sig-param">logs_path</em>, <em class="sig-param">plots_path</em>, <em class="sig-param">activate_tensorboard=0</em>, <em class="sig-param">run_id=0</em>, <em class="sig-param">tl_type='full_fine_tune'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dlmfg/core/model_train.html#TrainModel.run_train_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dlmfg.core.model_train.TrainModel.run_train_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>run_train_model function trains the model on the dataset and saves the trained model,logs and plots within the file structure, the function prints the training evaluation metrics</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>keras.models</em><em> (</em><em>required</em><em>)</em>) – 3D CNN model compiled within the Deep Learning Class, refer <a class="reference external" href="https://keras.io/models/model/">https://keras.io/models/model/</a> for more information</p></li>
+<li><p><strong>X_in</strong> (<em>numpy.array</em><em> [</em><em>samples*voxel_dim*voxel_dim*voxel_dim*deviation_channels</em><em>] </em><em>(</em><em>required</em><em>)</em>) – Train dataset input (predictor variables), 3D Voxel representation of the cloud of point and node deviation data obtained from the VRM software based on the sampling input</p></li>
+<li><p><strong>Y_out</strong> (<em>numpy.array</em><em> [</em><em>samples*assembly_kccs</em><em>] </em><em>(</em><em>required</em><em>)</em>) – Train dataset output (variables to predict), Process Parameters/KCCs obtained from sampling</p></li>
+<li><p><strong>model_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – model path at which the trained model is saved</p></li>
+<li><p><strong>logs_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – logs path where the training metrics file is saved</p></li>
+<li><p><strong>plots_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – plots path where model training loss convergence plot is saved</p></li>
+<li><p><strong>activate_tensorboard</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – flag to indicate if tensorboard should be added in model callbacks for better visualization, 0 by default, set to 1 to activate tensorboard</p></li>
+<li><p><strong>run_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – Run id index used in data study to conduct multiple training runs with different dataset sizes, defaults to 0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="deploy_model.html" title="Model Deployment"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="download.html" title="Data Download"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="installation.html" >Installation and Implementation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Sumit Sinha.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.2.
+    </div>
+  </body>
+</html>

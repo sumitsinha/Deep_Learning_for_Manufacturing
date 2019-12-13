@@ -1,0 +1,8 @@
+Data Processing (Measurement System)
+======================================
+
+The data obtained from the 3D scanner is processed for input to the trained model during deployment.
+
+
+.. automodule:: dlmfg.core.wls400a_system
+ :members:

@@ -1,0 +1,318 @@
+
+
+<!doctype html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>dlmfg.utilities.benchmarking &#8212; Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    <script type="text/javascript" src="../../../_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for dlmfg.utilities.benchmarking</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Benchmarking is used to test the 3D CNN model with standard machine learning models. The utility comes with existing models but the user can add, remove or tweak models based on his requirement. Refer scikit learn for more information about the models: https://scikit-learn.org/stable/supervised_learning.html#supervised-learning&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">pathlib</span>
+<span class="n">current_path</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
+<span class="n">parentdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">current_path</span><span class="p">)</span>
+
+<span class="c1">#Adding Path to various Modules</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;../core&quot;</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;../visualization&quot;</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;../utilities&quot;</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;../datasets&quot;</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;../trained_models&quot;</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;../config&quot;</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">xgboost</span> <span class="k">as</span> <span class="nn">xgb</span>
+<span class="kn">from</span> <span class="nn">sklearn.multioutput</span> <span class="kn">import</span> <span class="n">MultiOutputRegressor</span>
+
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+
+<span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">RandomForestRegressor</span>
+<span class="kn">from</span> <span class="nn">sklearn.svm</span> <span class="kn">import</span> <span class="n">SVR</span>
+<span class="kn">from</span> <span class="nn">sklearn.tree</span> <span class="kn">import</span> <span class="n">DecisionTreeRegressor</span>
+<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">Ridge</span>
+<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">Lasso</span>
+<span class="kn">from</span> <span class="nn">sklearn.neural_network</span> <span class="kn">import</span> <span class="n">MLPRegressor</span>
+
+<span class="c1">#Importing Config files</span>
+<span class="kn">import</span> <span class="nn">assembly_config</span> <span class="k">as</span> <span class="nn">config</span>
+<span class="kn">import</span> <span class="nn">model_config</span> <span class="k">as</span> <span class="nn">cftrain</span>
+
+<span class="c1">#Importing required modules from the package</span>
+<span class="kn">from</span> <span class="nn">measurement_system</span> <span class="kn">import</span> <span class="n">HexagonWlsScanner</span>
+<span class="kn">from</span> <span class="nn">assembly_system</span> <span class="kn">import</span> <span class="n">VRMSimulationModel</span>
+<span class="kn">from</span> <span class="nn">data_import</span> <span class="kn">import</span> <span class="n">GetTrainData</span>
+<span class="kn">from</span> <span class="nn">metrics_eval</span> <span class="kn">import</span> <span class="n">MetricsEval</span>
+
+<div class="viewcode-block" id="benchmarking_models"><a class="viewcode-back" href="../../../benchmarking.html#dlmfg.utilities.benchmarking.benchmarking_models">[docs]</a><span class="k">def</span> <span class="nf">benchmarking_models</span><span class="p">(</span><span class="n">max_models</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;benchmarking_models returns a list of models and model names less that or equal to max_models</span>
+<span class="sd">		</span>
+<span class="sd">		:param max_models: maximum number of models</span>
+<span class="sd">		:type max_models: int (required)</span>
+
+<span class="sd">		:returns: bn_models: list of models used for benchmarking</span>
+<span class="sd">		:rtype: list</span>
+
+<span class="sd">		:returns: bn_models_name: list of model names used for benchmarking </span>
+<span class="sd">		:rtype: list</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">bn_models</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">]</span><span class="o">*</span><span class="n">max_models</span>
+	<span class="n">bn_models_name</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">]</span><span class="o">*</span><span class="n">max_models</span>
+
+	<span class="n">bn_models</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="n">MultiOutputRegressor</span><span class="p">(</span><span class="n">estimator</span><span class="o">=</span><span class="n">xgb</span><span class="o">.</span><span class="n">XGBRegressor</span><span class="p">(</span><span class="n">colsample_bytree</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span><span class="n">gamma</span><span class="o">=</span><span class="mf">0.045</span><span class="p">,</span><span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.07</span><span class="p">,</span><span class="n">max_depth</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span><span class="n">min_child_weight</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span><span class="n">reg_alpha</span><span class="o">=</span><span class="mf">0.65</span><span class="p">,</span><span class="n">reg_lambda</span><span class="o">=</span><span class="mf">0.45</span><span class="p">,</span><span class="n">subsample</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span><span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span><span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+	<span class="n">bn_models_name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">bn_models</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">estimator</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span>
+	<span class="n">bn_models</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="n">MultiOutputRegressor</span><span class="p">(</span><span class="n">estimator</span><span class="o">=</span><span class="n">RandomForestRegressor</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span><span class="n">max_depth</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span><span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span><span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+	<span class="n">bn_models_name</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">bn_models</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">estimator</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span>
+	<span class="n">bn_models</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">=</span><span class="n">MultiOutputRegressor</span><span class="p">(</span><span class="n">estimator</span><span class="o">=</span><span class="n">SVR</span><span class="p">(</span><span class="n">kernel</span><span class="o">=</span><span class="s1">&#39;rbf&#39;</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=.</span><span class="mi">1</span><span class="p">))</span>
+	<span class="n">bn_models_name</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">bn_models</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">estimator</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span>
+	<span class="n">bn_models</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">=</span><span class="n">MLPRegressor</span><span class="p">(</span><span class="n">hidden_layer_sizes</span><span class="o">=</span><span class="p">(</span><span class="mi">512</span><span class="p">,</span><span class="mi">256</span><span class="p">,),</span>  <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">,</span> <span class="n">solver</span><span class="o">=</span><span class="s1">&#39;adam&#39;</span><span class="p">,</span>    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span><span class="n">batch_size</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span>
+			   <span class="n">learning_rate</span><span class="o">=</span><span class="s1">&#39;constant&#39;</span><span class="p">,</span> <span class="n">learning_rate_init</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">power_t</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+			   <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">warm_start</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">momentum</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
+			   <span class="n">nesterovs_momentum</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">early_stopping</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">validation_fraction</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">beta_1</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">beta_2</span><span class="o">=</span><span class="mf">0.999</span><span class="p">,</span>
+			   <span class="n">epsilon</span><span class="o">=</span><span class="mf">1e-08</span><span class="p">)</span>
+
+	<span class="n">bn_models_name</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">bn_models</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span><span class="o">.</span><span class="vm">__name__</span>
+	<span class="n">bn_models</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">=</span><span class="n">MultiOutputRegressor</span><span class="p">(</span><span class="n">estimator</span><span class="o">=</span><span class="n">DecisionTreeRegressor</span><span class="p">(</span><span class="n">max_depth</span><span class="o">=</span><span class="mi">10</span><span class="p">))</span>
+	<span class="n">bn_models_name</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">bn_models</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">estimator</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span>
+	<span class="n">bn_models</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">=</span><span class="n">MultiOutputRegressor</span><span class="p">(</span><span class="n">estimator</span><span class="o">=</span><span class="n">Ridge</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">))</span>
+	<span class="n">bn_models_name</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">bn_models</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">estimator</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span>
+	<span class="n">bn_models</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">=</span><span class="n">MultiOutputRegressor</span><span class="p">(</span><span class="n">estimator</span><span class="o">=</span><span class="n">Lasso</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">))</span>
+	<span class="n">bn_models_name</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">bn_models</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">.</span><span class="n">estimator</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span>
+
+	<span class="n">bn_models</span><span class="o">=</span><span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">bn_models</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
+	<span class="n">bn_models_name</span><span class="o">=</span><span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">bn_models_name</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
+	<span class="k">return</span> <span class="n">bn_models</span><span class="p">,</span><span class="n">bn_models_name</span></div>
+
+<div class="viewcode-block" id="benchmarking_models_eval"><a class="viewcode-back" href="../../../benchmarking.html#dlmfg.utilities.benchmarking.benchmarking_models_eval">[docs]</a><span class="k">def</span> <span class="nf">benchmarking_models_eval</span><span class="p">(</span><span class="n">bn_models</span><span class="p">,</span><span class="n">point_data</span><span class="p">,</span><span class="n">kcc_dataset</span><span class="p">,</span><span class="n">assembly_kccs</span><span class="p">,</span><span class="n">bm_path</span><span class="p">,</span><span class="n">test_size</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;benchmarking_models_evals trains each of the model based on the dataset and returns </span>
+<span class="sd">		</span>
+<span class="sd">		:param bn_models: list of models to be benchmarked</span>
+<span class="sd">		:type bn_model: list (required)</span>
+
+<span class="sd">		:param point_data: input data consisting of node deviations</span>
+<span class="sd">		:type point_data: numpy.array (samples*nodes) (required)</span>
+
+<span class="sd">		:param kcc_dataset: output data consisting of process parameters/KCCs</span>
+<span class="sd">		:type kcc_dataset: numpy.array (samples*kccs) (required)</span>
+
+<span class="sd">		:param assembly_kccs: number of assembly KCCs</span>
+<span class="sd">		:type assembly_kccs: int (required)</span>
+
+<span class="sd">		:param bm_path: Benchmarking path to save benchmarking results</span>
+<span class="sd">		:type bm_path: str (required)</span>
+
+<span class="sd">		:param test_size: The test size split</span>
+<span class="sd">		:type assembly_kccs: float (required)</span>
+
+<span class="sd">		:returns: bn_metrics_eval: Benchmarking metrics </span>
+<span class="sd">		:rtype: numpy.array [bn_models*kccs*metrics]</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">point_data</span><span class="p">,</span> <span class="n">kcc_dataset</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="n">test_size</span><span class="p">)</span>
+	<span class="n">bnoutput_mae</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">bn_models</span><span class="p">),</span><span class="n">assembly_kccs</span><span class="p">))</span>
+	<span class="n">bnoutput_mse</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">bn_models</span><span class="p">),</span><span class="n">assembly_kccs</span><span class="p">))</span>
+	<span class="n">bnoutput_rmse</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">bn_models</span><span class="p">),</span><span class="n">assembly_kccs</span><span class="p">))</span>
+	<span class="n">bnoutput_r2</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">bn_models</span><span class="p">),</span><span class="n">assembly_kccs</span><span class="p">))</span>
+
+	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">bn_models</span><span class="p">)):</span>
+		<span class="n">model</span><span class="o">=</span><span class="n">bn_models</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+		<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span><span class="n">y_train</span><span class="p">)</span>
+		<span class="n">y_pred</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+		<span class="n">eval_metrics</span><span class="p">,</span><span class="n">accuracy_metrics_df</span><span class="o">=</span><span class="n">metrics_eval</span><span class="o">.</span><span class="n">metrics_eval_base</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span><span class="n">y_test</span><span class="p">,</span><span class="n">bm_path</span><span class="p">)</span>
+		<span class="n">bnoutput_mae</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span><span class="o">=</span><span class="n">eval_metrics</span><span class="p">[</span><span class="s2">&quot;Mean Absolute Error&quot;</span><span class="p">]</span>
+		<span class="n">bnoutput_mse</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span><span class="o">=</span><span class="n">eval_metrics</span><span class="p">[</span><span class="s2">&quot;Mean Squared Error&quot;</span><span class="p">]</span>
+		<span class="n">bnoutput_rmse</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span><span class="o">=</span><span class="n">eval_metrics</span><span class="p">[</span><span class="s2">&quot;Root Mean Squared Error&quot;</span><span class="p">]</span>
+		<span class="n">bnoutput_r2</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span><span class="o">=</span><span class="n">eval_metrics</span><span class="p">[</span><span class="s2">&quot;R Squared&quot;</span><span class="p">]</span>
+
+	<span class="n">bneval_metrics</span><span class="o">=</span> <span class="p">{</span>
+			<span class="s2">&quot;Mean Absolute Error&quot;</span> <span class="p">:</span> <span class="n">bnoutput_mae</span><span class="p">,</span>
+			<span class="s2">&quot;Mean Squared Error&quot;</span> <span class="p">:</span> <span class="n">bnoutput_mse</span><span class="p">,</span>
+			<span class="s2">&quot;Root Mean Squared Error&quot;</span> <span class="p">:</span> <span class="n">bnoutput_rmse</span><span class="p">,</span>
+			<span class="s2">&quot;R Squared&quot;</span> <span class="p">:</span> <span class="n">bnoutput_r2</span>
+		<span class="p">}</span>
+	<span class="k">return</span> <span class="n">bneval_metrics</span></div>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Parsing from Assembly Config File....&#39;</span><span class="p">)</span>
+
+	<span class="n">data_type</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;data_type&#39;</span><span class="p">]</span>
+	<span class="n">application</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;application&#39;</span><span class="p">]</span>
+	<span class="n">part_type</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;part_type&#39;</span><span class="p">]</span>
+	<span class="n">part_name</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;part_name&#39;</span><span class="p">]</span>
+	<span class="n">data_format</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;data_format&#39;</span><span class="p">]</span>
+	<span class="n">assembly_type</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;assembly_type&#39;</span><span class="p">]</span>
+	<span class="n">assembly_kccs</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;assembly_kccs&#39;</span><span class="p">]</span>   
+	<span class="n">assembly_kpis</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;assembly_kpis&#39;</span><span class="p">]</span>
+	<span class="n">voxel_dim</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;voxel_dim&#39;</span><span class="p">]</span>
+	<span class="n">point_dim</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;point_dim&#39;</span><span class="p">]</span>
+	<span class="n">voxel_channels</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;voxel_channels&#39;</span><span class="p">]</span>
+	<span class="n">noise_type</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;noise_type&#39;</span><span class="p">]</span>
+	<span class="n">mapping_index</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;mapping_index&#39;</span><span class="p">]</span>
+	<span class="n">file_names_x</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;data_files_x&#39;</span><span class="p">]</span>
+	<span class="n">file_names_y</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;data_files_y&#39;</span><span class="p">]</span>
+	<span class="n">file_names_z</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;data_files_z&#39;</span><span class="p">]</span>
+	<span class="n">system_noise</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;system_noise&#39;</span><span class="p">]</span>
+	<span class="n">aritifical_noise</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;aritifical_noise&#39;</span><span class="p">]</span>
+	<span class="n">data_folder</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;data_folder&#39;</span><span class="p">]</span>
+	<span class="n">kcc_folder</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;kcc_folder&#39;</span><span class="p">]</span>
+	<span class="n">kcc_files</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;kcc_files&#39;</span><span class="p">]</span>
+
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Parsing from Training Config File&#39;</span><span class="p">)</span>
+
+	<span class="n">max_models</span><span class="o">=</span><span class="n">cftrain</span><span class="o">.</span><span class="n">bm_params</span><span class="p">[</span><span class="s1">&#39;max_models&#39;</span><span class="p">]</span>
+	<span class="n">runs</span><span class="o">=</span><span class="n">cftrain</span><span class="o">.</span><span class="n">bm_params</span><span class="p">[</span><span class="s1">&#39;runs&#39;</span><span class="p">]</span>
+	<span class="n">split_ratio</span><span class="o">=</span><span class="n">cftrain</span><span class="o">.</span><span class="n">bm_params</span><span class="p">[</span><span class="s1">&#39;split_ratio&#39;</span><span class="p">]</span>
+
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Creating file Structure....&#39;</span><span class="p">)</span>
+	
+	<span class="n">folder_name</span><span class="o">=</span><span class="n">part_type</span>
+	<span class="n">train_path</span><span class="o">=</span><span class="s1">&#39;../trained_models/&#39;</span><span class="o">+</span><span class="n">part_type</span>
+	<span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">train_path</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+	<span class="n">bm_path</span><span class="o">=</span><span class="n">train_path</span><span class="o">+</span><span class="s1">&#39;/benchmarking&#39;</span>
+	<span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">bm_path</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Initializing the Assembly System and Measurement System....&#39;</span><span class="p">)</span>
+	
+	<span class="n">measurement_system</span><span class="o">=</span><span class="n">HexagonWlsScanner</span><span class="p">(</span><span class="n">data_type</span><span class="p">,</span><span class="n">application</span><span class="p">,</span><span class="n">system_noise</span><span class="p">,</span><span class="n">part_type</span><span class="p">,</span><span class="n">data_format</span><span class="p">)</span>
+	<span class="n">vrm_system</span><span class="o">=</span><span class="n">VRMSimulationModel</span><span class="p">(</span><span class="n">assembly_type</span><span class="p">,</span><span class="n">assembly_kccs</span><span class="p">,</span><span class="n">assembly_kpis</span><span class="p">,</span><span class="n">part_name</span><span class="p">,</span><span class="n">part_type</span><span class="p">,</span><span class="n">voxel_dim</span><span class="p">,</span><span class="n">voxel_channels</span><span class="p">,</span><span class="n">point_dim</span><span class="p">,</span><span class="n">aritifical_noise</span><span class="p">)</span>
+	<span class="n">get_data</span><span class="o">=</span><span class="n">GetTrainData</span><span class="p">();</span>
+	<span class="n">metrics_eval</span><span class="o">=</span><span class="n">MetricsEval</span><span class="p">();</span>
+	
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Importing and preprocessing Cloud-of-Point Data&#39;</span><span class="p">)</span>
+	
+	<span class="n">dataset</span><span class="o">=</span><span class="p">[]</span>
+	<span class="n">dataset</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">get_data</span><span class="o">.</span><span class="n">data_import</span><span class="p">(</span><span class="n">file_names_x</span><span class="p">,</span><span class="n">data_folder</span><span class="p">))</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="n">point_dim</span><span class="p">])</span>
+	<span class="n">dataset</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">get_data</span><span class="o">.</span><span class="n">data_import</span><span class="p">(</span><span class="n">file_names_y</span><span class="p">,</span><span class="n">data_folder</span><span class="p">))</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="n">point_dim</span><span class="p">])</span>
+	<span class="n">dataset</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">get_data</span><span class="o">.</span><span class="n">data_import</span><span class="p">(</span><span class="n">file_names_z</span><span class="p">,</span><span class="n">data_folder</span><span class="p">))</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="n">point_dim</span><span class="p">])</span>
+	
+	<span class="n">kcc_dataset</span><span class="o">=</span><span class="n">get_data</span><span class="o">.</span><span class="n">data_import</span><span class="p">(</span><span class="n">kcc_files</span><span class="p">,</span><span class="n">kcc_folder</span><span class="p">)</span>
+	<span class="n">point_data</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">dataset</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">dataset</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Benchmarking for all Algorithims&#39;</span><span class="p">)</span>
+	<span class="n">bn_models</span><span class="p">,</span><span class="n">bn_models_name</span><span class="o">=</span><span class="n">benchmarking_models</span><span class="p">(</span><span class="n">max_models</span><span class="p">)</span>
+
+	<span class="n">mr_bnoutput_mae</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">runs</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">bn_models</span><span class="p">),</span><span class="n">assembly_kccs</span><span class="p">))</span>
+	<span class="n">mr_bnoutput_mse</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">runs</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">bn_models</span><span class="p">),</span><span class="n">assembly_kccs</span><span class="p">))</span>
+	<span class="n">mr_bnoutput_rmse</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">runs</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">bn_models</span><span class="p">),</span><span class="n">assembly_kccs</span><span class="p">))</span>
+	<span class="n">mr_bnoutput_r2</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">runs</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">bn_models</span><span class="p">),</span><span class="n">assembly_kccs</span><span class="p">))</span>
+
+	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">runs</span><span class="p">):</span>
+		<span class="n">bneval_metrics</span><span class="o">=</span><span class="n">benchmarking_models_eval</span><span class="p">(</span><span class="n">bn_models</span><span class="p">,</span><span class="n">point_data</span><span class="p">,</span><span class="n">kcc_dataset</span><span class="p">,</span><span class="n">assembly_kccs</span><span class="p">,</span><span class="n">bm_path</span><span class="p">,</span><span class="n">split_ratio</span><span class="p">)</span>
+		<span class="n">mr_bnoutput_mae</span><span class="p">[</span><span class="n">i</span><span class="p">,:,:]</span><span class="o">=</span><span class="n">bneval_metrics</span><span class="p">[</span><span class="s2">&quot;Mean Absolute Error&quot;</span><span class="p">]</span>
+		<span class="n">mr_bnoutput_mse</span><span class="p">[</span><span class="n">i</span><span class="p">,:,:]</span><span class="o">=</span><span class="n">bneval_metrics</span><span class="p">[</span><span class="s2">&quot;Mean Squared Error&quot;</span><span class="p">]</span>
+		<span class="n">mr_bnoutput_rmse</span><span class="p">[</span><span class="n">i</span><span class="p">,:,:]</span><span class="o">=</span><span class="n">bneval_metrics</span><span class="p">[</span><span class="s2">&quot;Root Mean Squared Error&quot;</span><span class="p">]</span>
+		<span class="n">mr_bnoutput_r2</span><span class="p">[</span><span class="n">i</span><span class="p">,:,:]</span><span class="o">=</span><span class="n">bneval_metrics</span><span class="p">[</span><span class="s2">&quot;R Squared&quot;</span><span class="p">]</span>
+		
+	<span class="n">avg_mrbn_mae</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">mr_bnoutput_mae</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+	<span class="n">avg_mrbn_mse</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">mr_bnoutput_mse</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+	<span class="n">avg_mrbn_rmse</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">mr_bnoutput_rmse</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+	<span class="n">avg_mrbn_r2</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">mr_bnoutput_r2</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+	<span class="n">std_mr_bn_mae</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">mr_bnoutput_mae</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+	<span class="n">std_mr_bn_mse</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">mr_bnoutput_mse</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+	<span class="n">std_mr_bn_rmse</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">mr_bnoutput_rmse</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+	<span class="n">std_mr_bn_r2</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">mr_bnoutput_r2</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+	<span class="n">avg_kcc_mrbn_mae</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">avg_mrbn_mae</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+	<span class="n">avg_kcc_mrbn_mse</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">avg_mrbn_mse</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+	<span class="n">avg_kcc_mrbn_rmse</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">avg_mrbn_rmse</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+	<span class="n">avg_kcc_mrbn_r2</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">avg_mrbn_r2</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+	<span class="n">avg_std_kcc_mae</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">std_mr_bn_mae</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+	<span class="n">avg_std_kcc_mse</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">std_mr_bn_mse</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+	<span class="n">avg_std_kcc_rmse</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">std_mr_bn_rmse</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+	<span class="n">avg_std_kcc_r2</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">std_mr_bn_r2</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Average performance considering all KCCs...&quot;</span><span class="p">)</span>
+
+	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">bn_models_name</span><span class="p">)):</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Name model: &#39;</span><span class="p">,</span> <span class="n">bn_models_name</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;MAE: &#39;</span><span class="p">,</span> <span class="n">avg_kcc_mrbn_mae</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="s1">&#39; MAE Standard Deviation: &#39;</span> <span class="p">,</span> <span class="n">avg_std_kcc_mae</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;MSE: &#39;</span><span class="p">,</span> <span class="n">avg_kcc_mrbn_mse</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="s1">&#39; MSE Standard Deviation: &#39;</span><span class="p">,</span><span class="n">avg_std_kcc_mse</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;RMSE: &#39;</span><span class="p">,</span> <span class="n">avg_kcc_mrbn_rmse</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="s1">&#39; RMSE Standard Deviation: &#39;</span><span class="p">,</span> <span class="n">avg_std_kcc_rmse</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;R2: &#39;</span><span class="p">,</span> <span class="n">avg_kcc_mrbn_r2</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="s1">&#39; R2 Standard Deviation: &#39;</span><span class="p">,</span> <span class="n">avg_std_kcc_r2</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Sumit Sinha.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.2.
+    </div>
+  </body>
+</html>

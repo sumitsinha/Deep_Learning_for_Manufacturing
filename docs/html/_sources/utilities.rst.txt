@@ -1,0 +1,12 @@
+Utilities
+===========================================================
+
+* The dlmfg library is integrated with additional utilities to aid implementation and further provide users with the capability to do ad-hoc work that aid model implementation and comparison across existing machine learning algorithms 
+
+.. toctree::
+   :maxdepth: 1
+
+   voxel_construction
+   mdn
+   benchmarking
+  

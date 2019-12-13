@@ -1,0 +1,224 @@
+
+
+<!doctype html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Transfer Learning &#8212; Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Active Learning/Adaptive Sampling" href="active_learning.html" />
+    <link rel="prev" title="Benchmarking" href="benchmarking.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="active_learning.html" title="Active Learning/Adaptive Sampling"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="benchmarking.html" title="Benchmarking"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="benchmarking.html"
+                        title="previous chapter">Benchmarking</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="active_learning.html"
+                        title="next chapter">Active Learning/Adaptive Sampling</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/transfer_learning.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="transfer-learning">
+<h1>Transfer Learning<a class="headerlink" href="#transfer-learning" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p>The <strong>Transfer Learning</strong> module is built considering the fact that across different case studies in manufacturing there will be similar deviation patterns that occur in each case study. Within sheet metal assembly systems clamp movement, repositioning errors, joining errors have a similar deviation signature that once learned can be leveraged across different case studies. Similar logic follows for other manufacturing applications such as stamping, machining, additive manufacturing etc. Initial tests done by us have given extremely promising results when transferring case studies between sheet metal manufacturing systems.</p></li>
+<li><p>Given the success of Transfer Learning in fields such as radiology, medical scan segmentation using state of the art architectures such as Mask R-CNN, the work inspires to do the same when it comes to 3D point cloud learning.</p></li>
+<li><p>The work aims to reproduce similar results on manufacturing 3D cloud-of-point using key 3D CNN architectures developed for Object detection and Medical segmentation by leveraging architectures such as Voxnet, 3D U-Net</p></li>
+<li><dl class="simple">
+<dt>Currently the dlmfg library is integrated with three transfer learning modes, which can be be specified in the model configuration file within the transfer learning dictionary:</dt><dd><ul>
+<li><p><strong>Full Fine Tune</strong> (full_fine_tune): Replaces the final layer with the required output of the target case study and then fine tunes all the weights (Convolution Layers, Dense Layers) the whole model on the new small dataset of the target case study</p></li>
+<li><p><strong>Variable Learning Rate</strong> (variable_lr): Replaces the final layer with the required output of the target case study and then fine tunes the convolution layer and dense layer at different learning rates. This is done using a Learning Rate Multiplier extension (Refer: <a class="reference external" href="https://pypi.org/project/keras-lr-multiplier/">https://pypi.org/project/keras-lr-multiplier/</a>) which integrated a learning rate multiplier for each layer in the network. Two additional parameters are given as input for this case (can be changed in the model configuration file), conv_layer_m: Convolution layer multiplier (default value: 0.1), which restricts the learning rate of convolution layers to 10% of the overall learning rate, dense_layer_m: Dense Layer Multiplier (default value:1), which trains the dense layers at the network learning rate</p></li>
+<li><p><strong>Feature Extractor</strong> (feature_extractor): Replaces the final layer with the required output of the target case study and then freezes the convolution layer to make them feature extractors</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<p>Refer the following for more details:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">A</span> <span class="n">survey</span> <span class="n">on</span> <span class="n">Deep</span> <span class="n">Learning</span> <span class="n">Advances</span> <span class="n">on</span> <span class="n">Different</span> <span class="mi">3</span><span class="n">D</span> <span class="n">Data</span> <span class="n">Representations</span> <span class="p">(</span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">arxiv</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">pdf</span><span class="o">/</span><span class="mf">1808.01462</span><span class="o">.</span><span class="n">pdf</span><span class="p">)</span>
+
+<span class="n">VoxNet</span><span class="p">:</span> <span class="n">A</span> <span class="mi">3</span><span class="n">D</span> <span class="n">Convolutional</span> <span class="n">Neural</span> <span class="n">Network</span> <span class="k">for</span> <span class="n">Real</span><span class="o">-</span><span class="n">Time</span> <span class="n">Object</span> <span class="n">Recognition</span> <span class="p">(</span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="o">.</span><span class="n">ri</span><span class="o">.</span><span class="n">cmu</span><span class="o">.</span><span class="n">edu</span><span class="o">/</span><span class="n">pub_files</span><span class="o">/</span><span class="mi">2015</span><span class="o">/</span><span class="mi">9</span><span class="o">/</span><span class="n">voxnet_maturana_scherer_iros15</span><span class="o">.</span><span class="n">pdf</span><span class="p">)</span>
+
+<span class="mi">3</span><span class="n">D</span> <span class="n">U</span><span class="o">-</span><span class="n">Net</span><span class="p">:</span> <span class="n">Learning</span> <span class="n">Dense</span> <span class="n">Volumetric</span> <span class="n">Segmentation</span> <span class="kn">from</span> <span class="nn">Sparse</span> <span class="n">Annotation</span> <span class="p">(</span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">arxiv</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="nb">abs</span><span class="o">/</span><span class="mf">1606.06650</span><span class="p">)</span>
+</pre></div>
+</div>
+<span class="target" id="module-dlmfg.transfer_learning.tl_core"></span><p>Contains core classes and methods for initializing a Transfer Learning Class and running transfer learning using a pre-trained model and a small training dataset, the inputs are provided in assemblyconfig file in utilities</p>
+<dl class="class">
+<dt id="dlmfg.transfer_learning.tl_core.TransferLearning">
+<em class="property">class </em><code class="sig-prename descclassname">dlmfg.transfer_learning.tl_core.</code><code class="sig-name descname">TransferLearning</code><span class="sig-paren">(</span><em class="sig-param">tl_type</em>, <em class="sig-param">tl_base</em>, <em class="sig-param">tl_app</em>, <em class="sig-param">model_type</em>, <em class="sig-param">output_dimension</em>, <em class="sig-param">optimizer</em>, <em class="sig-param">loss_function</em>, <em class="sig-param">regularizer_coeff</em>, <em class="sig-param">output_type</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dlmfg/transfer_learning/tl_core.html#TransferLearning"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dlmfg.transfer_learning.tl_core.TransferLearning" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transfer Learning Class</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tl_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – Type of transfer learning to be done, full fine-tune, partial fine-tune, feature extraction</p></li>
+<li><p><strong>tl_base</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – The base model to be used for model</p></li>
+<li><p><strong>tl_app</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – The application for transfer learning</p></li>
+<li><p><strong>model_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – The type of model, regression or classification</p></li>
+<li><p><strong>output_dimension</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – The number of KCCs for the case study to which the pre-trained model is to be transfered, to be used to reinitialize the last layer</p></li>
+<li><p><strong>optimizer</strong> (<em>keras.optimizer</em><em> (</em><em>required</em><em>)</em>) – The optimizer to be used for model training (<a class="reference external" href="https://keras.io/optimizers/">https://keras.io/optimizers/</a>)</p></li>
+<li><p><strong>loss_function</strong> (<em>keras.losses</em><em> (</em><em>required</em><em>)</em>) – The loss function to be used for model training (<a class="reference external" href="https://keras.io/losses/">https://keras.io/losses/</a>)</p></li>
+<li><p><strong>regularizer_coeff</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em> (</em><em>required</em><em>)</em>) – The regularization coefficient for L2 norm regularization of the fully connected layer (<a class="reference external" href="https://keras.io/regularizers/">https://keras.io/regularizers/</a>)</p></li>
+<li><p><strong>output_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – The type of model, regression or classification</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="method">
+<dt id="dlmfg.transfer_learning.tl_core.TransferLearning.build_transfer_model">
+<code class="sig-name descname">build_transfer_model</code><span class="sig-paren">(</span><em class="sig-param">model</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dlmfg/transfer_learning/tl_core.html#TransferLearning.build_transfer_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dlmfg.transfer_learning.tl_core.TransferLearning.build_transfer_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>The build_transfer_function takes the pre-trained model removes the final layer and adds another layer based on the new case study parameters, which is trained on a small dataset obtained from the new case study</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>model</strong> (<em>keras.model</em><em> (</em><em>required</em><em>)</em>) – keras model with preset parameters</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Updated model with new final layer</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>keras.model</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="dlmfg.transfer_learning.tl_core.TransferLearning.get_trained_model">
+<code class="sig-name descname">get_trained_model</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dlmfg/transfer_learning/tl_core.html#TransferLearning.get_trained_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dlmfg.transfer_learning.tl_core.TransferLearning.get_trained_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Imports the pre-trained model based on the object initialization, currently supports Keras modelname.h5 format (refer <a class="reference external" href="https://keras.io/models/model/">https://keras.io/models/model/</a> for more information on keras model)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Pre-trained model with weights</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>keras.model</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="dlmfg.transfer_learning.tl_core.TransferLearning.set_fixed_train_params">
+<code class="sig-name descname">set_fixed_train_params</code><span class="sig-paren">(</span><em class="sig-param">model</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dlmfg/transfer_learning/tl_core.html#TransferLearning.set_fixed_train_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dlmfg.transfer_learning.tl_core.TransferLearning.set_fixed_train_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>The set_fixed_params function is used to freeze the weights of the convolution layer, hence the initial part of the network is to be used only as a feature extractor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>model</strong> (<em>keras.model</em><em> (</em><em>required</em><em>)</em>) – keras model with preset parameters</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Updated model with non trainable convolution layers</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>keras.model</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="dlmfg.transfer_learning.tl_core.TransferLearning.set_variable_learning_rates">
+<code class="sig-name descname">set_variable_learning_rates</code><span class="sig-paren">(</span><em class="sig-param">model</em>, <em class="sig-param">conv_layer_m</em>, <em class="sig-param">dense_layer_m</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dlmfg/transfer_learning/tl_core.html#TransferLearning.set_variable_learning_rates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dlmfg.transfer_learning.tl_core.TransferLearning.set_variable_learning_rates" title="Permalink to this definition">¶</a></dt>
+<dd><p>The set_fixed_params function is used to freeze the weights of the convolution layer if the initial part of the network is to be used only as a feature extractor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>keras.model</em><em> (</em><em>required</em><em>)</em>) – keras model with preset parameters</p></li>
+<li><p><strong>conv_layer_m</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>(</em><em>required</em><em>)</em>) – Learning rate multiplier for convolution layer</p></li>
+<li><p><strong>dense_layer_m</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>(</em><em>required</em><em>)</em>) – Learning rate multiplier for dense layer</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Updated model with variable learning rates</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>keras.model</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="active_learning.html" title="Active Learning/Adaptive Sampling"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="benchmarking.html" title="Benchmarking"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Sumit Sinha.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.2.
+    </div>
+  </body>
+</html>

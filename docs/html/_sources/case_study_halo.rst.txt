@@ -1,0 +1,17 @@
+Case Study: Positioning and Clamping Variations for Halo
+===========================================================
+
+
+* Overview
+
+----------------
+
+.. figure:: halo.png
+   :align:   center
+
+   *Fig 2: Car Window Reinforcement (Halo)*
+
+
+* The details for the case study parameters, deviation patterns, results and implementation can be found in the document linked below
+
+:download:`Case Study: Positioning and Clamping Variations for Halo <case_study_halo.pdf>` 

@@ -1,0 +1,161 @@
+
+
+<!doctype html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Sampling Configuration &#8212; Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Data Description &amp; Processing" href="data_description.html" />
+    <link rel="prev" title="Process Parameter (KCC) Configuration" href="kcc_config.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="data_description.html" title="Data Description &amp; Processing"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="kcc_config.html" title="Process Parameter (KCC) Configuration"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="lib_config.html" accesskey="U">Library Configuration</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Sampling Configuration</a><ul>
+<li><a class="reference internal" href="#active-learning-adaptive-sampling-algorithm">Active Learning/Adaptive Sampling Algorithm</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="kcc_config.html"
+                        title="previous chapter">Process Parameter (KCC) Configuration</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="data_description.html"
+                        title="next chapter">Data Description &amp; Processing</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/sampling_config.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-dlmfg.config.sampling_config">
+<span id="sampling-configuration"></span><h1>Sampling Configuration<a class="headerlink" href="#module-dlmfg.config.sampling_config" title="Permalink to this headline">¶</a></h1>
+<p>The Sampling configuration file consists of the parameters which conducting adaptive sampling/active learning from the VRM system</p>
+<dl class="field-list simple">
+<dt class="field-odd">param sampling_config[‘sample_dim’]</dt>
+<dd class="field-odd"><p>Initial set (number) of KCC values to be generated to be sent to VRM for deviation pattern simulation</p>
+</dd>
+<dt class="field-even">type sampling_config[‘sample_dim’]</dt>
+<dd class="field-even"><p>int (required)</p>
+</dd>
+<dt class="field-odd">param sampling_config[‘adaptive_sample_dim’]</dt>
+<dd class="field-odd"><p>Consecutive adaptive set (number) of KCC values to be generated to be sent to VRM for deviation pattern simulation</p>
+</dd>
+<dt class="field-even">type sampling_config[‘adaptive_sample_dim’]</dt>
+<dd class="field-even"><p>int (required)</p>
+</dd>
+<dt class="field-odd">param sampling_config[‘adaptive_runs’]</dt>
+<dd class="field-odd"><p>Number of adaptive runs to conducted used as a terminating criteria for active learning</p>
+</dd>
+<dt class="field-even">type sampling_config[‘adaptive_runs’]</dt>
+<dd class="field-even"><p>int (required)</p>
+</dd>
+<dt class="field-odd">param sampling_config[‘sample_type’]</dt>
+<dd class="field-odd"><p>Initial sampling strategy uniform or LHS (Latin Hypercube Sampling), defaults to LHS</p>
+</dd>
+<dt class="field-even">type sampling_config[‘sample_type’]</dt>
+<dd class="field-even"><p>str (required)</p>
+</dd>
+<dt class="field-odd">param sampling_config[‘sample_type’]</dt>
+<dd class="field-odd"><p>The output filename of the generated samples to be used as input for the VRM software</p>
+</dd>
+<dt class="field-even">type sampling_config[‘sample_type’]</dt>
+<dd class="field-even"><p>str (required)</p>
+</dd>
+</dl>
+<div class="section" id="active-learning-adaptive-sampling-algorithm">
+<h2>Active Learning/Adaptive Sampling Algorithm<a class="headerlink" href="#active-learning-adaptive-sampling-algorithm" title="Permalink to this headline">¶</a></h2>
+<div class="figure align-center" id="id1">
+<img alt="_images/sampling.png" src="_images/sampling.png" />
+<p class="caption"><span class="caption-text"><em>Fig 4: Active learning strategy for faster training</em></span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="data_description.html" title="Data Description &amp; Processing"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="kcc_config.html" title="Process Parameter (KCC) Configuration"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="lib_config.html" >Library Configuration</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Sumit Sinha.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.2.
+    </div>
+  </body>
+</html>

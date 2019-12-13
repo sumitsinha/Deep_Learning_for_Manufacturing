@@ -1,0 +1,25 @@
+Research and References
+===========================================================
+
+3D Deep Learning on Manufacturing Point Cloud Data (PointdevNet)::
+
+	Sinha, S., Glorieux, E., Franciosa, P., & Ceglarek, D. (2019, June). 3D convolutional neural networks to estimate assembly process parameters using 3D point-clouds. In Multimodal Sensing: Technologies and Applications (Vol. 11059, p. 110590B). International Society for Optics and Photonics.
+
+Multi-fidelity CAE Simulation (VRM)::
+
+	Franciosa, P., Palit, A., Gerbino, S., & Ceglarek, D. (2019). A novel hybrid shell element formulation (QUAD+ and TRIA+): A benchmarking and comparative study. Finite Elements in Analysis and Design, 166, 103319.
+
+	Shahi, V. J., Masoumi, A., Franciosa, P., & Ceglarek, D. (2019). A quality-driven assembly sequence planning and line configuration selection for non-ideal compliant structures assemblies. The International Journal of Advanced Manufacturing Technology, 1-16.
+
+	Glorieux, E., Franciosa, P., & Ceglarek, D. (2019). Quality and productivity driven trajectory optimisation for robotic handling of compliant sheet metal parts in multi-press stamping lines. Robotics and Computer-Integrated Manufacturing, 56, 264-275.
+
+	Luo, C., Franciosa, P., Ceglarek, D., Ni, Z., & Jia, F. (2018). A Novel Geometric Tolerance Modeling Inspired by Parametric Space Envelope. IEEE Transactions on Automation Science and Engineering, 15(3), 1386-1398.
+
+	Franciosa, P., & Ceglarek, D. (2015). Hierarchical synthesis of multi-level design parameters in assembly system. CIRP Annals, 64(1), 149-152.
+
+	Franciosa, P., Gerbino, S., & Ceglarek, D. (2016). Fixture capability optimisation for early-stage design of assembly system with compliant parts using nested polynomial chaos expansion. Procedia CIRP, 41, 87-92.
+
+	Past Software Documentation:
+	https://www.researchgate.net/publication/312323684_Fixture_Analyser_Optimiser_-_Fundamentals
+	https://www.researchgate.net/publication/312323180_Fixture_Analyser_Optimiser_User_Guide
+	https://www.researchgate.net/publication/312323713_Fixture_Analyser_Optimiser_-_Supporting_Material

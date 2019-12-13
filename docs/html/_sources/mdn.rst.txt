@@ -1,0 +1,4 @@
+Mixture Density Network
+============================
+
+Refer https://github.com/cpmpercussion/keras-mdn-layer for more details

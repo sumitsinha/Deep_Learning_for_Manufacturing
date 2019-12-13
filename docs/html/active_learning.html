@@ -1,0 +1,188 @@
+
+
+<!doctype html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Active Learning/Adaptive Sampling &#8212; Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Case Study: Positioning and Clamping Variations for Halo" href="case_study_halo.html" />
+    <link rel="prev" title="Transfer Learning" href="transfer_learning.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="case_study_halo.html" title="Case Study: Positioning and Clamping Variations for Halo"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="transfer_learning.html" title="Transfer Learning"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="transfer_learning.html"
+                        title="previous chapter">Transfer Learning</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="case_study_halo.html"
+                        title="next chapter">Case Study: Positioning and Clamping Variations for Halo</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/active_learning.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="active-learning-adaptive-sampling">
+<h1>Active Learning/Adaptive Sampling<a class="headerlink" href="#active-learning-adaptive-sampling" title="Permalink to this headline">¶</a></h1>
+<p>The active learning/adaptive sampling is used to create a feedback loop between the deep learning model and VRM simulator. This enables faster training convergence as the model generates a set of process parameters based on the regions that have maximum uncertainty. This is done iteratively till the model performance on unseen data is above the set threshold. Given training sample generation from the multi-fidelity simulator is a time taking computation heavy process the active learning strategy has significant impact on reduction of computation resources and time. The aim of this is to have a continuous learning system that can adapt to dynamic changes within a system and learn continuously so that model performance does not diminish with time.</p>
+<div class="figure align-center" id="id1">
+<img alt="_images/sampling.png" src="_images/sampling.png" />
+<p class="caption"><span class="caption-text"><em>Fig 1: Active learning strategy for faster training</em></span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The active learning module is still under development currently only the initial sampling strategy functions are used to generate samples to given as input to the VRM</p>
+</div>
+<span class="target" id="module-dlmfg.active_learning.sampling_system"></span><dl class="class">
+<dt id="dlmfg.active_learning.sampling_system.adaptive_sampling">
+<em class="property">class </em><code class="sig-prename descclassname">dlmfg.active_learning.sampling_system.</code><code class="sig-name descname">adaptive_sampling</code><span class="sig-paren">(</span><em class="sig-param">sample_dim</em>, <em class="sig-param">sample_type</em>, <em class="sig-param">adaptive_samples_dim</em>, <em class="sig-param">adaptive_runs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dlmfg/active_learning/sampling_system.html#adaptive_sampling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dlmfg.active_learning.sampling_system.adaptive_sampling" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assembly System Class</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sample_dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – The number of initial samples to be generated</p></li>
+<li><p><strong>sample_type</strong> – Type of sampling to be used for generating initial samples</p></li>
+<li><p><strong>adaptive_sample_dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – The number of samples to be generated with each adaptive sample run</p></li>
+<li><p><strong>adaptive_runs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – The maximum number of adaptive runs to be conducted</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="method">
+<dt id="dlmfg.active_learning.sampling_system.adaptive_sampling.adpative_samples_gen">
+<code class="sig-name descname">adpative_samples_gen</code><span class="sig-paren">(</span><em class="sig-param">kcc_struct</em>, <em class="sig-param">run_id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dlmfg/active_learning/sampling_system.html#adaptive_sampling.adpative_samples_gen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dlmfg.active_learning.sampling_system.adaptive_sampling.adpative_samples_gen" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adaptive samples based on model uncertainty, currently this is Work in Progress</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dlmfg.active_learning.sampling_system.adaptive_sampling.inital_sampling_lhs">
+<code class="sig-name descname">inital_sampling_lhs</code><span class="sig-paren">(</span><em class="sig-param">kcc_struct</em>, <em class="sig-param">sample_dim</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dlmfg/active_learning/sampling_system.html#adaptive_sampling.inital_sampling_lhs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dlmfg.active_learning.sampling_system.adaptive_sampling.inital_sampling_lhs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates multi-variate LHS samples for each KCC and scales then based on the KCC maximum and minimum value</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>kcc_struct</strong> – list of dictionaries for each KCC from kcc_config file</p></li>
+<li><p><strong>sample_dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – The number of initial samples to be generated</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>numpy array of sampled KCCs</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.array [sample_dim*kcc_dim]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="dlmfg.active_learning.sampling_system.adaptive_sampling.inital_sampling_uniform_random">
+<code class="sig-name descname">inital_sampling_uniform_random</code><span class="sig-paren">(</span><em class="sig-param">kcc_struct</em>, <em class="sig-param">sample_dim</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dlmfg/active_learning/sampling_system.html#adaptive_sampling.inital_sampling_uniform_random"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dlmfg.active_learning.sampling_system.adaptive_sampling.inital_sampling_uniform_random" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates multi-variate uniform random samples for each KCC and scales then based on the KCC maximum and minimum value</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>kcc_struct</strong> – list of dictionaries for each KCC from kcc_config file</p></li>
+<li><p><strong>sample_dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – The number of initial samples to be generated</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>numpy array of sampled KCCs</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.array [sample_dim*kcc_dim]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="data">
+<dt id="dlmfg.active_learning.sampling_system.parentdir">
+<code class="sig-prename descclassname">dlmfg.active_learning.sampling_system.</code><code class="sig-name descname">parentdir</code><em class="property"> = 'C:\\Users\\sinha_s\\Desktop\\dlmfg_package\\dlmfg'</em><a class="headerlink" href="#dlmfg.active_learning.sampling_system.parentdir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Contains sampling classes and methods to enable active learning between VRM and 3D CNN model</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="case_study_halo.html" title="Case Study: Positioning and Clamping Variations for Halo"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="transfer_learning.html" title="Transfer Learning"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Sumit Sinha.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.2.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,5 @@
+Data and Convergence Study
+======================================
+
+.. automodule:: dlmfg.core.data_study
+ :members:

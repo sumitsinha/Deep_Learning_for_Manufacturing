@@ -1,0 +1,26 @@
+Transfer Learning
+============================
+
+* The **Transfer Learning** module is built considering the fact that across different case studies in manufacturing there will be similar deviation patterns that occur in each case study. Within sheet metal assembly systems clamp movement, repositioning errors, joining errors have a similar deviation signature that once learned can be leveraged across different case studies. Similar logic follows for other manufacturing applications such as stamping, machining, additive manufacturing etc. Initial tests done by us have given extremely promising results when transferring case studies between sheet metal manufacturing systems.
+
+* Given the success of Transfer Learning in fields such as radiology, medical scan segmentation using state of the art architectures such as Mask R-CNN, the work inspires to do the same when it comes to 3D point cloud learning.
+
+* The work aims to reproduce similar results on manufacturing 3D cloud-of-point using key 3D CNN architectures developed for Object detection and Medical segmentation by leveraging architectures such as Voxnet, 3D U-Net
+
+* Currently the dlmfg library is integrated with three transfer learning modes, which can be be specified in the model configuration file within the transfer learning dictionary:
+	- **Full Fine Tune** (full_fine_tune): Replaces the final layer with the required output of the target case study and then fine tunes all the weights (Convolution Layers, Dense Layers) the whole model on the new small dataset of the target case study
+	- **Variable Learning Rate** (variable_lr): Replaces the final layer with the required output of the target case study and then fine tunes the convolution layer and dense layer at different learning rates. This is done using a Learning Rate Multiplier extension (Refer: https://pypi.org/project/keras-lr-multiplier/) which integrated a learning rate multiplier for each layer in the network. Two additional parameters are given as input for this case (can be changed in the model configuration file), conv_layer_m: Convolution layer multiplier (default value: 0.1), which restricts the learning rate of convolution layers to 10% of the overall learning rate, dense_layer_m: Dense Layer Multiplier (default value:1), which trains the dense layers at the network learning rate
+	- **Feature Extractor** (feature_extractor): Replaces the final layer with the required output of the target case study and then freezes the convolution layer to make them feature extractors
+
+Refer the following for more details::
+
+	    A survey on Deep Learning Advances on Different 3D Data Representations (https://arxiv.org/pdf/1808.01462.pdf)
+
+	    VoxNet: A 3D Convolutional Neural Network for Real-Time Object Recognition (https://www.ri.cmu.edu/pub_files/2015/9/voxnet_maturana_scherer_iros15.pdf)
+
+	    3D U-Net: Learning Dense Volumetric Segmentation from Sparse Annotation (https://arxiv.org/abs/1606.06650)
+
+
+
+.. automodule:: dlmfg.transfer_learning.tl_core
+ :members:

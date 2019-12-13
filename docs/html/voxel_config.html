@@ -1,0 +1,129 @@
+
+
+<!doctype html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Voxel Configuration &#8212; Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Process Parameter (KCC) Configuration" href="kcc_config.html" />
+    <link rel="prev" title="Model Configuration" href="model_config.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="kcc_config.html" title="Process Parameter (KCC) Configuration"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="model_config.html" title="Model Configuration"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="lib_config.html" accesskey="U">Library Configuration</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="model_config.html"
+                        title="previous chapter">Model Configuration</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="kcc_config.html"
+                        title="next chapter">Process Parameter (KCC) Configuration</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/voxel_config.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-dlmfg.config.voxel_config">
+<span id="voxel-configuration"></span><h1>Voxel Configuration<a class="headerlink" href="#module-dlmfg.config.voxel_config" title="Permalink to this headline">¶</a></h1>
+<p>The Voxelization configuration files consists of the parameters required when a mapping file for a different voxel resolution needs to be created, by default a mapping file of resolution 64*64*64 is downloaded by default when running any case stusy</p>
+<dl class="field-list simple">
+<dt class="field-odd">param voxel_parameters[‘voxel_size’]</dt>
+<dd class="field-odd"><p>Voxel resolution considering the voxel to be cubical</p>
+</dd>
+<dt class="field-even">type voxel_parameters[‘voxel_size’]</dt>
+<dd class="field-even"><p>int (required)</p>
+</dd>
+<dt class="field-odd">param voxel_parameters[‘nominal_cop_filename’]</dt>
+<dd class="field-odd"><p>The filename of the nominal cloud of point to be voxelized</p>
+</dd>
+<dt class="field-even">type voxel_parameters[‘nominal_cop_filename’]</dt>
+<dd class="field-even"><p>str (required)</p>
+</dd>
+</dl>
+<p>Other parameters are needing in case data is to be pulled from the database server. by default the nominal_cop_file comes with the downloaded set of data files</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="kcc_config.html" title="Process Parameter (KCC) Configuration"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="model_config.html" title="Model Configuration"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="lib_config.html" >Library Configuration</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Sumit Sinha.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.2.
+    </div>
+  </body>
+</html>

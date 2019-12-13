@@ -1,0 +1,5 @@
+Assembly Configuration
+======================================
+
+.. automodule:: dlmfg.config.assembly_config
+ :members:

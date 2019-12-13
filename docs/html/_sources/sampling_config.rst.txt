@@ -1,0 +1,14 @@
+Sampling Configuration
+============================
+
+.. automodule:: dlmfg.config.sampling_config
+ :members:
+
+
+Active Learning/Adaptive Sampling Algorithm
+---------------------------------------------------
+
+.. figure:: sampling.png
+   :align:   center
+
+   *Fig 4: Active learning strategy for faster training*

@@ -1,0 +1,284 @@
+
+
+<!doctype html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>dlmfg.utilities.voxel_construction &#8212; Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    <script type="text/javascript" src="../../../_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for dlmfg.utilities.voxel_construction</h1><div class="highlight"><pre>
+<span></span>
+<span class="sd">&quot;&quot;&quot; Contains classes and methods to construct voxels based on a nominal cloud of point and given resolution, this can be used to construct cubical or cuboid voxels. By default no voxel is needed as each case study </span>
+<span class="sd">a mapping file considering a 64*64*64 voxel resolution.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">current_path</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
+<span class="n">parentdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">current_path</span><span class="p">)</span>
+
+<span class="c1">#Adding Path to various Modules</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;../core&quot;</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;../visualization&quot;</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;../utilities&quot;</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;../config&quot;</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="c1">#Importing Config files</span>
+<span class="kn">import</span> <span class="nn">assembly_config</span> <span class="k">as</span> <span class="nn">config</span>
+<span class="kn">import</span> <span class="nn">voxel_config</span> <span class="k">as</span> <span class="nn">vc</span>
+
+<span class="c1">#Importing required modules from the package</span>
+<span class="kn">from</span> <span class="nn">measurement_system</span> <span class="kn">import</span> <span class="n">HexagonWlsScanner</span>
+<span class="kn">from</span> <span class="nn">assembly_system</span> <span class="kn">import</span> <span class="n">VRMSimulationModel</span>
+<span class="kn">from</span> <span class="nn">cop_viz</span> <span class="kn">import</span> <span class="n">CopViz</span>
+
+
+<div class="viewcode-block" id="VoxelConstruct"><a class="viewcode-back" href="../../../voxel_construction.html#dlmfg.utilities.voxel_construction.VoxelConstruct">[docs]</a><span class="k">class</span> <span class="nc">VoxelConstruct</span><span class="p">:</span>
+	<span class="sd">&quot;&quot;&quot;Voxel Construction Class, for cubical voxel construction resolution in all three directions should be equal</span>
+
+<span class="sd">		:param x_dim: The voxel resolution in x-direction</span>
+<span class="sd">		:type x_dim: int (required)</span>
+
+<span class="sd">		:param y_dim: The voxel resolution in y-direction</span>
+<span class="sd">		:type y_dim: int (required)</span>
+
+<span class="sd">		:param z_dim: The voxel resolution in z-direction</span>
+<span class="sd">		:type z_dim: int (required) </span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">x_dim</span><span class="p">,</span><span class="n">y_dim</span><span class="p">,</span><span class="n">z_dim</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">x_dim</span><span class="o">=</span><span class="n">x_dim</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">y_dim</span><span class="o">=</span><span class="n">y_dim</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">z_dim</span><span class="o">=</span><span class="n">z_dim</span>
+	
+
+
+
+<div class="viewcode-block" id="VoxelConstruct.construct_voxel"><a class="viewcode-back" href="../../../voxel_construction.html#dlmfg.utilities.voxel_construction.VoxelConstruct.construct_voxel">[docs]</a>	<span class="k">def</span> <span class="nf">construct_voxel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">nominal_cop</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Construct voxel method takes nominal cop as input and based on the object initialization build a mapping index for each node in the nominal cloud of point</span>
+
+<span class="sd">			:param nominal_cop: The nominal cloud of point with x,y and z co-ordinates</span>
+<span class="sd">			:type x_dim: numpy.array (required)</span>
+
+<span class="sd">			:returns: mapping index (i,j,k) for numpy array of dim points * 3</span>
+<span class="sd">			:rtype: numpy.array [point_dim,3]</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">def</span> <span class="nf">distance_func</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span><span class="n">y1</span><span class="p">,</span><span class="n">z1</span><span class="p">,</span><span class="n">x2</span><span class="p">,</span><span class="n">y2</span><span class="p">,</span><span class="n">z2</span><span class="p">):</span>
+			<span class="kn">import</span> <span class="nn">math</span>
+			<span class="n">dist</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">x1</span><span class="o">-</span><span class="n">x2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">y1</span><span class="o">-</span><span class="n">y2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="p">(</span><span class="n">z1</span><span class="o">-</span><span class="n">z2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+			<span class="k">return</span> <span class="n">dist</span>
+
+		<span class="k">def</span> <span class="nf">get_dev_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">x1</span><span class="p">,</span><span class="n">y1</span><span class="p">,</span><span class="n">z1</span><span class="p">,</span><span class="n">x2</span><span class="p">,</span><span class="n">y2</span><span class="p">,</span><span class="n">z2</span><span class="p">):</span>   
+			<span class="k">if</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">x1</span><span class="p">)</span><span class="o">&gt;</span><span class="nb">abs</span><span class="p">(</span><span class="n">x2</span><span class="p">)):</span>
+				<span class="n">x_dev</span><span class="o">=</span><span class="n">x1</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">x_dev</span><span class="o">=</span><span class="n">x2</span>
+			<span class="k">if</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">y1</span><span class="p">)</span><span class="o">&gt;</span><span class="nb">abs</span><span class="p">(</span><span class="n">y2</span><span class="p">)):</span>
+				<span class="n">y_dev</span><span class="o">=</span><span class="n">y1</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">y_dev</span><span class="o">=</span><span class="n">y2</span>    
+			<span class="k">if</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">z1</span><span class="p">)</span><span class="o">&gt;</span><span class="nb">abs</span><span class="p">(</span><span class="n">z2</span><span class="p">)):</span>
+				<span class="n">z_dev</span><span class="o">=</span><span class="n">z1</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">z_dev</span><span class="o">=</span><span class="n">z2</span>
+		
+		<span class="n">retval</span><span class="o">=</span><span class="p">[</span><span class="n">x_dev</span><span class="p">,</span><span class="n">y_dev</span><span class="p">,</span><span class="n">z_dev</span><span class="p">]</span>
+		<span class="k">return</span> <span class="n">retval</span>
+		<span class="n">x_dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">x_dim</span>
+		<span class="n">y_dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">y_dim</span>
+		<span class="n">z_dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">z_dim</span>
+
+		<span class="n">point_dim</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">nominal_cop</span><span class="p">)</span>
+
+		<span class="n">df_point_index</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">point_dim</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+
+		<span class="n">x_cor_max</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="n">nominal_cop</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])</span>
+		<span class="n">y_cor_max</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="n">nominal_cop</span><span class="p">[:,</span><span class="mi">1</span><span class="p">])</span>
+		<span class="n">z_cor_max</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="n">nominal_cop</span><span class="p">[:,</span><span class="mi">2</span><span class="p">])</span>
+
+		<span class="n">x_cor_min</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">nominal_cop</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])</span>
+		<span class="n">y_cor_min</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">nominal_cop</span><span class="p">[:,</span><span class="mi">1</span><span class="p">])</span>
+		<span class="n">z_cor_min</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">nominal_cop</span><span class="p">[:,</span><span class="mi">2</span><span class="p">])</span>
+
+		<span class="n">voxel_unit_x</span><span class="o">=</span><span class="nb">int</span><span class="p">((</span><span class="n">x_cor_max</span><span class="o">-</span><span class="n">x_cor_min</span><span class="p">)</span><span class="o">/</span><span class="n">x_dim</span><span class="p">)</span>
+		<span class="n">voxel_unit_y</span><span class="o">=</span><span class="nb">int</span><span class="p">((</span><span class="n">y_cor_max</span><span class="o">-</span><span class="n">y_cor_min</span><span class="p">)</span><span class="o">/</span><span class="n">y_dim</span><span class="p">)</span>
+		<span class="n">voxel_unit_z</span><span class="o">=</span><span class="nb">int</span><span class="p">((</span><span class="n">z_cor_max</span><span class="o">-</span><span class="n">z_cor_min</span><span class="p">)</span><span class="o">/</span><span class="n">z_dim</span><span class="p">)</span>
+
+		<span class="n">array_locator</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">x_dim</span><span class="p">,</span><span class="n">y_dim</span><span class="p">,</span><span class="n">z_dim</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x_dim</span><span class="p">):</span>
+			<span class="n">array_locator</span><span class="p">[</span><span class="n">i</span><span class="p">,:,:,</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="n">x_cor_max</span>
+			<span class="n">x_cor_max</span><span class="o">=</span><span class="n">x_cor_max</span><span class="o">-</span><span class="n">voxel_unit_x</span>
+
+		<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_dim</span><span class="p">):</span>
+			<span class="n">array_locator</span><span class="p">[:,</span><span class="n">j</span><span class="p">,:,</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="n">y_cor_max</span>
+			<span class="n">y_cor_max</span><span class="o">=</span><span class="n">y_cor_max</span><span class="o">-</span><span class="n">voxel_unit_y</span>
+
+		<span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z_dim</span><span class="p">):</span>
+			<span class="n">array_locator</span><span class="p">[:,:,</span><span class="n">k</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="o">=</span><span class="n">z_cor_max</span>
+			<span class="n">z_cor_max</span><span class="o">=</span><span class="n">z_cor_max</span><span class="o">-</span><span class="n">voxel_unit_z</span>
+
+		<span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">point_dim</span><span class="p">)):</span>
+				<span class="n">min_distance</span><span class="o">=</span><span class="mi">10000</span>
+				<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">x_dim</span><span class="p">):</span>
+					<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">y_dim</span><span class="p">):</span>
+						<span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">z_dim</span><span class="p">):</span>
+							<span class="n">distance</span><span class="o">=</span><span class="n">distance_func</span><span class="p">(</span><span class="n">array_locator</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">k</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span><span class="n">array_locator</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">k</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="n">array_locator</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">k</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="n">nominal_cop</span><span class="p">[</span><span class="n">p</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span><span class="n">nominal_cop</span><span class="p">[</span><span class="n">p</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="n">nominal_cop</span><span class="p">[</span><span class="n">p</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>         
+							<span class="k">if</span><span class="p">(</span><span class="n">distance</span><span class="o">&lt;</span><span class="n">min_distance</span><span class="p">):</span>
+								<span class="n">min_distance</span><span class="o">=</span><span class="n">distance</span>
+								<span class="n">x_index</span><span class="o">=</span><span class="n">i</span>
+								<span class="n">y_index</span><span class="o">=</span><span class="n">j</span>
+								<span class="n">z_index</span><span class="o">=</span><span class="n">k</span>
+				<span class="n">df_point_index</span><span class="p">[</span><span class="n">p</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="n">x_index</span>
+				<span class="n">df_point_index</span><span class="p">[</span><span class="n">p</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="n">y_index</span>
+				<span class="n">df_point_index</span><span class="p">[</span><span class="n">p</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="o">=</span><span class="n">z_index</span>
+
+		<span class="k">return</span> <span class="n">df_point_index</span></div></div>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Parsing from Assembly Config File....&#39;</span><span class="p">)</span>
+
+	<span class="n">data_type</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;data_type&#39;</span><span class="p">]</span>
+	<span class="n">application</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;application&#39;</span><span class="p">]</span>
+	<span class="n">part_type</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;part_type&#39;</span><span class="p">]</span>
+	<span class="n">part_name</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;part_name&#39;</span><span class="p">]</span>
+	<span class="n">data_format</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;data_format&#39;</span><span class="p">]</span>
+	<span class="n">assembly_type</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;assembly_type&#39;</span><span class="p">]</span>
+	<span class="n">assembly_kccs</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;assembly_kccs&#39;</span><span class="p">]</span>	
+	<span class="n">assembly_kpis</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;assembly_kpis&#39;</span><span class="p">]</span>
+	<span class="n">voxel_dim</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;voxel_dim&#39;</span><span class="p">]</span>
+	<span class="n">point_dim</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;point_dim&#39;</span><span class="p">]</span>
+	<span class="n">voxel_channels</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;voxel_channels&#39;</span><span class="p">]</span>
+	<span class="n">noise_type</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;noise_type&#39;</span><span class="p">]</span>
+	<span class="n">mapping_index</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;mapping_index&#39;</span><span class="p">]</span>
+	<span class="n">file_names</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;data_files&#39;</span><span class="p">]</span>
+	<span class="n">system_noise</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;system_noise&#39;</span><span class="p">]</span>
+	<span class="n">aritifical_noise</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;aritifical_noise&#39;</span><span class="p">]</span>
+	
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Initializing the Assembly System and Measurement System....&#39;</span><span class="p">)</span>
+	<span class="n">measurement_system</span><span class="o">=</span><span class="n">HexagonWlsScanner</span><span class="p">(</span><span class="n">data_type</span><span class="p">,</span><span class="n">application</span><span class="p">,</span><span class="n">system_noise</span><span class="p">,</span><span class="n">part_type</span><span class="p">,</span><span class="n">data_format</span><span class="p">)</span>
+	<span class="n">vrm_system</span><span class="o">=</span><span class="n">VRMSimulationModel</span><span class="p">(</span><span class="n">assembly_type</span><span class="p">,</span><span class="n">assembly_kccs</span><span class="p">,</span><span class="n">assembly_kpis</span><span class="p">,</span><span class="n">part_name</span><span class="p">,</span><span class="n">part_type</span><span class="p">,</span><span class="n">voxel_dim</span><span class="p">,</span><span class="n">voxel_channels</span><span class="p">,</span><span class="n">point_dim</span><span class="p">,</span><span class="n">aritifical_noise</span><span class="p">)</span>
+	<span class="c1">#Import from File</span>
+	<span class="n">cop_file_name</span><span class="o">=</span><span class="n">vc</span><span class="o">.</span><span class="n">voxel_parameters</span><span class="p">[</span><span class="s1">&#39;nominal_cop_filename&#39;</span><span class="p">]</span>
+
+	<span class="c1">#import from Database</span>
+	<span class="c1">#Format of connection String Databasetype + username:password + @IPaddress:Port_number + database</span>
+	<span class="c1">#table_name=car_door_halo_nominal_cop</span>
+	<span class="c1">#database_type=vc.voxel_parameters[&#39;database_type&#39;]</span>
+	<span class="c1">#username=vc.voxel_parameters[&#39;username&#39;]</span>
+	<span class="c1">#password=vc.voxel_parameters[&#39;password&#39;]</span>
+	<span class="c1">#ip_address=vc.voxel_parameters[&#39;ip_address&#39;]</span>
+	<span class="c1">#port_number=vc.voxel_parameters[&#39;port_number&#39;]</span>
+	<span class="c1">#database_name=vc.voxel_parameters[&#39;database_name&#39;]</span>
+	
+	<span class="c1">#conn_string=data_basetype+&#39;:&#39;+username+&#39;:&#39;+password+&#39;@&#39;+ip_address+&#39;:&#39;+password+&#39;/&#39;+database_name</span>
+	<span class="c1">#&#39;postgresql://postgres:sumit123!@10.255.1.130:5432/IPQI&#39;</span>
+
+	<span class="n">file_path</span><span class="o">=</span><span class="s1">&#39;../resources/nominal_cop_files/&#39;</span><span class="o">+</span><span class="n">cop_file_name</span>
+	<span class="c1">#Read cop from csv file</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Importing Nominal COP&#39;</span><span class="p">)</span>
+	<span class="n">nominal_cop</span><span class="o">=</span><span class="n">vrm_system</span><span class="o">.</span><span class="n">get_nominal_cop</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Vizvalizing COP&#39;</span><span class="p">)</span>
+	
+	<span class="n">plot_file_name</span><span class="o">=</span><span class="n">part_name</span><span class="o">+</span><span class="s1">&#39;_nominal_cop.html&#39;</span>
+	<span class="n">copviz</span><span class="o">=</span><span class="n">CopViz</span><span class="p">(</span><span class="n">nominal_cop</span><span class="p">)</span>
+	<span class="n">copviz</span><span class="o">.</span><span class="n">plot_cop</span><span class="p">(</span><span class="n">plot_file_name</span><span class="p">)</span>
+
+	<span class="c1">#Read cop from SQL database</span>
+	<span class="c1">#nominal_cop=vrm.get_nominal_cop_database(self,conn_string,table_name)</span>
+	
+	<span class="c1">#Passing Voxel</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;voxelizing and creating mapping files...&#39;</span><span class="p">)</span>
+	<span class="n">voxel_construct</span><span class="o">=</span><span class="n">VoxelConstruct</span><span class="p">(</span><span class="n">voxel_dim</span><span class="p">,</span><span class="n">voxel_dim</span><span class="p">,</span><span class="n">voxel_dim</span><span class="p">)</span>
+	<span class="n">df_point_index</span><span class="o">=</span><span class="n">voxel_construct</span><span class="o">.</span><span class="n">construct_voxel</span><span class="p">(</span><span class="n">nominal_cop</span><span class="p">)</span>
+	
+	<span class="c1">#Dump Voxel</span>
+	<span class="n">name_cop</span><span class="o">=</span><span class="n">part_name</span><span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">voxel_dim</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;_voxel_mapping.dat&quot;</span>
+	<span class="n">df_point_index</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">name_cop</span><span class="p">)</span>
+
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Mapping file saved as: &#39;</span><span class="p">,</span><span class="n">name_cop</span><span class="p">)</span>
+
+
+	
+
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Sumit Sinha.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.2.
+    </div>
+  </body>
+</html>

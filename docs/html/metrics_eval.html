@@ -1,0 +1,149 @@
+
+
+<!doctype html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Model Evaluation &#8212; Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Real System Implementation (3D Optical Scanner: WLS400A)" href="real_system_implementation.html" />
+    <link rel="prev" title="Data and Convergence Study" href="data_study.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="real_system_implementation.html" title="Real System Implementation (3D Optical Scanner: WLS400A)"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="data_study.html" title="Data and Convergence Study"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="installation.html" accesskey="U">Installation and Implementation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="data_study.html"
+                        title="previous chapter">Data and Convergence Study</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="real_system_implementation.html"
+                        title="next chapter">Real System Implementation (3D Optical Scanner: WLS400A)</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/metrics_eval.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="model-evaluation">
+<h1>Model Evaluation<a class="headerlink" href="#model-evaluation" title="Permalink to this headline">¶</a></h1>
+<p>The model is evaluated based on various regression based metrics.</p>
+<span class="target" id="module-dlmfg.core.metrics_eval"></span><p>Contains classes and methods to obtain various regression based metrics to evaluate</p>
+<dl class="class">
+<dt id="dlmfg.core.metrics_eval.MetricsEval">
+<em class="property">class </em><code class="sig-prename descclassname">dlmfg.core.metrics_eval.</code><code class="sig-name descname">MetricsEval</code><a class="reference internal" href="_modules/dlmfg/core/metrics_eval.html#MetricsEval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dlmfg.core.metrics_eval.MetricsEval" title="Permalink to this definition">¶</a></dt>
+<dd><p>MetricsEval Class</p>
+<p>Evaluate metrics to evaluate model performance</p>
+<dl class="method">
+<dt id="dlmfg.core.metrics_eval.MetricsEval.metrics_eval_base">
+<code class="sig-name descname">metrics_eval_base</code><span class="sig-paren">(</span><em class="sig-param">predicted_y</em>, <em class="sig-param">test_y</em>, <em class="sig-param">logs_path</em>, <em class="sig-param">run_id=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dlmfg/core/metrics_eval.html#MetricsEval.metrics_eval_base"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dlmfg.core.metrics_eval.MetricsEval.metrics_eval_base" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get predicted and actual value for all KCCs and return regression metrics namely: Mean Absolute Error, Mean Squared Error, Root Mean Squared Error, R-Squared Value</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>predicted_y</strong> – predicted values for the process parameters</p></li>
+<li><p><strong>predicted_y</strong> – actual values for the process parameters</p></li>
+<li><p><strong>logs_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – Logs path to save the evaluation metrics</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dictionary of all metrics for each KCC</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dataframe of all metrics for each KCC</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.dataframe</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="real_system_implementation.html" title="Real System Implementation (3D Optical Scanner: WLS400A)"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="data_study.html" title="Data and Convergence Study"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="installation.html" >Installation and Implementation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Sumit Sinha.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.2.
+    </div>
+  </body>
+</html>

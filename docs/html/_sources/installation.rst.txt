@@ -1,0 +1,49 @@
+.. Deep Learning For Manufacturing documentation master file, created by
+   sphinx-quickstart on Wed Nov 13 13:56:06 2019.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+Installation and Implementation
+===========================================================
+
+
+.. toctree::
+   :maxdepth: 2
+
+   download
+   model_train
+   deploy_model
+   data_study
+   metrics_eval
+ 
+
+* Download the **dlmfg library** to your python environment (it is recommended to create a new environment to prevent version mismatch of the prerequisites e.g. TensorFlow, Keras etc) using 
+	Clone Repository::
+
+		Git clone https://github.com/sumitsinha/Deep_Learning_for_Manufacturing
+	
+	or using PyPI::
+
+		pip install dlmfg 
+
+	if you are using git clone you would need to install the requirements by running pip install –r requirements.txt from the root folder
+
+* Modify/Replace the :doc:`configuration files <lib_config>` based on the case study parameters, various configuration packages for different case studies are already included with the library, refer :doc:`Case Study: Window Reinforcement Halo <case_study_halo>` for more information
+
+* Run :doc:`data_download.py <download>`  located within core that creates the required folder structure and downloads the files within them they consist of :
+	* a folder within datasets with same name of the case study consisting of the model input i.e. node deviations *(Files: output_halo_x.csv, output_halo_y.csv, output_halo_z.csv)*
+	* a folder within active learning with the same name of the case study consisting of the model output i.e. process parameters or KCCs *(Files: initial_samples_halo.csv)*
+	* a file within resources/mapping files consisting of the voxel mapping *(File: voxel_mapping_halo_64.csv)*
+	* a file within resources/nominal_cop consisting of the nominal Cop in oder of node IDs *(File: nominal_cop_halo.csv)*
+
+* Run :doc:`model_train.py <model_train>`  located within core that trains the model by spitting the train data into train and validation sets and creates an output folder within the trained_models folder with the same name of case consisting of the following file structure:
+	* **Logs** – model training logs and training metrics (R-squared, RMSE, MAE, MSE)
+	* **Model** – trained model in Keras trained_model.h5 format
+	* **Plots** – training loss convergence visualization
+
+* Run :doc:`model_deployment.py <deploy_model>` within core to test the trained model on the test set and obtain accuracy metrics within the logs folder
+
+* Run :doc:`data_study.py <data_study>` within model core to train model incrementally by increasing the training data in steps, this obtains accuracy metric at each step by testing the trained model on the test set, this generates html plotly based plots for better visualization and training/testing metrics for each step within the logs folder
+
+
+

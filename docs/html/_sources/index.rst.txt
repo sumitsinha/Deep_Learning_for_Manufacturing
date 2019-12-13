@@ -1,0 +1,40 @@
+.. Deep Learning For Manufacturing documentation master file, created by
+   sphinx-quickstart on Wed Nov 13 13:56:06 2019.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+Deep Learning for Manufacturing (dlmfg): Documentation
+===========================================================
+
+Contents
+----------------
+.. toctree::
+   :maxdepth: 2
+
+   installation
+   real_system_implementation
+   lib_config
+   data_description
+   classes
+   kmc
+   utilities
+   transfer_learning
+   active_learning
+   case_study_halo
+   refrences
+
+  
+Workflow
+----------------
+
+.. figure:: workflow.png
+   :align:   center
+
+   *Fig 1: Data Generation and Learning Work flow*
+
+Indices and tables
+-------------------
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`

@@ -1,0 +1,325 @@
+
+
+<!doctype html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>dlmfg.utilities.MDN &#8212; Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    <script type="text/javascript" src="../../../_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for dlmfg.utilities.MDN</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">A Mixture Density Layer for Keras</span>
+<span class="sd">cpmpercussion: Charles Martin (University of Oslo) 2018</span>
+<span class="sd">https://github.com/cpmpercussion/keras-mdn-layer</span>
+<span class="sd">Hat tip to [Omimo&#39;s Keras MDN layer](https://github.com/omimo/Keras-MDN)</span>
+<span class="sd">for a starting point for this code.</span>
+<span class="sd">Provided under MIT License</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">.version</span> <span class="kn">import</span> <span class="n">__version__</span>
+<span class="kn">from</span> <span class="nn">tensorflow</span> <span class="kn">import</span> <span class="n">keras</span>
+<span class="kn">from</span> <span class="nn">tensorflow.keras</span> <span class="kn">import</span> <span class="n">backend</span> <span class="k">as</span> <span class="n">K</span>
+<span class="kn">from</span> <span class="nn">tensorflow.keras</span> <span class="kn">import</span> <span class="n">layers</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+<span class="c1">#from tensorflow_probability import distributions as tfd</span>
+
+
+<div class="viewcode-block" id="elu_plus_one_plus_epsilon"><a class="viewcode-back" href="../../../mdn.html#dlmfg.utilities.MDN.elu_plus_one_plus_epsilon">[docs]</a><span class="k">def</span> <span class="nf">elu_plus_one_plus_epsilon</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;ELU activation with a very small addition to help prevent</span>
+<span class="sd">    NaN in loss.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">keras</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">elu</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">keras</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">epsilon</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="MDN"><a class="viewcode-back" href="../../../mdn.html#dlmfg.utilities.MDN.MDN">[docs]</a><span class="k">class</span> <span class="nc">MDN</span><span class="p">(</span><span class="n">layers</span><span class="o">.</span><span class="n">Layer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A Mixture Density Network Layer for Keras.</span>
+<span class="sd">    This layer has a few tricks to avoid NaNs in the loss function when training:</span>
+<span class="sd">        - Activation for variances is ELU + 1 + 1e-8 (to avoid very small values)</span>
+<span class="sd">        - Mixture weights (pi) are trained in as logits, not in the softmax space.</span>
+<span class="sd">    A loss function needs to be constructed with the same output dimension and number of mixtures.</span>
+<span class="sd">    A sampling function is also provided to sample from distribution parametrised by the MDN outputs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_dimension</span><span class="p">,</span> <span class="n">num_mixtures</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_dim</span> <span class="o">=</span> <span class="n">output_dimension</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_mix</span> <span class="o">=</span> <span class="n">num_mixtures</span>
+        <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">name_scope</span><span class="p">(</span><span class="s1">&#39;MDN&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mdn_mus</span> <span class="o">=</span> <span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_mix</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_dim</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;mdn_mus&#39;</span><span class="p">)</span>  <span class="c1"># mix*output vals, no activation</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mdn_sigmas</span> <span class="o">=</span> <span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_mix</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_dim</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="n">elu_plus_one_plus_epsilon</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;mdn_sigmas&#39;</span><span class="p">)</span>  <span class="c1"># mix*output vals exp activation</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mdn_pi</span> <span class="o">=</span> <span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_mix</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;mdn_pi&#39;</span><span class="p">)</span>  <span class="c1"># mix vals, logits</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">MDN</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="MDN.build"><a class="viewcode-back" href="../../../mdn.html#dlmfg.utilities.MDN.MDN.build">[docs]</a>    <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">name_scope</span><span class="p">(</span><span class="s1">&#39;mus&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mdn_mus</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">input_shape</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">name_scope</span><span class="p">(</span><span class="s1">&#39;sigmas&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mdn_sigmas</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">input_shape</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">name_scope</span><span class="p">(</span><span class="s1">&#39;pis&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mdn_pi</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">input_shape</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">MDN</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">input_shape</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">trainable_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mdn_mus</span><span class="o">.</span><span class="n">trainable_weights</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">mdn_sigmas</span><span class="o">.</span><span class="n">trainable_weights</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">mdn_pi</span><span class="o">.</span><span class="n">trainable_weights</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">non_trainable_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mdn_mus</span><span class="o">.</span><span class="n">non_trainable_weights</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">mdn_sigmas</span><span class="o">.</span><span class="n">non_trainable_weights</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">mdn_pi</span><span class="o">.</span><span class="n">non_trainable_weights</span>
+
+<div class="viewcode-block" id="MDN.call"><a class="viewcode-back" href="../../../mdn.html#dlmfg.utilities.MDN.MDN.call">[docs]</a>    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">name_scope</span><span class="p">(</span><span class="s1">&#39;MDN&#39;</span><span class="p">):</span>
+            <span class="n">mdn_out</span> <span class="o">=</span> <span class="n">layers</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">mdn_mus</span><span class="p">(</span><span class="n">x</span><span class="p">),</span>
+                                          <span class="bp">self</span><span class="o">.</span><span class="n">mdn_sigmas</span><span class="p">(</span><span class="n">x</span><span class="p">),</span>
+                                          <span class="bp">self</span><span class="o">.</span><span class="n">mdn_pi</span><span class="p">(</span><span class="n">x</span><span class="p">)],</span>
+                                         <span class="n">name</span><span class="o">=</span><span class="s1">&#39;mdn_outputs&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">mdn_out</span></div>
+
+<div class="viewcode-block" id="MDN.compute_output_shape"><a class="viewcode-back" href="../../../mdn.html#dlmfg.utilities.MDN.MDN.compute_output_shape">[docs]</a>    <span class="k">def</span> <span class="nf">compute_output_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns output shape, showing the number of mixture parameters.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">input_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_dim</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_mix</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_mix</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MDN.get_config"><a class="viewcode-back" href="../../../mdn.html#dlmfg.utilities.MDN.MDN.get_config">[docs]</a>    <span class="k">def</span> <span class="nf">get_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;output_dimension&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_dim</span><span class="p">,</span>
+            <span class="s2">&quot;num_mixtures&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_mix</span>
+        <span class="p">}</span>
+        <span class="n">base_config</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">MDN</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">get_config</span><span class="p">()</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">base_config</span><span class="o">.</span><span class="n">items</span><span class="p">())</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span></div></div>
+
+    <span class="c1"># @classmethod</span>
+    <span class="c1"># def from_config(cls, config):</span>
+    <span class="c1">#     return cls(**config)</span>
+
+
+<div class="viewcode-block" id="get_mixture_loss_func"><a class="viewcode-back" href="../../../mdn.html#dlmfg.utilities.MDN.get_mixture_loss_func">[docs]</a><span class="k">def</span> <span class="nf">get_mixture_loss_func</span><span class="p">(</span><span class="n">output_dim</span><span class="p">,</span> <span class="n">num_mixes</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Construct a loss functions for the MDN layer parametrised by number of mixtures.&quot;&quot;&quot;</span>
+    <span class="c1"># Construct a loss function with the right number of mixtures and outputs</span>
+    <span class="k">def</span> <span class="nf">mdn_loss_func</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">):</span>
+        <span class="c1"># Reshape inputs in case this is used in a TimeDistribued layer</span>
+        <span class="n">y_pred</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">num_mixes</span> <span class="o">*</span> <span class="n">output_dim</span><span class="p">)</span> <span class="o">+</span> <span class="n">num_mixes</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;reshape_ypreds&#39;</span><span class="p">)</span>
+        <span class="n">y_true</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">output_dim</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;reshape_ytrue&#39;</span><span class="p">)</span>
+        <span class="c1"># Split the inputs into paramaters</span>
+        <span class="n">out_mu</span><span class="p">,</span> <span class="n">out_sigma</span><span class="p">,</span> <span class="n">out_pi</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span> <span class="n">num_or_size_splits</span><span class="o">=</span><span class="p">[</span><span class="n">num_mixes</span> <span class="o">*</span> <span class="n">output_dim</span><span class="p">,</span>
+                                                                         <span class="n">num_mixes</span> <span class="o">*</span> <span class="n">output_dim</span><span class="p">,</span>
+                                                                         <span class="n">num_mixes</span><span class="p">],</span>
+                                             <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;mdn_coef_split&#39;</span><span class="p">)</span>
+        <span class="c1"># Construct the mixture models</span>
+        <span class="n">cat</span> <span class="o">=</span> <span class="n">tfd</span><span class="o">.</span><span class="n">Categorical</span><span class="p">(</span><span class="n">logits</span><span class="o">=</span><span class="n">out_pi</span><span class="p">)</span>
+        <span class="n">component_splits</span> <span class="o">=</span> <span class="p">[</span><span class="n">output_dim</span><span class="p">]</span> <span class="o">*</span> <span class="n">num_mixes</span>
+        <span class="n">mus</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">out_mu</span><span class="p">,</span> <span class="n">num_or_size_splits</span><span class="o">=</span><span class="n">component_splits</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">sigs</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">out_sigma</span><span class="p">,</span> <span class="n">num_or_size_splits</span><span class="o">=</span><span class="n">component_splits</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">coll</span> <span class="o">=</span> <span class="p">[</span><span class="n">tfd</span><span class="o">.</span><span class="n">MultivariateNormalDiag</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="n">loc</span><span class="p">,</span> <span class="n">scale_diag</span><span class="o">=</span><span class="n">scale</span><span class="p">)</span> <span class="k">for</span> <span class="n">loc</span><span class="p">,</span> <span class="n">scale</span>
+                <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">mus</span><span class="p">,</span> <span class="n">sigs</span><span class="p">)]</span>
+        <span class="n">mixture</span> <span class="o">=</span> <span class="n">tfd</span><span class="o">.</span><span class="n">Mixture</span><span class="p">(</span><span class="n">cat</span><span class="o">=</span><span class="n">cat</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="n">coll</span><span class="p">)</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">mixture</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">y_true</span><span class="p">)</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">negative</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_mean</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">loss</span>
+
+    <span class="c1"># Actually return the loss function</span>
+    <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">name_scope</span><span class="p">(</span><span class="s1">&#39;MDN&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">mdn_loss_func</span></div>
+
+
+<div class="viewcode-block" id="get_mixture_sampling_fun"><a class="viewcode-back" href="../../../mdn.html#dlmfg.utilities.MDN.get_mixture_sampling_fun">[docs]</a><span class="k">def</span> <span class="nf">get_mixture_sampling_fun</span><span class="p">(</span><span class="n">output_dim</span><span class="p">,</span> <span class="n">num_mixes</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Construct a TensorFlor sampling operation for the MDN layer parametrised</span>
+<span class="sd">    by mixtures and output dimension. This can be used in a Keras model to</span>
+<span class="sd">    generate samples directly.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">sampling_func</span><span class="p">(</span><span class="n">y_pred</span><span class="p">):</span>
+        <span class="c1"># Reshape inputs in case this is used in a TimeDistribued layer</span>
+        <span class="n">y_pred</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">num_mixes</span> <span class="o">*</span> <span class="n">output_dim</span><span class="p">)</span> <span class="o">+</span> <span class="n">num_mixes</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;reshape_ypreds&#39;</span><span class="p">)</span>
+        <span class="n">out_mu</span><span class="p">,</span> <span class="n">out_sigma</span><span class="p">,</span> <span class="n">out_pi</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span> <span class="n">num_or_size_splits</span><span class="o">=</span><span class="p">[</span><span class="n">num_mixes</span> <span class="o">*</span> <span class="n">output_dim</span><span class="p">,</span>
+                                                                         <span class="n">num_mixes</span> <span class="o">*</span> <span class="n">output_dim</span><span class="p">,</span>
+                                                                         <span class="n">num_mixes</span><span class="p">],</span>
+                                             <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;mdn_coef_split&#39;</span><span class="p">)</span>
+        <span class="n">cat</span> <span class="o">=</span> <span class="n">tfd</span><span class="o">.</span><span class="n">Categorical</span><span class="p">(</span><span class="n">logits</span><span class="o">=</span><span class="n">out_pi</span><span class="p">)</span>
+        <span class="n">component_splits</span> <span class="o">=</span> <span class="p">[</span><span class="n">output_dim</span><span class="p">]</span> <span class="o">*</span> <span class="n">num_mixes</span>
+        <span class="n">mus</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">out_mu</span><span class="p">,</span> <span class="n">num_or_size_splits</span><span class="o">=</span><span class="n">component_splits</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">sigs</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">out_sigma</span><span class="p">,</span> <span class="n">num_or_size_splits</span><span class="o">=</span><span class="n">component_splits</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">coll</span> <span class="o">=</span> <span class="p">[</span><span class="n">tfd</span><span class="o">.</span><span class="n">MultivariateNormalDiag</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="n">loc</span><span class="p">,</span> <span class="n">scale_diag</span><span class="o">=</span><span class="n">scale</span><span class="p">)</span> <span class="k">for</span> <span class="n">loc</span><span class="p">,</span> <span class="n">scale</span>
+                <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">mus</span><span class="p">,</span> <span class="n">sigs</span><span class="p">)]</span>
+        <span class="n">mixture</span> <span class="o">=</span> <span class="n">tfd</span><span class="o">.</span><span class="n">Mixture</span><span class="p">(</span><span class="n">cat</span><span class="o">=</span><span class="n">cat</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="n">coll</span><span class="p">)</span>
+        <span class="n">samp</span> <span class="o">=</span> <span class="n">mixture</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+        <span class="c1"># Todo: temperature adjustment for sampling function.</span>
+        <span class="k">return</span> <span class="n">samp</span>
+
+    <span class="c1"># Actually return the loss_func</span>
+    <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">name_scope</span><span class="p">(</span><span class="s1">&#39;MDNLayer&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">sampling_func</span></div>
+
+
+<div class="viewcode-block" id="get_mixture_mse_accuracy"><a class="viewcode-back" href="../../../mdn.html#dlmfg.utilities.MDN.get_mixture_mse_accuracy">[docs]</a><span class="k">def</span> <span class="nf">get_mixture_mse_accuracy</span><span class="p">(</span><span class="n">output_dim</span><span class="p">,</span> <span class="n">num_mixes</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Construct an MSE accuracy function for the MDN layer</span>
+<span class="sd">    that takes one sample and compares to the true value.&quot;&quot;&quot;</span>
+    <span class="c1"># Construct a loss function with the right number of mixtures and outputs</span>
+    <span class="k">def</span> <span class="nf">mse_func</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">):</span>
+        <span class="c1"># Reshape inputs in case this is used in a TimeDistribued layer</span>
+        <span class="n">y_pred</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">num_mixes</span> <span class="o">*</span> <span class="n">output_dim</span><span class="p">)</span> <span class="o">+</span> <span class="n">num_mixes</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;reshape_ypreds&#39;</span><span class="p">)</span>
+        <span class="n">y_true</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">output_dim</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;reshape_ytrue&#39;</span><span class="p">)</span>
+        <span class="n">out_mu</span><span class="p">,</span> <span class="n">out_sigma</span><span class="p">,</span> <span class="n">out_pi</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span> <span class="n">num_or_size_splits</span><span class="o">=</span><span class="p">[</span><span class="n">num_mixes</span> <span class="o">*</span> <span class="n">output_dim</span><span class="p">,</span>
+                                                                         <span class="n">num_mixes</span> <span class="o">*</span> <span class="n">output_dim</span><span class="p">,</span>
+                                                                         <span class="n">num_mixes</span><span class="p">],</span>
+                                             <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;mdn_coef_split&#39;</span><span class="p">)</span>
+        <span class="n">cat</span> <span class="o">=</span> <span class="n">tfd</span><span class="o">.</span><span class="n">Categorical</span><span class="p">(</span><span class="n">logits</span><span class="o">=</span><span class="n">out_pi</span><span class="p">)</span>
+        <span class="n">component_splits</span> <span class="o">=</span> <span class="p">[</span><span class="n">output_dim</span><span class="p">]</span> <span class="o">*</span> <span class="n">num_mixes</span>
+        <span class="n">mus</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">out_mu</span><span class="p">,</span> <span class="n">num_or_size_splits</span><span class="o">=</span><span class="n">component_splits</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">sigs</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">out_sigma</span><span class="p">,</span> <span class="n">num_or_size_splits</span><span class="o">=</span><span class="n">component_splits</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">coll</span> <span class="o">=</span> <span class="p">[</span><span class="n">tfd</span><span class="o">.</span><span class="n">MultivariateNormalDiag</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="n">loc</span><span class="p">,</span> <span class="n">scale_diag</span><span class="o">=</span><span class="n">scale</span><span class="p">)</span> <span class="k">for</span> <span class="n">loc</span><span class="p">,</span> <span class="n">scale</span>
+                <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">mus</span><span class="p">,</span> <span class="n">sigs</span><span class="p">)]</span>
+        <span class="n">mixture</span> <span class="o">=</span> <span class="n">tfd</span><span class="o">.</span><span class="n">Mixture</span><span class="p">(</span><span class="n">cat</span><span class="o">=</span><span class="n">cat</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="n">coll</span><span class="p">)</span>
+        <span class="n">samp</span> <span class="o">=</span> <span class="n">mixture</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+        <span class="n">mse</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_mean</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">samp</span> <span class="o">-</span> <span class="n">y_true</span><span class="p">),</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># Todo: temperature adjustment for sampling functon.</span>
+        <span class="k">return</span> <span class="n">mse</span>
+
+    <span class="c1"># Actually return the loss_func</span>
+    <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">name_scope</span><span class="p">(</span><span class="s1">&#39;MDNLayer&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">mse_func</span></div>
+
+
+<div class="viewcode-block" id="split_mixture_params"><a class="viewcode-back" href="../../../mdn.html#dlmfg.utilities.MDN.split_mixture_params">[docs]</a><span class="k">def</span> <span class="nf">split_mixture_params</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">output_dim</span><span class="p">,</span> <span class="n">num_mixes</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Splits up an array of mixture parameters into mus, sigmas, and pis</span>
+<span class="sd">    depending on the number of mixtures and output dimension.</span>
+<span class="sd">    Arguments:</span>
+<span class="sd">    params -- the parameters of the mixture model</span>
+<span class="sd">    output_dim -- the dimension of the normal models in the mixture model</span>
+<span class="sd">    num_mixes -- the number of mixtures represented</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mus</span> <span class="o">=</span> <span class="n">params</span><span class="p">[:</span><span class="n">num_mixes</span> <span class="o">*</span> <span class="n">output_dim</span><span class="p">]</span>
+    <span class="n">sigs</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="n">num_mixes</span> <span class="o">*</span> <span class="n">output_dim</span><span class="p">:</span><span class="mi">2</span> <span class="o">*</span> <span class="n">num_mixes</span> <span class="o">*</span> <span class="n">output_dim</span><span class="p">]</span>
+    <span class="n">pi_logits</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="o">-</span><span class="n">num_mixes</span><span class="p">:]</span>
+    <span class="k">return</span> <span class="n">mus</span><span class="p">,</span> <span class="n">sigs</span><span class="p">,</span> <span class="n">pi_logits</span></div>
+
+
+<div class="viewcode-block" id="softmax"><a class="viewcode-back" href="../../../mdn.html#dlmfg.utilities.MDN.softmax">[docs]</a><span class="k">def</span> <span class="nf">softmax</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Softmax function for a list or numpy array of logits. Also adjusts temperature.</span>
+<span class="sd">    Arguments:</span>
+<span class="sd">    w -- a list or numpy array of logits</span>
+<span class="sd">    Keyword arguments:</span>
+<span class="sd">    t -- the temperature for to adjust the distribution (default 1.0)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">w</span><span class="p">)</span> <span class="o">/</span> <span class="n">t</span>  <span class="c1"># adjust temperature</span>
+    <span class="n">e</span> <span class="o">-=</span> <span class="n">e</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>  <span class="c1"># subtract max to protect from exploding exp values.</span>
+    <span class="n">e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+    <span class="n">dist</span> <span class="o">=</span> <span class="n">e</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">dist</span></div>
+
+
+<div class="viewcode-block" id="sample_from_categorical"><a class="viewcode-back" href="../../../mdn.html#dlmfg.utilities.MDN.sample_from_categorical">[docs]</a><span class="k">def</span> <span class="nf">sample_from_categorical</span><span class="p">(</span><span class="n">dist</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Samples from a categorical model PDF.</span>
+<span class="sd">    Arguments:</span>
+<span class="sd">    dist -- the parameters of the categorical model</span>
+<span class="sd">    Returns:</span>
+<span class="sd">    One sample from the categorical model, or -1 if sampling fails.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># uniform random number in [0,1]</span>
+    <span class="n">accumulate</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">size</span><span class="p">):</span>
+        <span class="n">accumulate</span> <span class="o">+=</span> <span class="n">dist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">accumulate</span> <span class="o">&gt;=</span> <span class="n">r</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">i</span>
+    <span class="n">tf</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Error sampling categorical model.&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="sample_from_output"><a class="viewcode-back" href="../../../mdn.html#dlmfg.utilities.MDN.sample_from_output">[docs]</a><span class="k">def</span> <span class="nf">sample_from_output</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">output_dim</span><span class="p">,</span> <span class="n">num_mixes</span><span class="p">,</span> <span class="n">temp</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">sigma_temp</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Sample from an MDN output with temperature adjustment.</span>
+<span class="sd">    This calculation is done outside of the Keras model using</span>
+<span class="sd">    Numpy.</span>
+<span class="sd">    Arguments:</span>
+<span class="sd">    params -- the parameters of the mixture model</span>
+<span class="sd">    output_dim -- the dimension of the normal models in the mixture model</span>
+<span class="sd">    num_mixes -- the number of mixtures represented</span>
+<span class="sd">    Keyword arguments:</span>
+<span class="sd">    temp -- the temperature for sampling between mixture components (default 1.0)</span>
+<span class="sd">    sigma_temp -- the temperature for sampling from the normal distribution (default 1.0)</span>
+<span class="sd">    Returns:</span>
+<span class="sd">    One sample from the the mixture model.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mus</span><span class="p">,</span> <span class="n">sigs</span><span class="p">,</span> <span class="n">pi_logits</span> <span class="o">=</span> <span class="n">split_mixture_params</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">output_dim</span><span class="p">,</span> <span class="n">num_mixes</span><span class="p">)</span>
+    <span class="n">pis</span> <span class="o">=</span> <span class="n">softmax</span><span class="p">(</span><span class="n">pi_logits</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="n">temp</span><span class="p">)</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">sample_from_categorical</span><span class="p">(</span><span class="n">pis</span><span class="p">)</span>
+    <span class="c1"># Alternative way to sample from categorical:</span>
+    <span class="c1"># m = np.random.choice(range(len(pis)), p=pis)</span>
+    <span class="n">mus_vector</span> <span class="o">=</span> <span class="n">mus</span><span class="p">[</span><span class="n">m</span> <span class="o">*</span> <span class="n">output_dim</span><span class="p">:(</span><span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">output_dim</span><span class="p">]</span>
+    <span class="n">sig_vector</span> <span class="o">=</span> <span class="n">sigs</span><span class="p">[</span><span class="n">m</span> <span class="o">*</span> <span class="n">output_dim</span><span class="p">:(</span><span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">output_dim</span><span class="p">]</span>
+    <span class="n">scale_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="n">output_dim</span><span class="p">)</span> <span class="o">*</span> <span class="n">sig_vector</span>  <span class="c1"># scale matrix from diag</span>
+    <span class="n">cov_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">scale_matrix</span><span class="p">,</span> <span class="n">scale_matrix</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>  <span class="c1"># cov is scale squared.</span>
+    <span class="n">cov_matrix</span> <span class="o">=</span> <span class="n">cov_matrix</span> <span class="o">*</span> <span class="n">sigma_temp</span>  <span class="c1"># adjust for sigma temperature</span>
+    <span class="n">sample</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">multivariate_normal</span><span class="p">(</span><span class="n">mus_vector</span><span class="p">,</span> <span class="n">cov_matrix</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">sample</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Sumit Sinha.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.2.
+    </div>
+  </body>
+</html>

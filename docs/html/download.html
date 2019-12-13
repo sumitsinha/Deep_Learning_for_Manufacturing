@@ -1,0 +1,146 @@
+
+
+<!doctype html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Data Download &#8212; Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Model Training" href="model_train.html" />
+    <link rel="prev" title="Installation and Implementation" href="installation.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="model_train.html" title="Model Training"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="installation.html" title="Installation and Implementation"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="installation.html" accesskey="U">Installation and Implementation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="installation.html"
+                        title="previous chapter">Installation and Implementation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="model_train.html"
+                        title="next chapter">Model Training</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/download.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-dlmfg.core.data_download">
+<span id="data-download"></span><h1>Data Download<a class="headerlink" href="#module-dlmfg.core.data_download" title="Permalink to this headline">¶</a></h1>
+<p>Contains classes and methods to create the input file structure and download the required data
+The program parses from the download_config.py file
+Currently leverages gdown library (<a class="reference external" href="https://pypi.org/project/gdown/">https://pypi.org/project/gdown/</a>) to download large files from Google drive
+Main Function parses from the download_config.py file and downloads the input, output and support files for the corresponding case study and then places them in a pre-specified file structure to be used for model training, deployment and data study</p>
+<dl class="class">
+<dt id="dlmfg.core.data_download.DataDownload">
+<em class="property">class </em><code class="sig-prename descclassname">dlmfg.core.data_download.</code><code class="sig-name descname">DataDownload</code><span class="sig-paren">(</span><em class="sig-param">base_url</em>, <em class="sig-param">download_type</em>, <em class="sig-param">download_flag=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dlmfg/core/data_download.html#DataDownload"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dlmfg.core.data_download.DataDownload" title="Permalink to this definition">¶</a></dt>
+<dd><p>Data Download Class</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>base_url</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – consists of the base URL of the server file location</p></li>
+<li><p><strong>download_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – Type of download, currently Google drive is used host the data files</p></li>
+<li><p><strong>download_flag</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – used to store the number of downloads done using one instance of the Data Download class, can be used to ensure Quality Checks on the downloaded data</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="method">
+<dt id="dlmfg.core.data_download.DataDownload.google_drive_downloader">
+<code class="sig-name descname">google_drive_downloader</code><span class="sig-paren">(</span><em class="sig-param">file_id</em>, <em class="sig-param">output</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dlmfg/core/data_download.html#DataDownload.google_drive_downloader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dlmfg.core.data_download.DataDownload.google_drive_downloader" title="Permalink to this definition">¶</a></dt>
+<dd><p>google_drive_downloader combines object initialization with the file ID to download to the desired output file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – Server file ID of the file to be downloaded</p></li>
+<li><p><strong>output</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – output path of the downloaded file</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="model_train.html" title="Model Training"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="installation.html" title="Installation and Implementation"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="installation.html" >Installation and Implementation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Sumit Sinha.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.2.
+    </div>
+  </body>
+</html>

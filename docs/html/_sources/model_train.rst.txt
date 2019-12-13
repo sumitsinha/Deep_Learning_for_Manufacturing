@@ -1,0 +1,5 @@
+Model Training
+======================================
+
+.. automodule:: dlmfg.core.model_train
+ :members:

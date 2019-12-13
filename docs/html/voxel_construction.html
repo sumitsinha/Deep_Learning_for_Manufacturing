@@ -1,0 +1,147 @@
+
+
+<!doctype html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Voxel Construction &#8212; Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Mixture Density Network" href="mdn.html" />
+    <link rel="prev" title="Utilities" href="utilities.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="mdn.html" title="Mixture Density Network"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="utilities.html" title="Utilities"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="utilities.html" accesskey="U">Utilities</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="utilities.html"
+                        title="previous chapter">Utilities</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="mdn.html"
+                        title="next chapter">Mixture Density Network</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/voxel_construction.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-dlmfg.utilities.voxel_construction">
+<span id="voxel-construction"></span><h1>Voxel Construction<a class="headerlink" href="#module-dlmfg.utilities.voxel_construction" title="Permalink to this headline">¶</a></h1>
+<p>Contains classes and methods to construct voxels based on a nominal cloud of point and given resolution, this can be used to construct cubical or cuboid voxels. By default no voxel is needed as each case study 
+a mapping file considering a 64*64*64 voxel resolution.</p>
+<dl class="class">
+<dt id="dlmfg.utilities.voxel_construction.VoxelConstruct">
+<em class="property">class </em><code class="sig-prename descclassname">dlmfg.utilities.voxel_construction.</code><code class="sig-name descname">VoxelConstruct</code><span class="sig-paren">(</span><em class="sig-param">x_dim</em>, <em class="sig-param">y_dim</em>, <em class="sig-param">z_dim</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dlmfg/utilities/voxel_construction.html#VoxelConstruct"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dlmfg.utilities.voxel_construction.VoxelConstruct" title="Permalink to this definition">¶</a></dt>
+<dd><p>Voxel Construction Class, for cubical voxel construction resolution in all three directions should be equal</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x_dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – The voxel resolution in x-direction</p></li>
+<li><p><strong>y_dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – The voxel resolution in y-direction</p></li>
+<li><p><strong>z_dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – The voxel resolution in z-direction</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="method">
+<dt id="dlmfg.utilities.voxel_construction.VoxelConstruct.construct_voxel">
+<code class="sig-name descname">construct_voxel</code><span class="sig-paren">(</span><em class="sig-param">nominal_cop</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dlmfg/utilities/voxel_construction.html#VoxelConstruct.construct_voxel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dlmfg.utilities.voxel_construction.VoxelConstruct.construct_voxel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct voxel method takes nominal cop as input and based on the object initialization build a mapping index for each node in the nominal cloud of point</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>nominal_cop</strong> – The nominal cloud of point with x,y and z co-ordinates</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>mapping index (i,j,k) for numpy array of dim points * 3</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.array [point_dim,3]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="mdn.html" title="Mixture Density Network"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="utilities.html" title="Utilities"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="utilities.html" >Utilities</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Sumit Sinha.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.2.
+    </div>
+  </body>
+</html>

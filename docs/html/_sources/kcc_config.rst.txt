@@ -1,0 +1,15 @@
+Process Parameter (KCC) Configuration
+======================================
+
+.. automodule:: dlmfg.config.kcc_config
+ :members:
+
+
+KCC Type Determination
+--------------------------
+The KCC type (1,2 or 3) can be determined using the figure below, this is used to speed up data generation as different type of KCCs require different sampling.
+
+.. figure:: kcc_type.png
+   :align:   center
+
+   *Fig 3: KCC type for locators*

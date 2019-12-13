@@ -1,0 +1,6 @@
+Benchmarking
+============================
+
+.. automodule:: dlmfg.utilities.benchmarking
+ :members:
+

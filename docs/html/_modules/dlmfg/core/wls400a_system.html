@@ -1,0 +1,197 @@
+
+
+<!doctype html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>dlmfg.core.wls400a_system &#8212; Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    <script type="text/javascript" src="../../../_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for dlmfg.core.wls400a_system</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="sd">&quot;&quot;&quot; Contains classes and methods to import required files to process measurement data &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="GetInferenceData"><a class="viewcode-back" href="../../../real_data_process.html#dlmfg.core.wls400a_system.GetInferenceData">[docs]</a><span class="k">class</span> <span class="nc">GetInferenceData</span><span class="p">():</span>
+	<span class="sd">&quot;&quot;&quot;Inference Data Class</span>
+
+<span class="sd">		Import required files to deploy model on measurement systems</span>
+<span class="sd">		</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="GetInferenceData.load_mapping_index"><a class="viewcode-back" href="../../../real_data_process.html#dlmfg.core.wls400a_system.GetInferenceData.load_mapping_index">[docs]</a>	<span class="k">def</span> <span class="nf">load_mapping_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">index_file</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Import mapping index used to map nodes to voxel locations from the file structure </span>
+<span class="sd">			</span>
+<span class="sd">			:param index_file: Path to the index file and the index file name</span>
+<span class="sd">			:type conn_str: str (required)</span>
+
+<span class="sd">			:returns: numpy array of voxel mapping index for each node</span>
+<span class="sd">			:rtype: numpy.array [point_dim,3]</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">voxel_point_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">index_file</span><span class="p">,</span><span class="n">allow_pickle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+		<span class="k">except</span> <span class="ne">AssertionError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+			<span class="nb">print</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Voxel Mapping File not found !&#39;</span><span class="p">)</span>
+
+		<span class="k">return</span> <span class="n">voxel_point_index</span></div>
+
+<div class="viewcode-block" id="GetInferenceData.load_measurement_file"><a class="viewcode-back" href="../../../real_data_process.html#dlmfg.core.wls400a_system.GetInferenceData.load_measurement_file">[docs]</a>	<span class="k">def</span> <span class="nf">load_measurement_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">measurement_file_name</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Import measurement file on which the model is to be deployed</span>
+<span class="sd">			</span>
+<span class="sd">			:param measurement_file_name: file name of the tab delimited file given as output from CoreviewAM</span>
+<span class="sd">			:type measurement_file_name: str (required)</span>
+
+<span class="sd">			:returns: numpy array of the file after eliminating meta data information</span>
+<span class="sd">			:rtype: numpy.array</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">measurement_data</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">measurement_file_name</span><span class="p">,</span><span class="n">delim_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">skiprows</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span><span class="n">low_memory</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">error_bad_lines</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+		<span class="k">except</span> <span class="ne">AssertionError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+			<span class="nb">print</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Measurement data file not found !&#39;</span><span class="p">)</span>
+
+		<span class="k">return</span> <span class="n">measurement_data</span></div>
+
+<div class="viewcode-block" id="GetInferenceData.data_pre_processing"><a class="viewcode-back" href="../../../real_data_process.html#dlmfg.core.wls400a_system.GetInferenceData.data_pre_processing">[docs]</a>	<span class="k">def</span> <span class="nf">data_pre_processing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">measurement_data</span><span class="p">,</span><span class="n">voxel_channels</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Process measurement data and impute missing values</span>
+<span class="sd">			</span>
+<span class="sd">			:param measurement_data: file name of the tab delimited file given as output from CoreviewAM</span>
+<span class="sd">			:type measurement_data: str (required)</span>
+
+<span class="sd">			:param voxel_channels: The number of voxel channels that can be extracted from the the measurement file</span>
+<span class="sd">			:type voxel_channels: int (required)</span>
+
+<span class="sd">			:returns: numpy array of the node deviations (this is similar to what is obtained from the VRM software )</span>
+<span class="sd">			:rtype: numpy.array [1*nodes]</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+
+		<span class="n">measurement_data_subset</span><span class="o">=</span><span class="n">measurement_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">measurement_data</span><span class="p">[</span><span class="s1">&#39;Name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;SF&#39;</span><span class="p">)]</span>
+		<span class="n">nominal_coordinates</span><span class="o">=</span><span class="n">measurement_data_subset</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="mi">5</span><span class="p">:</span><span class="mi">8</span><span class="p">]</span>
+		<span class="n">actual_coordinates</span><span class="o">=</span><span class="n">measurement_data_subset</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="mi">10</span><span class="p">:</span><span class="mi">13</span><span class="p">]</span>
+		<span class="n">deviations</span><span class="o">=</span><span class="n">actual_coordinates</span><span class="o">.</span><span class="n">values</span><span class="o">-</span><span class="n">nominal_coordinates</span><span class="o">.</span><span class="n">values</span>
+		<span class="n">imputed_deviations</span><span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">deviations</span><span class="p">)</span>
+		
+		<span class="k">if</span><span class="p">(</span><span class="n">voxel_channels</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span>
+			<span class="n">y_dev_data_filtered</span><span class="o">=</span><span class="n">imputed_deviations</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">voxel_channels</span><span class="o">==</span><span class="mi">3</span><span class="p">):</span>
+			<span class="n">y_dev_data_filtered</span><span class="o">=</span><span class="n">imputed_deviations</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
+		
+		<span class="k">return</span> <span class="n">y_dev_data_filtered</span></div>
+
+<div class="viewcode-block" id="GetInferenceData.voxel_mapping"><a class="viewcode-back" href="../../../real_data_process.html#dlmfg.core.wls400a_system.GetInferenceData.voxel_mapping">[docs]</a>	<span class="k">def</span> <span class="nf">voxel_mapping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">y_dev_data_filtered</span><span class="p">,</span><span class="n">voxel_point_index</span><span class="p">,</span><span class="n">point_dim</span><span class="p">,</span><span class="n">voxel_dim</span><span class="p">,</span><span class="n">voxel_channels</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Map the node deviations to voxel structure for input to the 3D CNN model</span>
+<span class="sd">			</span>
+<span class="sd">			:param y_dev_data_filtered: numpy array of the node deviations </span>
+<span class="sd">			:type y_dev_data_filtered: numpy.array (required)</span>
+<span class="sd">			</span>
+<span class="sd">			:param voxel_point_index: mapping index</span>
+<span class="sd">			:type voxel_point_index: numpy.array [nodes*3] (required)</span>
+
+<span class="sd">			:param point_dim: the number of nodes</span>
+<span class="sd">			:type point_dim: int (required)</span>
+<span class="sd">			</span>
+<span class="sd">			:param point_dim: the number of nodes</span>
+<span class="sd">			:type point_dim: int (required)</span>
+
+<span class="sd">			:param voxel_dim: The resolution of the voxel</span>
+<span class="sd">			:type voxel_dim: int (required)</span>
+
+<span class="sd">			:returns: voxel_dev_data (input to the 3D CNN model)</span>
+<span class="sd">			:rtype: np_array [1*voxel_dim,voxel_dim,voxel_dim,voxel_channels]</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+
+		<span class="k">def</span> <span class="nf">get_dev_data</span><span class="p">(</span><span class="n">y1</span><span class="p">,</span><span class="n">y2</span><span class="p">,</span><span class="n">p</span><span class="p">):</span>   
+		    <span class="k">if</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">y1</span><span class="p">)</span><span class="o">&gt;</span><span class="nb">abs</span><span class="p">(</span><span class="n">y2</span><span class="p">)):</span>
+		        <span class="n">y_dev</span><span class="o">=</span><span class="n">y1</span>
+		    <span class="k">else</span><span class="p">:</span>
+		        <span class="n">y_dev</span><span class="o">=</span><span class="n">y2</span>
+		    <span class="n">retval</span><span class="o">=</span><span class="n">y_dev</span>
+		    <span class="k">return</span> <span class="n">retval</span>
+		
+		<span class="n">voxel_dev_data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="n">voxel_dim</span><span class="p">,</span><span class="n">voxel_dim</span><span class="p">,</span><span class="n">voxel_dim</span><span class="p">,</span><span class="n">voxel_channels</span><span class="p">))</span>    
+
+		<span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">point_dim</span><span class="p">):</span>
+		    <span class="n">x_index</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">voxel_point_index</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">p</span><span class="p">),</span><span class="mi">0</span><span class="p">])</span>
+		    <span class="n">y_index</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">voxel_point_index</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">p</span><span class="p">),</span><span class="mi">1</span><span class="p">])</span>
+		    <span class="n">z_index</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">voxel_point_index</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">p</span><span class="p">),</span><span class="mi">2</span><span class="p">])</span>
+		    <span class="n">voxel_dev_data</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">x_index</span><span class="p">,</span><span class="n">y_index</span><span class="p">,</span><span class="n">z_index</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="n">get_dev_data</span><span class="p">(</span><span class="n">voxel_dev_data</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">x_index</span><span class="p">,</span><span class="n">y_index</span><span class="p">,</span><span class="n">z_index</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span><span class="n">y_dev_data_filtered</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">p</span><span class="p">)],</span><span class="nb">int</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
+
+		<span class="k">return</span> <span class="n">voxel_dev_data</span></div></div>
+	
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Sumit Sinha.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.2.
+    </div>
+  </body>
+</html>

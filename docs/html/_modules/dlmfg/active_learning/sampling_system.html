@@ -1,0 +1,231 @@
+
+
+<!doctype html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>dlmfg.active_learning.sampling_system &#8212; Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    <script type="text/javascript" src="../../../_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for dlmfg.active_learning.sampling_system</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">current_path</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
+<span class="n">parentdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">current_path</span><span class="p">)</span>
+
+<span class="sd">&quot;&quot;&quot; Contains sampling classes and methods to enable active learning between VRM and 3D CNN model &quot;&quot;&quot;</span>
+
+<span class="c1">#Adding Path to various Modules</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;../core&quot;</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;../visualization&quot;</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;../utilities&quot;</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;../datasets&quot;</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;../trained_models&quot;</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;../config&quot;</span><span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">pyDOE</span> <span class="kn">import</span> <span class="n">lhs</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">uniform</span><span class="p">,</span><span class="n">norm</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="c1">#Importing Config Files</span>
+<span class="kn">import</span> <span class="nn">kcc_config</span> <span class="k">as</span> <span class="nn">kcc_config</span>
+<span class="kn">import</span> <span class="nn">sampling_config</span> <span class="k">as</span> <span class="nn">sampling_config</span>
+
+<div class="viewcode-block" id="adaptive_sampling"><a class="viewcode-back" href="../../../active_learning.html#dlmfg.active_learning.sampling_system.adaptive_sampling">[docs]</a><span class="k">class</span> <span class="nc">adaptive_sampling</span><span class="p">():</span>
+	<span class="sd">&quot;&quot;&quot;Assembly System Class</span>
+
+<span class="sd">		:param sample_dim: The number of initial samples to be generated</span>
+<span class="sd">		:type sample_dim: int (required)</span>
+
+<span class="sd">		:param sample_type: Type of sampling to be used for generating initial samples</span>
+<span class="sd">		:type sample_dim: str (required)</span>
+
+<span class="sd">		:param adaptive_sample_dim: The number of samples to be generated with each adaptive sample run</span>
+<span class="sd">		:type adaptive_sample_dim: int (required) </span>
+
+<span class="sd">		:param adaptive_runs: The maximum number of adaptive runs to be conducted</span>
+<span class="sd">		:type adaptive_runs: int (required) </span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">sample_dim</span><span class="p">,</span><span class="n">sample_type</span><span class="p">,</span><span class="n">adaptive_samples_dim</span><span class="p">,</span><span class="n">adaptive_runs</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">sample_dim</span><span class="o">=</span><span class="n">sample_dim</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">sample_type</span><span class="o">=</span><span class="n">sample_type</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">adaptive_samples_dim</span><span class="o">=</span><span class="n">adaptive_samples_dim</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">adaptive_runs</span><span class="o">=</span><span class="n">adaptive_runs</span>
+	
+<div class="viewcode-block" id="adaptive_sampling.inital_sampling_lhs"><a class="viewcode-back" href="../../../active_learning.html#dlmfg.active_learning.sampling_system.adaptive_sampling.inital_sampling_lhs">[docs]</a>	<span class="k">def</span> <span class="nf">inital_sampling_lhs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">kcc_struct</span><span class="p">,</span><span class="n">sample_dim</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Generates multi-variate LHS samples for each KCC and scales then based on the KCC maximum and minimum value</span>
+
+<span class="sd">			:param kcc_struct: list of dictionaries for each KCC from kcc_config file</span>
+<span class="sd">			:type file_name: list (required)</span>
+
+<span class="sd">			:param sample_dim: The number of initial samples to be generated</span>
+<span class="sd">			:type sample_dim: int (required)</span>
+
+<span class="sd">			:returns: numpy array of sampled KCCs</span>
+<span class="sd">			:rtype: numpy.array [sample_dim*kcc_dim]</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">kcc_dim</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">kcc_struct</span><span class="p">)</span>
+		<span class="n">sample_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_type</span>
+
+		<span class="n">samples</span> <span class="o">=</span><span class="n">lhs</span><span class="p">(</span><span class="n">kcc_dim</span><span class="p">,</span><span class="n">samples</span><span class="o">=</span><span class="n">sample_dim</span><span class="p">,</span><span class="n">criterion</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">)</span>
+		<span class="n">initial_samples</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span>
+		<span class="n">index</span><span class="o">=</span><span class="mi">0</span>
+		<span class="k">for</span> <span class="n">kcc</span> <span class="ow">in</span> <span class="n">kcc_struct</span><span class="p">:</span>   
+			<span class="n">initial_samples</span><span class="p">[:,</span><span class="n">index</span><span class="p">]</span><span class="o">=</span><span class="n">samples</span><span class="p">[:,</span><span class="n">index</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">kcc</span><span class="p">[</span><span class="s1">&#39;kcc_max&#39;</span><span class="p">]</span><span class="o">-</span><span class="n">kcc</span><span class="p">[</span><span class="s1">&#39;kcc_min&#39;</span><span class="p">])</span><span class="o">+</span><span class="n">kcc</span><span class="p">[</span><span class="s1">&#39;kcc_min&#39;</span><span class="p">]</span>
+			<span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span>
+
+		<span class="k">return</span> <span class="n">initial_samples</span></div>
+
+<div class="viewcode-block" id="adaptive_sampling.inital_sampling_uniform_random"><a class="viewcode-back" href="../../../active_learning.html#dlmfg.active_learning.sampling_system.adaptive_sampling.inital_sampling_uniform_random">[docs]</a>	<span class="k">def</span> <span class="nf">inital_sampling_uniform_random</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">kcc_struct</span><span class="p">,</span><span class="n">sample_dim</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Generates multi-variate uniform random samples for each KCC and scales then based on the KCC maximum and minimum value</span>
+
+<span class="sd">			:param kcc_struct: list of dictionaries for each KCC from kcc_config file</span>
+<span class="sd">			:type file_name: list (required)</span>
+
+<span class="sd">			:param sample_dim: The number of initial samples to be generated</span>
+<span class="sd">			:type sample_dim: int (required)</span>
+
+<span class="sd">			:returns: numpy array of sampled KCCs</span>
+<span class="sd">			:rtype: numpy.array [sample_dim*kcc_dim]</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">kcc_dim</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">kcc_struct</span><span class="p">)</span>
+		<span class="n">sample_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_type</span>
+		<span class="n">initial_samples</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">sample_dim</span><span class="p">,</span><span class="n">kcc_dim</span><span class="p">))</span>
+		<span class="n">index</span><span class="o">=</span><span class="mi">0</span>
+		<span class="k">for</span> <span class="n">kcc</span> <span class="ow">in</span> <span class="n">kcc_struct</span><span class="p">:</span>
+			<span class="n">initial_samples</span><span class="p">[:,</span><span class="n">index</span><span class="p">]</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">kcc</span><span class="p">[</span><span class="s1">&#39;kcc_min&#39;</span><span class="p">],</span><span class="n">kcc</span><span class="p">[</span><span class="s1">&#39;kcc_max&#39;</span><span class="p">],</span><span class="n">sample_dim</span><span class="p">)</span>
+			<span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span>
+
+		<span class="k">return</span> <span class="n">initial_samples</span></div>
+	
+<div class="viewcode-block" id="adaptive_sampling.adpative_samples_gen"><a class="viewcode-back" href="../../../active_learning.html#dlmfg.active_learning.sampling_system.adaptive_sampling.adpative_samples_gen">[docs]</a>	<span class="k">def</span> <span class="nf">adpative_samples_gen</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">kcc_struct</span><span class="p">,</span><span class="n">run_id</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Adaptive samples based on model uncertainty, currently this is Work in Progress</span>
+
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">adaptive_samples_dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">adaptive_samples_dim</span>
+
+		<span class="n">adaptive_samples</span><span class="o">=</span><span class="p">[]</span>
+
+		<span class="n">index</span><span class="o">=</span><span class="mi">0</span>
+		<span class="k">for</span> <span class="n">kcc</span> <span class="ow">in</span> <span class="n">kcc_struct</span><span class="p">:</span>
+			<span class="n">adaptive_samples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inital_sampling</span><span class="p">(</span><span class="n">kcc_struct</span><span class="p">,</span><span class="n">adaptive_samples_dim</span><span class="p">))</span>
+			<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">run_id</span><span class="p">:</span>
+				<span class="n">adaptive_samples</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="n">index</span><span class="o">+</span><span class="n">i</span><span class="p">,:]</span><span class="o">=</span><span class="mi">0</span>
+
+		<span class="k">return</span> <span class="n">adaptive_samples</span></div>
+
+	<span class="k">def</span> <span class="nf">get_uncertaninity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">kcc_struct</span><span class="p">,</span><span class="n">model</span><span class="p">,</span><span class="n">samples</span><span class="p">):</span>
+		<span class="k">pass</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+	
+	<span class="n">kcc_struct</span><span class="o">=</span><span class="n">kcc_config</span><span class="o">.</span><span class="n">kcc_struct</span>
+	<span class="n">sampling_config</span><span class="o">=</span><span class="n">sampling_config</span><span class="o">.</span><span class="n">sampling_config</span>
+
+	<span class="n">adaptive_sampling</span><span class="o">=</span><span class="n">adaptive_sampling</span><span class="p">(</span><span class="n">sampling_config</span><span class="p">[</span><span class="s1">&#39;sample_dim&#39;</span><span class="p">],</span><span class="n">sampling_config</span><span class="p">[</span><span class="s1">&#39;sample_type&#39;</span><span class="p">],</span><span class="n">sampling_config</span><span class="p">[</span><span class="s1">&#39;adaptive_sample_dim&#39;</span><span class="p">],</span><span class="n">sampling_config</span><span class="p">[</span><span class="s1">&#39;adaptive_runs&#39;</span><span class="p">])</span>
+
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Generating initial samples&#39;</span><span class="p">)</span>
+
+	<span class="k">if</span><span class="p">(</span><span class="n">adaptive_sampling</span><span class="o">.</span><span class="n">sample_type</span><span class="o">==</span><span class="s1">&#39;lhs&#39;</span><span class="p">):</span>
+		<span class="n">initial_samples</span><span class="o">=</span><span class="n">adaptive_sampling</span><span class="o">.</span><span class="n">inital_sampling_lhs</span><span class="p">(</span><span class="n">kcc_struct</span><span class="p">,</span><span class="n">sampling_config</span><span class="p">[</span><span class="s1">&#39;sample_dim&#39;</span><span class="p">])</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">initial_samples</span><span class="o">=</span><span class="n">adaptive_sampling</span><span class="o">.</span><span class="n">inital_sampling_uniform_random</span><span class="p">(</span><span class="n">kcc_struct</span><span class="p">,</span><span class="n">sampling_config</span><span class="p">[</span><span class="s1">&#39;sample_dim&#39;</span><span class="p">])</span>
+
+
+	<span class="n">file_name</span><span class="o">=</span><span class="n">sampling_config</span><span class="p">[</span><span class="s1">&#39;output_file_name&#39;</span><span class="p">]</span>
+	<span class="n">file_path</span><span class="o">=</span><span class="s1">&#39;./sample_input/&#39;</span><span class="o">+</span><span class="n">file_name</span>
+	<span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">initial_samples</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Initial Samples Saved to path: &#39;</span><span class="p">,</span><span class="n">file_path</span><span class="p">)</span>
+
+	<span class="c1">#WIP to integrate adaptive sampling from VRM Oracle</span>
+	<span class="c1">#@Run VRM Oracle on initial samples</span>
+	<span class="c1">#@Train Model on initial samples</span>
+
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	for i in range(sampling_config[&#39;adaptive_runs&#39;]):</span>
+<span class="sd">		adaptive_samples=adaptive_sampling.adpative_samples_gen(kcc_struct,i)</span>
+<span class="sd">		sample_uncertaninity=model_uncertaninity.get_uncertaninity(adaptive_samples)</span>
+<span class="sd">		adaptive_sample_id=sample_uncertaninity.index(min(sample_uncertaninity))</span>
+<span class="sd">		selected_adaptive_samples=adaptive_samples[adaptive_sample_id]</span>
+<span class="sd">		</span>
+<span class="sd">		#@Run Matlab model on selected adaptive samples</span>
+<span class="sd">		#@Fine Tune Model on the genrated adaptive samples</span>
+<span class="sd">		#@Check model on test dataset, stop if accuracy crietria is met</span>
+<span class="sd">	</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Sumit Sinha.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.2.
+    </div>
+  </body>
+</html>

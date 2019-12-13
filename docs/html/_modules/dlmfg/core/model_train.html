@@ -1,0 +1,311 @@
+
+
+<!doctype html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>dlmfg.core.model_train &#8212; Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    <script type="text/javascript" src="../../../_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for dlmfg.core.model_train</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot; The model train file trains the model on the download dataset and other parameters specified in the assemblyconfig file</span>
+<span class="sd">The main function runs the training and populates the created file structure with the trained model, logs and plots</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">current_path</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
+<span class="n">parentdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">current_path</span><span class="p">)</span>
+
+<span class="c1">#Adding Path to various Modules</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;../core&quot;</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;../visualization&quot;</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;../utilities&quot;</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;../datasets&quot;</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;../trained_models&quot;</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;../config&quot;</span><span class="p">)</span>
+<span class="c1">#path_var=os.path.join(os.path.dirname(__file__),&quot;../utilities&quot;)</span>
+<span class="c1">#sys.path.append(path_var)</span>
+<span class="c1">#sys.path.insert(0,parentdir) </span>
+
+<span class="c1">#Importing Required Modules</span>
+<span class="kn">import</span> <span class="nn">pathlib</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+<span class="kn">from</span> <span class="nn">keras</span> <span class="kn">import</span> <span class="n">backend</span> <span class="k">as</span> <span class="n">K</span>
+<span class="n">K</span><span class="o">.</span><span class="n">clear_session</span><span class="p">()</span>
+
+<span class="c1">#Importing Config files</span>
+<span class="kn">import</span> <span class="nn">assembly_config</span> <span class="k">as</span> <span class="nn">config</span>
+<span class="kn">import</span> <span class="nn">model_config</span> <span class="k">as</span> <span class="nn">cftrain</span>
+
+<span class="c1">#Importing required modules from the package</span>
+<span class="kn">from</span> <span class="nn">measurement_system</span> <span class="kn">import</span> <span class="n">HexagonWlsScanner</span>
+<span class="kn">from</span> <span class="nn">assembly_system</span> <span class="kn">import</span> <span class="n">VRMSimulationModel</span>
+<span class="kn">from</span> <span class="nn">wls400a_system</span> <span class="kn">import</span> <span class="n">GetInferenceData</span>
+<span class="kn">from</span> <span class="nn">data_import</span> <span class="kn">import</span> <span class="n">GetTrainData</span>
+<span class="kn">from</span> <span class="nn">core_model</span> <span class="kn">import</span> <span class="n">DLModel</span>
+<span class="kn">from</span> <span class="nn">training_viz</span> <span class="kn">import</span> <span class="n">TrainViz</span>
+<span class="kn">from</span> <span class="nn">metrics_eval</span> <span class="kn">import</span> <span class="n">MetricsEval</span>
+<span class="kn">from</span> <span class="nn">keras_lr_multiplier</span> <span class="kn">import</span> <span class="n">LRMultiplier</span>
+
+<div class="viewcode-block" id="TrainModel"><a class="viewcode-back" href="../../../model_train.html#dlmfg.core.model_train.TrainModel">[docs]</a><span class="k">class</span> <span class="nc">TrainModel</span><span class="p">:</span>
+	<span class="sd">&quot;&quot;&quot;Train Model Class, the initialization parameters are parsed from modelconfig_train.py file</span>
+<span class="sd">		</span>
+<span class="sd">		:param batch_size: mini batch size while training the model </span>
+<span class="sd">		:type batch_size: int (required)</span>
+
+<span class="sd">		:param epochs: no of epochs to conduct training</span>
+<span class="sd">		:type epochs: int (required)</span>
+
+<span class="sd">		:param split_ratio: train and validation split for the model</span>
+<span class="sd">		:type assembly_system: float (required)</span>
+
+<span class="sd">		The class contains run_train_model method</span>
+<span class="sd">	&quot;&quot;&quot;</span>	
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">batch_size</span><span class="p">,</span><span class="n">epochs</span><span class="p">,</span><span class="n">split_ratio</span><span class="p">):</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">epochs</span><span class="o">=</span><span class="n">epochs</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">split_ratio</span><span class="o">=</span><span class="n">split_ratio</span>
+			
+
+<div class="viewcode-block" id="TrainModel.run_train_model"><a class="viewcode-back" href="../../../model_train.html#dlmfg.core.model_train.TrainModel.run_train_model">[docs]</a>	<span class="k">def</span> <span class="nf">run_train_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">model</span><span class="p">,</span><span class="n">X_in</span><span class="p">,</span><span class="n">Y_out</span><span class="p">,</span><span class="n">model_path</span><span class="p">,</span><span class="n">logs_path</span><span class="p">,</span><span class="n">plots_path</span><span class="p">,</span><span class="n">activate_tensorboard</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">run_id</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">tl_type</span><span class="o">=</span><span class="s1">&#39;full_fine_tune&#39;</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;run_train_model function trains the model on the dataset and saves the trained model,logs and plots within the file structure, the function prints the training evaluation metrics</span>
+<span class="sd">			</span>
+<span class="sd">			:param model: 3D CNN model compiled within the Deep Learning Class, refer https://keras.io/models/model/ for more information </span>
+<span class="sd">			:type model: keras.models (required)</span>
+
+<span class="sd">			:param X_in: Train dataset input (predictor variables), 3D Voxel representation of the cloud of point and node deviation data obtained from the VRM software based on the sampling input</span>
+<span class="sd">			:type X_in: numpy.array [samples*voxel_dim*voxel_dim*voxel_dim*deviation_channels] (required)</span>
+<span class="sd">			</span>
+<span class="sd">			:param Y_out: Train dataset output (variables to predict), Process Parameters/KCCs obtained from sampling</span>
+<span class="sd">			:type Y_out: numpy.array [samples*assembly_kccs] (required)</span>
+
+<span class="sd">			:param model_path: model path at which the trained model is saved</span>
+<span class="sd">			:type model_path: str (required)</span>
+<span class="sd">			</span>
+<span class="sd">			:param logs_path: logs path where the training metrics file is saved</span>
+<span class="sd">			:type logs_path: str (required)</span>
+
+<span class="sd">			:param plots_path: plots path where model training loss convergence plot is saved</span>
+<span class="sd">			:type plots_path: str (required)</span>
+
+<span class="sd">			:param activate_tensorboard: flag to indicate if tensorboard should be added in model callbacks for better visualization, 0 by default, set to 1 to activate tensorboard</span>
+<span class="sd">			:type activate_tensorboard: int</span>
+
+<span class="sd">			:param run_id: Run id index used in data study to conduct multiple training runs with different dataset sizes, defaults to 0</span>
+<span class="sd">			:type run_id: int			</span>
+<span class="sd">		&quot;&quot;&quot;</span>			
+		<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+		<span class="kn">from</span> <span class="nn">keras.models</span> <span class="kn">import</span> <span class="n">load_model</span>
+		<span class="kn">from</span> <span class="nn">keras.callbacks</span> <span class="kn">import</span> <span class="n">ModelCheckpoint</span>
+		<span class="kn">from</span> <span class="nn">keras.callbacks</span> <span class="kn">import</span> <span class="n">TensorBoard</span>
+
+		<span class="n">model_file_path</span><span class="o">=</span><span class="n">model_path</span><span class="o">+</span><span class="s1">&#39;/trained_model_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">run_id</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;.h5&#39;</span>
+		<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X_in</span><span class="p">,</span> <span class="n">Y_out</span><span class="p">,</span> <span class="n">test_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">split_ratio</span><span class="p">)</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Data Split Completed&quot;</span><span class="p">)</span>
+		
+		<span class="c1">#Checkpointer to save the best model</span>
+		<span class="n">checkpointer</span> <span class="o">=</span> <span class="n">ModelCheckpoint</span><span class="p">(</span><span class="n">model_file_path</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">save_best_only</span><span class="o">=</span><span class="s1">&#39;mae&#39;</span><span class="p">)</span>
+		<span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="n">checkpointer</span><span class="p">]</span>
+		
+		<span class="k">if</span><span class="p">(</span><span class="n">activate_tensorboard</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span>
+			<span class="c1">#Activating Tensorboard for Visualization</span>
+			<span class="n">tensorboard</span> <span class="o">=</span> <span class="n">TensorBoard</span><span class="p">(</span><span class="n">log_dir</span><span class="o">=</span><span class="n">logs_path</span><span class="p">,</span><span class="n">histogram_freq</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">write_graph</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">write_images</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+			<span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="n">checkpointer</span><span class="p">,</span><span class="n">tensorboard</span><span class="p">]</span>
+		
+		<span class="n">tensorboard</span> <span class="o">=</span> <span class="n">TensorBoard</span><span class="p">(</span><span class="n">log_dir</span><span class="o">=</span><span class="n">logs_path</span><span class="p">,</span><span class="n">histogram_freq</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">write_graph</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">write_images</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+		<span class="n">history</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">validation_data</span><span class="o">=</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span><span class="n">y_test</span><span class="p">),</span> <span class="n">epochs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">epochs</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span><span class="n">callbacks</span><span class="o">=</span><span class="n">callbacks</span><span class="p">)</span>
+		
+		<span class="n">trainviz</span><span class="o">=</span><span class="n">TrainViz</span><span class="p">()</span>
+		<span class="n">trainviz</span><span class="o">.</span><span class="n">training_plot</span><span class="p">(</span><span class="n">history</span><span class="p">,</span><span class="n">plots_path</span><span class="p">,</span><span class="n">run_id</span><span class="p">)</span>
+		
+		<span class="k">if</span><span class="p">(</span><span class="n">tl_type</span><span class="o">==</span><span class="s1">&#39;variable_lr&#39;</span><span class="p">):</span>
+			<span class="n">inference_model</span><span class="o">=</span><span class="n">load_model</span><span class="p">(</span><span class="n">model_file_path</span><span class="p">,</span> <span class="n">custom_objects</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;LRMultiplier&#39;</span><span class="p">:</span> <span class="n">LRMultiplier</span><span class="p">})</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">inference_model</span><span class="o">=</span><span class="n">load_model</span><span class="p">(</span><span class="n">model_file_path</span><span class="p">)</span>
+			
+		<span class="n">y_pred</span><span class="o">=</span><span class="n">inference_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+		<span class="n">metrics_eval</span><span class="o">=</span><span class="n">MetricsEval</span><span class="p">();</span>
+		<span class="n">eval_metrics</span><span class="p">,</span><span class="n">accuracy_metrics_df</span><span class="o">=</span><span class="n">metrics_eval</span><span class="o">.</span><span class="n">metrics_eval_base</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span><span class="n">y_test</span><span class="p">,</span><span class="n">logs_path</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">model</span><span class="p">,</span><span class="n">eval_metrics</span><span class="p">,</span><span class="n">accuracy_metrics_df</span></div>
+
+	<span class="k">def</span> <span class="nf">run_train_model_dynamic</span><span class="p">():</span>
+		<span class="k">pass</span></div>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Parsing from Assembly Config File....&#39;</span><span class="p">)</span>
+
+	<span class="n">data_type</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;data_type&#39;</span><span class="p">]</span>
+	<span class="n">application</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;application&#39;</span><span class="p">]</span>
+	<span class="n">part_type</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;part_type&#39;</span><span class="p">]</span>
+	<span class="n">part_name</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;part_name&#39;</span><span class="p">]</span>
+	<span class="n">data_format</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;data_format&#39;</span><span class="p">]</span>
+	<span class="n">assembly_type</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;assembly_type&#39;</span><span class="p">]</span>
+	<span class="n">assembly_kccs</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;assembly_kccs&#39;</span><span class="p">]</span>	
+	<span class="n">assembly_kpis</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;assembly_kpis&#39;</span><span class="p">]</span>
+	<span class="n">voxel_dim</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;voxel_dim&#39;</span><span class="p">]</span>
+	<span class="n">point_dim</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;point_dim&#39;</span><span class="p">]</span>
+	<span class="n">voxel_channels</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;voxel_channels&#39;</span><span class="p">]</span>
+	<span class="n">noise_type</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;noise_type&#39;</span><span class="p">]</span>
+	<span class="n">mapping_index</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;mapping_index&#39;</span><span class="p">]</span>
+	<span class="n">file_names_x</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;data_files_x&#39;</span><span class="p">]</span>
+	<span class="n">file_names_y</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;data_files_y&#39;</span><span class="p">]</span>
+	<span class="n">file_names_z</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;data_files_z&#39;</span><span class="p">]</span>
+	<span class="n">system_noise</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;system_noise&#39;</span><span class="p">]</span>
+	<span class="n">aritifical_noise</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;aritifical_noise&#39;</span><span class="p">]</span>
+	<span class="n">data_folder</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;data_folder&#39;</span><span class="p">]</span>
+	<span class="n">kcc_folder</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;kcc_folder&#39;</span><span class="p">]</span>
+	<span class="n">kcc_files</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;kcc_files&#39;</span><span class="p">]</span>
+
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Parsing from Training Config File&#39;</span><span class="p">)</span>
+
+	<span class="n">model_type</span><span class="o">=</span><span class="n">cftrain</span><span class="o">.</span><span class="n">model_parameters</span><span class="p">[</span><span class="s1">&#39;model_type&#39;</span><span class="p">]</span>
+	<span class="n">output_type</span><span class="o">=</span><span class="n">cftrain</span><span class="o">.</span><span class="n">model_parameters</span><span class="p">[</span><span class="s1">&#39;output_type&#39;</span><span class="p">]</span>
+	<span class="n">batch_size</span><span class="o">=</span><span class="n">cftrain</span><span class="o">.</span><span class="n">model_parameters</span><span class="p">[</span><span class="s1">&#39;batch_size&#39;</span><span class="p">]</span>
+	<span class="n">epocs</span><span class="o">=</span><span class="n">cftrain</span><span class="o">.</span><span class="n">model_parameters</span><span class="p">[</span><span class="s1">&#39;epocs&#39;</span><span class="p">]</span>
+	<span class="n">split_ratio</span><span class="o">=</span><span class="n">cftrain</span><span class="o">.</span><span class="n">model_parameters</span><span class="p">[</span><span class="s1">&#39;split_ratio&#39;</span><span class="p">]</span>
+	<span class="n">optimizer</span><span class="o">=</span><span class="n">cftrain</span><span class="o">.</span><span class="n">model_parameters</span><span class="p">[</span><span class="s1">&#39;optimizer&#39;</span><span class="p">]</span>
+	<span class="n">loss_func</span><span class="o">=</span><span class="n">cftrain</span><span class="o">.</span><span class="n">model_parameters</span><span class="p">[</span><span class="s1">&#39;loss_func&#39;</span><span class="p">]</span>
+	<span class="n">regularizer_coeff</span><span class="o">=</span><span class="n">cftrain</span><span class="o">.</span><span class="n">model_parameters</span><span class="p">[</span><span class="s1">&#39;regularizer_coeff&#39;</span><span class="p">]</span>
+	<span class="n">activate_tensorboard</span><span class="o">=</span><span class="n">cftrain</span><span class="o">.</span><span class="n">model_parameters</span><span class="p">[</span><span class="s1">&#39;activate_tensorboard&#39;</span><span class="p">]</span>
+	
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Creating file Structure....&#39;</span><span class="p">)</span>
+	
+	<span class="n">folder_name</span><span class="o">=</span><span class="n">part_type</span>
+	<span class="n">train_path</span><span class="o">=</span><span class="s1">&#39;../trained_models/&#39;</span><span class="o">+</span><span class="n">part_type</span>
+	<span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">train_path</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> 
+
+	<span class="n">model_path</span><span class="o">=</span><span class="n">train_path</span><span class="o">+</span><span class="s1">&#39;/model&#39;</span>
+	<span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">model_path</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	
+	<span class="n">logs_path</span><span class="o">=</span><span class="n">train_path</span><span class="o">+</span><span class="s1">&#39;/logs&#39;</span>
+	<span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">logs_path</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+	<span class="n">plots_path</span><span class="o">=</span><span class="n">train_path</span><span class="o">+</span><span class="s1">&#39;/plots&#39;</span>
+	<span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">plots_path</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+	<span class="n">deployment_path</span><span class="o">=</span><span class="n">train_path</span><span class="o">+</span><span class="s1">&#39;/deploy&#39;</span>
+	<span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">deployment_path</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+	<span class="c1">#Objects of Measurement System, Assembly System, Get Inference Data</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Initializing the Assembly System and Measurement System....&#39;</span><span class="p">)</span>
+	
+	<span class="n">measurement_system</span><span class="o">=</span><span class="n">HexagonWlsScanner</span><span class="p">(</span><span class="n">data_type</span><span class="p">,</span><span class="n">application</span><span class="p">,</span><span class="n">system_noise</span><span class="p">,</span><span class="n">part_type</span><span class="p">,</span><span class="n">data_format</span><span class="p">)</span>
+	<span class="n">vrm_system</span><span class="o">=</span><span class="n">VRMSimulationModel</span><span class="p">(</span><span class="n">assembly_type</span><span class="p">,</span><span class="n">assembly_kccs</span><span class="p">,</span><span class="n">assembly_kpis</span><span class="p">,</span><span class="n">part_name</span><span class="p">,</span><span class="n">part_type</span><span class="p">,</span><span class="n">voxel_dim</span><span class="p">,</span><span class="n">voxel_channels</span><span class="p">,</span><span class="n">point_dim</span><span class="p">,</span><span class="n">aritifical_noise</span><span class="p">)</span>
+	<span class="n">get_data</span><span class="o">=</span><span class="n">GetTrainData</span><span class="p">();</span>
+
+	<span class="c1">#print(input_conv_data.shape,kcc_subset_dump.shape)</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Building 3D CNN model&#39;</span><span class="p">)</span>
+
+	<span class="n">output_dimension</span><span class="o">=</span><span class="n">assembly_kccs</span>
+	
+	<span class="n">dl_model</span><span class="o">=</span><span class="n">DLModel</span><span class="p">(</span><span class="n">model_type</span><span class="p">,</span><span class="n">output_dimension</span><span class="p">,</span><span class="n">optimizer</span><span class="p">,</span><span class="n">loss_func</span><span class="p">,</span><span class="n">regularizer_coeff</span><span class="p">,</span><span class="n">output_type</span><span class="p">)</span>
+	<span class="n">model</span><span class="o">=</span><span class="n">dl_model</span><span class="o">.</span><span class="n">cnn_model_3d</span><span class="p">(</span><span class="n">voxel_dim</span><span class="p">,</span><span class="n">voxel_channels</span><span class="p">)</span>
+
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Training 3D CNN model&#39;</span><span class="p">)</span>
+	
+	<span class="k">if</span><span class="p">(</span><span class="n">activate_tensorboard</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span>
+		<span class="n">tensorboard_str</span><span class="o">=</span><span class="s1">&#39;tensorboard&#39;</span> <span class="o">+</span> <span class="s1">&#39;--logdir &#39;</span><span class="o">+</span><span class="n">logs_path</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Vizavlize at Tensorboard using &#39;</span><span class="p">,</span> <span class="n">tensorboard_str</span><span class="p">)</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Importing and Preprocessing Cloud-of-Point Data&#39;</span><span class="p">)</span>
+	
+	<span class="n">dataset</span><span class="o">=</span><span class="p">[]</span>
+	<span class="n">dataset</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_data</span><span class="o">.</span><span class="n">data_import</span><span class="p">(</span><span class="n">file_names_x</span><span class="p">,</span><span class="n">data_folder</span><span class="p">))</span>
+	<span class="n">dataset</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_data</span><span class="o">.</span><span class="n">data_import</span><span class="p">(</span><span class="n">file_names_y</span><span class="p">,</span><span class="n">data_folder</span><span class="p">))</span>
+	<span class="n">dataset</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_data</span><span class="o">.</span><span class="n">data_import</span><span class="p">(</span><span class="n">file_names_z</span><span class="p">,</span><span class="n">data_folder</span><span class="p">))</span>
+	<span class="n">point_index</span><span class="o">=</span><span class="n">get_data</span><span class="o">.</span><span class="n">load_mapping_index</span><span class="p">(</span><span class="n">mapping_index</span><span class="p">)</span>
+
+	<span class="n">kcc_dataset</span><span class="o">=</span><span class="n">get_data</span><span class="o">.</span><span class="n">data_import</span><span class="p">(</span><span class="n">kcc_files</span><span class="p">,</span><span class="n">kcc_folder</span><span class="p">)</span>
+	<span class="n">input_conv_data</span><span class="p">,</span> <span class="n">kcc_subset_dump</span><span class="p">,</span><span class="n">kpi_subset_dump</span><span class="o">=</span><span class="n">get_data</span><span class="o">.</span><span class="n">data_convert_voxel_mc</span><span class="p">(</span><span class="n">vrm_system</span><span class="p">,</span><span class="n">dataset</span><span class="p">,</span><span class="n">point_index</span><span class="p">,</span><span class="n">kcc_dataset</span><span class="p">)</span>
+	
+	<span class="n">train_model</span><span class="o">=</span><span class="n">TrainModel</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span><span class="n">epocs</span><span class="p">,</span><span class="n">split_ratio</span><span class="p">)</span>
+	<span class="n">trained_model</span><span class="p">,</span><span class="n">eval_metrics</span><span class="p">,</span><span class="n">accuracy_metrics_df</span><span class="o">=</span><span class="n">train_model</span><span class="o">.</span><span class="n">run_train_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="n">input_conv_data</span><span class="p">,</span><span class="n">kcc_subset_dump</span><span class="p">,</span><span class="n">model_path</span><span class="p">,</span><span class="n">logs_path</span><span class="p">,</span><span class="n">plots_path</span><span class="p">,</span><span class="n">activate_tensorboard</span><span class="p">,</span><span class="n">tf_fl</span><span class="p">)</span>
+	
+	<span class="n">accuracy_metrics_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">logs_path</span><span class="o">+</span><span class="s1">&#39;/metrics_train.csv&#39;</span><span class="p">)</span>
+
+	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Model Training Complete..&quot;</span><span class="p">)</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The Model Validation Metrics are &quot;</span><span class="p">)</span>
+	<span class="nb">print</span><span class="p">(</span><span class="n">eval_metrics</span><span class="p">)</span>
+
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Training Completed Successfully&#39;</span><span class="p">)</span>
+
+
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Sumit Sinha.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.2.
+    </div>
+  </body>
+</html>

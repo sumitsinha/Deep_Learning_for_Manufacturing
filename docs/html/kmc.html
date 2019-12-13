@@ -1,0 +1,163 @@
+
+
+<!doctype html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Key Measurement Characteristics (KMCs) &#8212; Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Utilities" href="utilities.html" />
+    <link rel="prev" title="Deep Learning Class" href="deep_learning.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="utilities.html" title="Utilities"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="deep_learning.html" title="Deep Learning Class"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="deep_learning.html"
+                        title="previous chapter">Deep Learning Class</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="utilities.html"
+                        title="next chapter">Utilities</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/kmc.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="key-measurement-characteristics-kmcs">
+<h1>Key Measurement Characteristics (KMCs)<a class="headerlink" href="#key-measurement-characteristics-kmcs" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p>KMCs are useful is visualizing which areas need to be measured to determine the value of the process parameter. This is useful in terms of determining the optimal sensor layout and in assigning areas a priority when partial measurements needs to be conducted due to system constraints such as cycle time.</p></li>
+</ul>
+<div class="figure align-center" id="id1">
+<img alt="_images/kmc1.png" src="_images/kmc1.png" />
+<p class="caption"><span class="caption-text"><em>Fig 5: KMC for pin hole translation in x-direction</em></span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+</div>
+<div class="figure align-center" id="id2">
+<img alt="_images/kmc2.png" src="_images/kmc2.png" />
+<p class="caption"><span class="caption-text"><em>Fig 6: KMC for pin hole translation in y-direction</em></span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+</div>
+<div class="figure align-center" id="id3">
+<img alt="_images/kmc3.png" src="_images/kmc3.png" />
+<p class="caption"><span class="caption-text"><em>Fig 7: KMC for rotation around pin hole</em></span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+</div>
+<span class="target" id="module-dlmfg.kmc_gen.kmc_model"></span><p>Feature importance of ensemble models such as Gradient Boosted Trees or Random Forests is used in determining KMCs for each KCC</p>
+<dl class="function">
+<dt id="dlmfg.kmc_gen.kmc_model.kmc_model_build">
+<code class="sig-prename descclassname">dlmfg.kmc_gen.kmc_model.</code><code class="sig-name descname">kmc_model_build</code><span class="sig-paren">(</span><em class="sig-param">tree_based_model</em>, <em class="sig-param">point_data</em>, <em class="sig-param">selected_kcc</em>, <em class="sig-param">kcc_name</em>, <em class="sig-param">split_ratio=0.2</em>, <em class="sig-param">save_model=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dlmfg/kmc_gen/kmc_model.html#kmc_model_build"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dlmfg.kmc_gen.kmc_model.kmc_model_build" title="Permalink to this definition">¶</a></dt>
+<dd><p>kmc_model_build function inputs model_type and data to generate KMC for each KCC</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tree_based_model</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – Type of model to be used for feature importance</p></li>
+<li><p><strong>point_data</strong> (<em>numpy.array</em><em> (</em><em>samples*nodes</em><em>) </em><em>(</em><em>required</em><em>)</em>) – input data consisting of node deviations</p></li>
+<li><p><strong>selected_kcc</strong> (<em>numpy.array</em><em> (</em><em>samples*1</em><em>) </em><em>(</em><em>required</em><em>)</em>) – output data consisting of selected process parameter/KCC</p></li>
+<li><p><strong>kcc_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – unique identifier for the KCC</p></li>
+<li><p><strong>split_ratio</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – test data split</p></li>
+<li><p><strong>save_model</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – Save model flag, set to 1 to save model</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>filtered_nodeIDs_x, node ids for which x-deviation is significant given the kcc</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.array [kmcs*1]</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>filtered_nodeIDs_y, node ids for which y-deviation is significant given the kcc</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.array [kmcs*1]</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>filtered_nodeIDs_z, node ids for which z-deviation is significant given the kcc</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.array [kmcs*1]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="utilities.html" title="Utilities"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="deep_learning.html" title="Deep Learning Class"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Sumit Sinha.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.2.
+    </div>
+  </body>
+</html>

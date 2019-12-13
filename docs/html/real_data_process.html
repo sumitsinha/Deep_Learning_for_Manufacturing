@@ -1,0 +1,198 @@
+
+
+<!doctype html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Data Processing (Measurement System) &#8212; Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Class Structure: Objects and Methods" href="classes.html" />
+    <link rel="prev" title="Data Processing (VRM)" href="sim_data_process.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="classes.html" title="Class Structure: Objects and Methods"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="sim_data_process.html" title="Data Processing (VRM)"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="data_description.html" accesskey="U">Data Description &amp; Processing</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="sim_data_process.html"
+                        title="previous chapter">Data Processing (VRM)</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="classes.html"
+                        title="next chapter">Class Structure: Objects and Methods</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/real_data_process.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="data-processing-measurement-system">
+<h1>Data Processing (Measurement System)<a class="headerlink" href="#data-processing-measurement-system" title="Permalink to this headline">¶</a></h1>
+<p>The data obtained from the 3D scanner is processed for input to the trained model during deployment.</p>
+<span class="target" id="module-dlmfg.core.wls400a_system"></span><dl class="class">
+<dt id="dlmfg.core.wls400a_system.GetInferenceData">
+<em class="property">class </em><code class="sig-prename descclassname">dlmfg.core.wls400a_system.</code><code class="sig-name descname">GetInferenceData</code><a class="reference internal" href="_modules/dlmfg/core/wls400a_system.html#GetInferenceData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dlmfg.core.wls400a_system.GetInferenceData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inference Data Class</p>
+<p>Import required files to deploy model on measurement systems</p>
+<dl class="method">
+<dt id="dlmfg.core.wls400a_system.GetInferenceData.data_pre_processing">
+<code class="sig-name descname">data_pre_processing</code><span class="sig-paren">(</span><em class="sig-param">measurement_data</em>, <em class="sig-param">voxel_channels=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dlmfg/core/wls400a_system.html#GetInferenceData.data_pre_processing"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dlmfg.core.wls400a_system.GetInferenceData.data_pre_processing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Process measurement data and impute missing values</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>measurement_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – file name of the tab delimited file given as output from CoreviewAM</p></li>
+<li><p><strong>voxel_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – The number of voxel channels that can be extracted from the the measurement file</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>numpy array of the node deviations (this is similar to what is obtained from the VRM software )</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.array [1*nodes]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="dlmfg.core.wls400a_system.GetInferenceData.load_mapping_index">
+<code class="sig-name descname">load_mapping_index</code><span class="sig-paren">(</span><em class="sig-param">index_file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dlmfg/core/wls400a_system.html#GetInferenceData.load_mapping_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dlmfg.core.wls400a_system.GetInferenceData.load_mapping_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Import mapping index used to map nodes to voxel locations from the file structure</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>index_file</strong> – Path to the index file and the index file name</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>numpy array of voxel mapping index for each node</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.array [point_dim,3]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="dlmfg.core.wls400a_system.GetInferenceData.load_measurement_file">
+<code class="sig-name descname">load_measurement_file</code><span class="sig-paren">(</span><em class="sig-param">measurement_file_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dlmfg/core/wls400a_system.html#GetInferenceData.load_measurement_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dlmfg.core.wls400a_system.GetInferenceData.load_measurement_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Import measurement file on which the model is to be deployed</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>measurement_file_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – file name of the tab delimited file given as output from CoreviewAM</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>numpy array of the file after eliminating meta data information</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="dlmfg.core.wls400a_system.GetInferenceData.voxel_mapping">
+<code class="sig-name descname">voxel_mapping</code><span class="sig-paren">(</span><em class="sig-param">y_dev_data_filtered</em>, <em class="sig-param">voxel_point_index</em>, <em class="sig-param">point_dim</em>, <em class="sig-param">voxel_dim</em>, <em class="sig-param">voxel_channels</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dlmfg/core/wls400a_system.html#GetInferenceData.voxel_mapping"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dlmfg.core.wls400a_system.GetInferenceData.voxel_mapping" title="Permalink to this definition">¶</a></dt>
+<dd><p>Map the node deviations to voxel structure for input to the 3D CNN model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y_dev_data_filtered</strong> (<em>numpy.array</em><em> (</em><em>required</em><em>)</em>) – numpy array of the node deviations</p></li>
+<li><p><strong>voxel_point_index</strong> (<em>numpy.array</em><em> [</em><em>nodes*3</em><em>] </em><em>(</em><em>required</em><em>)</em>) – mapping index</p></li>
+<li><p><strong>point_dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – the number of nodes</p></li>
+<li><p><strong>point_dim</strong> – the number of nodes</p></li>
+<li><p><strong>voxel_dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – The resolution of the voxel</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>voxel_dev_data (input to the 3D CNN model)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np_array [1*voxel_dim,voxel_dim,voxel_dim,voxel_channels]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="classes.html" title="Class Structure: Objects and Methods"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="sim_data_process.html" title="Data Processing (VRM)"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="data_description.html" >Data Description &amp; Processing</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Sumit Sinha.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.2.
+    </div>
+  </body>
+</html>

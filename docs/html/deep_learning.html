@@ -1,0 +1,192 @@
+
+
+<!doctype html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Deep Learning Class &#8212; Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Key Measurement Characteristics (KMCs)" href="kmc.html" />
+    <link rel="prev" title="Measurement System Class" href="measurement_system.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="kmc.html" title="Key Measurement Characteristics (KMCs)"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="measurement_system.html" title="Measurement System Class"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="classes.html" accesskey="U">Class Structure: Objects and Methods</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="measurement_system.html"
+                        title="previous chapter">Measurement System Class</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="kmc.html"
+                        title="next chapter">Key Measurement Characteristics (KMCs)</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/deep_learning.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-dlmfg.core.core_model">
+<span id="deep-learning-class"></span><h1>Deep Learning Class<a class="headerlink" href="#module-dlmfg.core.core_model" title="Permalink to this headline">¶</a></h1>
+<p>Contains core classes and methods for initializing the deep learning 3D CNN model with different variants of the loss function, inputs are provided from the modelconfig_train.py file</p>
+<dl class="class">
+<dt id="dlmfg.core.core_model.DLModel">
+<em class="property">class </em><code class="sig-prename descclassname">dlmfg.core.core_model.</code><code class="sig-name descname">DLModel</code><span class="sig-paren">(</span><em class="sig-param">model_type</em>, <em class="sig-param">output_dimension</em>, <em class="sig-param">optimizer</em>, <em class="sig-param">loss_function</em>, <em class="sig-param">regularizer_coeff</em>, <em class="sig-param">output_type='regression'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dlmfg/core/core_model.html#DLModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dlmfg.core.core_model.DLModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deep Learning Model Class</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – Type of model to be used for training 3D CNN with MSE loss, 3D CNN with hetreoskedastic aleatoric loss, 3D CNN with a mixture density network (GMM) output</p></li>
+<li><p><strong>output_dimension</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – Number of output nodes for the network equal to number of KCCs for the assembly in case MSE is used as loss function</p></li>
+<li><p><strong>optimizer</strong> (<em>keras.optimizer</em><em> (</em><em>required</em><em>)</em>) – The optimizer to be used while model training, refer: <a class="reference external" href="https://keras.io/optimizers/">https://keras.io/optimizers/</a> for more information</p></li>
+<li><p><strong>loss_function</strong> (<em>keras.losses</em><em> (</em><em>required</em><em>)</em>) – The loss function to be optimized by training the model, refer: <a class="reference external" href="https://keras.io/losses/">https://keras.io/losses/</a> for more information</p></li>
+<li><p><strong>regularizer_coeff</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em> (</em><em>required</em><em>)</em>) – The L2 norm regularization coefficient value used in the penultimate fully connected layer of the model, refer: <a class="reference external" href="https://keras.io/regularizers/">https://keras.io/regularizers/</a> for more information</p></li>
+<li><p><strong>output_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – The output type of the model which can be regression or classification, this is used to define the output layer of the model, defaults to regression (classification: softmax, regression: linear)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="method">
+<dt id="dlmfg.core.core_model.DLModel.cnn_model_3d">
+<code class="sig-name descname">cnn_model_3d</code><span class="sig-paren">(</span><em class="sig-param">voxel_dim</em>, <em class="sig-param">deviation_channels</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dlmfg/core/core_model.html#DLModel.cnn_model_3d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dlmfg.core.core_model.DLModel.cnn_model_3d" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build the 3D Model using the specified loss function, the inputs are parsed from the assemblyconfig_&lt;case_study_name&gt;.py file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>voxel_dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – The voxel dimension of the input, required to build input to the 3D CNN model</p></li>
+<li><p><strong>voxel_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – The number of voxel channels in the input structure, required to build input to the 3D CNN model</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="dlmfg.core.core_model.DLModel.cnn_model_3d_aleatoric">
+<code class="sig-name descname">cnn_model_3d_aleatoric</code><span class="sig-paren">(</span><em class="sig-param">voxel_dim</em>, <em class="sig-param">deviation_channels</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dlmfg/core/core_model.html#DLModel.cnn_model_3d_aleatoric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dlmfg.core.core_model.DLModel.cnn_model_3d_aleatoric" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build the 3D Model with a heteroeskedastic aleatoric loss, this enables different standard deviation of each predicted value, to be used when the expected sensor noise is heteroskedastic</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>voxel_dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – The voxel dimension of the input, required to build input to the 3D CNN model</p></li>
+<li><p><strong>voxel_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – The number of voxel channels in the input structure, required to build input to the 3D CNN model</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="dlmfg.core.core_model.DLModel.cnn_model_3d_mdn">
+<code class="sig-name descname">cnn_model_3d_mdn</code><span class="sig-paren">(</span><em class="sig-param">voxel_dim</em>, <em class="sig-param">deviation_channels</em>, <em class="sig-param">num_of_mixtures=5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dlmfg/core/core_model.html#DLModel.cnn_model_3d_mdn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dlmfg.core.core_model.DLModel.cnn_model_3d_mdn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build the 3D Model with a Mixture Density Network output the gives parameters of a Gaussian Mixture Model as output, to be used if the system is expected to be collinear (Multi-Stage Assembly Systems) i.e. a single input can have multiple outputs
+Functions for predicting and sampling from a MDN.py need to used when deploying a MDN based model
+refer <a class="reference external" href="https://publications.aston.ac.uk/id/eprint/373/1/NCRG_94_004.pdf">https://publications.aston.ac.uk/id/eprint/373/1/NCRG_94_004.pdf</a> for more details on the working of a MDN model
+refer <a class="reference external" href="https://arxiv.org/pdf/1709.02249.pdf">https://arxiv.org/pdf/1709.02249.pdf</a> to understand how a MDN model can be leveraged to estimate the epistemic and aleatoric unceratninty present in manufacturing sytems based on the data collected</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>voxel_dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – The voxel dimension of the input, reuired to build input to the 3D CNN model</p></li>
+<li><p><strong>voxel_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – The number of voxel channels in the input structure, required to build input to the 3D CNN model</p></li>
+<li><p><strong>number_of_mixtures</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – The number of mixtures in the Gaussian Mixture Model output, defaults to 5, can be increased if higher collinearity is expected</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="dlmfg.core.core_model.DLModel.cnn_model_3d_tl">
+<code class="sig-name descname">cnn_model_3d_tl</code><span class="sig-paren">(</span><em class="sig-param">voxel_dim</em>, <em class="sig-param">deviation_channels</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dlmfg/core/core_model.html#DLModel.cnn_model_3d_tl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dlmfg.core.core_model.DLModel.cnn_model_3d_tl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build the 3D Model with GlobalMAxPooling3D instead of flatten, this enables input for different voxel dimensions, to be used when the model needs to be leveraged for transfer learning with different size input</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>voxel_dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – The voxel dimension of the input, required to build input to the 3D CNN model</p></li>
+<li><p><strong>voxel_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – The number of voxel channels in the input structure, required to build input to the 3D CNN model</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="kmc.html" title="Key Measurement Characteristics (KMCs)"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="measurement_system.html" title="Measurement System Class"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="classes.html" >Class Structure: Objects and Methods</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Sumit Sinha.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.2.
+    </div>
+  </body>
+</html>

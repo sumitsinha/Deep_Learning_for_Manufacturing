@@ -1,0 +1,8 @@
+Data Processing (VRM)
+============================
+
+The data obtained from the multi-fidelity simulation software (VRM) consists of node deviations, these need to be processed and mapped to the corresponding voxel location as voxel features using the mapping index for the nominal cloud of point (comes with the downloaded files for the case study with 64*64*64 resolution, different resolution mapping index can be generated using the voxelization utility).
+
+
+.. automodule:: dlmfg.core.data_import
+ :members:

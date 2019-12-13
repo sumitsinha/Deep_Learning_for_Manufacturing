@@ -1,0 +1,139 @@
+
+
+<!doctype html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Real System Implementation (3D Optical Scanner: WLS400A) &#8212; Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Library Configuration" href="lib_config.html" />
+    <link rel="prev" title="Model Evaluation" href="metrics_eval.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="lib_config.html" title="Library Configuration"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="metrics_eval.html" title="Model Evaluation"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="metrics_eval.html"
+                        title="previous chapter">Model Evaluation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="lib_config.html"
+                        title="next chapter">Library Configuration</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/real_system_implementation.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="real-system-implementation-3d-optical-scanner-wls400a">
+<h1>Real System Implementation (3D Optical Scanner: WLS400A)<a class="headerlink" href="#real-system-implementation-3d-optical-scanner-wls400a" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p>Real Measurement data obtained from 3D Optical Scanners is cloud of point data which is processes and node deviations are obtained from the software. This is done within the software provided by the vendor itself. The current implementation is based on the WLS400A Hexagon scanner mounted on a ABB robot and the software includes CoreView Teach and CoreView AM (refer: <a class="reference external" href="https://www.hexagonmi.com/products/white-light-scanner-systems/hexagon-metrology-wls400a">https://www.hexagonmi.com/products/white-light-scanner-systems/hexagon-metrology-wls400a</a> and <a class="reference external" href="https://www.hexagonmi.com/products/software/software-for-white-light-scanner-systems/coreview-teach">https://www.hexagonmi.com/products/software/software-for-white-light-scanner-systems/coreview-teach</a>)</p></li>
+</ul>
+<div class="figure align-center" id="id1">
+<img alt="_images/scanner.jpg" src="_images/scanner.jpg" />
+<p class="caption"><span class="caption-text"><em>Fig 1:ABB Robot with a Hexgaon WLS400 scanner head</em></span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+</div>
+<ul class="simple">
+<li><p>This data is similar to the data generated by the VRM software and a model trained on simulated data is deployed on measurement data obtained from the system. A demonstration for this was done as the our group (<a class="reference external" href="https://warwick.ac.uk/fac/sci/wmg/research/digital/dlm/">https://warwick.ac.uk/fac/sci/wmg/research/digital/dlm/</a>) at WMG, University of Warwick under the In-Process Quality Improvement Project (<a class="reference external" href="https://warwick.ac.uk/fac/sci/wmg/research/digital/dlm/projects/ipqi_new">https://warwick.ac.uk/fac/sci/wmg/research/digital/dlm/projects/ipqi_new</a>)</p></li>
+</ul>
+<div class="figure align-center" id="id2">
+<img alt="_images/demo_system.jpg" src="_images/demo_system.jpg" />
+<p class="caption"><span class="caption-text"><em>Fig 2: Setup for actual system verification and validation</em></span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+</div>
+<ul class="simple">
+<li><dl class="simple">
+<dt>The model performs better as it fine tuned on a small amount of the real data obtained from the system to compensate for minor differences between simulation and real system. This enables the following:</dt><dd><ul>
+<li><p>to use a single model from design phase to full scale production phase by integrating small amount of actual system data obtained during operation</p></li>
+<li><p>Can be adapted to dynamic changes in the manufacturing system</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<div class="figure align-center" id="id3">
+<img alt="_images/demo_results.png" src="_images/demo_results.png" />
+<p class="caption"><span class="caption-text"><em>Fig 3: Verification and validation results</em></span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="lib_config.html" title="Library Configuration"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="metrics_eval.html" title="Model Evaluation"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Sumit Sinha.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.2.
+    </div>
+  </body>
+</html>

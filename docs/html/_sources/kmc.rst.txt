@@ -1,0 +1,23 @@
+Key Measurement Characteristics (KMCs)
+============================================
+
+* KMCs are useful is visualizing which areas need to be measured to determine the value of the process parameter. This is useful in terms of determining the optimal sensor layout and in assigning areas a priority when partial measurements needs to be conducted due to system constraints such as cycle time.
+
+.. figure:: kmc1.png
+   :align:   center
+
+   *Fig 5: KMC for pin hole translation in x-direction*
+
+.. figure:: kmc2.png
+   :align:   center
+
+   *Fig 6: KMC for pin hole translation in y-direction*
+
+.. figure:: kmc3.png
+   :align:   center
+
+   *Fig 7: KMC for rotation around pin hole*
+
+
+.. automodule:: dlmfg.kmc_gen.kmc_model
+ :members:

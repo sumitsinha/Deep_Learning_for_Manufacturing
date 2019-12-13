@@ -1,0 +1,306 @@
+
+
+<!doctype html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>dlmfg.kmc_gen.kmc_model &#8212; Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    <script type="text/javascript" src="../../../_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for dlmfg.kmc_gen.kmc_model</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot; Feature importance of ensemble models such as Gradient Boosted Trees or Random Forests is used in determining KMCs for each KCC</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">current_path</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
+<span class="n">parentdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">current_path</span><span class="p">)</span>
+
+<span class="c1">#Adding Path to various Modules</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;../core&quot;</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;../visualization&quot;</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;../utilities&quot;</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;../datasets&quot;</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;../trained_models&quot;</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;../config&quot;</span><span class="p">)</span>
+
+
+<span class="c1">#from sklearn import RandomForestRegressor</span>
+<span class="kn">import</span> <span class="nn">pathlib</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="kn">import</span> <span class="nn">xgboost</span> <span class="k">as</span> <span class="nn">xgb</span>
+<span class="kn">from</span> <span class="nn">sklearn.externals</span> <span class="kn">import</span> <span class="n">joblib</span>
+
+<span class="c1">#Importing Config files</span>
+<span class="kn">import</span> <span class="nn">assembly_config</span> <span class="k">as</span> <span class="nn">config</span>
+<span class="kn">import</span> <span class="nn">model_config</span> <span class="k">as</span> <span class="nn">cftrain</span>
+
+<span class="c1">#Importing required modules from the package</span>
+<span class="kn">from</span> <span class="nn">measurement_system</span> <span class="kn">import</span> <span class="n">HexagonWlsScanner</span>
+<span class="kn">from</span> <span class="nn">assembly_system</span> <span class="kn">import</span> <span class="n">VRMSimulationModel</span>
+<span class="kn">from</span> <span class="nn">data_import</span> <span class="kn">import</span> <span class="n">GetTrainData</span>
+<span class="kn">import</span> <span class="nn">voxel_config</span> <span class="k">as</span> <span class="nn">vc</span>
+<span class="kn">from</span> <span class="nn">cop_viz</span> <span class="kn">import</span> <span class="n">CopViz</span>
+
+
+<div class="viewcode-block" id="kmc_model_build"><a class="viewcode-back" href="../../../kmc.html#dlmfg.kmc_gen.kmc_model.kmc_model_build">[docs]</a><span class="k">def</span> <span class="nf">kmc_model_build</span><span class="p">(</span><span class="n">tree_based_model</span><span class="p">,</span><span class="n">point_data</span><span class="p">,</span><span class="n">selected_kcc</span><span class="p">,</span><span class="n">kcc_name</span><span class="p">,</span><span class="n">split_ratio</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span><span class="n">save_model</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;kmc_model_build function inputs model_type and data to generate KMC for each KCC</span>
+
+<span class="sd">		:param tree_based_model: Type of model to be used for feature importance </span>
+<span class="sd">		:type tree_based_model: str (required)</span>
+
+<span class="sd">		:param point_data: input data consisting of node deviations</span>
+<span class="sd">		:type point_data: numpy.array (samples*nodes) (required)</span>
+
+<span class="sd">		:param selected_kcc: output data consisting of selected process parameter/KCC</span>
+<span class="sd">		:type selected_kcc: numpy.array (samples*1) (required)</span>
+
+<span class="sd">		:param kcc_name: unique identifier for the KCC</span>
+<span class="sd">		:type kcc_name: str (required)</span>
+
+<span class="sd">		:param split_ratio: test data split</span>
+<span class="sd">		:type split_ratio: float</span>
+
+<span class="sd">		:param save_model: Save model flag, set to 1 to save model</span>
+<span class="sd">		:type save_model: int</span>
+
+<span class="sd">		:returns: filtered_nodeIDs_x, node ids for which x-deviation is significant given the kcc</span>
+<span class="sd">		:rtype: numpy.array [kmcs*1]</span>
+
+<span class="sd">		:returns: filtered_nodeIDs_y, node ids for which y-deviation is significant given the kcc</span>
+<span class="sd">		:rtype: numpy.array [kmcs*1]</span>
+
+<span class="sd">		:returns: filtered_nodeIDs_z, node ids for which z-deviation is significant given the kcc</span>
+<span class="sd">		:rtype: numpy.array [kmcs*1]</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">train_X</span><span class="p">,</span> <span class="n">test_X</span><span class="p">,</span> <span class="n">train_y</span><span class="p">,</span> <span class="n">test_y</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">point_data</span><span class="p">,</span> <span class="n">selected_kcc</span><span class="p">,</span> <span class="n">test_size</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">)</span>
+	<span class="n">train</span><span class="o">=</span><span class="n">train_X</span>
+	<span class="n">target</span><span class="o">=</span><span class="n">train_y</span>
+	<span class="n">train</span><span class="o">.</span><span class="n">index</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+	<span class="n">target</span><span class="o">.</span><span class="n">index</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+	
+	<span class="c1">#%%</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;KMC Generation for selected :&#39;</span><span class="p">,</span> <span class="n">kcc_name</span><span class="p">)</span>
+
+	<span class="k">if</span><span class="p">(</span><span class="n">tree_based_model</span><span class="o">==</span><span class="s1">&#39;rf&#39;</span><span class="p">):</span>
+		<span class="n">model</span><span class="o">=</span><span class="n">RandomForestRegressor</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span><span class="n">max_depth</span><span class="o">=</span><span class="mi">700</span><span class="p">,</span><span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span><span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	
+	<span class="k">if</span><span class="p">(</span><span class="n">tree_based_model</span><span class="o">==</span><span class="s1">&#39;xgb&#39;</span><span class="p">):</span>
+		<span class="n">model</span><span class="o">=</span><span class="n">xgb</span><span class="o">.</span><span class="n">XGBRegressor</span><span class="p">(</span><span class="n">colsample_bytree</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span><span class="n">gamma</span><span class="o">=</span><span class="mf">0.045</span><span class="p">,</span><span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.07</span><span class="p">,</span><span class="n">max_depth</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span><span class="n">min_child_weight</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span><span class="n">reg_alpha</span><span class="o">=</span><span class="mf">0.65</span><span class="p">,</span><span class="n">reg_lambda</span><span class="o">=</span><span class="mf">0.45</span><span class="p">,</span><span class="n">subsample</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span><span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span><span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	
+	<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train</span><span class="p">,</span><span class="n">target</span><span class="p">)</span>
+	<span class="c1">#%%</span>
+	<span class="n">y_pred</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">test_X</span><span class="p">)</span>
+
+	<span class="n">mae</span><span class="o">=</span><span class="n">metrics</span><span class="o">.</span><span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">test_y</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+	
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The MAE for feature selection for: &#39;</span><span class="p">,</span><span class="n">kcc_name</span><span class="p">)</span>
+	<span class="nb">print</span><span class="p">(</span><span class="n">mae</span><span class="p">)</span>
+	
+	<span class="k">if</span><span class="p">(</span><span class="n">save_model</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span>
+		<span class="n">filename</span> <span class="o">=</span> <span class="n">kcc_name</span><span class="o">+</span><span class="s1">&#39;_XGB_model.sav&#39;</span>
+		<span class="n">joblib</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Trained Model Saved to disk....&#39;</span><span class="p">)</span>
+	
+	<span class="n">thresholds</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">feature_importances_</span>
+	<span class="n">node_id</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="n">point_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+	<span class="n">threshold_data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">point_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="mi">2</span><span class="p">))</span>
+	<span class="n">threshold_data</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="n">node_id</span>
+	<span class="n">threshold_data</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="n">thresholds</span>
+	<span class="nb">print</span><span class="p">(</span><span class="n">point_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+	
+	<span class="n">node_IDs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">threshold_data</span><span class="p">,</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;node_id&#39;</span><span class="p">,</span><span class="s1">&#39;Feature_Importance&#39;</span><span class="p">])</span>
+	<span class="n">node_IDs</span> <span class="o">=</span> <span class="n">node_IDs</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;Feature_Importance&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+	<span class="n">filtered_nodeIDs</span><span class="o">=</span><span class="n">node_IDs</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">node_IDs</span><span class="p">[</span><span class="s1">&#39;Feature_Importance&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span>
+	
+	<span class="n">filtered_nodeIDs_x</span><span class="o">=</span><span class="n">filtered_nodeIDs</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">filtered_nodeIDs</span><span class="p">[</span><span class="s1">&#39;node_id&#39;</span><span class="p">]</span><span class="o">&lt;=</span><span class="n">point_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="mi">3</span><span class="p">]</span>
+	<span class="n">filtered_nodeIDs_y</span><span class="o">=</span><span class="n">filtered_nodeIDs</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">filtered_nodeIDs</span><span class="p">[</span><span class="s1">&#39;node_id&#39;</span><span class="p">]</span><span class="o">&gt;</span><span class="n">point_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">filtered_nodeIDs</span><span class="p">[</span><span class="s1">&#39;node_id&#39;</span><span class="p">]</span><span class="o">&lt;=</span><span class="n">point_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">2</span><span class="o">/</span><span class="mi">3</span><span class="p">)]</span>
+	<span class="n">filtered_nodeIDs_z</span><span class="o">=</span><span class="n">filtered_nodeIDs</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">filtered_nodeIDs</span><span class="p">[</span><span class="s1">&#39;node_id&#39;</span><span class="p">]</span><span class="o">&gt;</span><span class="n">point_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">2</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">filtered_nodeIDs</span><span class="p">[</span><span class="s1">&#39;node_id&#39;</span><span class="p">]</span><span class="o">&lt;=</span><span class="n">point_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
+	
+	<span class="k">return</span> <span class="n">filtered_nodeIDs_x</span><span class="p">,</span> <span class="n">filtered_nodeIDs_y</span><span class="p">,</span> <span class="n">filtered_nodeIDs_z</span></div>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Parsing from Assembly Config File....&#39;</span><span class="p">)</span>
+
+	<span class="n">data_type</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;data_type&#39;</span><span class="p">]</span>
+	<span class="n">application</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;application&#39;</span><span class="p">]</span>
+	<span class="n">part_type</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;part_type&#39;</span><span class="p">]</span>
+	<span class="n">part_name</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;part_name&#39;</span><span class="p">]</span>
+	<span class="n">data_format</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;data_format&#39;</span><span class="p">]</span>
+	<span class="n">assembly_type</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;assembly_type&#39;</span><span class="p">]</span>
+	<span class="n">assembly_kccs</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;assembly_kccs&#39;</span><span class="p">]</span>   
+	<span class="n">assembly_kpis</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;assembly_kpis&#39;</span><span class="p">]</span>
+	<span class="n">voxel_dim</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;voxel_dim&#39;</span><span class="p">]</span>
+	<span class="n">point_dim</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;point_dim&#39;</span><span class="p">]</span>
+	<span class="n">voxel_channels</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;voxel_channels&#39;</span><span class="p">]</span>
+	<span class="n">noise_type</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;noise_type&#39;</span><span class="p">]</span>
+	<span class="n">mapping_index</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;mapping_index&#39;</span><span class="p">]</span>
+	<span class="n">file_names_x</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;data_files_x&#39;</span><span class="p">]</span>
+	<span class="n">file_names_y</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;data_files_y&#39;</span><span class="p">]</span>
+	<span class="n">file_names_z</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;data_files_z&#39;</span><span class="p">]</span>
+	<span class="n">system_noise</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;system_noise&#39;</span><span class="p">]</span>
+	<span class="n">aritifical_noise</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;aritifical_noise&#39;</span><span class="p">]</span>
+	<span class="n">data_folder</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;data_folder&#39;</span><span class="p">]</span>
+	<span class="n">kcc_folder</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;kcc_folder&#39;</span><span class="p">]</span>
+	<span class="n">kcc_files</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;kcc_files&#39;</span><span class="p">]</span>
+
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Parsing from Training Config File&#39;</span><span class="p">)</span>
+
+	<span class="n">tree_based_model</span><span class="o">=</span><span class="n">cftrain</span><span class="o">.</span><span class="n">kmc_params</span><span class="p">[</span><span class="s1">&#39;tree_based_model&#39;</span><span class="p">]</span>
+	<span class="n">importance_creteria</span><span class="o">=</span><span class="n">cftrain</span><span class="o">.</span><span class="n">kmc_params</span><span class="p">[</span><span class="s1">&#39;importance_creteria&#39;</span><span class="p">]</span>
+	<span class="n">save_model</span><span class="o">=</span><span class="n">cftrain</span><span class="o">.</span><span class="n">kmc_params</span><span class="p">[</span><span class="s1">&#39;save_model&#39;</span><span class="p">]</span>
+	<span class="n">split_ratio</span><span class="o">=</span><span class="n">cftrain</span><span class="o">.</span><span class="n">kmc_params</span><span class="p">[</span><span class="s1">&#39;split_ratio&#39;</span><span class="p">]</span>
+	<span class="n">plot_kmc</span><span class="o">=</span><span class="n">cftrain</span><span class="o">.</span><span class="n">kmc_params</span><span class="p">[</span><span class="s1">&#39;plot_kmc&#39;</span><span class="p">]</span>
+   
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Creating file Structure....&#39;</span><span class="p">)</span>
+	
+	<span class="n">folder_name</span><span class="o">=</span><span class="n">part_type</span>
+	<span class="n">train_path</span><span class="o">=</span><span class="s1">&#39;../trained_models/&#39;</span><span class="o">+</span><span class="n">part_type</span>
+	<span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">train_path</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+	<span class="n">kmc_path</span><span class="o">=</span><span class="n">train_path</span><span class="o">+</span><span class="s1">&#39;/kmc&#39;</span>
+	<span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">kmc_path</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+	<span class="n">kmc_plot_path</span><span class="o">=</span><span class="n">kmc_path</span><span class="o">+</span><span class="s1">&#39;/plots&#39;</span>
+	<span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">kmc_plot_path</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Initializing the Assembly System and Measurement System....&#39;</span><span class="p">)</span>
+	
+	<span class="n">measurement_system</span><span class="o">=</span><span class="n">HexagonWlsScanner</span><span class="p">(</span><span class="n">data_type</span><span class="p">,</span><span class="n">application</span><span class="p">,</span><span class="n">system_noise</span><span class="p">,</span><span class="n">part_type</span><span class="p">,</span><span class="n">data_format</span><span class="p">)</span>
+	<span class="n">vrm_system</span><span class="o">=</span><span class="n">VRMSimulationModel</span><span class="p">(</span><span class="n">assembly_type</span><span class="p">,</span><span class="n">assembly_kccs</span><span class="p">,</span><span class="n">assembly_kpis</span><span class="p">,</span><span class="n">part_name</span><span class="p">,</span><span class="n">part_type</span><span class="p">,</span><span class="n">voxel_dim</span><span class="p">,</span><span class="n">voxel_channels</span><span class="p">,</span><span class="n">point_dim</span><span class="p">,</span><span class="n">aritifical_noise</span><span class="p">)</span>
+	<span class="n">get_data</span><span class="o">=</span><span class="n">GetTrainData</span><span class="p">()</span>
+	
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Importing and preprocessing Cloud-of-Point Data&#39;</span><span class="p">)</span>
+	
+	<span class="n">dataset</span><span class="o">=</span><span class="p">[]</span>
+	<span class="n">dataset</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">get_data</span><span class="o">.</span><span class="n">data_import</span><span class="p">(</span><span class="n">file_names_x</span><span class="p">,</span><span class="n">data_folder</span><span class="p">))</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="n">point_dim</span><span class="p">])</span>
+	<span class="n">dataset</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">get_data</span><span class="o">.</span><span class="n">data_import</span><span class="p">(</span><span class="n">file_names_y</span><span class="p">,</span><span class="n">data_folder</span><span class="p">))</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="n">point_dim</span><span class="p">])</span>
+	<span class="n">dataset</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">get_data</span><span class="o">.</span><span class="n">data_import</span><span class="p">(</span><span class="n">file_names_z</span><span class="p">,</span><span class="n">data_folder</span><span class="p">))</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="n">point_dim</span><span class="p">])</span>
+	
+	<span class="n">kcc_dataset</span><span class="o">=</span><span class="n">get_data</span><span class="o">.</span><span class="n">data_import</span><span class="p">(</span><span class="n">kcc_files</span><span class="p">,</span><span class="n">kcc_folder</span><span class="p">)</span>
+
+	
+	<span class="n">point_data</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">dataset</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">dataset</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+	<span class="n">kcc_id</span><span class="o">=</span><span class="p">[]</span>
+	<span class="n">kmc_list_x</span><span class="o">=</span><span class="p">[]</span>
+	<span class="n">kmc_list_y</span><span class="o">=</span><span class="p">[]</span>
+	<span class="n">kmc_list_z</span><span class="o">=</span><span class="p">[]</span>
+
+	<span class="n">cop_file_name</span><span class="o">=</span><span class="n">vc</span><span class="o">.</span><span class="n">voxel_parameters</span><span class="p">[</span><span class="s1">&#39;nominal_cop_filename&#39;</span><span class="p">]</span>
+
+	<span class="n">file_path</span><span class="o">=</span><span class="s1">&#39;../resources/nominal_cop_files/&#39;</span><span class="o">+</span><span class="n">cop_file_name</span>
+	<span class="c1">#Read cop from csv file</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Importing Nominal COP&#39;</span><span class="p">)</span>
+	<span class="n">nominal_cop</span><span class="o">=</span><span class="n">vrm_system</span><span class="o">.</span><span class="n">get_nominal_cop</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+	<span class="n">copviz</span><span class="o">=</span><span class="n">CopViz</span><span class="p">(</span><span class="n">nominal_cop</span><span class="p">)</span>
+
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Generating KMC for all KCCs...&#39;</span><span class="p">)</span>
+
+	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">assembly_kccs</span><span class="p">):</span>
+		<span class="n">kcc_name</span><span class="o">=</span><span class="s2">&quot;KCC_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+		<span class="n">kcc_id</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">kcc_name</span><span class="p">)</span>
+		<span class="n">selected_kcc</span><span class="o">=</span><span class="n">kcc_dataset</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+		<span class="n">filtered_nodeIDs_x</span><span class="p">,</span><span class="n">filtered_nodeIDs_y</span><span class="p">,</span><span class="n">filtered_nodeIDs_z</span><span class="o">=</span><span class="n">kmc_model_build</span><span class="p">(</span><span class="n">tree_based_model</span><span class="p">,</span><span class="n">point_data</span><span class="p">,</span><span class="n">selected_kcc</span><span class="p">,</span><span class="n">kcc_name</span><span class="p">,</span><span class="n">split_ratio</span><span class="p">,</span><span class="n">save_model</span><span class="p">)</span>
+		<span class="nb">print</span><span class="p">(</span><span class="n">point_dim</span><span class="p">)</span>
+		<span class="n">filtered_nodeIDs_y</span><span class="p">[</span><span class="s1">&#39;node_id&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">filtered_nodeIDs_y</span><span class="p">[</span><span class="s1">&#39;node_id&#39;</span><span class="p">]</span><span class="o">-</span><span class="n">point_dim</span>
+		<span class="n">filtered_nodeIDs_z</span><span class="p">[</span><span class="s1">&#39;node_id&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">filtered_nodeIDs_z</span><span class="p">[</span><span class="s1">&#39;node_id&#39;</span><span class="p">]</span><span class="o">-</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">point_dim</span><span class="p">)</span>
+		
+		<span class="n">filtered_nodeIDs_x</span><span class="p">[</span><span class="s1">&#39;node_id&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">filtered_nodeIDs_x</span><span class="p">[</span><span class="s1">&#39;node_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int&#39;</span><span class="p">)</span>
+		<span class="n">filtered_nodeIDs_y</span><span class="p">[</span><span class="s1">&#39;node_id&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">filtered_nodeIDs_y</span><span class="p">[</span><span class="s1">&#39;node_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int&#39;</span><span class="p">)</span>
+		<span class="n">filtered_nodeIDs_z</span><span class="p">[</span><span class="s1">&#39;node_id&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">filtered_nodeIDs_z</span><span class="p">[</span><span class="s1">&#39;node_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int&#39;</span><span class="p">)</span>
+
+		<span class="n">filename_x</span><span class="o">=</span><span class="n">kmc_path</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">kcc_name</span><span class="o">+</span><span class="s1">&#39;_x.csv&#39;</span>
+		<span class="n">filename_y</span><span class="o">=</span><span class="n">kmc_path</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">kcc_name</span><span class="o">+</span><span class="s1">&#39;_y.csv&#39;</span>
+		<span class="n">filename_z</span><span class="o">=</span><span class="n">kmc_path</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">kcc_name</span><span class="o">+</span><span class="s1">&#39;_z.csv&#39;</span>
+
+		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Saving KMCs to disk...&#39;</span><span class="p">)</span>
+		<span class="n">filtered_nodeIDs_x</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">filename_x</span><span class="p">,</span><span class="n">index</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+		<span class="n">filtered_nodeIDs_y</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">filename_y</span><span class="p">,</span><span class="n">index</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+		<span class="n">filtered_nodeIDs_z</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">filename_z</span><span class="p">,</span><span class="n">index</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+
+		<span class="n">stack</span><span class="o">=</span><span class="n">copviz</span><span class="o">.</span><span class="n">get_data_stacks</span><span class="p">(</span><span class="n">filtered_nodeIDs_x</span><span class="p">,</span><span class="n">filtered_nodeIDs_y</span><span class="p">,</span><span class="n">filtered_nodeIDs_z</span><span class="p">)</span>
+
+		<span class="n">copviz</span><span class="o">.</span><span class="n">plot_multiple_stacks</span><span class="p">(</span><span class="n">stack</span><span class="p">,</span><span class="n">kmc_plot_path</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">kcc_name</span><span class="p">)</span>
+
+
+
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Sumit Sinha.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.2.
+    </div>
+  </body>
+</html>

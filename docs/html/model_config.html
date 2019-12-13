@@ -1,0 +1,291 @@
+
+
+<!doctype html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Model Configuration &#8212; Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Voxel Configuration" href="voxel_config.html" />
+    <link rel="prev" title="Measurement Configuration" href="measurement_config.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="voxel_config.html" title="Voxel Configuration"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="measurement_config.html" title="Measurement Configuration"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="lib_config.html" accesskey="U">Library Configuration</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="measurement_config.html"
+                        title="previous chapter">Measurement Configuration</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="voxel_config.html"
+                        title="next chapter">Voxel Configuration</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/model_config.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-dlmfg.config.model_config">
+<span id="model-configuration"></span><h1>Model Configuration<a class="headerlink" href="#module-dlmfg.config.model_config" title="Permalink to this headline">¶</a></h1>
+<p>The Model Configuration file contains configuration for training the model, conducting data study, KMC Generation, Benchmarking and Transfer Learning</p>
+<p>Model Training Parameters</p>
+<dl class="field-list simple">
+<dt class="field-odd">param model_parameters[‘model_type’]</dt>
+<dd class="field-odd"><p>The type of model to be used for training, currently defaults to 3D CNN</p>
+</dd>
+<dt class="field-even">type model_parameters[‘model_type’]</dt>
+<dd class="field-even"><p>str (required)</p>
+</dd>
+<dt class="field-odd">param model_parameters[‘output_type’]</dt>
+<dd class="field-odd"><p>(regression, classification) The output type of the model used to initialize the output layer, currently defaults to regression</p>
+</dd>
+<dt class="field-even">type model_parameters[‘output_type’]</dt>
+<dd class="field-even"><p>str (required)</p>
+</dd>
+<dt class="field-odd">param model_parameters[‘batch_size’]</dt>
+<dd class="field-odd"><p>The batch size while training, can be tuned based on the hardware specifications, currently defaults to 32</p>
+</dd>
+<dt class="field-even">type model_parameters[‘batch_size’]</dt>
+<dd class="field-even"><p>int (required)</p>
+</dd>
+<dt class="field-odd">param model_parameters[‘epocs’]</dt>
+<dd class="field-odd"><p>The number of epocs the model is to be trained for, currently defaults to 150</p>
+</dd>
+<dt class="field-even">type model_parameters[‘epocs’]</dt>
+<dd class="field-even"><p>int (required)</p>
+</dd>
+<dt class="field-odd">param model_parameters[‘split_ratio’]</dt>
+<dd class="field-odd"><p>Split Ratio for train and validation</p>
+</dd>
+<dt class="field-even">type model_parameters[‘split_ratio’]</dt>
+<dd class="field-even"><p>float (required)</p>
+</dd>
+<dt class="field-odd">param model_parameters[‘optimizer’]</dt>
+<dd class="field-odd"><p>The optimizer to be used for model training, refer <a class="reference external" href="https://keras.io/optimizers/">https://keras.io/optimizers/</a> for more information, currently defaults to adam</p>
+</dd>
+<dt class="field-even">type model_parameters[‘optimizer’]</dt>
+<dd class="field-even"><p>keras.optimizer (required)</p>
+</dd>
+<dt class="field-odd">param model_parameters[‘loss_func’]</dt>
+<dd class="field-odd"><p>The loss function to be optimized while model training, refer <a class="reference external" href="https://keras.io/losses/">https://keras.io/losses/</a> for more information, currently defaults to Mean Squared Error (MSE)</p>
+</dd>
+<dt class="field-even">type model_parameters[‘loss_func’]</dt>
+<dd class="field-even"><p>keras.losses (required)</p>
+</dd>
+<dt class="field-odd">param model_parameters[‘regularizer_coeff’]</dt>
+<dd class="field-odd"><p>The regularizing coefficient to be used for L2 norm regularization of the fully connected layer, refer <a class="reference external" href="https://keras.io/regularizers/">https://keras.io/regularizers/</a> for more information currently defaults to 0.1</p>
+</dd>
+<dt class="field-even">type model_parameters[‘regularizer_coeff’]</dt>
+<dd class="field-even"><p>float (required)</p>
+</dd>
+<dt class="field-odd">param model_parameters[‘activate_tensorboard’]</dt>
+<dd class="field-odd"><p>Tensorboard activation flag <a class="reference external" href="https://www.tensorflow.org/tensorboard">https://www.tensorflow.org/tensorboard</a>, currently set to 0, changes to 1 for activating tensorbiard, Warning: There can be some compatibility issues with different Tensorflow and Cuda Toolkit Versions</p>
+</dd>
+<dt class="field-even">type model_parameters[‘loss_func’]</dt>
+<dd class="field-even"><p>int (required)</p>
+</dd>
+</dl>
+<p>Data Study Parameters</p>
+<dl class="field-list simple">
+<dt class="field-odd">param data_study_params[‘batch_size’]</dt>
+<dd class="field-odd"><p>The batch size while conducting data study, can be tuned based on the hardware specifications, currently defaults to 32</p>
+</dd>
+<dt class="field-even">type data_study_params[‘batch_size’]</dt>
+<dd class="field-even"><p>int (required)</p>
+</dd>
+<dt class="field-odd">param data_study_params[‘epocs’]</dt>
+<dd class="field-odd"><p>The number of epocs the model is to be trained for, currently defaults to 50</p>
+</dd>
+<dt class="field-even">type data_study_params[‘epocs’]</dt>
+<dd class="field-even"><p>int (required)</p>
+</dd>
+<dt class="field-odd">param data_study_params[‘split_ratio’]</dt>
+<dd class="field-odd"><p>Split Ratio for train and validation during data study</p>
+</dd>
+<dt class="field-even">type data_study_params[‘split_ratio’]</dt>
+<dd class="field-even"><p>float (required)</p>
+</dd>
+<dt class="field-odd">param data_study_params[‘min_train_samples’]</dt>
+<dd class="field-odd"><p>Minimum train Samples for data study, currently defaults to 100</p>
+</dd>
+<dt class="field-even">type data_study_params[‘min_train_samples’]</dt>
+<dd class="field-even"><p>int (required)</p>
+</dd>
+<dt class="field-odd">param data_study_params[‘max_train_samples’]</dt>
+<dd class="field-odd"><p>Maximum train samples for data study, dataset size is the maximum value</p>
+</dd>
+<dt class="field-even">type data_study_params[‘max_train_samples’]</dt>
+<dd class="field-even"><p>int (required)</p>
+</dd>
+<dt class="field-odd">param data_study_params[‘train_increment’]</dt>
+<dd class="field-odd"><p>Increment in the train size with each iteration, currently defaults to 100</p>
+</dd>
+<dt class="field-even">type data_study_params[‘train_increment’]</dt>
+<dd class="field-even"><p>int (required)</p>
+</dd>
+</dl>
+<p>Key Measurment Characteristics Generation Parameters</p>
+<dl class="field-list simple">
+<dt class="field-odd">param kmc_params[‘tree_based_model’]</dt>
+<dd class="field-odd"><p>The model to be used while generating feature importance, refer: <a class="reference external" href="https://xgboost.readthedocs.io/en/latest/R-package/discoverYourData.html#measure-feature-importance">https://xgboost.readthedocs.io/en/latest/R-package/discoverYourData.html#measure-feature-importance</a> for more details, currently defaults to xgb, random forests can also be used</p>
+</dd>
+<dt class="field-even">type kmc_params[‘tree_based_model’]</dt>
+<dd class="field-even"><p>str (required)</p>
+</dd>
+<dt class="field-odd">param kmc_params[‘tree_based_model’]</dt>
+<dd class="field-odd"><p>The importance criteria to be used, currently defaults to gini index</p>
+</dd>
+<dt class="field-even">type kmc_params[‘tree_based_model’]</dt>
+<dd class="field-even"><p>str (required)</p>
+</dd>
+<dt class="field-odd">param kmc_params[‘split_ratio’]</dt>
+<dd class="field-odd"><p>Split Ratio for train and validation during data study</p>
+</dd>
+<dt class="field-even">type kmc_params[‘split_ratio’]</dt>
+<dd class="field-even"><p>float (required)</p>
+</dd>
+<dt class="field-odd">param kmc_params[‘save_model’]</dt>
+<dd class="field-odd"><p>Flag to save the model, Currently defaults to 0, change to 1 if model needs to be saved</p>
+</dd>
+<dt class="field-even">type kmc_params[‘save_model’]</dt>
+<dd class="field-even"><p>int (required)</p>
+</dd>
+<dt class="field-odd">param kmc_params[‘plot_kmc’]</dt>
+<dd class="field-odd"><p>Flag to plot the KMC, Currently defaults to 1, change to 0 if no plotting is required</p>
+</dd>
+<dt class="field-even">type kmc_params[‘plot_kmc’]</dt>
+<dd class="field-even"><p>int (required)</p>
+</dd>
+</dl>
+<p>Benchmarking Parameters</p>
+<dl class="field-list simple">
+<dt class="field-odd">param bm_params[‘max_models’]</dt>
+<dd class="field-odd"><p>The maximum number of models to be used for benchmarking, currently defaults to 10</p>
+</dd>
+<dt class="field-even">type bm_params[‘max_models’]</dt>
+<dd class="field-even"><p>int (required)</p>
+</dd>
+<dt class="field-odd">param bm_params[‘runs’]</dt>
+<dd class="field-odd"><p>Number of benchmarking runs to be conducted</p>
+</dd>
+<dt class="field-even">type bm_params[‘runs’]</dt>
+<dd class="field-even"><p>int (required)</p>
+</dd>
+</dl>
+<p>Transfer Learning Parameters</p>
+<dl class="field-list simple">
+<dt class="field-odd">param transfer_learning[‘tl_type’]</dt>
+<dd class="field-odd"><p>The type of transfer learning to be used (full_fine_tune,  variable_lr, feature_extractor) currently defaults to full_fine_tune</p>
+</dd>
+<dt class="field-even">type transfer_learning[‘tl_type’]</dt>
+<dd class="field-even"><p>str (required)</p>
+</dd>
+<dt class="field-odd">param transfer_learning[‘tl_base’]</dt>
+<dd class="field-odd"><p>The type of base model (3D CNN Architecture) to be used (pointdevnet, voxnet, 3d-UNet), currently defaults to PointdevNet</p>
+</dd>
+<dt class="field-even">type transfer_learning[‘tl_base’]</dt>
+<dd class="field-even"><p>str (required)</p>
+</dd>
+<dt class="field-odd">param transfer_learning[‘tl_app’]</dt>
+<dd class="field-odd"><p>The application of the transfer learning model (classification, regression), currently defaults to regression</p>
+</dd>
+<dt class="field-even">type transfer_learning[‘tl_app’]</dt>
+<dd class="field-even"><p>str (required)</p>
+</dd>
+<dt class="field-odd">param transfer_learning[‘conv_layer_m’]</dt>
+<dd class="field-odd"><p>The learning rate multiplier for convolution layers (only needed when tl_type is variable_lr), defaults to 0.1 (10% of the network Learning Rate)</p>
+</dd>
+<dt class="field-even">type transfer_learning[‘conv_layer_m’]</dt>
+<dd class="field-even"><p>float (required)</p>
+</dd>
+<dt class="field-odd">param transfer_learning[‘dense_layer_m’]</dt>
+<dd class="field-odd"><p>The learning rate multiplier for dense layers (only needed when tl_type is variable_lr), defaults to 1 (100% of the network Learning Rate)</p>
+</dd>
+<dt class="field-even">type transfer_learning[‘dense_layer_m’]</dt>
+<dd class="field-even"><p>float (required)</p>
+</dd>
+</dl>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="voxel_config.html" title="Voxel Configuration"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="measurement_config.html" title="Measurement Configuration"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="lib_config.html" >Library Configuration</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Sumit Sinha.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.2.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,16 @@
+Data Files
+===========================================================
+
+* Input Data to the 3D CNN model (Independent variables/Predictor Variables):
+	* 𝑥,𝑦, 𝑧 deviations of 8047 nodes generated as output from the VRM *(Eg files: output_halo_x.csv, output_halo_y.csv, output_halo_z.csv)*
+	* These correspond to the output of the VRM simulation software
+
+* Output Data of the 3D CNN model (Dependent Variables/Predicted Variables):
+	* Process parameters (KCCs) *(Files: initial_samples_halo.csv)*
+	* These correspond as input to the VRM simulation software
+
+* Mapping Files to map deviation nodes to Voxel locations (64\*64\*64)
+	* Voxel index (𝑖,𝑗,𝑘) for each node (𝑥,𝑦,𝑧) *(File: voxel_mapping_halo_64.csv)*
+
+* Nominal Cloud of Point with node ID
+	* Node nominal location in 3D Space *(File: nominal_cop_halo.csv)*

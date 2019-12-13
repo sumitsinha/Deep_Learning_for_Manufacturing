@@ -1,0 +1,188 @@
+
+
+<!doctype html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Download Configuration &#8212; Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Assembly Configuration" href="assembly_config.html" />
+    <link rel="prev" title="Library Configuration" href="lib_config.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="assembly_config.html" title="Assembly Configuration"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="lib_config.html" title="Library Configuration"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="lib_config.html" accesskey="U">Library Configuration</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="lib_config.html"
+                        title="previous chapter">Library Configuration</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="assembly_config.html"
+                        title="next chapter">Assembly Configuration</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/download_config.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-dlmfg.config.download_config">
+<span id="download-configuration"></span><h1>Download Configuration<a class="headerlink" href="#module-dlmfg.config.download_config" title="Permalink to this headline">¶</a></h1>
+<p>The download config file consists of parameters required to download files</p>
+<dl class="field-list simple">
+<dt class="field-odd">param download_params[‘download_type’]</dt>
+<dd class="field-odd"><p>Server name of the file location, currently supports Google Drive</p>
+</dd>
+<dt class="field-even">type download_params[‘download_type’]</dt>
+<dd class="field-even"><p>str (required)</p>
+</dd>
+<dt class="field-odd">param download_params[‘base_url’]</dt>
+<dd class="field-odd"><p>base URL of the server</p>
+</dd>
+<dt class="field-even">type download_params[‘base_url’]</dt>
+<dd class="field-even"><p>str (required)</p>
+</dd>
+<dt class="field-odd">param download_params[‘id_kcc_files’]</dt>
+<dd class="field-odd"><p>List of KCC file IDs on the server, minimum one file id in the list is required</p>
+</dd>
+<dt class="field-even">type download_params[‘id_kcc_files’]</dt>
+<dd class="field-even"><p>list (required)</p>
+</dd>
+<dt class="field-odd">param download_params[‘id_test_kcc_files’]</dt>
+<dd class="field-odd"><p>List of test KCC file IDs on the server, minimum one file id in the list is required</p>
+</dd>
+<dt class="field-even">type download_params[‘id_test_kcc_files’]</dt>
+<dd class="field-even"><p>list (required)</p>
+</dd>
+<dt class="field-odd">param download_params[‘id_data_files_x’]</dt>
+<dd class="field-odd"><p>List of data files IDs consisting of x-deviation of nodes on the server, minimum one file id in the list is required</p>
+</dd>
+<dt class="field-even">type download_params[‘id_data_files_x’]</dt>
+<dd class="field-even"><p>list (required)</p>
+</dd>
+<dt class="field-odd">param download_params[‘id_data_files_y’]</dt>
+<dd class="field-odd"><p>List of data files IDs consisting of y-deviation of nodes on the serve, minimum one file id in the list is required</p>
+</dd>
+<dt class="field-even">type download_params[‘id_data_files_y’]</dt>
+<dd class="field-even"><p>list (required)</p>
+</dd>
+<dt class="field-odd">param download_params[‘id_data_files_z’]</dt>
+<dd class="field-odd"><p>List of data files IDs consisting of z-deviation of nodes on the serve, minimum one file id in the list is required</p>
+</dd>
+<dt class="field-even">type download_params[‘id_data_files_z’]</dt>
+<dd class="field-even"><p>list (required)</p>
+</dd>
+<dt class="field-odd">param download_params[‘id_test_data_files_x’]</dt>
+<dd class="field-odd"><p>List of test data files IDs consisting of x-deviation of nodes on the server, minimum one file id in the list is required</p>
+</dd>
+<dt class="field-even">type download_params[‘id_test_data_files_x’]</dt>
+<dd class="field-even"><p>list (required)</p>
+</dd>
+<dt class="field-odd">param download_params[‘id_test_data_files_y’]</dt>
+<dd class="field-odd"><p>List of test data files IDs consisting of y-deviation of nodes on the serve, minimum one file id in the list is required</p>
+</dd>
+<dt class="field-even">type download_params[‘id_test_data_files_y’]</dt>
+<dd class="field-even"><p>list (required)</p>
+</dd>
+<dt class="field-odd">param download_params[‘id_test_data_files_z’]</dt>
+<dd class="field-odd"><p>List of test data files IDs consisting of z-deviation of nodes on the serve, minimum one file id in the list is required</p>
+</dd>
+<dt class="field-even">type download_params[‘id_test_data_files_z’]</dt>
+<dd class="field-even"><p>list (required)</p>
+</dd>
+<dt class="field-odd">param download_params[‘id_mapping_index’]</dt>
+<dd class="field-odd"><p>Mapping File ID</p>
+</dd>
+<dt class="field-even">type download_params[‘id_mapping_index’]</dt>
+<dd class="field-even"><p>str (required)</p>
+</dd>
+<dt class="field-odd">param download_params[‘id_nominal_cop’]</dt>
+<dd class="field-odd"><p>Nominal COP file ID</p>
+</dd>
+<dt class="field-even">type download_params[‘id_nominal_cop’]</dt>
+<dd class="field-even"><p>str (required)</p>
+</dd>
+</dl>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="assembly_config.html" title="Assembly Configuration"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="lib_config.html" title="Library Configuration"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="lib_config.html" >Library Configuration</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Sumit Sinha.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.2.
+    </div>
+  </body>
+</html>

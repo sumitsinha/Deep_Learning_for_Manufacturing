@@ -1,0 +1,396 @@
+
+
+<!doctype html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>dlmfg.transfer_learning.tl_core &#8212; Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    <script type="text/javascript" src="../../../_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for dlmfg.transfer_learning.tl_core</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot; Contains core classes and methods for initializing a Transfer Learning Class and running transfer learning using a pre-trained model and a small training dataset, the inputs are provided in assemblyconfig file in utilities&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">current_path</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
+<span class="n">parentdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">current_path</span><span class="p">)</span>
+
+<span class="c1">#Adding Path to various Modules</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;../core&quot;</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;../visualization&quot;</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;../utilities&quot;</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;../datasets&quot;</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;../trained_models&quot;</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;../config&quot;</span><span class="p">)</span>
+
+
+<span class="c1">#Importing Required Modules</span>
+<span class="kn">import</span> <span class="nn">pathlib</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+<span class="kn">from</span> <span class="nn">keras</span> <span class="kn">import</span> <span class="n">backend</span> <span class="k">as</span> <span class="n">K</span>
+<span class="kn">from</span> <span class="nn">keras.models</span> <span class="kn">import</span> <span class="n">load_model</span>
+<span class="kn">from</span> <span class="nn">keras_contrib.layers.normalization.instancenormalization</span> <span class="kn">import</span> <span class="n">InstanceNormalization</span>
+<span class="kn">from</span> <span class="nn">keras_lr_multiplier</span> <span class="kn">import</span> <span class="n">LRMultiplier</span>
+<span class="kn">from</span> <span class="nn">keras.utils</span> <span class="kn">import</span> <span class="n">plot_model</span>
+<span class="n">K</span><span class="o">.</span><span class="n">clear_session</span><span class="p">()</span>
+
+<span class="c1">#Importing Config files</span>
+<span class="kn">import</span> <span class="nn">assembly_config</span> <span class="k">as</span> <span class="nn">config</span>
+<span class="kn">import</span> <span class="nn">model_config</span> <span class="k">as</span> <span class="nn">cftrain</span>
+
+<span class="c1">#Importing required modules from the package</span>
+<span class="kn">from</span> <span class="nn">measurement_system</span> <span class="kn">import</span> <span class="n">HexagonWlsScanner</span>
+<span class="kn">from</span> <span class="nn">assembly_system</span> <span class="kn">import</span> <span class="n">VRMSimulationModel</span>
+<span class="kn">from</span> <span class="nn">wls400a_system</span> <span class="kn">import</span> <span class="n">GetInferenceData</span>
+<span class="kn">from</span> <span class="nn">data_import</span> <span class="kn">import</span> <span class="n">GetTrainData</span>
+<span class="kn">from</span> <span class="nn">core_model</span> <span class="kn">import</span> <span class="n">DLModel</span>
+<span class="kn">from</span> <span class="nn">training_viz</span> <span class="kn">import</span> <span class="n">TrainViz</span>
+<span class="kn">from</span> <span class="nn">metrics_eval</span> <span class="kn">import</span> <span class="n">MetricsEval</span>
+<span class="kn">from</span> <span class="nn">model_train</span> <span class="kn">import</span> <span class="n">TrainModel</span>
+
+<div class="viewcode-block" id="TransferLearning"><a class="viewcode-back" href="../../../transfer_learning.html#dlmfg.transfer_learning.tl_core.TransferLearning">[docs]</a><span class="k">class</span> <span class="nc">TransferLearning</span><span class="p">:</span>
+	<span class="sd">&quot;&quot;&quot;Transfer Learning Class</span>
+
+<span class="sd">		:param tl_type: Type of transfer learning to be done, full fine-tune, partial fine-tune, feature extraction</span>
+<span class="sd">		:type tl_type: str (required)</span>
+
+<span class="sd">		:param tl_base: The base model to be used for model</span>
+<span class="sd">		:type tl_base: str (required)</span>
+
+<span class="sd">		:param tl_app: The application for transfer learning</span>
+<span class="sd">		:type tl_app: str (required)</span>
+
+<span class="sd">		:param model_type: The type of model, regression or classification</span>
+<span class="sd">		:type model_type: str (required)</span>
+
+<span class="sd">		:param output_dimension: The number of KCCs for the case study to which the pre-trained model is to be transfered, to be used to reinitialize the last layer</span>
+<span class="sd">		:type output_dimension: int (required)</span>
+
+<span class="sd">		:param optimizer: The optimizer to be used for model training (https://keras.io/optimizers/)</span>
+<span class="sd">		:type optimizer: keras.optimizer (required)</span>
+
+<span class="sd">		:param loss_function: The loss function to be used for model training (https://keras.io/losses/)</span>
+<span class="sd">		:type loss_function: keras.losses (required)</span>
+
+<span class="sd">		:param regularizer_coeff: The regularization coefficient for L2 norm regularization of the fully connected layer (https://keras.io/regularizers/)</span>
+<span class="sd">		:type regularizer_coeff: float (required)</span>
+
+<span class="sd">		:param output_type: The type of model, regression or classification</span>
+<span class="sd">		:type output_type: str (required)</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tl_type</span><span class="p">,</span><span class="n">tl_base</span><span class="p">,</span><span class="n">tl_app</span><span class="p">,</span><span class="n">model_type</span><span class="p">,</span><span class="n">output_dimension</span><span class="p">,</span><span class="n">optimizer</span><span class="p">,</span><span class="n">loss_function</span><span class="p">,</span><span class="n">regularizer_coeff</span><span class="p">,</span><span class="n">output_type</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">tl_type</span><span class="o">=</span><span class="n">tl_type</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">tl_base</span><span class="o">=</span><span class="n">tl_base</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">tl_app</span><span class="o">=</span><span class="n">tl_app</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">output_dimension</span><span class="o">=</span><span class="n">output_dimension</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">model_type</span><span class="o">=</span><span class="n">model_type</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">loss_function</span><span class="o">=</span><span class="n">loss_function</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">regularizer_coeff</span><span class="o">=</span><span class="n">regularizer_coeff</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">output_type</span><span class="o">=</span><span class="n">output_type</span>
+	
+<div class="viewcode-block" id="TransferLearning.get_trained_model"><a class="viewcode-back" href="../../../transfer_learning.html#dlmfg.transfer_learning.tl_core.TransferLearning.get_trained_model">[docs]</a>	<span class="k">def</span> <span class="nf">get_trained_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Imports the pre-trained model based on the object initialization, currently supports Keras modelname.h5 format (refer https://keras.io/models/model/ for more information on keras model)</span>
+
+<span class="sd">			:returns: Pre-trained model with weights</span>
+<span class="sd">			:rtype: keras.model</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">def</span> <span class="nf">weighted_dice_coefficient</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">smooth</span><span class="o">=</span><span class="mf">0.00001</span><span class="p">):</span>
+		 
+			<span class="k">return</span> <span class="n">K</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="p">(</span><span class="n">K</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">y_true</span> <span class="o">*</span> <span class="n">y_pred</span><span class="p">,</span>
+									  <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span> <span class="o">+</span> <span class="n">smooth</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">K</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span>
+																	<span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span> <span class="o">+</span> <span class="n">K</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span>
+																					   <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span> <span class="o">+</span> <span class="n">smooth</span><span class="p">))</span>
+
+		<span class="k">def</span> <span class="nf">weighted_dice_coefficient_loss</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">):</span>
+			<span class="k">return</span> <span class="o">-</span><span class="n">weighted_dice_coefficient</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+
+		<span class="n">model_path</span><span class="o">=</span><span class="s1">&#39;../pre_trained_models/&#39;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">tl_base</span>
+		
+		<span class="k">if</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tl_base</span><span class="o">==</span><span class="s1">&#39;unet_3d.h5&#39;</span><span class="p">):</span>
+			<span class="n">base_model</span><span class="o">=</span><span class="n">load_model</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span><span class="n">custom_objects</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;InstanceNormalization&#39;</span><span class="p">:</span> <span class="n">InstanceNormalization</span><span class="p">,</span><span class="s1">&#39;weighted_dice_coefficient_loss&#39;</span><span class="p">:</span><span class="n">weighted_dice_coefficient_loss</span><span class="p">})</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">base_model</span><span class="o">=</span><span class="n">load_model</span><span class="p">(</span><span class="n">model_path</span><span class="p">)</span>
+		
+		<span class="k">return</span> <span class="n">base_model</span></div>
+
+<div class="viewcode-block" id="TransferLearning.build_transfer_model"><a class="viewcode-back" href="../../../transfer_learning.html#dlmfg.transfer_learning.tl_core.TransferLearning.build_transfer_model">[docs]</a>	<span class="k">def</span> <span class="nf">build_transfer_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">model</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;The build_transfer_function takes the pre-trained model removes the final layer and adds another layer based on the new case study parameters, which is trained on a small dataset obtained from the new case study</span>
+
+<span class="sd">			:param model: keras model with preset parameters</span>
+<span class="sd">			:type model: keras.model (required)</span>
+
+<span class="sd">			:returns: Updated model with new final layer</span>
+<span class="sd">			:rtype: keras.model</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="kn">from</span> <span class="nn">keras.layers</span> <span class="kn">import</span> <span class="n">Conv3D</span><span class="p">,</span> <span class="n">MaxPool3D</span><span class="p">,</span> <span class="n">Flatten</span><span class="p">,</span> <span class="n">Dense</span><span class="p">,</span> <span class="n">Dropout</span>
+		<span class="kn">from</span> <span class="nn">keras.models</span> <span class="kn">import</span> <span class="n">Model</span>
+		
+		<span class="k">if</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_type</span><span class="o">==</span><span class="s2">&quot;regression&quot;</span><span class="p">):</span>
+			<span class="n">final_layer_avt</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span>
+
+		<span class="k">if</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_type</span><span class="o">==</span><span class="s2">&quot;classification&quot;</span><span class="p">):</span>
+			<span class="n">final_layer_avt</span><span class="o">=</span><span class="s1">&#39;softmax&#39;</span>
+
+		<span class="n">model</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+		<span class="n">model</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+		<span class="n">x</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">output</span>
+		
+		<span class="n">x</span> <span class="o">=</span> <span class="n">Dense</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_dimension</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="n">final_layer_avt</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;new_predictions&#39;</span><span class="p">)(</span><span class="n">x</span><span class="p">)</span>
+
+		<span class="n">transfer_model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">input</span><span class="p">,</span><span class="n">output</span><span class="o">=</span><span class="n">x</span><span class="p">)</span>	
+		
+		<span class="k">return</span> <span class="n">transfer_model</span></div>
+		
+<div class="viewcode-block" id="TransferLearning.set_fixed_train_params"><a class="viewcode-back" href="../../../transfer_learning.html#dlmfg.transfer_learning.tl_core.TransferLearning.set_fixed_train_params">[docs]</a>	<span class="k">def</span> <span class="nf">set_fixed_train_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">model</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;The set_fixed_params function is used to freeze the weights of the convolution layer, hence the initial part of the network is to be used only as a feature extractor</span>
+
+<span class="sd">			:param model: keras model with preset parameters</span>
+<span class="sd">			:type model: keras.model (required)</span>
+
+<span class="sd">			:returns: Updated model with non trainable convolution layers</span>
+<span class="sd">			:rtype: keras.model</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">layers</span><span class="p">:</span>
+			<span class="k">if</span><span class="p">(</span><span class="s1">&#39;conv&#39;</span><span class="ow">in</span> <span class="n">layer</span><span class="o">.</span><span class="n">name</span><span class="p">):</span>	
+				<span class="n">layer</span><span class="o">.</span><span class="n">trainable</span> <span class="o">=</span> <span class="kc">False</span>
+
+		<span class="n">model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">loss</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">loss_function</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;mae&#39;</span><span class="p">])</span>
+
+		<span class="k">return</span> <span class="n">model</span></div>
+
+<div class="viewcode-block" id="TransferLearning.set_variable_learning_rates"><a class="viewcode-back" href="../../../transfer_learning.html#dlmfg.transfer_learning.tl_core.TransferLearning.set_variable_learning_rates">[docs]</a>	<span class="k">def</span> <span class="nf">set_variable_learning_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">model</span><span class="p">,</span><span class="n">conv_layer_m</span><span class="p">,</span><span class="n">dense_layer_m</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;The set_fixed_params function is used to freeze the weights of the convolution layer if the initial part of the network is to be used only as a feature extractor</span>
+
+<span class="sd">			:param model: keras model with preset parameters</span>
+<span class="sd">			:type model: keras.model (required)</span>
+
+<span class="sd">			:param conv_layer_m: Learning rate multiplier for convolution layer</span>
+<span class="sd">			:type conv_layer_m: float(required)</span>
+
+<span class="sd">			:param dense_layer_m: Learning rate multiplier for dense layer</span>
+<span class="sd">			:type dense_layer_m: float(required)</span>
+
+<span class="sd">			:returns: Updated model with variable learning rates</span>
+<span class="sd">			:rtype: keras.model</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">lr_dict</span><span class="o">=</span><span class="p">{}</span>
+
+		<span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">layers</span><span class="p">:</span>
+			<span class="k">if</span><span class="p">(</span><span class="s1">&#39;conv&#39;</span><span class="ow">in</span> <span class="n">layer</span><span class="o">.</span><span class="n">name</span><span class="p">):</span>	
+				<span class="n">lr_dict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">layer</span><span class="o">.</span><span class="n">name</span> <span class="p">:</span> <span class="n">conv_layer_m</span><span class="p">})</span>
+			<span class="k">if</span><span class="p">(</span><span class="s1">&#39;dense&#39;</span> <span class="ow">in</span> <span class="n">layer</span><span class="o">.</span><span class="n">name</span><span class="p">):</span>
+				<span class="n">lr_dict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">layer</span><span class="o">.</span><span class="n">name</span> <span class="p">:</span> <span class="n">dense_layer_m</span><span class="p">})</span>
+
+		<span class="n">key</span><span class="o">=</span><span class="s1">&#39;conv3d_1_input&#39;</span>
+		
+		<span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">lr_dict</span><span class="p">:</span>
+			<span class="k">del</span> <span class="n">lr_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+		<span class="c1">#print(lr_dict)</span>
+
+		<span class="n">variable_optimizer</span><span class="o">=</span><span class="n">LRMultiplier</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="p">,</span><span class="n">lr_dict</span><span class="p">)</span>
+
+		<span class="n">model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">loss</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">loss_function</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="n">variable_optimizer</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;mae&#39;</span><span class="p">])</span>
+		<span class="k">return</span> <span class="n">model</span></div>
+
+
+	<span class="k">def</span> <span class="nf">tl_mode3</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">model</span><span class="p">):</span>
+		<span class="k">pass</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+
+	
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Parsing from Assembly Config File....&#39;</span><span class="p">)</span>
+
+	<span class="n">data_type</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;data_type&#39;</span><span class="p">]</span>
+	<span class="n">application</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;application&#39;</span><span class="p">]</span>
+	<span class="n">part_type</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;part_type&#39;</span><span class="p">]</span>
+	<span class="n">part_name</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;part_name&#39;</span><span class="p">]</span>
+	<span class="n">data_format</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;data_format&#39;</span><span class="p">]</span>
+	<span class="n">assembly_type</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;assembly_type&#39;</span><span class="p">]</span>
+	<span class="n">assembly_kccs</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;assembly_kccs&#39;</span><span class="p">]</span>	
+	<span class="n">assembly_kpis</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;assembly_kpis&#39;</span><span class="p">]</span>
+	<span class="n">voxel_dim</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;voxel_dim&#39;</span><span class="p">]</span>
+	<span class="n">point_dim</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;point_dim&#39;</span><span class="p">]</span>
+	<span class="n">voxel_channels</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;voxel_channels&#39;</span><span class="p">]</span>
+	<span class="n">noise_type</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;noise_type&#39;</span><span class="p">]</span>
+	<span class="n">mapping_index</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;mapping_index&#39;</span><span class="p">]</span>
+	<span class="n">file_names_x</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;data_files_x&#39;</span><span class="p">]</span>
+	<span class="n">file_names_y</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;data_files_y&#39;</span><span class="p">]</span>
+	<span class="n">file_names_z</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;data_files_z&#39;</span><span class="p">]</span>
+	<span class="n">system_noise</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;system_noise&#39;</span><span class="p">]</span>
+	<span class="n">aritifical_noise</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;aritifical_noise&#39;</span><span class="p">]</span>
+	<span class="n">data_folder</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;data_folder&#39;</span><span class="p">]</span>
+	<span class="n">kcc_folder</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;kcc_folder&#39;</span><span class="p">]</span>
+	<span class="n">kcc_files</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;kcc_files&#39;</span><span class="p">]</span>
+
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Parsing from Training Config File&#39;</span><span class="p">)</span>
+
+	<span class="n">model_type</span><span class="o">=</span><span class="n">cftrain</span><span class="o">.</span><span class="n">model_parameters</span><span class="p">[</span><span class="s1">&#39;model_type&#39;</span><span class="p">]</span>
+	<span class="n">output_type</span><span class="o">=</span><span class="n">cftrain</span><span class="o">.</span><span class="n">model_parameters</span><span class="p">[</span><span class="s1">&#39;output_type&#39;</span><span class="p">]</span>
+	<span class="n">batch_size</span><span class="o">=</span><span class="n">cftrain</span><span class="o">.</span><span class="n">model_parameters</span><span class="p">[</span><span class="s1">&#39;batch_size&#39;</span><span class="p">]</span>
+	<span class="n">epocs</span><span class="o">=</span><span class="n">cftrain</span><span class="o">.</span><span class="n">model_parameters</span><span class="p">[</span><span class="s1">&#39;epocs&#39;</span><span class="p">]</span>
+	<span class="n">split_ratio</span><span class="o">=</span><span class="n">cftrain</span><span class="o">.</span><span class="n">model_parameters</span><span class="p">[</span><span class="s1">&#39;split_ratio&#39;</span><span class="p">]</span>
+	<span class="n">optimizer</span><span class="o">=</span><span class="n">cftrain</span><span class="o">.</span><span class="n">model_parameters</span><span class="p">[</span><span class="s1">&#39;optimizer&#39;</span><span class="p">]</span>
+	<span class="n">loss_func</span><span class="o">=</span><span class="n">cftrain</span><span class="o">.</span><span class="n">model_parameters</span><span class="p">[</span><span class="s1">&#39;loss_func&#39;</span><span class="p">]</span>
+	<span class="n">regularizer_coeff</span><span class="o">=</span><span class="n">cftrain</span><span class="o">.</span><span class="n">model_parameters</span><span class="p">[</span><span class="s1">&#39;regularizer_coeff&#39;</span><span class="p">]</span>
+	<span class="n">activate_tensorboard</span><span class="o">=</span><span class="n">cftrain</span><span class="o">.</span><span class="n">model_parameters</span><span class="p">[</span><span class="s1">&#39;activate_tensorboard&#39;</span><span class="p">]</span>
+
+	<span class="n">tl_type</span><span class="o">=</span><span class="n">cftrain</span><span class="o">.</span><span class="n">transfer_learning</span><span class="p">[</span><span class="s1">&#39;tl_type&#39;</span><span class="p">]</span>
+	<span class="n">tl_base</span><span class="o">=</span><span class="n">cftrain</span><span class="o">.</span><span class="n">transfer_learning</span><span class="p">[</span><span class="s1">&#39;tl_base&#39;</span><span class="p">]</span>
+	<span class="n">tl_app</span><span class="o">=</span><span class="n">cftrain</span><span class="o">.</span><span class="n">transfer_learning</span><span class="p">[</span><span class="s1">&#39;tl_app&#39;</span><span class="p">]</span>
+	<span class="n">conv_layer_m</span><span class="o">=</span><span class="n">cftrain</span><span class="o">.</span><span class="n">transfer_learning</span><span class="p">[</span><span class="s1">&#39;conv_layer_m&#39;</span><span class="p">]</span>
+	<span class="n">dense_layer_m</span><span class="o">=</span><span class="n">cftrain</span><span class="o">.</span><span class="n">transfer_learning</span><span class="p">[</span><span class="s1">&#39;dense_layer_m&#39;</span><span class="p">]</span>
+
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Creating file Structure....&#39;</span><span class="p">)</span>
+	
+	<span class="n">folder_name</span><span class="o">=</span><span class="n">part_type</span>
+	<span class="n">train_path</span><span class="o">=</span><span class="s1">&#39;../trained_models/&#39;</span><span class="o">+</span><span class="n">part_type</span>
+	<span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">train_path</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> 
+
+	<span class="n">tl_path</span><span class="o">=</span><span class="n">train_path</span><span class="o">+</span><span class="s1">&#39;/transfer_learning&#39;</span>
+	<span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">tl_path</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	
+	<span class="n">model_path</span><span class="o">=</span><span class="n">tl_path</span><span class="o">+</span><span class="s1">&#39;/model&#39;</span>
+	<span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">model_path</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+	<span class="n">logs_path</span><span class="o">=</span><span class="n">tl_path</span><span class="o">+</span><span class="s1">&#39;/logs&#39;</span>
+	<span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">logs_path</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+	<span class="n">plots_path</span><span class="o">=</span><span class="n">tl_path</span><span class="o">+</span><span class="s1">&#39;/plots&#39;</span>
+	<span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">plots_path</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+	<span class="n">deployment_path</span><span class="o">=</span><span class="n">tl_path</span><span class="o">+</span><span class="s1">&#39;/deploy&#39;</span>
+	<span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">deployment_path</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+	<span class="c1">#Objects of Measurement System, Assembly System, Get Inference Data</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Initializing the Assembly System and Measurement System....&#39;</span><span class="p">)</span>
+	
+	<span class="n">measurement_system</span><span class="o">=</span><span class="n">HexagonWlsScanner</span><span class="p">(</span><span class="n">data_type</span><span class="p">,</span><span class="n">application</span><span class="p">,</span><span class="n">system_noise</span><span class="p">,</span><span class="n">part_type</span><span class="p">,</span><span class="n">data_format</span><span class="p">)</span>
+	<span class="n">vrm_system</span><span class="o">=</span><span class="n">VRMSimulationModel</span><span class="p">(</span><span class="n">assembly_type</span><span class="p">,</span><span class="n">assembly_kccs</span><span class="p">,</span><span class="n">assembly_kpis</span><span class="p">,</span><span class="n">part_name</span><span class="p">,</span><span class="n">part_type</span><span class="p">,</span><span class="n">voxel_dim</span><span class="p">,</span><span class="n">voxel_channels</span><span class="p">,</span><span class="n">point_dim</span><span class="p">,</span><span class="n">aritifical_noise</span><span class="p">)</span>
+	
+	<span class="n">get_data</span><span class="o">=</span><span class="n">GetTrainData</span><span class="p">();</span>
+	<span class="n">point_index</span><span class="o">=</span><span class="n">get_data</span><span class="o">.</span><span class="n">load_mapping_index</span><span class="p">(</span><span class="n">mapping_index</span><span class="p">)</span>
+
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Training 3D CNN model&#39;</span><span class="p">)</span>
+	
+	<span class="k">if</span><span class="p">(</span><span class="n">activate_tensorboard</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span>
+		<span class="n">tensorboard_str</span><span class="o">=</span><span class="s1">&#39;tensorboard&#39;</span> <span class="o">+</span> <span class="s1">&#39;--logdir &#39;</span><span class="o">+</span><span class="n">logs_path</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Visualize at Tensorboard using &#39;</span><span class="p">,</span> <span class="n">tensorboard_str</span><span class="p">)</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Importing and Preprocessing Cloud-of-Point Data&#39;</span><span class="p">)</span>
+	
+	<span class="n">dataset</span><span class="o">=</span><span class="p">[]</span>
+	<span class="n">dataset</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_data</span><span class="o">.</span><span class="n">data_import</span><span class="p">(</span><span class="n">file_names_x</span><span class="p">,</span><span class="n">data_folder</span><span class="p">))</span>
+	<span class="n">dataset</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_data</span><span class="o">.</span><span class="n">data_import</span><span class="p">(</span><span class="n">file_names_y</span><span class="p">,</span><span class="n">data_folder</span><span class="p">))</span>
+	<span class="n">dataset</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_data</span><span class="o">.</span><span class="n">data_import</span><span class="p">(</span><span class="n">file_names_z</span><span class="p">,</span><span class="n">data_folder</span><span class="p">))</span>
+	<span class="n">point_index</span><span class="o">=</span><span class="n">get_data</span><span class="o">.</span><span class="n">load_mapping_index</span><span class="p">(</span><span class="n">mapping_index</span><span class="p">)</span>
+
+	<span class="n">kcc_dataset</span><span class="o">=</span><span class="n">get_data</span><span class="o">.</span><span class="n">data_import</span><span class="p">(</span><span class="n">kcc_files</span><span class="p">,</span><span class="n">kcc_folder</span><span class="p">)</span>
+	<span class="n">input_conv_data</span><span class="p">,</span> <span class="n">kcc_subset_dump</span><span class="p">,</span><span class="n">kpi_subset_dump</span><span class="o">=</span><span class="n">get_data</span><span class="o">.</span><span class="n">data_convert_voxel_mc</span><span class="p">(</span><span class="n">vrm_system</span><span class="p">,</span><span class="n">dataset</span><span class="p">,</span><span class="n">point_index</span><span class="p">,</span><span class="n">kcc_dataset</span><span class="p">)</span>
+	
+	<span class="n">transfer_learning</span><span class="o">=</span><span class="n">TransferLearning</span><span class="p">(</span><span class="n">tl_type</span><span class="p">,</span><span class="n">tl_base</span><span class="p">,</span><span class="n">tl_app</span><span class="p">,</span><span class="n">model_type</span><span class="p">,</span><span class="n">assembly_kccs</span><span class="p">,</span><span class="n">optimizer</span><span class="p">,</span><span class="n">loss_func</span><span class="p">,</span><span class="n">regularizer_coeff</span><span class="p">,</span><span class="n">output_type</span><span class="p">)</span>
+	<span class="n">base_model</span><span class="o">=</span><span class="n">transfer_learning</span><span class="o">.</span><span class="n">get_trained_model</span><span class="p">()</span>
+	
+	<span class="nb">print</span><span class="p">(</span><span class="n">base_model</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+	
+	<span class="c1">#plot_model(base_model, to_file=&#39;model.png&#39;)</span>
+
+	<span class="n">transfer_model</span><span class="o">=</span><span class="n">transfer_learning</span><span class="o">.</span><span class="n">build_transfer_model</span><span class="p">(</span><span class="n">base_model</span><span class="p">)</span>
+
+	<span class="k">if</span><span class="p">(</span><span class="n">tl_type</span><span class="o">==</span><span class="s1">&#39;full_fine_tune&#39;</span><span class="p">):</span>
+		<span class="n">model</span><span class="o">=</span><span class="n">transfer_model</span>
+
+	<span class="k">if</span><span class="p">(</span><span class="n">tl_type</span><span class="o">==</span><span class="s1">&#39;variable_lr&#39;</span><span class="p">):</span>
+		<span class="n">model</span><span class="o">=</span><span class="n">transfer_learning</span><span class="o">.</span><span class="n">set_variable_learning_rates</span><span class="p">(</span><span class="n">transfer_model</span><span class="p">,</span><span class="n">conv_layer_m</span><span class="p">,</span><span class="n">dense_layer_m</span><span class="p">)</span>
+
+	<span class="k">if</span><span class="p">(</span><span class="n">tl_type</span><span class="o">==</span><span class="s1">&#39;feature_extractor&#39;</span><span class="p">):</span>
+		<span class="n">model</span><span class="o">=</span><span class="n">transfer_learning</span><span class="o">.</span><span class="n">set_fixed_train_params</span><span class="p">(</span><span class="n">transfer_model</span><span class="p">)</span>
+
+	
+	<span class="n">train_model</span><span class="o">=</span><span class="n">TrainModel</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span><span class="n">epocs</span><span class="p">,</span><span class="n">split_ratio</span><span class="p">)</span>
+	<span class="n">trained_model</span><span class="p">,</span><span class="n">eval_metrics</span><span class="p">,</span><span class="n">accuracy_metrics_df</span><span class="o">=</span><span class="n">train_model</span><span class="o">.</span><span class="n">run_train_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="n">input_conv_data</span><span class="p">[:,:,:,:,</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">],</span><span class="n">kcc_subset_dump</span><span class="p">,</span><span class="n">model_path</span><span class="p">,</span><span class="n">logs_path</span><span class="p">,</span><span class="n">plots_path</span><span class="p">,</span><span class="n">activate_tensorboard</span><span class="p">,</span><span class="n">tl_type</span><span class="o">=</span><span class="n">tl_type</span><span class="p">)</span>
+
+	<span class="n">accuracy_metrics_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">logs_path</span><span class="o">+</span><span class="s1">&#39;/tl_metrics.csv&#39;</span><span class="p">)</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Transfer Learning Based Model Training Complete..&quot;</span><span class="p">)</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The Model Validation Metrics are &quot;</span><span class="p">)</span>
+	<span class="nb">print</span><span class="p">(</span><span class="n">eval_metrics</span><span class="p">)</span>
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Sumit Sinha.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.2.
+    </div>
+  </body>
+</html>

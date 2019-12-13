@@ -1,0 +1,232 @@
+
+
+<!doctype html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>dlmfg.core.data_download &#8212; Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    <script type="text/javascript" src="../../../_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for dlmfg.core.data_download</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot; Contains classes and methods to create the input file structure and download the required data</span>
+<span class="sd">	The program parses from the download_config.py file</span>
+<span class="sd">	Currently leverages gdown library (https://pypi.org/project/gdown/) to download large files from Google drive</span>
+<span class="sd">	Main Function parses from the download_config.py file and downloads the input, output and support files for the corresponding case study and then places them in a pre-specified file structure to be used for model training, deployment and data study</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">current_path</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
+<span class="n">parentdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">current_path</span><span class="p">)</span>
+
+<span class="c1">#Adding Path to various Modules</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;../core&quot;</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;../visualization&quot;</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;../utilities&quot;</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;../datasets&quot;</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;../trained_models&quot;</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;../config&quot;</span><span class="p">)</span>
+
+<span class="c1">#Importing Required Modules</span>
+<span class="kn">import</span> <span class="nn">pathlib</span>
+<span class="kn">import</span> <span class="nn">gdown</span>
+
+<span class="c1">#Importing Config files</span>
+<span class="kn">import</span> <span class="nn">assembly_config</span> <span class="k">as</span> <span class="nn">config</span>
+<span class="kn">import</span> <span class="nn">download_config</span> <span class="k">as</span> <span class="nn">downloadconfig</span>
+
+<div class="viewcode-block" id="DataDownload"><a class="viewcode-back" href="../../../download.html#dlmfg.core.data_download.DataDownload">[docs]</a><span class="k">class</span> <span class="nc">DataDownload</span><span class="p">:</span>
+	<span class="sd">&quot;&quot;&quot;Data Download Class</span>
+
+<span class="sd">		:param base_url: consists of the base URL of the server file location</span>
+<span class="sd">		:type base_url: str (required)</span>
+
+<span class="sd">		:param download_type: Type of download, currently Google drive is used host the data files</span>
+<span class="sd">		:type download_type: str (required)</span>
+
+<span class="sd">		:param download_flag: used to store the number of downloads done using one instance of the Data Download class, can be used to ensure Quality Checks on the downloaded data</span>
+<span class="sd">		:type download_flag: int </span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">base_url</span><span class="p">,</span><span class="n">download_type</span><span class="p">,</span><span class="n">download_flag</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">base_url</span><span class="o">=</span><span class="n">base_url</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">download_type</span><span class="o">=</span><span class="n">download_type</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">download_flag</span><span class="o">=</span><span class="n">download_flag</span>
+			
+<div class="viewcode-block" id="DataDownload.google_drive_downloader"><a class="viewcode-back" href="../../../download.html#dlmfg.core.data_download.DataDownload.google_drive_downloader">[docs]</a>	<span class="k">def</span> <span class="nf">google_drive_downloader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">file_id</span><span class="p">,</span><span class="n">output</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;google_drive_downloader combines object initialization with the file ID to download to the desired output file</span>
+
+<span class="sd">			:param file_id: Server file ID of the file to be downloaded</span>
+<span class="sd">			:type file_id: str (required)</span>
+
+<span class="sd">			:param output: output path of the downloaded file</span>
+<span class="sd">			:type output: str (required)</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Attempting download from &#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">download_type</span><span class="p">,</span> <span class="s1">&#39; for output: &#39;</span><span class="p">,</span><span class="n">output</span><span class="p">)</span>
+		<span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">base_url</span><span class="o">+</span><span class="n">file_id</span>
+		<span class="n">gdown</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Download Completed for: &#39;</span><span class="p">,</span><span class="n">output</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">download_flag</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">download_flag</span><span class="o">+</span><span class="mi">1</span></div></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+	<span class="sd">&quot;&quot;&quot; Main Function parses from the download_config.py file and downloads the input, output and support files for the corresponding case study and then places them in a pre-specified file structure to be used for model training, deployment and data study&quot;&quot;&quot;</span>
+
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Parsing from Assembly Config File....&#39;</span><span class="p">)</span>
+
+	<span class="n">data_type</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;data_type&#39;</span><span class="p">]</span>
+	<span class="n">application</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;application&#39;</span><span class="p">]</span>
+	<span class="n">part_type</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;part_type&#39;</span><span class="p">]</span>
+	<span class="n">part_name</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;part_name&#39;</span><span class="p">]</span>
+	<span class="n">data_format</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;data_format&#39;</span><span class="p">]</span>
+	
+	<span class="n">mapping_index</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;mapping_index&#39;</span><span class="p">]</span>
+	<span class="n">nominal_cop_filename</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;nominal_cop_filename&#39;</span><span class="p">]</span>
+
+	<span class="n">file_names_x</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;data_files_x&#39;</span><span class="p">]</span>
+	<span class="n">file_names_y</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;data_files_y&#39;</span><span class="p">]</span>
+	<span class="n">file_names_z</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;data_files_z&#39;</span><span class="p">]</span>
+	<span class="n">kcc_files</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;kcc_files&#39;</span><span class="p">]</span>
+
+	<span class="n">data_folder</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;data_folder&#39;</span><span class="p">]</span>
+	<span class="n">kcc_folder</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;kcc_folder&#39;</span><span class="p">]</span>
+	
+	<span class="n">test_file_names_x</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;test_data_files_x&#39;</span><span class="p">]</span>
+	<span class="n">test_file_names_y</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;test_data_files_y&#39;</span><span class="p">]</span>
+	<span class="n">test_file_names_z</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;test_data_files_z&#39;</span><span class="p">]</span>
+	<span class="n">test_kcc_files</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;test_kcc_files&#39;</span><span class="p">]</span>
+	
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Parsing from Download Config File&#39;</span><span class="p">)</span>
+
+	<span class="n">id_kcc_files</span><span class="o">=</span><span class="n">downloadconfig</span><span class="o">.</span><span class="n">download_params</span><span class="p">[</span><span class="s1">&#39;id_kcc_files&#39;</span><span class="p">]</span>
+	<span class="n">id_test_kcc_files</span><span class="o">=</span><span class="n">downloadconfig</span><span class="o">.</span><span class="n">download_params</span><span class="p">[</span><span class="s1">&#39;id_test_kcc_files&#39;</span><span class="p">]</span>
+	
+	<span class="n">id_data_files_x</span><span class="o">=</span><span class="n">downloadconfig</span><span class="o">.</span><span class="n">download_params</span><span class="p">[</span><span class="s1">&#39;id_data_files_x&#39;</span><span class="p">]</span>
+	<span class="n">id_data_files_y</span><span class="o">=</span><span class="n">downloadconfig</span><span class="o">.</span><span class="n">download_params</span><span class="p">[</span><span class="s1">&#39;id_data_files_y&#39;</span><span class="p">]</span>
+	<span class="n">id_data_files_z</span><span class="o">=</span><span class="n">downloadconfig</span><span class="o">.</span><span class="n">download_params</span><span class="p">[</span><span class="s1">&#39;id_data_files_z&#39;</span><span class="p">]</span>
+	
+	<span class="n">id_test_data_files_x</span><span class="o">=</span><span class="n">downloadconfig</span><span class="o">.</span><span class="n">download_params</span><span class="p">[</span><span class="s1">&#39;id_test_data_files_x&#39;</span><span class="p">]</span>
+	<span class="n">id_test_data_files_y</span><span class="o">=</span><span class="n">downloadconfig</span><span class="o">.</span><span class="n">download_params</span><span class="p">[</span><span class="s1">&#39;id_test_data_files_y&#39;</span><span class="p">]</span>
+	<span class="n">id_test_data_files_z</span><span class="o">=</span><span class="n">downloadconfig</span><span class="o">.</span><span class="n">download_params</span><span class="p">[</span><span class="s1">&#39;id_test_data_files_z&#39;</span><span class="p">]</span>
+	   
+	<span class="n">id_mapping_index</span><span class="o">=</span><span class="n">downloadconfig</span><span class="o">.</span><span class="n">download_params</span><span class="p">[</span><span class="s1">&#39;id_mapping_index&#39;</span><span class="p">]</span>
+	<span class="n">id_nominal_cop</span><span class="o">=</span><span class="n">downloadconfig</span><span class="o">.</span><span class="n">download_params</span><span class="p">[</span><span class="s1">&#39;id_nominal_cop&#39;</span><span class="p">]</span>
+	
+	<span class="n">download_type</span><span class="o">=</span><span class="n">downloadconfig</span><span class="o">.</span><span class="n">download_params</span><span class="p">[</span><span class="s1">&#39;download_type&#39;</span><span class="p">]</span>
+	<span class="n">base_url</span><span class="o">=</span><span class="n">downloadconfig</span><span class="o">.</span><span class="n">download_params</span><span class="p">[</span><span class="s1">&#39;base_url&#39;</span><span class="p">]</span>
+
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Creating file Structure for downloaded files....&#39;</span><span class="p">)</span>
+	
+	<span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">data_folder</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	<span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">kcc_folder</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+	<span class="n">nominal_cop_path</span><span class="o">=</span><span class="s1">&#39;../resources/nominal_cop_files&#39;</span>
+	<span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">nominal_cop_path</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> 
+	
+	<span class="n">mapping_files_path</span><span class="o">=</span><span class="s1">&#39;../resources/mapping_files&#39;</span>
+	<span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">mapping_files_path</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+	<span class="n">data_download</span><span class="o">=</span><span class="n">DataDownload</span><span class="p">(</span><span class="n">base_url</span><span class="p">,</span><span class="n">download_type</span><span class="p">)</span>
+
+	<span class="n">data_download</span><span class="o">.</span><span class="n">google_drive_downloader</span><span class="p">(</span><span class="n">id_mapping_index</span><span class="p">,(</span><span class="n">mapping_files_path</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">mapping_index</span><span class="p">))</span>
+	<span class="n">data_download</span><span class="o">.</span><span class="n">google_drive_downloader</span><span class="p">(</span><span class="n">id_nominal_cop</span><span class="p">,(</span><span class="n">nominal_cop_path</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">nominal_cop_filename</span><span class="p">))</span>
+
+	<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">file</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">file_names_x</span><span class="p">):</span>
+		<span class="n">data_download</span><span class="o">.</span><span class="n">google_drive_downloader</span><span class="p">(</span><span class="n">id_data_files_x</span><span class="p">[</span><span class="n">i</span><span class="p">],(</span><span class="n">data_folder</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">file</span><span class="p">))</span>
+
+	<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">file</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">file_names_y</span><span class="p">):</span>
+		<span class="n">data_download</span><span class="o">.</span><span class="n">google_drive_downloader</span><span class="p">(</span><span class="n">id_data_files_y</span><span class="p">[</span><span class="n">i</span><span class="p">],(</span><span class="n">data_folder</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">file</span><span class="p">))</span>
+
+	<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">file</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">file_names_z</span><span class="p">):</span>
+		<span class="n">data_download</span><span class="o">.</span><span class="n">google_drive_downloader</span><span class="p">(</span><span class="n">id_data_files_z</span><span class="p">[</span><span class="n">i</span><span class="p">],(</span><span class="n">data_folder</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">file</span><span class="p">))</span>
+
+	<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">file</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">kcc_files</span><span class="p">):</span>
+		<span class="n">data_download</span><span class="o">.</span><span class="n">google_drive_downloader</span><span class="p">(</span><span class="n">id_kcc_files</span><span class="p">[</span><span class="n">i</span><span class="p">],(</span><span class="n">kcc_folder</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">file</span><span class="p">))</span>
+	
+	<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">file</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">test_file_names_x</span><span class="p">):</span>
+		<span class="n">data_download</span><span class="o">.</span><span class="n">google_drive_downloader</span><span class="p">(</span><span class="n">id_test_data_files_x</span><span class="p">[</span><span class="n">i</span><span class="p">],(</span><span class="n">data_folder</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">file</span><span class="p">))</span>
+
+	<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">file</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">test_file_names_y</span><span class="p">):</span>
+		<span class="n">data_download</span><span class="o">.</span><span class="n">google_drive_downloader</span><span class="p">(</span><span class="n">id_test_data_files_y</span><span class="p">[</span><span class="n">i</span><span class="p">],(</span><span class="n">data_folder</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">file</span><span class="p">))</span>
+
+	<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">file</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">test_file_names_z</span><span class="p">):</span>
+		<span class="n">data_download</span><span class="o">.</span><span class="n">google_drive_downloader</span><span class="p">(</span><span class="n">id_test_data_files_z</span><span class="p">[</span><span class="n">i</span><span class="p">],(</span><span class="n">data_folder</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">file</span><span class="p">))</span>
+
+	<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">file</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">test_kcc_files</span><span class="p">):</span>
+		<span class="n">data_download</span><span class="o">.</span><span class="n">google_drive_downloader</span><span class="p">(</span><span class="n">id_test_kcc_files</span><span class="p">[</span><span class="n">i</span><span class="p">],(</span><span class="n">kcc_folder</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">file</span><span class="p">))</span>
+
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;File Structure built and Download completed for a no of file: &#39;</span><span class="p">,</span><span class="n">data_download</span><span class="o">.</span><span class="n">download_flag</span><span class="p">)</span>	
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Sumit Sinha.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.2.
+    </div>
+  </body>
+</html>

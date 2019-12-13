@@ -1,0 +1,266 @@
+
+
+<!doctype html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Assembly Configuration &#8212; Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Measurement Configuration" href="measurement_config.html" />
+    <link rel="prev" title="Download Configuration" href="download_config.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="measurement_config.html" title="Measurement Configuration"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="download_config.html" title="Download Configuration"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="lib_config.html" accesskey="U">Library Configuration</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="download_config.html"
+                        title="previous chapter">Download Configuration</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="measurement_config.html"
+                        title="next chapter">Measurement Configuration</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/assembly_config.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-dlmfg.config.assembly_config">
+<span id="assembly-configuration"></span><h1>Assembly Configuration<a class="headerlink" href="#module-dlmfg.config.assembly_config" title="Permalink to this headline">¶</a></h1>
+<p>The assembly config file required to initialize the assembly class and perform model training and deployment</p>
+<dl class="field-list simple">
+<dt class="field-odd">param assembly_system[‘data_type’]</dt>
+<dd class="field-odd"><p>The incoming data type from the assembly/VRM system, currently defaults to 3D point cloud data</p>
+</dd>
+<dt class="field-even">type assembly_system[‘data_type’]</dt>
+<dd class="field-even"><p>str (required)</p>
+</dd>
+<dt class="field-odd">param assembly_system[‘application’]</dt>
+<dd class="field-odd"><p>The application for which the library is being used, currently defaults to In line Root Cause Analysis</p>
+</dd>
+<dt class="field-even">type assembly_system[‘application’]</dt>
+<dd class="field-even"><p>str (required)</p>
+</dd>
+<dt class="field-odd">param assembly_system[‘part_type’]</dt>
+<dd class="field-odd"><p>The type of the part within the assembly, used to create the file structure within trained_models and active_learning</p>
+</dd>
+<dt class="field-even">type assembly_system[‘part_type’]</dt>
+<dd class="field-even"><p>str (required)</p>
+</dd>
+<dt class="field-odd">param assembly_system[‘part_name’]</dt>
+<dd class="field-odd"><p>Name of the part, to be extended to a list when used for multi-stage systems</p>
+</dd>
+<dt class="field-even">type assembly_system[‘part_name’]</dt>
+<dd class="field-even"><p>str (required)</p>
+</dd>
+<dt class="field-odd">param assembly_system[‘data_format’]</dt>
+<dd class="field-odd"><p>The data format currently defaults to complete, to be extended to partial data input refer: <a class="reference external" href="https://github.com/manojkumrb/spaceTimeV2">https://github.com/manojkumrb/spaceTimeV2</a> for more details</p>
+</dd>
+<dt class="field-even">type assembly_system[‘data_format’]</dt>
+<dd class="field-even"><p>str (required)</p>
+</dd>
+<dt class="field-odd">param assembly_system[‘assembly_type’]</dt>
+<dd class="field-odd"><p>Type of assembly system, single stage vs multiple stages</p>
+</dd>
+<dt class="field-even">type assembly_system[‘assembly_type’]</dt>
+<dd class="field-even"><p>str (required)</p>
+</dd>
+<dt class="field-odd">param assembly_system[‘assembly_kccs’]</dt>
+<dd class="field-odd"><p>The number of kccs in the assembly system used to determine the number of output neurons for the system</p>
+</dd>
+<dt class="field-even">type assembly_system[‘assembly_kccs’]</dt>
+<dd class="field-even"><p>int (required)</p>
+</dd>
+<dt class="field-odd">param assembly_system[‘assembly_kpis’]</dt>
+<dd class="field-odd"><p>the number of assembly KPIs in the system (the first KPI is convergence flag to indicate if the VRM simulation has converged), minimum value should be 1</p>
+</dd>
+<dt class="field-even">type assembly_system[‘assembly_kpis’]</dt>
+<dd class="field-even"><p>int (required)</p>
+</dd>
+<dt class="field-odd">param assembly_system[‘voxel_dim’]</dt>
+<dd class="field-odd"><p>The dimension/resolution of the voxel required to initialize the input to the model currently defaults to 64</p>
+</dd>
+<dt class="field-even">type assembly_system[‘voxel_dim’]</dt>
+<dd class="field-even"><p>int (required)</p>
+</dd>
+<dt class="field-odd">param assembly_system[‘point_dim’]</dt>
+<dd class="field-odd"><p>The number of nodes in the input mesh of the assembly</p>
+</dd>
+<dt class="field-even">type assembly_system[‘point_dim’]</dt>
+<dd class="field-even"><p>int (required)</p>
+</dd>
+<dt class="field-odd">param assembly_system[‘system_noise’]</dt>
+<dd class="field-odd"><p>Noise parameter for the system, used to make model training more robust to actual system noise</p>
+</dd>
+<dt class="field-even">type assembly_system[‘system_noise’]</dt>
+<dd class="field-even"><p>int (required)</p>
+</dd>
+<dt class="field-odd">param assembly_system[‘aritifical_noise’]</dt>
+<dd class="field-odd"><p>Noise parameter for the model, used to make model training more robust to actual system noise (usually same as system noise)</p>
+</dd>
+<dt class="field-even">type assembly_system[‘aritifical_noise’]</dt>
+<dd class="field-even"><p>int (required)</p>
+</dd>
+<dt class="field-odd">param assembly_system[‘noise_type’]</dt>
+<dd class="field-odd"><p>The distribution of the noise , defaults to uniform random value between +- system noise, in case of Gaussian it corresponds to the standard deviation (mean is zero)</p>
+</dd>
+<dt class="field-even">type assembly_system[‘noise_type’]</dt>
+<dd class="field-even"><p>float (required)</p>
+</dd>
+<dt class="field-odd">param assembly_system[‘mapping_index’]</dt>
+<dd class="field-odd"><p>File name of the mapping index, after download is complete the file is saved with this name</p>
+</dd>
+<dt class="field-even">type assembly_system[‘mapping_index’]</dt>
+<dd class="field-even"><p>str (required)</p>
+</dd>
+<dt class="field-odd">param assembly_system[‘nominal_cop_filename’]</dt>
+<dd class="field-odd"><p>File name of the nominal cop, after download is complete the file is saved with this name</p>
+</dd>
+<dt class="field-even">type assembly_system[‘nominal_cop_filename’]</dt>
+<dd class="field-even"><p>str (required)</p>
+</dd>
+<dt class="field-odd">param assembly_system[‘data_folder’]</dt>
+<dd class="field-odd"><p>Path to input data location</p>
+</dd>
+<dt class="field-even">type assembly_system[‘data_folder’]</dt>
+<dd class="field-even"><p>str (required)</p>
+</dd>
+<dt class="field-odd">param assembly_system[‘kcc_folder’]</dt>
+<dd class="field-odd"><p>Path to Output data/KCC location</p>
+</dd>
+<dt class="field-even">type assembly_system[‘kcc_folder’]</dt>
+<dd class="field-even"><p>str (required)</p>
+</dd>
+<dt class="field-odd">param assembly_system[‘kcc_files’]</dt>
+<dd class="field-odd"><p>List of kcc files, after download is complete the file is saved with this name</p>
+</dd>
+<dt class="field-even">type assembly_system[‘kcc_files’]</dt>
+<dd class="field-even"><p>str (required)</p>
+</dd>
+<dt class="field-odd">param assembly_system[‘test_kcc_files’]</dt>
+<dd class="field-odd"><p>List of test kcc files, after download is complete the file is saved with this name</p>
+</dd>
+<dt class="field-even">type assembly_system[‘test_kcc_files’]</dt>
+<dd class="field-even"><p>str (required)</p>
+</dd>
+<dt class="field-odd">param assembly_system[‘data_files_x’]</dt>
+<dd class="field-odd"><p>List of x deviation input files, after download is complete the file is saved with this name</p>
+</dd>
+<dt class="field-even">type assembly_system[‘data_files_x’]</dt>
+<dd class="field-even"><p>str (required)</p>
+</dd>
+<dt class="field-odd">param assembly_system[‘data_files_y’]</dt>
+<dd class="field-odd"><p>List of y deviation input files, after download is complete the file is saved with this name</p>
+</dd>
+<dt class="field-even">type assembly_system[‘data_files_y’]</dt>
+<dd class="field-even"><p>str (required)</p>
+</dd>
+<dt class="field-odd">param assembly_system[‘data_files_z’]</dt>
+<dd class="field-odd"><p>List of z deviation input files, after download is complete the file is saved with this name</p>
+</dd>
+<dt class="field-even">type assembly_system[‘data_files_z’]</dt>
+<dd class="field-even"><p>str (required)</p>
+</dd>
+<dt class="field-odd">param assembly_system[‘test_data_files_x’]</dt>
+<dd class="field-odd"><p>List of x deviation test input files, after download is complete the file is saved with this name</p>
+</dd>
+<dt class="field-even">type assembly_system[‘test_data_files_x’]</dt>
+<dd class="field-even"><p>str (required)</p>
+</dd>
+<dt class="field-odd">param assembly_system[‘test_data_files_y’]</dt>
+<dd class="field-odd"><p>List of y deviation test input files, after download is complete the file is saved with this name</p>
+</dd>
+<dt class="field-even">type assembly_system[‘test_data_files_y’]</dt>
+<dd class="field-even"><p>str (required)</p>
+</dd>
+<dt class="field-odd">param assembly_system[‘test_data_files_z’]</dt>
+<dd class="field-odd"><p>List of z deviation test input files, after download is complete the file is saved with this name</p>
+</dd>
+<dt class="field-even">type assembly_system[‘test_data_files_z’]</dt>
+<dd class="field-even"><p>str (required)</p>
+</dd>
+</dl>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="measurement_config.html" title="Measurement Configuration"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="download_config.html" title="Download Configuration"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="lib_config.html" >Library Configuration</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Sumit Sinha.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.2.
+    </div>
+  </body>
+</html>

@@ -3,6 +3,8 @@ import sys
 current_path=os.path.dirname(__file__)
 parentdir = os.path.dirname(current_path)
 
+""" Contains sampling classes and methods to enable active learning between VRM and 3D CNN model """
+
 #Adding Path to various Modules
 sys.path.append("../core")
 sys.path.append("../visualization")
@@ -20,7 +22,20 @@ import kcc_config as kcc_config
 import sampling_config as sampling_config
 
 class adaptive_sampling():
+	"""Assembly System Class
 
+		:param sample_dim: The number of initial samples to be generated
+		:type sample_dim: int (required)
+
+		:param sample_type: Type of sampling to be used for generating initial samples
+		:type sample_dim: str (required)
+
+		:param adaptive_sample_dim: The number of samples to be generated with each adaptive sample run
+		:type adaptive_sample_dim: int (required) 
+
+		:param adaptive_runs: The maximum number of adaptive runs to be conducted
+		:type adaptive_runs: int (required) 
+	"""
 	def __init__(self,sample_dim,sample_type,adaptive_samples_dim,adaptive_runs):
 		self.sample_dim=sample_dim
 		self.sample_type=sample_type
@@ -28,7 +43,17 @@ class adaptive_sampling():
 		self.adaptive_runs=adaptive_runs
 	
 	def inital_sampling_lhs(self,kcc_struct,sample_dim):
+		"""Generates multi-variate LHS samples for each KCC and scales then based on the KCC maximum and minimum value
 
+			:param kcc_struct: list of dictionaries for each KCC from kcc_config file
+			:type file_name: list (required)
+
+			:param sample_dim: The number of initial samples to be generated
+			:type sample_dim: int (required)
+
+			:returns: numpy array of sampled KCCs
+			:rtype: numpy.array [sample_dim*kcc_dim]
+		"""
 		kcc_dim=len(kcc_struct)
 		sample_type=self.sample_type
 
@@ -36,17 +61,23 @@ class adaptive_sampling():
 		initial_samples=np.zeros_like(samples)
 		index=0
 		for kcc in kcc_struct:   
-			if(sample_type=='uniform'):
-				#initial_samples[:,index]=uniform.ppf(samples[:,index], loc=kcc['kcc_nominal'], scale=kcc['kcc_max']-kcc['kcc_min'])
-				initial_samples[:,index]=samples[:,index]*(kcc['kcc_max']-kcc['kcc_min'])+kcc['kcc_min']
-			else:
-				initial_samples[:,index]=norm.ppf(samples[:,index], loc=(kcc['kcc_nominal']+kcc['kcc_max'])/2, scale=(kcc['kcc_max']-kcc['kcc_min'])/6)
+			initial_samples[:,index]=samples[:,index]*(kcc['kcc_max']-kcc['kcc_min'])+kcc['kcc_min']
 			index=index+1
 
 		return initial_samples
 
 	def inital_sampling_uniform_random(self,kcc_struct,sample_dim):
+		"""Generates multi-variate uniform random samples for each KCC and scales then based on the KCC maximum and minimum value
 
+			:param kcc_struct: list of dictionaries for each KCC from kcc_config file
+			:type file_name: list (required)
+
+			:param sample_dim: The number of initial samples to be generated
+			:type sample_dim: int (required)
+
+			:returns: numpy array of sampled KCCs
+			:rtype: numpy.array [sample_dim*kcc_dim]
+		"""
 		kcc_dim=len(kcc_struct)
 		sample_type=self.sample_type
 		initial_samples=np.zeros((sample_dim,kcc_dim))
@@ -58,7 +89,9 @@ class adaptive_sampling():
 		return initial_samples
 	
 	def adpative_samples_gen(self,kcc_struct,run_id):
-		
+		"""Adaptive samples based on model uncertainty, currently this is Work in Progress
+
+		"""
 		adaptive_samples_dim=self.adaptive_samples_dim
 
 		adaptive_samples=[]
@@ -82,14 +115,19 @@ if __name__ == '__main__':
 
 	adaptive_sampling=adaptive_sampling(sampling_config['sample_dim'],sampling_config['sample_type'],sampling_config['adaptive_sample_dim'],sampling_config['adaptive_runs'])
 
-	print('Generating inital samples')
-	initial_samples=adaptive_sampling.inital_sampling_uniform_random(kcc_struct,sampling_config['sample_dim'])
+	print('Generating initial samples')
+
+	if(adaptive_sampling.sample_type=='lhs'):
+		initial_samples=adaptive_sampling.inital_sampling_lhs(kcc_struct,sampling_config['sample_dim'])
+	else:
+		initial_samples=adaptive_sampling.inital_sampling_uniform_random(kcc_struct,sampling_config['sample_dim'])
+
 
 	file_name=sampling_config['output_file_name']
 	file_path='./sample_input/'+file_name
 	np.savetxt(file_path, initial_samples, delimiter=",")
 
-	print('Inital Samples Saved to path: ',file_path)
+	print('Initial Samples Saved to path: ',file_path)
 
 	#WIP to integrate adaptive sampling from VRM Oracle
 	#@Run VRM Oracle on initial samples

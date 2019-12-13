@@ -1,0 +1,5 @@
+Deep Learning Class
+======================================
+
+.. automodule:: dlmfg.core.core_model
+ :members:

@@ -1,0 +1,146 @@
+
+
+<!doctype html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Model Deployment &#8212; Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Data and Convergence Study" href="data_study.html" />
+    <link rel="prev" title="Model Training" href="model_train.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="data_study.html" title="Data and Convergence Study"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="model_train.html" title="Model Training"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="installation.html" accesskey="U">Installation and Implementation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="model_train.html"
+                        title="previous chapter">Model Training</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="data_study.html"
+                        title="next chapter">Data and Convergence Study</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/deploy_model.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-dlmfg.core.model_deployment">
+<span id="model-deployment"></span><h1>Model Deployment<a class="headerlink" href="#module-dlmfg.core.model_deployment" title="Permalink to this headline">¶</a></h1>
+<p>The model deploy file is used to leverage a trained model to perform inference on unknown set of node deviations.</p>
+<dl class="class">
+<dt id="dlmfg.core.model_deployment.DeployModel">
+<em class="property">class </em><code class="sig-prename descclassname">dlmfg.core.model_deployment.</code><code class="sig-name descname">DeployModel</code><a class="reference internal" href="_modules/dlmfg/core/model_deployment.html#DeployModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dlmfg.core.model_deployment.DeployModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Deploy Model class is used to import a trained model and use it to infer on unknown data</p>
+<dl class="method">
+<dt id="dlmfg.core.model_deployment.DeployModel.get_model">
+<code class="sig-name descname">get_model</code><span class="sig-paren">(</span><em class="sig-param">model_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dlmfg/core/model_deployment.html#DeployModel.get_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dlmfg.core.model_deployment.DeployModel.get_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>get_model method is is used to retrieve the trained model from a given path</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>model_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – Path to the trained model, ideally it should be same as the train model path output</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="dlmfg.core.model_deployment.DeployModel.model_inference">
+<code class="sig-name descname">model_inference</code><span class="sig-paren">(</span><em class="sig-param">inference_data</em>, <em class="sig-param">inference_model</em>, <em class="sig-param">print_result=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dlmfg/core/model_deployment.html#DeployModel.model_inference"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dlmfg.core.model_deployment.DeployModel.model_inference" title="Permalink to this definition">¶</a></dt>
+<dd><p>model_inference method is used to infer from unknown sample(s) using the trained model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inference_data</strong> (<em>numpy.array</em><em> [</em><em>samples*voxel_dim*voxel_dim*voxel_dim*deviation_channels</em><em>] </em><em>(</em><em>required</em><em>) </em><em>(</em><em>required</em><em>)</em>) – Unknown dataset having same structure as the train dataset</p></li>
+<li><p><strong>inference_model</strong> (<em>keras.model</em><em> (</em><em>required</em><em>)</em>) – Trained model</p></li>
+<li><p><strong>print_result</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – Flag to indicate if the result needs to be printed, 0 by default, change to 1 in case the results need to be printed on the console</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="data_study.html" title="Data and Convergence Study"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="model_train.html" title="Model Training"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="installation.html" >Installation and Implementation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Sumit Sinha.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.2.
+    </div>
+  </body>
+</html>

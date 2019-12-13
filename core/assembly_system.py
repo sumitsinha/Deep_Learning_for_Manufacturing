@@ -48,8 +48,8 @@ class PartType(AssemblySystem):
 			:param file_name: Name of the input file
 			:type file_name: str (required)
 
-			:returns: numpy array of dim points * 3
-			:rtype: numpy.array[point_dim,3]
+			:returns: numpy array of nominal COP
+			:rtype: numpy.array [point_dim,3]
 		"""
 		df=pd.read_csv(file_name, sep=',',header=None)
 		nominal_cop=df.values

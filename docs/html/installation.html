@@ -1,0 +1,157 @@
+
+
+<!doctype html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Installation and Implementation &#8212; Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Data Download" href="download.html" />
+    <link rel="prev" title="Deep Learning for Manufacturing (dlmfg): Documentation" href="index.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="download.html" title="Data Download"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Deep Learning for Manufacturing (dlmfg): Documentation"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Deep Learning for Manufacturing (dlmfg): Documentation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="download.html"
+                        title="next chapter">Data Download</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/installation.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="installation-and-implementation">
+<h1>Installation and Implementation<a class="headerlink" href="#installation-and-implementation" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="download.html">Data Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_train.html">Model Training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deploy_model.html">Model Deployment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_study.html">Data and Convergence Study</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metrics_eval.html">Model Evaluation</a></li>
+</ul>
+</div>
+<ul>
+<li><dl>
+<dt>Download the <strong>dlmfg library</strong> to your python environment (it is recommended to create a new environment to prevent version mismatch of the prerequisites e.g. TensorFlow, Keras etc) using</dt><dd><p>Clone Repository:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">sumitsinha</span><span class="o">/</span><span class="n">Deep_Learning_for_Manufacturing</span>
+</pre></div>
+</div>
+<p>or using PyPI:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">dlmfg</span>
+</pre></div>
+</div>
+<p>if you are using git clone you would need to install the requirements by running pip install –r requirements.txt from the root folder</p>
+</dd>
+</dl>
+</li>
+<li><p>Modify/Replace the <a class="reference internal" href="lib_config.html"><span class="doc">configuration files</span></a> based on the case study parameters, various configuration packages for different case studies are already included with the library, refer <a class="reference internal" href="case_study_halo.html"><span class="doc">Case Study: Window Reinforcement Halo</span></a> for more information</p></li>
+<li><dl class="simple">
+<dt>Run <a class="reference internal" href="download.html"><span class="doc">data_download.py</span></a>  located within core that creates the required folder structure and downloads the files within them they consist of :</dt><dd><ul class="simple">
+<li><p>a folder within datasets with same name of the case study consisting of the model input i.e. node deviations <em>(Files: output_halo_x.csv, output_halo_y.csv, output_halo_z.csv)</em></p></li>
+<li><p>a folder within active learning with the same name of the case study consisting of the model output i.e. process parameters or KCCs <em>(Files: initial_samples_halo.csv)</em></p></li>
+<li><p>a file within resources/mapping files consisting of the voxel mapping <em>(File: voxel_mapping_halo_64.csv)</em></p></li>
+<li><p>a file within resources/nominal_cop consisting of the nominal Cop in oder of node IDs <em>(File: nominal_cop_halo.csv)</em></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Run <a class="reference internal" href="model_train.html"><span class="doc">model_train.py</span></a>  located within core that trains the model by spitting the train data into train and validation sets and creates an output folder within the trained_models folder with the same name of case consisting of the following file structure:</dt><dd><ul class="simple">
+<li><p><strong>Logs</strong> – model training logs and training metrics (R-squared, RMSE, MAE, MSE)</p></li>
+<li><p><strong>Model</strong> – trained model in Keras trained_model.h5 format</p></li>
+<li><p><strong>Plots</strong> – training loss convergence visualization</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p>Run <a class="reference internal" href="deploy_model.html"><span class="doc">model_deployment.py</span></a> within core to test the trained model on the test set and obtain accuracy metrics within the logs folder</p></li>
+<li><p>Run <a class="reference internal" href="data_study.html"><span class="doc">data_study.py</span></a> within model core to train model incrementally by increasing the training data in steps, this obtains accuracy metric at each step by testing the trained model on the test set, this generates html plotly based plots for better visualization and training/testing metrics for each step within the logs folder</p></li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="download.html" title="Data Download"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Deep Learning for Manufacturing (dlmfg): Documentation"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Sumit Sinha.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.2.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,17 @@
+Library Configuration
+===========================================================
+
+* The user input to model to the model for various applications is done through various configuration files that take a dictionary based input and use that to initialize various objects for the Assembly, Measurement and Deep Learning Class. The following configuration files are required to run various modules within the library. All configuration files have default initial values which can be updated on user requirement or the case study on which the library is applied.
+
+.. toctree::
+   :maxdepth: 1
+
+   download_config
+   assembly_config
+   measurement_config
+   model_config
+   voxel_config
+   kcc_config
+   sampling_config
+  
+ 

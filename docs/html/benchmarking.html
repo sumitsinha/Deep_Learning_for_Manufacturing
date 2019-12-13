@@ -1,0 +1,161 @@
+
+
+<!doctype html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Benchmarking &#8212; Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Transfer Learning" href="transfer_learning.html" />
+    <link rel="prev" title="Mixture Density Network" href="mdn.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="transfer_learning.html" title="Transfer Learning"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="mdn.html" title="Mixture Density Network"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="utilities.html" accesskey="U">Utilities</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="mdn.html"
+                        title="previous chapter">Mixture Density Network</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="transfer_learning.html"
+                        title="next chapter">Transfer Learning</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/benchmarking.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-dlmfg.utilities.benchmarking">
+<span id="benchmarking"></span><h1>Benchmarking<a class="headerlink" href="#module-dlmfg.utilities.benchmarking" title="Permalink to this headline">¶</a></h1>
+<p>Benchmarking is used to test the 3D CNN model with standard machine learning models. The utility comes with existing models but the user can add, remove or tweak models based on his requirement. Refer scikit learn for more information about the models: <a class="reference external" href="https://scikit-learn.org/stable/supervised_learning.html#supervised-learning">https://scikit-learn.org/stable/supervised_learning.html#supervised-learning</a></p>
+<dl class="function">
+<dt id="dlmfg.utilities.benchmarking.benchmarking_models">
+<code class="sig-prename descclassname">dlmfg.utilities.benchmarking.</code><code class="sig-name descname">benchmarking_models</code><span class="sig-paren">(</span><em class="sig-param">max_models</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dlmfg/utilities/benchmarking.html#benchmarking_models"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dlmfg.utilities.benchmarking.benchmarking_models" title="Permalink to this definition">¶</a></dt>
+<dd><p>benchmarking_models returns a list of models and model names less that or equal to max_models</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>max_models</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – maximum number of models</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>bn_models: list of models used for benchmarking</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)">list</a></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>bn_models_name: list of model names used for benchmarking</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)">list</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="dlmfg.utilities.benchmarking.benchmarking_models_eval">
+<code class="sig-prename descclassname">dlmfg.utilities.benchmarking.</code><code class="sig-name descname">benchmarking_models_eval</code><span class="sig-paren">(</span><em class="sig-param">bn_models</em>, <em class="sig-param">point_data</em>, <em class="sig-param">kcc_dataset</em>, <em class="sig-param">assembly_kccs</em>, <em class="sig-param">bm_path</em>, <em class="sig-param">test_size</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dlmfg/utilities/benchmarking.html#benchmarking_models_eval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dlmfg.utilities.benchmarking.benchmarking_models_eval" title="Permalink to this definition">¶</a></dt>
+<dd><p>benchmarking_models_evals trains each of the model based on the dataset and returns</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bn_models</strong> – list of models to be benchmarked</p></li>
+<li><p><strong>point_data</strong> (<em>numpy.array</em><em> (</em><em>samples*nodes</em><em>) </em><em>(</em><em>required</em><em>)</em>) – input data consisting of node deviations</p></li>
+<li><p><strong>kcc_dataset</strong> (<em>numpy.array</em><em> (</em><em>samples*kccs</em><em>) </em><em>(</em><em>required</em><em>)</em>) – output data consisting of process parameters/KCCs</p></li>
+<li><p><strong>assembly_kccs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em> (</em><em>required</em><em>)</em>) – number of assembly KCCs</p></li>
+<li><p><strong>bm_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – Benchmarking path to save benchmarking results</p></li>
+<li><p><strong>test_size</strong> – The test size split</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>bn_metrics_eval: Benchmarking metrics</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.array [bn_models*kccs*metrics]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="transfer_learning.html" title="Transfer Learning"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="mdn.html" title="Mixture Density Network"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="utilities.html" >Utilities</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Sumit Sinha.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.2.
+    </div>
+  </body>
+</html>

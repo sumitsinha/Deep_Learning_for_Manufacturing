@@ -1,5 +1,5 @@
 """
-A Libraray to initilize the avaiable modules and data structures
+A Library to initialize the available modules and data structures
 
 """
 

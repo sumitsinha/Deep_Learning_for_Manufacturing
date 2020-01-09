@@ -4,6 +4,9 @@ from matplotlib import pyplot
 from mpl_toolkits.mplot3d import Axes3D
 import plotly as py
 import plotly.graph_objs as go
+import numpy as np
+from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.pyplot as plt
 
 class CopViz:
 	"""Cop Visualization class methods and objects to visualize different forms of COP data  
@@ -169,64 +172,24 @@ class CopViz:
 		fig = go.Figure(data=data, layout=layout)
 		py.offline.plot(fig, filename=plot_path)
 
-		def plot_voxelized_data(self,voxel_data,cop_mapping,plot_file_name):
-			"""used to plot the voxelized cloud-of-point data
+	def plot_voxelized_data(self,voxel_data,component):
+		"""used to plot the voxelized cloud-of-point data
 
-				:param voxel_data: voxelized COP data 
-				:type voxel_data: numpy.array (required)
-				
-				:param cop_mapping: cop to voxel mapping file 
-				:type cop_mapping: numpy.array (required)
-				
-				:param plot_file_name: File name to save plot file 
-				:type cop_mapping: str (required)
-				
-
-			"""
-			nominal_cop=self.nominal_cop
-			voxel_dim=len(voxel_cop[:,:,:,1])
-			grip_len=np.count_nonzero(voxel_cop)
-			grid_cop=np.zeros((grid_len,3))
+			:param voxel_data: voxelized COP data 
+			:type voxel_data: numpy.array (required)
 			
-			print('Grid Length')
-
-			for i in range(voxel_dim):
-				for j in range(voxel_dim):
-					for k in range(voxel_dim):
-						if(voxel_data[i,j,k,1]!=0):
-							grid_cop[index,0]=i
-							grid_cop[index,1]=j
-							grid_cop[index,2]=k
-					  
-			for i in range(grid_len):
-				for j in range(len(nominal_cop)):
-					if((grid_cop[i,0]==cop_mapping[j,0] and grid_cop[i,1]==cop_mapping[j,1] and grid_cop[i,2]==cop_mapping[j,2])):
-						grip_cop_values[i,:]=df_nom[j,:]              
-
-			trace1 = go.Scatter3d(
-				x=grip_cop_values[:,0],
-				y=grip_cop_values[:,1],
-				z=grip_cop_values[:,2],
-				mode='markers',
-				marker=dict(
-					size=5,
-					line=dict(
-						color='rgba(217, 217, 217, 5)',
-						width=0.1
-					),
-					opacity=1
-				)
-			)
-					
-
-			data = [trace1]
-			layout = go.Layout(
-				margin=dict(
-					l=0,
-					r=0,
-					b=0,
-					t=0
-				)
-			)
-			fig = go.Figure(data=data, layout=layout)
-			py.offline.plot(fig, filename=plot_file_name)
+			:param component: The component of deviation to be considered while plotting
+			:type component: int (required)
+			
+			:param plot_file_name: File name to save plot file 
+			:type cop_mapping: str (required)
+			
+		"""
+		
+		fig = plt.figure()
+		ax = fig.gca(projection='3d')
+		#ax.set_aspect('equal')
+		ax.voxels(voxel_data[:,:,:,component], edgecolor="k")
+		plt.show()
+		
+	

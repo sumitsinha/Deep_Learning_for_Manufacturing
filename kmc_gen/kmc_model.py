@@ -170,9 +170,8 @@ if __name__ == '__main__':
 	dataset.append((get_data.data_import(file_names_x,data_folder)).iloc[:,0:point_dim])
 	dataset.append((get_data.data_import(file_names_y,data_folder)).iloc[:,0:point_dim])
 	dataset.append((get_data.data_import(file_names_z,data_folder)).iloc[:,0:point_dim])
-	
 	kcc_dataset=get_data.data_import(kcc_files,kcc_folder)
-
+	point_index=get_data.load_mapping_index(mapping_index)
 	
 	point_data=pd.concat([dataset[0],dataset[1],dataset[2]],axis=1,ignore_index=True)
 

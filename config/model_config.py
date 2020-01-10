@@ -96,7 +96,7 @@
 
 
 model_parameters = {	
-        'model_type':'3D Convolutional Neural Network',
+        'model_type':'3D Convolution Neural Network',
         'output_type':'regression',
         'batch_size': 32,
         'epocs': 20,

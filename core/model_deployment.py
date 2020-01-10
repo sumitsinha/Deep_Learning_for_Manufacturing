@@ -31,6 +31,7 @@ from assembly_system import PartType
 from wls400a_system import GetInferenceData
 from metrics_eval import MetricsEval
 from data_import import GetTrainData
+from cam_viz import CamViz
 
 class DeployModel:
 	"""The Deploy Model class is used to import a trained model and use it to infer on unknown data
@@ -99,14 +100,14 @@ if __name__ == '__main__':
 	kcc_files=config.assembly_system['test_kcc_files']
 	
 
-	print('Intilizing the Assembly System and Measurement System....')
+	print('Initializing the Assembly System and Measurement System....')
 	measurement_system=HexagonWlsScanner(data_type,application,system_noise,part_type,data_format)
 	vrm_system=VRMSimulationModel(assembly_type,assembly_kccs,assembly_kpis,part_name,part_type,voxel_dim,voxel_channels,point_dim,aritifical_noise)
 	deploy_model=DeployModel()
 	
 	#Generate Paths
 	train_path='../trained_models/'+part_type
-	model_path=train_path+'/model'+'/trained_model_28.h5'
+	model_path=train_path+'/model'+'/trained_model.h5'
 	logs_path=train_path+'/logs'
 	deploy_path=train_path+'/deploy/'
 
@@ -162,3 +163,10 @@ if __name__ == '__main__':
 		#y_pred=deploy_model.model_inference(input_conv_data,inference_model);
 		#print('KCCs for: ',measurement_file)
 		#print(y_pred)
+
+	#Code for CAM Visualization
+
+	print(inference_model.summary())
+	camviz=CamViz(inference_model,'conv3d_3')
+
+	grads=camviz.grad_cam_3d(input_conv_data[1:2,:,:,:,:],1)

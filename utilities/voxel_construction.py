@@ -76,8 +76,9 @@ class VoxelConstruct:
 			else:
 				z_dev=z2
 		
-		retval=[x_dev,y_dev,z_dev]
-		return retval
+			retval=[x_dev,y_dev,z_dev]
+			return retval
+		
 		x_dim=self.x_dim
 		y_dim=self.y_dim
 		z_dim=self.z_dim
@@ -146,7 +147,6 @@ if __name__ == '__main__':
 	voxel_channels=config.assembly_system['voxel_channels']
 	noise_type=config.assembly_system['noise_type']
 	mapping_index=config.assembly_system['mapping_index']
-	file_names=config.assembly_system['data_files']
 	system_noise=config.assembly_system['system_noise']
 	aritifical_noise=config.assembly_system['aritifical_noise']
 	
@@ -174,9 +174,9 @@ if __name__ == '__main__':
 	print('Importing Nominal COP')
 	nominal_cop=vrm_system.get_nominal_cop(file_path)
 
-	print('Vizvalizing COP')
+	print('Visualizing COP')
 	
-	plot_file_name=part_name+'_nominal_cop.html'
+	plot_file_name='../resources/nominal_cop_files/part_name'+'_nominal_cop.html'
 	copviz=CopViz(nominal_cop)
 	copviz.plot_cop(plot_file_name)
 
@@ -184,13 +184,13 @@ if __name__ == '__main__':
 	#nominal_cop=vrm.get_nominal_cop_database(self,conn_string,table_name)
 	
 	#Passing Voxel
-	print('voxelizing and creating mapping files...')
+	print('Voxelizing and creating mapping files...')
 	voxel_construct=VoxelConstruct(voxel_dim,voxel_dim,voxel_dim)
 	df_point_index=voxel_construct.construct_voxel(nominal_cop)
 	
 	#Dump Voxel
 	name_cop=part_name+'_'+str(voxel_dim)+"_voxel_mapping.dat"
-	df_point_index.dump(name_cop)
+	df_point_index.dump('../resources/mapping_files/'+name_cop)
 
 	print('Mapping file saved as: ',name_cop)
 

@@ -99,7 +99,7 @@ model_parameters = {
         'model_type':'3D Convolution Neural Network',
         'output_type':'regression',
         'batch_size': 32,
-        'epocs': 50,
+        'epocs': 20,
         'split_ratio': 0.3,
         'optimizer':'adam',
         'loss_func':'mse',

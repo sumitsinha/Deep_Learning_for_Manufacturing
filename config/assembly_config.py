@@ -78,7 +78,7 @@
 
 assembly_system = {	
         'data_type': '3D Point Cloud Data',
-        'application': 'Inline Root Cause Analysis',
+        'application': 'InLine Root Cause Analysis',
         'part_type': 'inner_rf_assembly',
         'part_name':'inner_rf',
         'data_format': 'Complete',
@@ -95,17 +95,17 @@ assembly_system = {
         'nominal_cop_filename':'inner_rf_nominal_cop.csv',
         'data_folder':'../datasets/inner_rf_assembly',
         'kcc_folder':'../active_learning/sample_input/inner_rf_assembly',
-        'kcc_files':['input_X.csv'],
-        'test_kcc_files':['test_input_X.csv'],
-        'data_files_x':['output_table_x_3.csv'],
-        'data_files_y':['output_table_y_3.csv'],
-        'data_files_z':['output_table_z_3.csv'],
-        'test_data_files_x':['output_table_x.csv'],
-        'test_data_files_y':['output_table_y.csv'],
-        'test_data_files_z':['output_table_z.csv'],
+        'kcc_files':['inner_rf_samples_datagen6_scaled.csv'],
+        'test_kcc_files':['inner_rf_samples_datagen2_set.csv'],
+        'data_files_x':['output_table_x_datagen6_scaled_4.csv'],
+        'data_files_y':['output_table_y_datagen6_scaled_4.csv'],
+        'data_files_z':['output_table_z_datagen6_scaled_4.csv'],
+        'test_data_files_x':['VRM-m-Stageoutput_table_x_datagen2_3.csv'],
+        'test_data_files_y':['VRM-m-Stageoutput_table_y_datagen2_3.csv'],
+        'test_data_files_z':['VRM-m-Stageoutput_table_z_datagen2_3.csv'],
         }
 
-#Assert that all config values conform to the libarary requirements
+#Assert that all config values conform to the library requirements
 assert type(assembly_system['assembly_kccs']) is int, "Assembly KCCs is not an integer: %r" %assembly_system[assembly_kccs]
 assert type(assembly_system['assembly_kpis']) is int, "Assembly KPIs is not an integer: %r" % assembly_system[assembly_kpis]
 assert type(assembly_system['voxel_dim']) is int, "Voxel Dim is not an integer: %r" % assembly_system[voxel_dim]

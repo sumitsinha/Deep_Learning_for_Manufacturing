@@ -94,6 +94,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../active_learning.html">Active Learning/Adaptive Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../viz.html">Visualization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../case_study_halo.html">Case Study: Positioning and Clamping Variations for Halo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../case_study_inner_rf.html">Case Study: Door Inner and Hinge Reinforcement Multi-Stage Assembly</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../refrences.html">Research and References</a></li>
 </ul>
 
@@ -373,7 +374,7 @@
 	<span class="n">input_conv_data</span><span class="p">,</span> <span class="n">kcc_subset_dump</span><span class="p">,</span><span class="n">kpi_subset_dump</span><span class="o">=</span><span class="n">get_data</span><span class="o">.</span><span class="n">data_convert_voxel_mc</span><span class="p">(</span><span class="n">vrm_system</span><span class="p">,</span><span class="n">dataset</span><span class="p">,</span><span class="n">point_index</span><span class="p">,</span><span class="n">kcc_dataset</span><span class="p">)</span>
 	
 	<span class="n">train_model</span><span class="o">=</span><span class="n">TrainModel</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span><span class="n">epocs</span><span class="p">,</span><span class="n">split_ratio</span><span class="p">)</span>
-	<span class="n">trained_model</span><span class="p">,</span><span class="n">eval_metrics</span><span class="p">,</span><span class="n">accuracy_metrics_df</span><span class="o">=</span><span class="n">train_model</span><span class="o">.</span><span class="n">run_train_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="n">input_conv_data</span><span class="p">,</span><span class="n">kcc_subset_dump</span><span class="p">,</span><span class="n">model_path</span><span class="p">,</span><span class="n">logs_path</span><span class="p">,</span><span class="n">plots_path</span><span class="p">,</span><span class="n">activate_tensorboard</span><span class="p">,</span><span class="n">tf_fl</span><span class="p">)</span>
+	<span class="n">trained_model</span><span class="p">,</span><span class="n">eval_metrics</span><span class="p">,</span><span class="n">accuracy_metrics_df</span><span class="o">=</span><span class="n">train_model</span><span class="o">.</span><span class="n">run_train_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="n">input_conv_data</span><span class="p">,</span><span class="n">kcc_subset_dump</span><span class="p">,</span><span class="n">model_path</span><span class="p">,</span><span class="n">logs_path</span><span class="p">,</span><span class="n">plots_path</span><span class="p">,</span><span class="n">activate_tensorboard</span><span class="p">)</span>
 	
 	<span class="n">accuracy_metrics_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">logs_path</span><span class="o">+</span><span class="s1">&#39;/metrics_train.csv&#39;</span><span class="p">)</span>
 

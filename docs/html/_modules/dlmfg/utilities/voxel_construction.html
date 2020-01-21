@@ -94,6 +94,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../active_learning.html">Active Learning/Adaptive Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../viz.html">Visualization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../case_study_halo.html">Case Study: Positioning and Clamping Variations for Halo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../case_study_inner_rf.html">Case Study: Door Inner and Hinge Reinforcement Multi-Stage Assembly</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../refrences.html">Research and References</a></li>
 </ul>
 
@@ -236,8 +237,9 @@
 			<span class="k">else</span><span class="p">:</span>
 				<span class="n">z_dev</span><span class="o">=</span><span class="n">z2</span>
 		
-		<span class="n">retval</span><span class="o">=</span><span class="p">[</span><span class="n">x_dev</span><span class="p">,</span><span class="n">y_dev</span><span class="p">,</span><span class="n">z_dev</span><span class="p">]</span>
-		<span class="k">return</span> <span class="n">retval</span>
+			<span class="n">retval</span><span class="o">=</span><span class="p">[</span><span class="n">x_dev</span><span class="p">,</span><span class="n">y_dev</span><span class="p">,</span><span class="n">z_dev</span><span class="p">]</span>
+			<span class="k">return</span> <span class="n">retval</span>
+		
 		<span class="n">x_dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">x_dim</span>
 		<span class="n">y_dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">y_dim</span>
 		<span class="n">z_dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">z_dim</span>
@@ -306,7 +308,6 @@
 	<span class="n">voxel_channels</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;voxel_channels&#39;</span><span class="p">]</span>
 	<span class="n">noise_type</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;noise_type&#39;</span><span class="p">]</span>
 	<span class="n">mapping_index</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;mapping_index&#39;</span><span class="p">]</span>
-	<span class="n">file_names</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;data_files&#39;</span><span class="p">]</span>
 	<span class="n">system_noise</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;system_noise&#39;</span><span class="p">]</span>
 	<span class="n">aritifical_noise</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;aritifical_noise&#39;</span><span class="p">]</span>
 	
@@ -334,9 +335,9 @@
 	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Importing Nominal COP&#39;</span><span class="p">)</span>
 	<span class="n">nominal_cop</span><span class="o">=</span><span class="n">vrm_system</span><span class="o">.</span><span class="n">get_nominal_cop</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
 
-	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Vizvalizing COP&#39;</span><span class="p">)</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Visualizing COP&#39;</span><span class="p">)</span>
 	
-	<span class="n">plot_file_name</span><span class="o">=</span><span class="n">part_name</span><span class="o">+</span><span class="s1">&#39;_nominal_cop.html&#39;</span>
+	<span class="n">plot_file_name</span><span class="o">=</span><span class="s1">&#39;../resources/nominal_cop_files/part_name&#39;</span><span class="o">+</span><span class="s1">&#39;_nominal_cop.html&#39;</span>
 	<span class="n">copviz</span><span class="o">=</span><span class="n">CopViz</span><span class="p">(</span><span class="n">nominal_cop</span><span class="p">)</span>
 	<span class="n">copviz</span><span class="o">.</span><span class="n">plot_cop</span><span class="p">(</span><span class="n">plot_file_name</span><span class="p">)</span>
 
@@ -344,13 +345,13 @@
 	<span class="c1">#nominal_cop=vrm.get_nominal_cop_database(self,conn_string,table_name)</span>
 	
 	<span class="c1">#Passing Voxel</span>
-	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;voxelizing and creating mapping files...&#39;</span><span class="p">)</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Voxelizing and creating mapping files...&#39;</span><span class="p">)</span>
 	<span class="n">voxel_construct</span><span class="o">=</span><span class="n">VoxelConstruct</span><span class="p">(</span><span class="n">voxel_dim</span><span class="p">,</span><span class="n">voxel_dim</span><span class="p">,</span><span class="n">voxel_dim</span><span class="p">)</span>
 	<span class="n">df_point_index</span><span class="o">=</span><span class="n">voxel_construct</span><span class="o">.</span><span class="n">construct_voxel</span><span class="p">(</span><span class="n">nominal_cop</span><span class="p">)</span>
 	
 	<span class="c1">#Dump Voxel</span>
 	<span class="n">name_cop</span><span class="o">=</span><span class="n">part_name</span><span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">voxel_dim</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;_voxel_mapping.dat&quot;</span>
-	<span class="n">df_point_index</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">name_cop</span><span class="p">)</span>
+	<span class="n">df_point_index</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="s1">&#39;../resources/mapping_files/&#39;</span><span class="o">+</span><span class="n">name_cop</span><span class="p">)</span>
 
 	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Mapping file saved as: &#39;</span><span class="p">,</span><span class="n">name_cop</span><span class="p">)</span>
 

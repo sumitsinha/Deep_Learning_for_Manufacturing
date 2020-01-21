@@ -94,6 +94,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../active_learning.html">Active Learning/Adaptive Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../viz.html">Visualization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../case_study_halo.html">Case Study: Positioning and Clamping Variations for Halo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../case_study_inner_rf.html">Case Study: Door Inner and Hinge Reinforcement Multi-Stage Assembly</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../refrences.html">Research and References</a></li>
 </ul>
 
@@ -330,9 +331,8 @@
 	<span class="n">dataset</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">get_data</span><span class="o">.</span><span class="n">data_import</span><span class="p">(</span><span class="n">file_names_x</span><span class="p">,</span><span class="n">data_folder</span><span class="p">))</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="n">point_dim</span><span class="p">])</span>
 	<span class="n">dataset</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">get_data</span><span class="o">.</span><span class="n">data_import</span><span class="p">(</span><span class="n">file_names_y</span><span class="p">,</span><span class="n">data_folder</span><span class="p">))</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="n">point_dim</span><span class="p">])</span>
 	<span class="n">dataset</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">get_data</span><span class="o">.</span><span class="n">data_import</span><span class="p">(</span><span class="n">file_names_z</span><span class="p">,</span><span class="n">data_folder</span><span class="p">))</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="n">point_dim</span><span class="p">])</span>
-	
 	<span class="n">kcc_dataset</span><span class="o">=</span><span class="n">get_data</span><span class="o">.</span><span class="n">data_import</span><span class="p">(</span><span class="n">kcc_files</span><span class="p">,</span><span class="n">kcc_folder</span><span class="p">)</span>
-
+	<span class="n">point_index</span><span class="o">=</span><span class="n">get_data</span><span class="o">.</span><span class="n">load_mapping_index</span><span class="p">(</span><span class="n">mapping_index</span><span class="p">)</span>
 	
 	<span class="n">point_data</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">dataset</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">dataset</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 

@@ -99,8 +99,8 @@ model_parameters = {
         'model_type':'3D Convolution Neural Network',
         'output_type':'regression',
         'batch_size': 32,
-        'epocs': 50,
-        'split_ratio': 0.3,
+        'epocs': 100,
+        'split_ratio': 0.2,
         'optimizer':'adam',
         'loss_func':'mse',
         'regularizer_coeff': 0.01,
@@ -112,7 +112,7 @@ data_study_params = {
 	'epocs':50,
 	'min_train_samples':100,
         'train_increment':100,
-        'max_train_samples':3000,
+        'max_train_samples':4000,
 	'split_ratio':0.2
 }
 

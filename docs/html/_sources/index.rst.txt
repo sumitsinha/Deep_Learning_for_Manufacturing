@@ -6,6 +6,15 @@
 Deep Learning for Manufacturing (dlmfg): Documentation
 ===========================================================
 
+Framework
+----------------
+The research aims to develop artificial intelligence based solutions by integrating multi-fidelity Computer Aided Emulation (CAE) and system data to enable process design, process monitoring, automated root cause analysis, automated correction in various phases of the manufacturing production cycle with the final aim of achieving **Closed Loop In-Process Quality Control** for Multi-Stage Manufacturing Systems.
+
+.. figure:: framework.png
+   :align:   center
+
+   *Fig 1: Framework for Closed Loop In-Process Quality Control*
+
 Contents
 ----------------
 .. toctree::
@@ -22,6 +31,7 @@ Contents
    active_learning
    viz
    case_study_halo
+   case_study_inner_rf
    refrences
 
   
@@ -31,7 +41,7 @@ Workflow
 .. figure:: workflow.png
    :align:   center
 
-   *Fig 1: Data Generation and Learning Work flow*
+   *Fig 2: Data Generation and Learning Work flow*
 
 Indices and tables
 -------------------

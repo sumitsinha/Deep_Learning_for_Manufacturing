@@ -1,0 +1,17 @@
+Case Study: Door Inner and Hinge Reinforcement Multi-Stage Assembly
+==========================================================================
+
+
+* Overview
+
+----------------
+
+.. figure:: inner_rf.png
+   :align:   center
+
+   *Fig 2: Door Inner and Hinge Reinforcement Assembly*
+
+
+* The details for the case study parameters, deviation patterns, results and implementation can be found in the document linked below
+
+:download:`Case Study: Door Inner and Hinge Reinforcement Assembly <inner_rf.pdf>` 

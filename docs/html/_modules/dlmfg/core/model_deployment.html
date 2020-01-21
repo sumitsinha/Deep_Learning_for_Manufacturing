@@ -94,6 +94,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../active_learning.html">Active Learning/Adaptive Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../viz.html">Visualization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../case_study_halo.html">Case Study: Positioning and Clamping Variations for Halo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../case_study_inner_rf.html">Case Study: Door Inner and Hinge Reinforcement Multi-Stage Assembly</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../refrences.html">Research and References</a></li>
 </ul>
 
@@ -191,6 +192,7 @@
 <span class="kn">from</span> <span class="nn">wls400a_system</span> <span class="kn">import</span> <span class="n">GetInferenceData</span>
 <span class="kn">from</span> <span class="nn">metrics_eval</span> <span class="kn">import</span> <span class="n">MetricsEval</span>
 <span class="kn">from</span> <span class="nn">data_import</span> <span class="kn">import</span> <span class="n">GetTrainData</span>
+<span class="kn">from</span> <span class="nn">cam_viz</span> <span class="kn">import</span> <span class="n">CamViz</span>
 
 <div class="viewcode-block" id="DeployModel"><a class="viewcode-back" href="../../../deploy_model.html#dlmfg.core.model_deployment.DeployModel">[docs]</a><span class="k">class</span> <span class="nc">DeployModel</span><span class="p">:</span>
 	<span class="sd">&quot;&quot;&quot;The Deploy Model class is used to import a trained model and use it to infer on unknown data</span>
@@ -259,14 +261,14 @@
 	<span class="n">kcc_files</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;test_kcc_files&#39;</span><span class="p">]</span>
 	
 
-	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Intilizing the Assembly System and Measurement System....&#39;</span><span class="p">)</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Initializing the Assembly System and Measurement System....&#39;</span><span class="p">)</span>
 	<span class="n">measurement_system</span><span class="o">=</span><span class="n">HexagonWlsScanner</span><span class="p">(</span><span class="n">data_type</span><span class="p">,</span><span class="n">application</span><span class="p">,</span><span class="n">system_noise</span><span class="p">,</span><span class="n">part_type</span><span class="p">,</span><span class="n">data_format</span><span class="p">)</span>
 	<span class="n">vrm_system</span><span class="o">=</span><span class="n">VRMSimulationModel</span><span class="p">(</span><span class="n">assembly_type</span><span class="p">,</span><span class="n">assembly_kccs</span><span class="p">,</span><span class="n">assembly_kpis</span><span class="p">,</span><span class="n">part_name</span><span class="p">,</span><span class="n">part_type</span><span class="p">,</span><span class="n">voxel_dim</span><span class="p">,</span><span class="n">voxel_channels</span><span class="p">,</span><span class="n">point_dim</span><span class="p">,</span><span class="n">aritifical_noise</span><span class="p">)</span>
 	<span class="n">deploy_model</span><span class="o">=</span><span class="n">DeployModel</span><span class="p">()</span>
 	
 	<span class="c1">#Generate Paths</span>
 	<span class="n">train_path</span><span class="o">=</span><span class="s1">&#39;../trained_models/&#39;</span><span class="o">+</span><span class="n">part_type</span>
-	<span class="n">model_path</span><span class="o">=</span><span class="n">train_path</span><span class="o">+</span><span class="s1">&#39;/model&#39;</span><span class="o">+</span><span class="s1">&#39;/trained_model_28.h5&#39;</span>
+	<span class="n">model_path</span><span class="o">=</span><span class="n">train_path</span><span class="o">+</span><span class="s1">&#39;/model&#39;</span><span class="o">+</span><span class="s1">&#39;/trained_model.h5&#39;</span>
 	<span class="n">logs_path</span><span class="o">=</span><span class="n">train_path</span><span class="o">+</span><span class="s1">&#39;/logs&#39;</span>
 	<span class="n">deploy_path</span><span class="o">=</span><span class="n">train_path</span><span class="o">+</span><span class="s1">&#39;/deploy/&#39;</span>
 
@@ -322,6 +324,13 @@
 		<span class="c1">#y_pred=deploy_model.model_inference(input_conv_data,inference_model);</span>
 		<span class="c1">#print(&#39;KCCs for: &#39;,measurement_file)</span>
 		<span class="c1">#print(y_pred)</span>
+
+	<span class="c1">#Code for CAM Visualization</span>
+
+	<span class="nb">print</span><span class="p">(</span><span class="n">inference_model</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+	<span class="n">camviz</span><span class="o">=</span><span class="n">CamViz</span><span class="p">(</span><span class="n">inference_model</span><span class="p">,</span><span class="s1">&#39;conv3d_3&#39;</span><span class="p">)</span>
+
+	<span class="n">grads</span><span class="o">=</span><span class="n">camviz</span><span class="o">.</span><span class="n">grad_cam_3d</span><span class="p">(</span><span class="n">input_conv_data</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">,:,:,:,:],</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 
            </div>

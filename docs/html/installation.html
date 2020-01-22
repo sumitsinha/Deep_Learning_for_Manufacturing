@@ -190,13 +190,19 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">dlmfg</span>
 </pre></div>
 </div>
-<p>if you are using git clone you would need to install the requirements by running pip install –r requirements.txt from the root folder</p>
 </dd>
 </dl>
 </li>
-<li><p>Modify/Replace the <a class="reference internal" href="lib_config.html"><span class="doc">configuration files</span></a> based on the case study parameters, various configuration packages for different case studies are already included with the library, refer <a class="reference internal" href="case_study_halo.html"><span class="doc">Case Study: Window Reinforcement Halo</span></a> for more information</p></li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The pip package is yet to be uploaded</p>
+<p>if you are using git clone you would need to install the requirements by running pip install –r requirements.txt from the root folder</p>
+</div>
+<ul class="simple">
+<li><p>Modify/Replace the <a class="reference internal" href="lib_config.html"><span class="doc">configuration files</span></a> based on the case study parameters, various configuration packages for different case studies are already included with the library, refer <a class="reference internal" href="case_study_halo.html"><span class="doc">Case Study: Window Reinforcement Halo</span></a> and <a class="reference internal" href="case_study_inner_rf.html"><span class="doc">Case Study: Door Inner Hinge Reinforcement assembly</span></a> for more information</p></li>
 <li><dl class="simple">
-<dt>Run <a class="reference internal" href="download.html"><span class="doc">data_download.py</span></a>  located within core that creates the required folder structure and downloads the files within them they consist of :</dt><dd><ul class="simple">
+<dt>Run <a class="reference internal" href="download.html"><span class="doc">data_download.py</span></a>  located within core that creates the required folder structure and downloads the files within them they consist of :</dt><dd><ul>
 <li><p>a folder within datasets with same name of the case study consisting of the model input i.e. node deviations <em>(Files: output_halo_x.csv, output_halo_y.csv, output_halo_z.csv)</em></p></li>
 <li><p>a folder within active learning with the same name of the case study consisting of the model output i.e. process parameters or KCCs <em>(Files: initial_samples_halo.csv)</em></p></li>
 <li><p>a file within resources/mapping files consisting of the voxel mapping <em>(File: voxel_mapping_halo_64.csv)</em></p></li>
@@ -206,7 +212,7 @@
 </dl>
 </li>
 <li><dl class="simple">
-<dt>Run <a class="reference internal" href="model_train.html"><span class="doc">model_train.py</span></a>  located within core that trains the model by spitting the train data into train and validation sets and creates an output folder within the trained_models folder with the same name of case consisting of the following file structure:</dt><dd><ul class="simple">
+<dt>Run <a class="reference internal" href="model_train.html"><span class="doc">model_train.py</span></a>  located within core that trains the model by spitting the train data into train and validation sets and creates an output folder within the trained_models folder with the same name of case consisting of the following file structure:</dt><dd><ul>
 <li><p><strong>Logs</strong> – model training logs and training metrics (R-squared, RMSE, MAE, MSE)</p></li>
 <li><p><strong>Model</strong> – trained model in Keras trained_model.h5 format</p></li>
 <li><p><strong>Plots</strong> – training loss convergence visualization</p></li>

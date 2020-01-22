@@ -26,9 +26,14 @@ Installation and Implementation
 
 		pip install dlmfg 
 
+
+.. warning::        
+	The pip package is yet to be uploaded
+
+
 	if you are using git clone you would need to install the requirements by running pip install –r requirements.txt from the root folder
 
-* Modify/Replace the :doc:`configuration files <lib_config>` based on the case study parameters, various configuration packages for different case studies are already included with the library, refer :doc:`Case Study: Window Reinforcement Halo <case_study_halo>` for more information
+* Modify/Replace the :doc:`configuration files <lib_config>` based on the case study parameters, various configuration packages for different case studies are already included with the library, refer :doc:`Case Study: Window Reinforcement Halo <case_study_halo>` and :doc:`Case Study: Door Inner Hinge Reinforcement assembly <case_study_inner_rf>` for more information
 
 * Run :doc:`data_download.py <download>`  located within core that creates the required folder structure and downloads the files within them they consist of :
 	* a folder within datasets with same name of the case study consisting of the model input i.e. node deviations *(Files: output_halo_x.csv, output_halo_y.csv, output_halo_z.csv)*

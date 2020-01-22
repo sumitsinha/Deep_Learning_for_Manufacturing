@@ -24,6 +24,10 @@ Real System Implementation (3D Optical Scanner: WLS400A)
 
    *Fig 3: Verification and validation results*
 
+* The poster for the industrial demonstration located at the International Manufacturing Center, WMG, University of Warwick can be found below
+
+:download:`In-Process Quality Improvement - Industrial Demonstration Poster <IPQI_demo_poster_v1.2.pdf>`
+
 * The details for the steps followed from conceptualization to verification and validation for the Industrial Demonstration are in the document below
 
 :download:`3D Convolutional Neural Networks for Root Cause Analysis: Industrial Demonstration <industrial_demo.pdf>`

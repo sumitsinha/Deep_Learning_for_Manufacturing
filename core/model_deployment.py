@@ -84,7 +84,7 @@ class DeployModel:
 			import plotly as py
 			fig = go.Figure(data=go.Scatter(y=rounded_result[0,:], marker=dict(
         	size=30,color=100), mode='markers+text',text=rounded_result[0,:],x=["KCC 1","KCC 2", "KCC 3", "KCC 4", "KCC 5", "KCC 6"]))
-			fig.update_traces(texttemplate='KCC Value: %{y:.1f}', textfont_size=20,textposition='top center')
+			fig.update_traces(texttemplate='KCC Value: %{y:.2f}', textfont_size=20,textposition='top center')
 			py.offline.plot(fig, filename="results.html")
 
 		return result

@@ -43,8 +43,8 @@ The datasets can be download by running the download_data.py file within the dow
 
 The library consists of the following two key datasets:
 
-1.	3D Cloud of Point data with node deviations and process parameters for Single Part Car Halo Reinforcement – Obtained due to variations in the Measurement Station locators and Stamping Process
-2.	3D Cloud of Point data with node deviations and process parameters for Two part assembly for Car Door Inner and Hinge Reinforcement – Obtained due to variations in the Assembly System locators and joining tools.
+1.	[**3D Cloud of Point data with node deviations and process parameters for Single Part Car Halo Reinforcement**](https://sumitsinha.github.io/Deep_Learning_for_Manufacturing/html/case_study_halo.html) – Obtained due to variations in the Measurement Station locators and Stamping Process
+2.	[**3D Cloud of Point data with node deviations and process parameters for Two part assembly for Car Door Inner and Hinge Reinforcement**](https://sumitsinha.github.io/Deep_Learning_for_Manufacturing/html/case_study_inner_rf.html) – Obtained due to variations in the Assembly System locators and joining tools.
 
 ## Model 
 
@@ -81,6 +81,9 @@ The library consists of following key modules. More details about the classes, o
 * **Trained Models** - Consists of a file structure created for each case study that is run. This file structure consists of training and testing logs, trained models and plots
 * **Pre-Trained Models** - Consists of state of the art pre-trained 3D CNN models such as Voxnet (Object Detection) and 3D U-Net (Medical Scan Segmentation)
 * **Configuration** - specify the configuration parameters for different case studies and other parametrized applications such as model training, model construction, Sampling for active learning, transfer learning etc.
+
+## Verification and Validation
+Details of verification and validation of the model on an actual system can be found here: [**Real System Implementation**](https://sumitsinha.github.io/Deep_Learning_for_Manufacturing/html/real_system_implementation.html)
 
 ##### Please cite work as:
 

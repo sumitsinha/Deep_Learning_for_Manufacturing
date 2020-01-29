@@ -46,7 +46,7 @@ class GetTrainData():
 
 		return voxel_point_index
 
-	def data_convert_voxel_mc(self,vrm_system,dataset,point_index,kcc_data):
+	def data_convert_voxel_mc(self,vrm_system,dataset,point_index,kcc_data=0):
 		"""data converts the node deviations to voxelized output 
 
 			:param vrm_system: Object of the VRM System class

@@ -2,6 +2,8 @@
 """
 
 import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+
 import sys
 current_path=os.path.dirname(__file__)
 parentdir = os.path.dirname(current_path)
@@ -18,6 +20,8 @@ import numpy as np
 import pandas as pd
 import tensorflow as tf
 from keras.models import load_model
+import logging
+tf.get_logger().setLevel(logging.ERROR)
 
 #Importing Config files
 import assembly_config as config
@@ -46,14 +50,14 @@ class DeployModel:
 
 		try:
 			inference_model=load_model(model_path)
-			print('Model found and loaded')
+			print('Deep Learning Model found and loaded')
 		except AssertionError as error:
 			print(error)
 			print('Model not found at this path ',model_path, ' Update path in config file if required')
 
 		return inference_model
 
-	def model_inference(self,inference_data,inference_model,print_result=0):
+	def model_inference(self,inference_data,inference_model,print_result=1,plot_result=1):
 		"""model_inference method is used to infer from unknown sample(s) using the trained model 
 				
 				:param inference_data: Unknown dataset having same structure as the train dataset
@@ -69,12 +73,25 @@ class DeployModel:
 		result=inference_model.predict(inference_data)
 		description="The Process Parameters variations are inferred from the obtained measurement data and the trained CNN based model"
 		print('The model estimates are: ')
+		rounded_result=np.round(result,2)
 		if(print_result==1):
-			print(result)
+			print(rounded_result)
+		
+		
+		if(plot_result==1):
+			print("Plotting Results in HTML...")
+			import plotly.graph_objects as go
+			import plotly as py
+			fig = go.Figure(data=go.Scatter(y=rounded_result[0,:], marker=dict(
+        	size=30,color=100), mode='markers+text',text=rounded_result[0,:],x=["KCC 1","KCC 2", "KCC 3", "KCC 4", "KCC 5", "KCC 6"]))
+			fig.update_traces(texttemplate='KCC Value: %{y:.1f}', textfont_size=20,textposition='top center')
+			py.offline.plot(fig, filename="results.html")
+
 		return result
 
 if __name__ == '__main__':
 	
+	print("Welcome to Deep Learning for Manufacturing (dlmfg)...")
 	print('Parsing from Assembly Config File....')
 
 	data_type=config.assembly_system['data_type']
@@ -107,7 +124,7 @@ if __name__ == '__main__':
 	
 	#Generate Paths
 	train_path='../trained_models/'+part_type
-	model_path=train_path+'/model'+'/trained_model.h5'
+	model_path=train_path+'/model'+'/trained_model_0.h5'
 	logs_path=train_path+'/logs'
 	deploy_path=train_path+'/deploy/'
 
@@ -137,14 +154,17 @@ if __name__ == '__main__':
 
 	y_pred=deploy_model.model_inference(input_conv_data,inference_model);
 
-	metrics_eval=MetricsEval();
-	eval_metrics,accuracy_metrics_df=metrics_eval.metrics_eval_base(y_pred,kcc_dataset,logs_path)
-	
-	print('Evaluation Metrics: ',eval_metrics)
-	accuracy_metrics_df.to_csv(logs_path+'/metrics_test.csv')
-	
-	np.savetxt((deploy_path+"predicted.csv"), y_pred, delimiter=",")
-	print('Predicted Values saved to disk...')
+	evalerror=0
+
+	if(evalerror==1):
+		metrics_eval=MetricsEval();
+		eval_metrics,accuracy_metrics_df=metrics_eval.metrics_eval_base(y_pred,kcc_dataset,logs_path)
+		
+		print('Evaluation Metrics: ',eval_metrics)
+		accuracy_metrics_df.to_csv(logs_path+'/metrics_test.csv')
+		
+		np.savetxt((deploy_path+"predicted.csv"), y_pred, delimiter=",")
+		print('Predicted Values saved to disk...')
 
 	#Inference from Measurement Data
 
@@ -165,8 +185,9 @@ if __name__ == '__main__':
 		#print(y_pred)
 
 	#Code for CAM Visualization
+	viz=0
+	if(viz==1):
+		print(inference_model.summary())
+		camviz=CamViz(inference_model,'conv3d_3')
 
-	print(inference_model.summary())
-	camviz=CamViz(inference_model,'conv3d_3')
-
-	grads=camviz.grad_cam_3d(input_conv_data[1:2,:,:,:,:],1)
+		grads=camviz.grad_cam_3d(input_conv_data[1:2,:,:,:,:],1)

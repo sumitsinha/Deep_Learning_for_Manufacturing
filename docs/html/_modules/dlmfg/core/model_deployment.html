@@ -214,7 +214,7 @@
 
 		<span class="k">return</span> <span class="n">inference_model</span></div>
 
-<div class="viewcode-block" id="DeployModel.model_inference"><a class="viewcode-back" href="../../../deploy_model.html#dlmfg.core.model_deployment.DeployModel.model_inference">[docs]</a>	<span class="k">def</span> <span class="nf">model_inference</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">inference_data</span><span class="p">,</span><span class="n">inference_model</span><span class="p">,</span><span class="n">print_result</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<div class="viewcode-block" id="DeployModel.model_inference"><a class="viewcode-back" href="../../../deploy_model.html#dlmfg.core.model_deployment.DeployModel.model_inference">[docs]</a>	<span class="k">def</span> <span class="nf">model_inference</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">inference_data</span><span class="p">,</span><span class="n">inference_model</span><span class="p">,</span><span class="n">print_result</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;model_inference method is used to infer from unknown sample(s) using the trained model </span>
 <span class="sd">				</span>
 <span class="sd">				:param inference_data: Unknown dataset having same structure as the train dataset</span>
@@ -231,7 +231,8 @@
 		<span class="n">description</span><span class="o">=</span><span class="s2">&quot;The Process Parameters variations are inferred from the obtained measurement data and the trained CNN based model&quot;</span>
 		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The model estimates are: &#39;</span><span class="p">)</span>
 		<span class="k">if</span><span class="p">(</span><span class="n">print_result</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span>
-			<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+			<span class="n">rounded_result</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">result</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="n">rounded_result</span><span class="p">)</span>
 		<span class="k">return</span> <span class="n">result</span></div></div>
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
@@ -268,7 +269,7 @@
 	
 	<span class="c1">#Generate Paths</span>
 	<span class="n">train_path</span><span class="o">=</span><span class="s1">&#39;../trained_models/&#39;</span><span class="o">+</span><span class="n">part_type</span>
-	<span class="n">model_path</span><span class="o">=</span><span class="n">train_path</span><span class="o">+</span><span class="s1">&#39;/model&#39;</span><span class="o">+</span><span class="s1">&#39;/trained_model.h5&#39;</span>
+	<span class="n">model_path</span><span class="o">=</span><span class="n">train_path</span><span class="o">+</span><span class="s1">&#39;/model&#39;</span><span class="o">+</span><span class="s1">&#39;/trained_model_0.h5&#39;</span>
 	<span class="n">logs_path</span><span class="o">=</span><span class="n">train_path</span><span class="o">+</span><span class="s1">&#39;/logs&#39;</span>
 	<span class="n">deploy_path</span><span class="o">=</span><span class="n">train_path</span><span class="o">+</span><span class="s1">&#39;/deploy/&#39;</span>
 
@@ -298,14 +299,17 @@
 
 	<span class="n">y_pred</span><span class="o">=</span><span class="n">deploy_model</span><span class="o">.</span><span class="n">model_inference</span><span class="p">(</span><span class="n">input_conv_data</span><span class="p">,</span><span class="n">inference_model</span><span class="p">);</span>
 
-	<span class="n">metrics_eval</span><span class="o">=</span><span class="n">MetricsEval</span><span class="p">();</span>
-	<span class="n">eval_metrics</span><span class="p">,</span><span class="n">accuracy_metrics_df</span><span class="o">=</span><span class="n">metrics_eval</span><span class="o">.</span><span class="n">metrics_eval_base</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span><span class="n">kcc_dataset</span><span class="p">,</span><span class="n">logs_path</span><span class="p">)</span>
-	
-	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Evaluation Metrics: &#39;</span><span class="p">,</span><span class="n">eval_metrics</span><span class="p">)</span>
-	<span class="n">accuracy_metrics_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">logs_path</span><span class="o">+</span><span class="s1">&#39;/metrics_test.csv&#39;</span><span class="p">)</span>
-	
-	<span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">((</span><span class="n">deploy_path</span><span class="o">+</span><span class="s2">&quot;predicted.csv&quot;</span><span class="p">),</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
-	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Predicted Values saved to disk...&#39;</span><span class="p">)</span>
+	<span class="n">evalerror</span><span class="o">=</span><span class="mi">0</span>
+
+	<span class="k">if</span><span class="p">(</span><span class="n">evalerror</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span>
+		<span class="n">metrics_eval</span><span class="o">=</span><span class="n">MetricsEval</span><span class="p">();</span>
+		<span class="n">eval_metrics</span><span class="p">,</span><span class="n">accuracy_metrics_df</span><span class="o">=</span><span class="n">metrics_eval</span><span class="o">.</span><span class="n">metrics_eval_base</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span><span class="n">kcc_dataset</span><span class="p">,</span><span class="n">logs_path</span><span class="p">)</span>
+		
+		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Evaluation Metrics: &#39;</span><span class="p">,</span><span class="n">eval_metrics</span><span class="p">)</span>
+		<span class="n">accuracy_metrics_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">logs_path</span><span class="o">+</span><span class="s1">&#39;/metrics_test.csv&#39;</span><span class="p">)</span>
+		
+		<span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">((</span><span class="n">deploy_path</span><span class="o">+</span><span class="s2">&quot;predicted.csv&quot;</span><span class="p">),</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Predicted Values saved to disk...&#39;</span><span class="p">)</span>
 
 	<span class="c1">#Inference from Measurement Data</span>
 
@@ -326,11 +330,12 @@
 		<span class="c1">#print(y_pred)</span>
 
 	<span class="c1">#Code for CAM Visualization</span>
+	<span class="n">viz</span><span class="o">=</span><span class="mi">0</span>
+	<span class="k">if</span><span class="p">(</span><span class="n">viz</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span>
+		<span class="nb">print</span><span class="p">(</span><span class="n">inference_model</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+		<span class="n">camviz</span><span class="o">=</span><span class="n">CamViz</span><span class="p">(</span><span class="n">inference_model</span><span class="p">,</span><span class="s1">&#39;conv3d_3&#39;</span><span class="p">)</span>
 
-	<span class="nb">print</span><span class="p">(</span><span class="n">inference_model</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
-	<span class="n">camviz</span><span class="o">=</span><span class="n">CamViz</span><span class="p">(</span><span class="n">inference_model</span><span class="p">,</span><span class="s1">&#39;conv3d_3&#39;</span><span class="p">)</span>
-
-	<span class="n">grads</span><span class="o">=</span><span class="n">camviz</span><span class="o">.</span><span class="n">grad_cam_3d</span><span class="p">(</span><span class="n">input_conv_data</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">,:,:,:,:],</span><span class="mi">1</span><span class="p">)</span>
+		<span class="n">grads</span><span class="o">=</span><span class="n">camviz</span><span class="o">.</span><span class="n">grad_cam_3d</span><span class="p">(</span><span class="n">input_conv_data</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">,:,:,:,:],</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 
            </div>

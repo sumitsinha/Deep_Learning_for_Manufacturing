@@ -24,10 +24,10 @@
 	:param download_params['id_test_data_files_x']: List of test data files IDs consisting of x-deviation of nodes on the server, minimum one file id in the list is required
 	:type download_params['id_test_data_files_x']: list (required)
 
-	:param download_params['id_test_data_files_y']: List of test data files IDs consisting of y-deviation of nodes on the serve, minimum one file id in the list is required
+	:param download_params['id_test_data_files_y']: List of test data files IDs consisting of y-deviation of nodes on the server, minimum one file id in the list is required
 	:type download_params['id_test_data_files_y']: list (required)
 
-	:param download_params['id_test_data_files_z']: List of test data files IDs consisting of z-deviation of nodes on the serve, minimum one file id in the list is required
+	:param download_params['id_test_data_files_z']: List of test data files IDs consisting of z-deviation of nodes on the server, minimum one file id in the list is required
 	:type download_params['id_test_data_files_z']: list (required)
 
 	:param download_params['id_mapping_index']: Mapping File ID

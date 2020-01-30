@@ -35,7 +35,7 @@ from assembly_system import PartType
 from wls400a_system import GetInferenceData
 from metrics_eval import MetricsEval
 from data_import import GetTrainData
-from cam_viz import CamViz
+#from cam_viz import CamViz
 
 class DeployModel:
 	"""The Deploy Model class is used to import a trained model and use it to infer on unknown data

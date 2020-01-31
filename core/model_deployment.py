@@ -19,9 +19,11 @@ sys.path.append("../config")
 import numpy as np
 import pandas as pd
 import tensorflow as tf
-from keras.models import load_model
 import logging
 tf.get_logger().setLevel(logging.ERROR)
+
+from keras.models import load_model
+
 
 #Importing Config files
 import assembly_config as config
@@ -35,7 +37,7 @@ from assembly_system import PartType
 from wls400a_system import GetInferenceData
 from metrics_eval import MetricsEval
 from data_import import GetTrainData
-from cam_viz import CamViz
+#from cam_viz import CamViz
 
 class DeployModel:
 	"""The Deploy Model class is used to import a trained model and use it to infer on unknown data

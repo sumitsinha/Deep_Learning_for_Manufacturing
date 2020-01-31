@@ -78,7 +78,7 @@
 
 assembly_system = {	
         'data_type': '3D Point Cloud Data',
-        'application': 'Inline Root Cause Analysis',
+        'application': 'In-line Root Cause Analysis',
         'part_type': 'Inner_Rf_Assembly',
         'part_name':'inner_rf',
         'data_format': 'Complete',

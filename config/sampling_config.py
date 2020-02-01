@@ -17,9 +17,9 @@
 
 """
 
-sampling_config={'sample_dim':5000,
+sampling_config={'sample_dim':6000,
 		'adaptive_sample_dim':5000,
 		'adaptive_runs':5,	
-        'sample_type':'lhs',
-        'output_file_name':'inner_rf_samples_datagen7_demo.csv'
+        'sample_type':'uniform',
+        'output_file_name':'inner_rf_samples_datagen10_gui_demo.csv'
         }

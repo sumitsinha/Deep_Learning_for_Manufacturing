@@ -19,6 +19,7 @@ sys.path.append("../config")
 import numpy as np
 import pandas as pd
 import tensorflow as tf
+import csv
 import logging
 tf.get_logger().setLevel(logging.ERROR)
 
@@ -59,7 +60,7 @@ class DeployModel:
 
 		return inference_model
 
-	def model_inference(self,inference_data,inference_model,print_result=1,plot_result=1):
+	def model_inference(self,inference_data,inference_model,print_result=1,plot_result=1,append_result=1):
 		"""model_inference method is used to infer from unknown sample(s) using the trained model 
 				
 				:param inference_data: Unknown dataset having same structure as the train dataset
@@ -79,15 +80,24 @@ class DeployModel:
 		if(print_result==1):
 			print(rounded_result)
 		
+		if(append_result==1):
+			with open ("user_preds.csv",'a',newline='') as filedata:
+				#fieldnames = ['kcc1','kcc2','kcc3','kcc4','kcc5','kcc6']                            
+				writer = csv.writer(filedata, delimiter=',')
+				writer.writerow(rounded_result[0,:].tolist())
+				#writer.writerow(dict(zip(fieldnames, rounded_result[0,:].tolist()))) 
+				#filedata.write(rounded_result[0,:].tolist())
 		
 		if(plot_result==1):
 			print("Plotting Results in HTML...")
 			import plotly.graph_objects as go
 			import plotly as py
 			fig = go.Figure(data=go.Scatter(y=rounded_result[0,:], marker=dict(
-        	size=30,color=100), mode='markers+text',text=rounded_result[0,:],x=["KCC 1","KCC 2", "KCC 3", "KCC 4", "KCC 5", "KCC 6"]))
+			size=30,color=100), mode='markers+text',text=rounded_result[0,:],x=["KCC 1","KCC 2", "KCC 3", "KCC 4", "KCC 5", "KCC 6"]))
 			fig.update_traces(texttemplate='KCC Value: %{y:.2f}', textfont_size=20,textposition='top center')
 			py.offline.plot(fig, filename="results.html")
+
+
 
 		return result
 
@@ -151,6 +161,7 @@ if __name__ == '__main__':
 	inference_model=deploy_model.get_model(model_path)
 
 	kcc_dataset=get_data.data_import(kcc_files,kcc_folder)
+
 
 	input_conv_data, kcc_subset_dump,kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,dataset,point_index,kcc_dataset)
 

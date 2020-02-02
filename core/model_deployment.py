@@ -166,10 +166,10 @@ if __name__ == '__main__':
 	#Inference from simulated data
 	inference_model=deploy_model.get_model(model_path)
 
-	kcc_dataset=get_data.data_import(kcc_files,kcc_folder)
+	#kcc_dataset=get_data.data_import(kcc_files,kcc_folder)
 
 
-	input_conv_data, kcc_subset_dump,kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,dataset,point_index,kcc_dataset)
+	input_conv_data, kcc_subset_dump,kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,dataset,point_index)
 
 	y_pred=deploy_model.model_inference(input_conv_data,inference_model);
 

@@ -100,6 +100,7 @@ class DeployModel:
 			fig = go.Figure(data=go.Scatter(y=rounded_result[0,:], marker=dict(
 			size=30,color=100), mode='markers+text',text=display_str,x=["KCC 1","KCC 2", "KCC 3", "KCC 4", "KCC 5", "KCC 6"]))
 			fig.update_traces( textfont_size=20,textposition='top center')
+			fig.update_layout(title_text='Deep Learning for Manufacturing - Model Estimates')
 			py.offline.plot(fig, filename="results.html")
 
 

@@ -76,7 +76,7 @@ def plot_data(dataset,nominal_cop):
 	dev[:,2]=z_dev[0,0:(z_dev.shape[1]-1)]
 
 	sample_cop=nominal_cop+dev
-	plot_file_name='../resources/nominal_cop_files/part_name'+'_sample_cop.html'
+	plot_file_name='../resources/nominal_cop_files/inner_rf'+'_sample_cop.html'
 	copviz=CopViz(sample_cop)
 	copviz.plot_cop(plot_file_name)
 

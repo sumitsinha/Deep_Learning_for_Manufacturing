@@ -92,9 +92,14 @@ class DeployModel:
 			print("Plotting Results in HTML...")
 			import plotly.graph_objects as go
 			import plotly as py
+			result_str = ["%.2f" % number for number in rounded_result[0,:]]
+
+			kcc_str=["KCC 1:  ","KCC 2: ", "KCC 3: ", "KCC 4: ", "KCC 5: ", "KCC 6: "]	
+			display_str=np.core.defchararray.add(kcc_str, result_str)	
+			print(display_str)
 			fig = go.Figure(data=go.Scatter(y=rounded_result[0,:], marker=dict(
-			size=30,color=100), mode='markers+text',text=rounded_result[0,:],x=["KCC 1","KCC 2", "KCC 3", "KCC 4", "KCC 5", "KCC 6"]))
-			fig.update_traces(texttemplate='KCC Value: %{y:.2f}', textfont_size=20,textposition='top center')
+			size=30,color=100), mode='markers+text',text=display_str,x=["KCC 1","KCC 2", "KCC 3", "KCC 4", "KCC 5", "KCC 6"]))
+			fig.update_traces( textfont_size=20,textposition='top center')
 			py.offline.plot(fig, filename="results.html")
 
 

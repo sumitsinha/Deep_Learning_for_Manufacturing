@@ -93,7 +93,7 @@ assembly_system = {
         'noise_type':'uniform',
         'mapping_index':'inner_rf_64_voxel_mapping.dat',
         'nominal_cop_filename':'inner_rf_nominal_cop.csv',
-        'data_folder':'../../../VRM - GUI/Demov1',
+        'data_folder':'../../../VRM - GUI/Demo Door Inner Hinge',
         'kcc_folder':'../active_learning/sample_input/inner_rf_assembly',
         'kcc_files':['inner_rf_samples_datagen4_set_clamps.csv'],
         'test_kcc_files':['inner_rf_samples_datagen4_set_clamps.csv'],

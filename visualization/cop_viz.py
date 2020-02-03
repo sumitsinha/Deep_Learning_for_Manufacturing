@@ -41,6 +41,7 @@ class CopViz:
 
 		data = [trace1]
 		layout = go.Layout(
+			scene=dict(aspectmode='cube',aspectratio=dict(x=1, y=1, z=0.95)),
 			margin=dict(
 				l=0,
 				r=0,

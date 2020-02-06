@@ -23,12 +23,13 @@ count_user_inputs = user_inputs.shape[0]
 count_user_preds = user_preds.shape[0] 
 
 if(count_user_inputs!=count_user_preds):
-	print("Inconsisting between CAE Simulation and AI Model")
+	print("Inconsistency between CAE Simulation and AI Model")
 
 #print(user_inputs)
 user_names=user_inputs.iloc[:,0:1].values
 errors=(user_inputs.iloc[:,1:7].values).astype(np.float)-user_preds.iloc[0:count_user_inputs,:].values
 errors=np.absolute(errors)
+print(errors)
 mae=errors.mean(axis=1)  
 #print(user_names)
 

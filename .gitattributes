@@ -1,1 +1,4 @@
+docs/* linguist-documentation
 docs/ linguist-documentation
+docs/html/ linguist-documentation
+docs/html/* linguist-documentation

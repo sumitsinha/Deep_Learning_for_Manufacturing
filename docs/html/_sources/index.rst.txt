@@ -15,6 +15,10 @@ The research aims to develop artificial intelligence based solutions by integrat
 
    *Fig 1: Overall Research Framework*
 
+* The details for the application area, the challenges faced and the solutions provided by the librray are summarized in the document linked below
+
+:download:`Deep Learning for Manufacturing Framework and Overview <dlmfg_overview.pdf>` 
+
 Contents
 ----------------
 .. toctree::

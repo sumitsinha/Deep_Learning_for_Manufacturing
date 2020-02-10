@@ -163,6 +163,8 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;TF_CPP_MIN_LOG_LEVEL&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;3&#39;</span>
+
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="n">current_path</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
 <span class="n">parentdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">current_path</span><span class="p">)</span>
@@ -178,7 +180,12 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+<span class="kn">import</span> <span class="nn">csv</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="n">tf</span><span class="o">.</span><span class="n">get_logger</span><span class="p">()</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
+
 <span class="kn">from</span> <span class="nn">keras.models</span> <span class="kn">import</span> <span class="n">load_model</span>
+
 
 <span class="c1">#Importing Config files</span>
 <span class="kn">import</span> <span class="nn">assembly_config</span> <span class="k">as</span> <span class="nn">config</span>
@@ -192,7 +199,7 @@
 <span class="kn">from</span> <span class="nn">wls400a_system</span> <span class="kn">import</span> <span class="n">GetInferenceData</span>
 <span class="kn">from</span> <span class="nn">metrics_eval</span> <span class="kn">import</span> <span class="n">MetricsEval</span>
 <span class="kn">from</span> <span class="nn">data_import</span> <span class="kn">import</span> <span class="n">GetTrainData</span>
-<span class="kn">from</span> <span class="nn">cam_viz</span> <span class="kn">import</span> <span class="n">CamViz</span>
+<span class="c1">#from cam_viz import CamViz</span>
 
 <div class="viewcode-block" id="DeployModel"><a class="viewcode-back" href="../../../deploy_model.html#dlmfg.core.model_deployment.DeployModel">[docs]</a><span class="k">class</span> <span class="nc">DeployModel</span><span class="p">:</span>
 	<span class="sd">&quot;&quot;&quot;The Deploy Model class is used to import a trained model and use it to infer on unknown data</span>
@@ -207,14 +214,14 @@
 
 		<span class="k">try</span><span class="p">:</span>
 			<span class="n">inference_model</span><span class="o">=</span><span class="n">load_model</span><span class="p">(</span><span class="n">model_path</span><span class="p">)</span>
-			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Model found and loaded&#39;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Deep Learning Model found and loaded&#39;</span><span class="p">)</span>
 		<span class="k">except</span> <span class="ne">AssertionError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
 			<span class="nb">print</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
 			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Model not found at this path &#39;</span><span class="p">,</span><span class="n">model_path</span><span class="p">,</span> <span class="s1">&#39; Update path in config file if required&#39;</span><span class="p">)</span>
 
 		<span class="k">return</span> <span class="n">inference_model</span></div>
 
-<div class="viewcode-block" id="DeployModel.model_inference"><a class="viewcode-back" href="../../../deploy_model.html#dlmfg.core.model_deployment.DeployModel.model_inference">[docs]</a>	<span class="k">def</span> <span class="nf">model_inference</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">inference_data</span><span class="p">,</span><span class="n">inference_model</span><span class="p">,</span><span class="n">print_result</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<div class="viewcode-block" id="DeployModel.model_inference"><a class="viewcode-back" href="../../../deploy_model.html#dlmfg.core.model_deployment.DeployModel.model_inference">[docs]</a>	<span class="k">def</span> <span class="nf">model_inference</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">inference_data</span><span class="p">,</span><span class="n">inference_model</span><span class="p">,</span><span class="n">print_result</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">plot_result</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">append_result</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;model_inference method is used to infer from unknown sample(s) using the trained model </span>
 <span class="sd">				</span>
 <span class="sd">				:param inference_data: Unknown dataset having same structure as the train dataset</span>
@@ -230,13 +237,40 @@
 		<span class="n">result</span><span class="o">=</span><span class="n">inference_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">inference_data</span><span class="p">)</span>
 		<span class="n">description</span><span class="o">=</span><span class="s2">&quot;The Process Parameters variations are inferred from the obtained measurement data and the trained CNN based model&quot;</span>
 		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The model estimates are: &#39;</span><span class="p">)</span>
+		<span class="n">rounded_result</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">result</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
 		<span class="k">if</span><span class="p">(</span><span class="n">print_result</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span>
-			<span class="n">rounded_result</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">result</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
 			<span class="nb">print</span><span class="p">(</span><span class="n">rounded_result</span><span class="p">)</span>
+		
+		<span class="k">if</span><span class="p">(</span><span class="n">append_result</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span>
+			<span class="k">with</span> <span class="nb">open</span> <span class="p">(</span><span class="s2">&quot;user_preds.csv&quot;</span><span class="p">,</span><span class="s1">&#39;a&#39;</span><span class="p">,</span><span class="n">newline</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">filedata</span><span class="p">:</span>
+				<span class="c1">#fieldnames = [&#39;kcc1&#39;,&#39;kcc2&#39;,&#39;kcc3&#39;,&#39;kcc4&#39;,&#39;kcc5&#39;,&#39;kcc6&#39;]                            </span>
+				<span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">filedata</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+				<span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">rounded_result</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+				<span class="c1">#writer.writerow(dict(zip(fieldnames, rounded_result[0,:].tolist()))) </span>
+				<span class="c1">#filedata.write(rounded_result[0,:].tolist())</span>
+		
+		<span class="k">if</span><span class="p">(</span><span class="n">plot_result</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Plotting Results in HTML...&quot;</span><span class="p">)</span>
+			<span class="kn">import</span> <span class="nn">plotly.graph_objects</span> <span class="k">as</span> <span class="nn">go</span>
+			<span class="kn">import</span> <span class="nn">plotly</span> <span class="k">as</span> <span class="nn">py</span>
+			<span class="n">result_str</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;</span><span class="si">%.2f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">number</span> <span class="k">for</span> <span class="n">number</span> <span class="ow">in</span> <span class="n">rounded_result</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]]</span>
+
+			<span class="n">kcc_str</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;X(1): &quot;</span><span class="p">,</span><span class="s2">&quot;X(2): &quot;</span><span class="p">,</span> <span class="s2">&quot;X(3): &quot;</span><span class="p">,</span> <span class="s2">&quot;X(4): &quot;</span><span class="p">,</span> <span class="s2">&quot;X(5): &quot;</span><span class="p">,</span> <span class="s2">&quot;X(6): &quot;</span><span class="p">]</span>	
+			<span class="n">display_str</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">defchararray</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">kcc_str</span><span class="p">,</span> <span class="n">result_str</span><span class="p">)</span>	
+			<span class="nb">print</span><span class="p">(</span><span class="n">display_str</span><span class="p">)</span>
+			<span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">rounded_result</span><span class="p">[</span><span class="mi">0</span><span class="p">,:],</span> <span class="n">marker</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+			<span class="n">size</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="mi">100</span><span class="p">),</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;markers+text&#39;</span><span class="p">,</span><span class="n">text</span><span class="o">=</span><span class="n">display_str</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;X(1)&quot;</span><span class="p">,</span><span class="s2">&quot;X(2)&quot;</span><span class="p">,</span> <span class="s2">&quot;X(3)&quot;</span><span class="p">,</span> <span class="s2">&quot;X(4)&quot;</span><span class="p">,</span> <span class="s2">&quot;X(5)&quot;</span><span class="p">,</span> <span class="s2">&quot;X(6)&quot;</span><span class="p">]))</span>
+			<span class="n">fig</span><span class="o">.</span><span class="n">update_traces</span><span class="p">(</span> <span class="n">textfont_size</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span><span class="n">textposition</span><span class="o">=</span><span class="s1">&#39;top center&#39;</span><span class="p">)</span>
+			<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">title_text</span><span class="o">=</span><span class="s1">&#39;Deep Learning for Manufacturing - Model Estimates&#39;</span><span class="p">)</span>
+			<span class="n">py</span><span class="o">.</span><span class="n">offline</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;results.html&quot;</span><span class="p">)</span>
+
+
+
 		<span class="k">return</span> <span class="n">result</span></div></div>
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
 	
+	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Welcome to Deep Learning for Manufacturing (dlmfg)...&quot;</span><span class="p">)</span>
 	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Parsing from Assembly Config File....&#39;</span><span class="p">)</span>
 
 	<span class="n">data_type</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">assembly_system</span><span class="p">[</span><span class="s1">&#39;data_type&#39;</span><span class="p">]</span>
@@ -293,9 +327,10 @@
 	<span class="c1">#Inference from simulated data</span>
 	<span class="n">inference_model</span><span class="o">=</span><span class="n">deploy_model</span><span class="o">.</span><span class="n">get_model</span><span class="p">(</span><span class="n">model_path</span><span class="p">)</span>
 
-	<span class="n">kcc_dataset</span><span class="o">=</span><span class="n">get_data</span><span class="o">.</span><span class="n">data_import</span><span class="p">(</span><span class="n">kcc_files</span><span class="p">,</span><span class="n">kcc_folder</span><span class="p">)</span>
+	<span class="c1">#kcc_dataset=get_data.data_import(kcc_files,kcc_folder)</span>
 
-	<span class="n">input_conv_data</span><span class="p">,</span> <span class="n">kcc_subset_dump</span><span class="p">,</span><span class="n">kpi_subset_dump</span><span class="o">=</span><span class="n">get_data</span><span class="o">.</span><span class="n">data_convert_voxel_mc</span><span class="p">(</span><span class="n">vrm_system</span><span class="p">,</span><span class="n">dataset</span><span class="p">,</span><span class="n">point_index</span><span class="p">,</span><span class="n">kcc_dataset</span><span class="p">)</span>
+
+	<span class="n">input_conv_data</span><span class="p">,</span> <span class="n">kcc_subset_dump</span><span class="p">,</span><span class="n">kpi_subset_dump</span><span class="o">=</span><span class="n">get_data</span><span class="o">.</span><span class="n">data_convert_voxel_mc</span><span class="p">(</span><span class="n">vrm_system</span><span class="p">,</span><span class="n">dataset</span><span class="p">,</span><span class="n">point_index</span><span class="p">)</span>
 
 	<span class="n">y_pred</span><span class="o">=</span><span class="n">deploy_model</span><span class="o">.</span><span class="n">model_inference</span><span class="p">(</span><span class="n">input_conv_data</span><span class="p">,</span><span class="n">inference_model</span><span class="p">);</span>
 

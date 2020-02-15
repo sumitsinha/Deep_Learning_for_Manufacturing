@@ -3,6 +3,7 @@
 import pandas as pd
 import numpy as np
 from tqdm import tqdm
+#from numba import cuda
 
 class GetTrainData():
 	"""GetTrainData Class (No initialization parameter)
@@ -46,6 +47,7 @@ class GetTrainData():
 
 		return voxel_point_index
 
+	#@cuda.jit	
 	def data_convert_voxel_mc(self,vrm_system,dataset,point_index,kcc_data=pd.DataFrame({'A' : []})):
 		"""data converts the node deviations to voxelized output 
 
@@ -111,6 +113,8 @@ class GetTrainData():
 		kpi_dump=dataset[0].iloc[start_index:end_index, point_dim:point_dim+kpi_dim]
 		kpi_dump=kpi_dump.values
 		not_convergent=0
+		
+
 		for index in tqdm(range(run_length)):
 			x_point_data=dataset[0].iloc[index, 0:point_dim]
 			y_point_data=dataset[1].iloc[index, 0:point_dim]

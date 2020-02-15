@@ -21,7 +21,7 @@ import numpy as np
 import kcc_config as kcc_config
 import sampling_config as sampling_config
 
-class adaptive_sampling():
+class AdaptiveSampling():
 	"""Assembly System Class
 
 		:param sample_dim: The number of initial samples to be generated
@@ -113,7 +113,7 @@ if __name__ == '__main__':
 	kcc_struct=kcc_config.kcc_struct
 	sampling_config=sampling_config.sampling_config
 
-	adaptive_sampling=adaptive_sampling(sampling_config['sample_dim'],sampling_config['sample_type'],sampling_config['adaptive_sample_dim'],sampling_config['adaptive_runs'])
+	adaptive_sampling=AdaptiveSampling(sampling_config['sample_dim'],sampling_config['sample_type'],sampling_config['adaptive_sample_dim'],sampling_config['adaptive_runs'])
 
 	print('Generating initial samples')
 

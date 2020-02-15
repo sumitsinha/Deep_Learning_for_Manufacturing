@@ -26,8 +26,8 @@ import pathlib
 import numpy as np
 import pandas as pd
 import tensorflow as tf
-from keras import backend as K
-K.clear_session()
+import tensorflow_probability as tfp
+
 
 #Importing Config files
 import assembly_config as config
@@ -38,10 +38,9 @@ from measurement_system import HexagonWlsScanner
 from assembly_system import VRMSimulationModel
 from wls400a_system import GetInferenceData
 from data_import import GetTrainData
-from core_model import DLModel
-from training_viz import TrainViz
-from metrics_eval import MetricsEval
-from keras_lr_multiplier import LRMultiplier
+from core_model_bayes import Bayes_DLModel
+
+
 
 class TrainModel:
 	"""Train Model Class, the initialization parameters are parsed from modelconfig_train.py file
@@ -91,39 +90,25 @@ class TrainModel:
 			:type run_id: int			
 		"""			
 		from sklearn.model_selection import train_test_split
-		from keras.models import load_model
-		from keras.callbacks import ModelCheckpoint
-		from keras.callbacks import TensorBoard
 
-		model_file_path=model_path+'/trained_model_'+str(run_id)+'.h5'
+
+		model_file_path=model_path+'/Bayes_trained_model_'+str(run_id)
 		X_train, X_test, y_train, y_test = train_test_split(X_in, Y_out, test_size = self.split_ratio)
 		print("Data Split Completed")
 		
-		#Checkpointer to save the best model
-		checkpointer = ModelCheckpoint(model_file_path, verbose=1, save_best_only='mae')
-		callbacks=[checkpointer]
+		tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir='C:\\Users\\sinha_s\\Desktop\\dlmfg_package\\dlmfg\\trained_models\\inner_rf_assembly\\logs',histogram_freq=1)
+		checkpointer = tf.keras.callbacks.ModelCheckpoint(model_file_path, verbose=1, save_best_only='mae',save_weights_only=True)
+		#Check pointer to save the best model
+		history=model.fit(X_train, y_train, validation_data=(X_test,y_test), epochs=self.epochs, batch_size=self.batch_size,callbacks=[tensorboard_callback,checkpointer])
 		
-		if(activate_tensorboard==1):
-			#Activating Tensorboard for Visualization
-			tensorboard = TensorBoard(log_dir=logs_path,histogram_freq=1, write_graph=True, write_images=True)
-			callbacks=[checkpointer,tensorboard]
+		#y_pred=model.predict(X_test)
+		# y_pred=model(X_test)
+		# samples=10
+		# for i in range(samples):
+		# 	y_pred_sample=model(X_test[0:1,:,:,:,:])
+		# 	print(y_pred_sample.sample())
 		
-		tensorboard = TensorBoard(log_dir=logs_path,histogram_freq=1, write_graph=True, write_images=True)
-		history=model.fit(X_train, y_train, validation_data=(X_test,y_test), epochs=self.epochs, batch_size=self.batch_size,callbacks=callbacks)
-		
-		trainviz=TrainViz()
-		trainviz.training_plot(history,plots_path,run_id)
-		
-		if(tl_type=='variable_lr'):
-			inference_model=load_model(model_file_path, custom_objects={'LRMultiplier': LRMultiplier})
-		else:
-			inference_model=load_model(model_file_path)
-			
-		y_pred=inference_model.predict(X_test)
-
-		metrics_eval=MetricsEval();
-		eval_metrics,accuracy_metrics_df=metrics_eval.metrics_eval_base(y_pred,y_test,logs_path)
-		return model,eval_metrics,accuracy_metrics_df
+		return model
 
 	def run_train_model_dynamic():
 		pass
@@ -196,8 +181,8 @@ if __name__ == '__main__':
 
 	output_dimension=assembly_kccs
 	
-	dl_model=DLModel(model_type,output_dimension,optimizer,loss_func,regularizer_coeff,output_type)
-	model=dl_model.cnn_model_3d(voxel_dim,voxel_channels)
+	dl_model=Bayes_DLModel(model_type,output_dimension,optimizer,loss_func,regularizer_coeff,output_type)
+	model=dl_model.bayes_cnn_model_3d(voxel_dim,voxel_channels)
 
 	print('Training 3D CNN model')
 	
@@ -216,15 +201,7 @@ if __name__ == '__main__':
 	input_conv_data, kcc_subset_dump,kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,dataset,point_index,kcc_dataset)
 	
 	train_model=TrainModel(batch_size,epocs,split_ratio)
-	trained_model,eval_metrics,accuracy_metrics_df=train_model.run_train_model(model,input_conv_data,kcc_subset_dump,model_path,logs_path,plots_path,activate_tensorboard)
+	trained_model=train_model.run_train_model(model,input_conv_data,kcc_subset_dump,model_path,logs_path,plots_path,activate_tensorboard)
 	
-	accuracy_metrics_df.to_csv(logs_path+'/metrics_train.csv')
-
-	print("Model Training Complete..")
-	print("The Model Validation Metrics are ")
-	print(eval_metrics)
 
 	print('Training Completed Successfully')
-
-
-

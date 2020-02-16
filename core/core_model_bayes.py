@@ -47,6 +47,8 @@ class Bayes_DLModel:
 		
 		aleatoric_std=0.0001
 		
+		#constant aleatoric uncertainty
+		
 		def _softplus_inverse(x):
   			"""Helper which computes the function inverse of `tf.nn.softplus`."""
   			return tf.math.log(tf.math.expm1(x))
@@ -70,7 +72,7 @@ class Bayes_DLModel:
 			])
 
 		#negloglik = lambda y, p_y: -p_y.log_prob(y)
-		model.compile(optimizer=tf.optimizers.Adam(),experimental_run_tf_function=False, loss=negloglik,metrics=[tf.keras.metrics.MeanAbsoluteError()])
+		model.compile(optimizer=tf.optimizers.Adam(),experimental_run_tf_function=False, loss=negloglik,metrics=[tf.keras.metrics.MeanAbsoluteError(),tf.keras.metrics.KLDivergence()])
 		print("3D CNN model successfully compiled")
 		print(model.summary())
 		return model

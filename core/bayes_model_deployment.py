@@ -21,6 +21,7 @@ sys.path.append("../config")
 
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 import tensorflow as tf
 import tensorflow_probability as tfp
 import csv
@@ -63,7 +64,7 @@ class DeployModel:
 
 		return model
 
-	def model_inference(self,inference_data,inference_model,y_pred,print_result=1,plot_result=0,append_result=0):
+	def model_inference(self,inference_data,inference_model,y_pred,y_actual,print_result=1,plot_result=0,append_result=0):
 		"""model_inference method is used to infer from unknown sample(s) using the trained model 
 				
 				:param inference_data: Unknown dataset having same structure as the train dataset
@@ -81,14 +82,31 @@ class DeployModel:
 
 		for i in range(len(inference_data)):
 			
+			from scipy.stats import norm
+			epistemic_samples=1000
 			inference_sample=inference_data[i,:,:,:,:]
 			print(inference_sample.shape)
-			input_sample=np.array([inference_sample,]*700)
-			print((input_sample[0,:,:,:,:]==input_sample[50,:,:,:,:]).all())
+			input_sample=np.array([inference_sample,]*epistemic_samples)
+			#print((input_sample[0,:,:,:,:]==input_sample[50,:,:,:,:]).all())
 			output=inference_model(input_sample)
 			output_mean=output.mean()
+
 			pred_mean=np.array(output_mean).mean(axis=0)
 			pred_std=np.array(output_mean).std(axis=0,ddof=1)
+			output_mean=np.array(output_mean)
+			print(output_mean.shape)
+			for j in range(y_pred.shape[1]):
+				plot_data=output_mean[:,j]
+				actual_obv=y_actual[i,j]
+				plt.hist(plot_data, range=(actual_obv-0.2,actual_obv+0.2),bins=40)
+				plt.axvline(x=actual_obv,label="Actual Value = "+str(actual_obv),c='r')
+				plt.axvline(x=pred_mean[j],label="Prediction Mean = "+str(actual_obv),c='c')
+				plt.axvline(x=pred_mean[j]+norm.ppf(0.95)*pred_std[j], label="95 CI = "+str(pred_mean[j]+norm.ppf(0.95)*pred_std[j]),c='b')
+				plt.axvline(x=pred_mean[j]-norm.ppf(0.95)*pred_std[j], label="95 CI = "+str(pred_mean[j]-norm.ppf(0.95)*pred_std[j]),c='b')
+				plt.title("Prediction Distribution for KCC " + str(j) + " sample "+ str(i))
+				#plt.show()
+				plt.savefig("./pred_plots/"+"KCC " + str(j) + " sample "+ str(i)+'.png')
+				plt.clf()
 			y_pred[i,:]=pred_mean
 			y_std[i,:]=pred_std
 			print(pred_mean)
@@ -200,8 +218,12 @@ if __name__ == '__main__':
 	input_conv_data, kcc_subset_dump,kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,dataset,point_index,kcc_dataset)
 	y_pred=np.zeros_like(kcc_dataset)
 
-	y_pred,y_std=deploy_model.model_inference(input_conv_data,inference_model,y_pred);
+	y_pred,y_std=deploy_model.model_inference(input_conv_data,inference_model,y_pred,kcc_dataset.values);
 
+	avg_std=np.array(y_std).mean(axis=0)
+
+	print("Average Epistemic Uncertainty of each KCC: ",avg_std)
+	
 	evalerror=1
 
 	if(evalerror==1):

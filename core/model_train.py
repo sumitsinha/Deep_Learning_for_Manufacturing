@@ -198,7 +198,8 @@ if __name__ == '__main__':
 	
 	dl_model=DLModel(model_type,output_dimension,optimizer,loss_func,regularizer_coeff,output_type)
 	model=dl_model.cnn_model_3d(voxel_dim,voxel_channels)
-
+	print(model.summary())
+	#sys.exit()
 	print('Training 3D CNN model')
 	
 	if(activate_tensorboard==1):

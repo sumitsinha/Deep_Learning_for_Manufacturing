@@ -165,7 +165,7 @@ if __name__ == '__main__':
 	
 	#Inference from simulated data
 	inference_model=deploy_model.get_model(model_path)
-
+	print(inference_model.summary())
 	#kcc_dataset=get_data.data_import(kcc_files,kcc_folder)
 
 

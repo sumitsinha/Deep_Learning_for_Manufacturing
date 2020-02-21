@@ -98,7 +98,7 @@
 model_parameters = {	
         'model_type':'3D Convolution Neural Network',
         'output_type':'regression',
-        'batch_size': 128,
+        'batch_size': 64,
         'epocs': 500,
         'split_ratio': 0.2,
         'optimizer':'adam',
@@ -126,7 +126,8 @@ kmc_params={
 
 bm_params={
         'max_models':10,
-        'runs':3
+        'runs':15,
+        'split_ratio': 0.2
 }
 
 transfer_learning={

@@ -54,9 +54,9 @@ def benchmarking_models(max_models):
 	bn_models=[None]*max_models
 	bn_models_name=[None]*max_models
 
-	bn_models[0]=MultiOutputRegressor(estimator=xgb.XGBRegressor(colsample_bytree=0.4,gamma=0.045,learning_rate=0.07,max_depth=500,min_child_weight=1.5,n_estimators=500,reg_alpha=0.65,reg_lambda=0.45,subsample=0.95,n_jobs=-1,verbose=True))
+	bn_models[0]=MultiOutputRegressor(estimator=xgb.XGBRegressor(colsample_bytree=0.4,gamma=0.045,learning_rate=0.07,max_depth=500,min_child_weight=1.5,n_estimators=50,reg_alpha=0.65,reg_lambda=0.45,subsample=0.95,n_jobs=-1,verbose=True))
 	bn_models_name[0] = type(bn_models[0].estimator).__name__
-	bn_models[1]=MultiOutputRegressor(estimator=RandomForestRegressor(n_estimators=1000,max_depth=50,n_jobs=-1,verbose=True))
+	bn_models[1]=MultiOutputRegressor(estimator=RandomForestRegressor(n_estimators=500,max_depth=20,n_jobs=-1,verbose=True))
 	bn_models_name[1] = type(bn_models[1].estimator).__name__
 	bn_models[2]=MultiOutputRegressor(estimator=SVR(kernel='rbf', C=100, gamma=0.1, epsilon=.1))
 	bn_models_name[2] = type(bn_models[2].estimator).__name__
@@ -111,6 +111,7 @@ def benchmarking_models_eval(bn_models,point_data,kcc_dataset,assembly_kccs,bm_p
 	bnoutput_r2=np.zeros((len(bn_models),assembly_kccs))
 
 	for i in range(len(bn_models)):
+		print(i)
 		model=bn_models[i]
 		model.fit(X_train,y_train)
 		y_pred=model.predict(X_test)
@@ -166,7 +167,7 @@ if __name__ == '__main__':
 	train_path='../trained_models/'+part_type
 	pathlib.Path(train_path).mkdir(parents=True, exist_ok=True)
 
-	bm_path=train_path+'/benchmarking'
+	bm_path=train_path+'/benchmarking/'
 	pathlib.Path(bm_path).mkdir(parents=True, exist_ok=True)
 
 	print('Initializing the Assembly System and Measurement System....')
@@ -195,6 +196,7 @@ if __name__ == '__main__':
 	mr_bnoutput_r2=np.zeros((runs,len(bn_models),assembly_kccs))
 
 	for i in range(runs):
+		print("Run ID: ", i)
 		bneval_metrics=benchmarking_models_eval(bn_models,point_data,kcc_dataset,assembly_kccs,bm_path,split_ratio)
 		mr_bnoutput_mae[i,:,:]=bneval_metrics["Mean Absolute Error"]
 		mr_bnoutput_mse[i,:,:]=bneval_metrics["Mean Squared Error"]
@@ -210,6 +212,7 @@ if __name__ == '__main__':
 	std_mr_bn_mse=np.std(mr_bnoutput_mse,axis=0, ddof=1)
 	std_mr_bn_rmse=np.std(mr_bnoutput_rmse,axis=0, ddof=1)
 	std_mr_bn_r2=np.std(mr_bnoutput_r2,axis=0, ddof=1)
+
 
 	avg_kcc_mrbn_mae=np.mean(avg_mrbn_mae,axis=1)
 	avg_kcc_mrbn_mse=np.mean(avg_mrbn_mse,axis=1)
@@ -230,5 +233,20 @@ if __name__ == '__main__':
 		print('RMSE: ', avg_kcc_mrbn_rmse[i],' RMSE Standard Deviation: ', avg_std_kcc_rmse[i])
 		print('R2: ', avg_kcc_mrbn_r2[i], ' R2 Standard Deviation: ', avg_std_kcc_r2[i])
 
+	np.savetxt((bm_path+"avg_kcc_mrbn_mae.csv"), avg_kcc_mrbn_mae, delimiter=",")
+	np.savetxt((bm_path+"avg_kcc_mrbn_rmse.csv"), avg_kcc_mrbn_rmse, delimiter=",")
+	np.savetxt((bm_path+"avg_kcc_mrbn_r2.csv"), avg_kcc_mrbn_r2, delimiter=",")
 
+	np.savetxt((bm_path+"avg_std_kcc_mae.csv"), avg_std_kcc_mae, delimiter=",")
+	np.savetxt((bm_path+"avg_std_kcc_rmse.csv"), avg_std_kcc_rmse, delimiter=",")
+	np.savetxt((bm_path+"avg_std_kcc_r2.csv"), avg_std_kcc_r2, delimiter=",")
+
+
+	np.savetxt((bm_path+"avg_mrbn_mae.csv"), avg_mrbn_mae, delimiter=",")
+	np.savetxt((bm_path+"avg_mrbn_rmse.csv"), avg_mrbn_rmse, delimiter=",")
+	np.savetxt((bm_path+"avg_mrbn_r2.csv"), avg_mrbn_r2, delimiter=",")
+
+	np.savetxt((bm_path+"std_mrbn_mae.csv"), std_mr_bn_mae, delimiter=",")
+	np.savetxt((bm_path+"std_mrbn_rmse.csv"), std_mr_bn_rmse, delimiter=",")
+	np.savetxt((bm_path+"std_mrbn_r2.csv"), std_mr_bn_r2, delimiter=",")
 

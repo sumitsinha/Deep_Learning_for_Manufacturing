@@ -57,7 +57,7 @@ class DLModel:
 		model.add(Flatten())
 		model.add(Dense(128,kernel_regularizer=regularizers.l2(self.regularizer_coeff),activation='relu'))
 		#model.add(Dropout(0.2))
-		#model.add(Dense(64,kernel_regularizer=regularizers.l2(self.regularizer_coeff),activation='relu'))
+		model.add(Dense(64,kernel_regularizer=regularizers.l2(self.regularizer_coeff),activation='relu'))
 		model.add(Dense(self.output_dimension, activation=final_layer_avt))
 		model.compile(loss=self.loss_function, optimizer=self.optimizer, metrics=['mae'])
 

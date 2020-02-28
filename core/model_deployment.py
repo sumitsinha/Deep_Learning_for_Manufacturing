@@ -60,7 +60,7 @@ class DeployModel:
 
 		return inference_model
 
-	def model_inference(self,inference_data,inference_model,print_result=1,plot_result=1,append_result=1):
+	def model_inference(self,inference_data,inference_model,print_result=0,plot_result=0,append_result=0):
 		"""model_inference method is used to infer from unknown sample(s) using the trained model 
 				
 				:param inference_data: Unknown dataset having same structure as the train dataset

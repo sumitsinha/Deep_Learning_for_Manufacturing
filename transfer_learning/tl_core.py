@@ -98,7 +98,7 @@ class TransferLearning:
 		def weighted_dice_coefficient_loss(y_true, y_pred):
 			return -weighted_dice_coefficient(y_true, y_pred)
 
-		model_path='../pre_trained_models/'+self.tl_base
+		model_path='../pre_trained_models/deterministic_models/'+self.tl_base
 		
 		if(self.tl_base=='unet_3d.h5'):
 			base_model=load_model(model_path,custom_objects={'InstanceNormalization': InstanceNormalization,'weighted_dice_coefficient_loss':weighted_dice_coefficient_loss})
@@ -147,6 +147,13 @@ class TransferLearning:
 		for layer in model.layers:
 			if('conv'in layer.name):	
 				layer.trainable = False
+
+		model.compile(loss=self.loss_function, optimizer=self.optimizer, metrics=['mae'])
+
+		return model
+
+
+	def full_fine_tune(self,model):
 
 		model.compile(loss=self.loss_function, optimizer=self.optimizer, metrics=['mae'])
 
@@ -303,7 +310,7 @@ if __name__ == '__main__':
 
 	
 	train_model=TrainModel(batch_size,epocs,split_ratio)
-	trained_model,eval_metrics,accuracy_metrics_df=train_model.run_train_model(model,input_conv_data[:,:,:,:,1:2],kcc_subset_dump,model_path,logs_path,plots_path,activate_tensorboard,tl_type=tl_type)
+	trained_model,eval_metrics,accuracy_metrics_df=train_model.run_train_model(model,input_conv_data,kcc_subset_dump,model_path,logs_path,plots_path,activate_tensorboard,tl_type=tl_type)
 
 	accuracy_metrics_df.to_csv(logs_path+'/tl_metrics.csv')
 	print("Transfer Learning Based Model Training Complete..")

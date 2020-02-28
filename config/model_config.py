@@ -108,12 +108,13 @@ model_parameters = {
         }
 
 data_study_params = {
-	'batch_size':32,
+	'batch_size':64,
 	'epocs':50,
 	'min_train_samples':100,
         'train_increment':100,
-        'max_train_samples':4000,
-	'split_ratio':0.2
+        'max_train_samples':3000,
+	'split_ratio':0.1,
+        'tl_flag':1
 }
 
 kmc_params={
@@ -132,7 +133,7 @@ bm_params={
 
 transfer_learning={
         'tl_type':'full_fine_tune', #options 'full_fine_tune', variable_lr', 'feature_extractor'
-        'tl_base':'model_pointnet_64.h5',
+        'tl_base':'model_pointnet_64_halo.h5',
         'tl_app':'halo_deploy',
         'conv_layer_m':0.1,
         'dense_layer_m':1, 

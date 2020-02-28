@@ -9,6 +9,7 @@ import sys
 current_path=os.path.dirname(__file__)
 parentdir = os.path.dirname(current_path)
 
+os.environ["CUDA_VISIBLE_DEVICES"]="0" # Nvidia Quadro GV100
 #Adding Path to various Modules
 sys.path.append("../core")
 sys.path.append("../visualization")
@@ -16,6 +17,7 @@ sys.path.append("../utilities")
 sys.path.append("../datasets")
 sys.path.append("../trained_models")
 sys.path.append("../config")
+sys.path.append("../transfer_learning")
 #path_var=os.path.join(os.path.dirname(__file__),"../utilities")
 #sys.path.append(path_var)
 #sys.path.insert(0,parentdir) 
@@ -47,6 +49,7 @@ from metrics_eval import MetricsEval
 from model_train import TrainModel
 from model_deployment import DeployModel
 from metrics_eval import MetricsEval
+from tl_core import TransferLearning
 	
 if __name__ == '__main__':
 
@@ -95,6 +98,13 @@ if __name__ == '__main__':
 	min_train_samples=cftrain.data_study_params['min_train_samples']
 	max_train_samples=cftrain.data_study_params['max_train_samples']
 	train_increment=cftrain.data_study_params['train_increment']
+	tl_flag=cftrain.data_study_params['tl_flag']
+
+	tl_type=cftrain.transfer_learning['tl_type']
+	tl_base=cftrain.transfer_learning['tl_base']
+	tl_app=cftrain.transfer_learning['tl_app']
+	conv_layer_m=cftrain.transfer_learning['conv_layer_m']
+	dense_layer_m=cftrain.transfer_learning['dense_layer_m']
 
 	print('Creating file Structure....')
 	folder_name=part_type
@@ -165,6 +175,9 @@ if __name__ == '__main__':
 	datastudy_output_test=np.zeros((no_of_splits,(assembly_kccs+1)*len(eval_metrics_type)+1))
 
 	train_dim=min_train_samples
+
+
+
 	for i in tqdm(range(no_of_splits)):
 		
 		run_id=i
@@ -174,9 +187,31 @@ if __name__ == '__main__':
 		
 		print('Building 3D CNN model')
 
-	
-		dl_model=DLModel(model_type,output_dimension,optimizer,loss_func,regularizer_coeff,output_type)
-		model=dl_model.cnn_model_3d(voxel_dim,voxel_channels)
+		
+		if(tl_flag==0):
+			dl_model=DLModel(model_type,output_dimension,optimizer,loss_func,regularizer_coeff,output_type)
+			model=dl_model.cnn_model_3d(voxel_dim,voxel_channels)
+
+		if(tl_flag==1):
+			transfer_learning=TransferLearning(tl_type,tl_base,tl_app,model_type,assembly_kccs,optimizer,loss_func,regularizer_coeff,output_type)
+			base_model=transfer_learning.get_trained_model()
+			
+			print(base_model.summary())
+			
+			#plot_model(base_model, to_file='model.png')
+
+			transfer_model=transfer_learning.build_transfer_model(base_model)
+
+			if(tl_type=='full_fine_tune'):
+				model=transfer_learning.full_fine_tune(transfer_model)
+
+			if(tl_type=='variable_lr'):
+				model=transfer_learning.set_variable_learning_rates(transfer_model,conv_layer_m,dense_layer_m)
+
+			if(tl_type=='feature_extractor'):
+				model=transfer_learning.set_fixed_train_params(transfer_model)
+
+		print(model.summary())
 
 		print("Conducting data study study on :",train_dim, " samples")
 		input_conv_subset=input_conv_data[0:train_dim,:,:,:,:]

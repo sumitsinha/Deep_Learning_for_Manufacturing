@@ -96,7 +96,8 @@
 
 
 model_parameters = {	
-        'model_type':'3D Convolution Neural Network',
+        'model_type':'3D Convolution Neural Network', #other option: 'Bayesian 3D Convolution Neural Network'  
+        'learning_type':'Basic', # use 'Transfer Learning' if transfer learning is to be leveraged
         'output_type':'regression',
         'batch_size': 64,
         'epocs': 500,
@@ -106,7 +107,14 @@ model_parameters = {
         'regularizer_coeff': 0.01,
         'activate_tensorboard':0
         }
-
+cae_sim_params = {
+        'simulation_platform':'MatLab',
+        'simulation_engine':'VRM',
+        'max_run_lenegth':100,
+        'cae_input_path': 'check',
+        'cae_output_path':'check',
+        #case_study parameter imported from assembly_configration
+}
 data_study_params = {
 	'batch_size':64,
 	'epocs':50,

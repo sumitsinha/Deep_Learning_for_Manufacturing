@@ -111,6 +111,7 @@ class TrainModel:
 		return model
 
 	def run_train_model_dynamic():
+
 		pass
 
 if __name__ == '__main__':
@@ -203,5 +204,4 @@ if __name__ == '__main__':
 	train_model=TrainModel(batch_size,epocs,split_ratio)
 	trained_model=train_model.run_train_model(model,input_conv_data,kcc_subset_dump,model_path,logs_path,plots_path,activate_tensorboard)
 	
-
-	print('Training Completed Successfully')
+	

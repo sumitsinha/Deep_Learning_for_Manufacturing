@@ -18,8 +18,10 @@
 """
 
 sampling_config={'sample_dim':200,
-		'adaptive_sample_dim':5000,
+                'test_sample_dim':200,
+		'adaptive_sample_dim':200,
 		'adaptive_runs':5,	
         'sample_type':'uniform',
-        'output_file_name':'inner_rf_samples_datagen10_gui_demo_test_oor.csv'
+        'output_file_name_test':'inner_rf_samples_dynamic_datagen10_gui_demo_test.csv'
+        'output_file_name_train': 'inner_rf_samples_dynamic_datagen10_gui_demo_train.csv'
         }

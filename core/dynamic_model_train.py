@@ -1,0 +1,293 @@
+""" The model train file trains the model on the download dataset and other parameters specified in the assemblyconfig file
+The main function runs the training and populates the created file structure with the trained model, logs and plots
+"""
+
+import os
+import sys
+current_path=os.path.dirname(__file__)
+parentdir = os.path.dirname(current_path)
+
+#choose GPU
+os.environ["CUDA_VISIBLE_DEVICES"]="0" # Nvidia Quadro GV100
+#os.environ["CUDA_VISIBLE_DEVICES"]="1" # Nvidia Quadro M2000
+
+#Adding Path to various Modules
+sys.path.append("../core")
+sys.path.append("../visualization")
+sys.path.append("../utilities")
+sys.path.append("../datasets")
+sys.path.append("../trained_models")
+sys.path.append("../config")
+sys.path.append("../cae_simulations")
+sys.path.append("../active_learning")
+#path_var=os.path.join(os.path.dirname(__file__),"../utilities")
+#sys.path.append(path_var)
+#sys.path.insert(0,parentdir) 
+
+#Importing Required Modules
+import pathlib
+import numpy as np
+import pandas as pd
+import tensorflow as tf
+import tensorflow_probability as tfp
+from pyDOE import lhs
+from scipy.stats import uniform,norm
+
+#Importing Config files
+import assembly_config as config
+import model_config as cftrain
+
+#Importing required modules from the package
+from measurement_system import HexagonWlsScanner
+from assembly_system import VRMSimulationModel
+from wls400a_system import GetInferenceData
+from data_import import GetTrainData
+from core_model_bayes import Bayes_DLModel
+from cae_simulations import CAESimulations
+from sampling_sys import AdaptiveSampling
+import kcc_config as kcc_config
+import sampling_config as sampling_config
+
+
+
+if __name__ == '__main__':
+
+	print('Parsing from Assembly Config File....')
+
+	data_type=config.assembly_system['data_type']
+	application=config.assembly_system['application']
+	part_type=config.assembly_system['part_type']
+	part_name=config.assembly_system['part_name']
+	data_format=config.assembly_system['data_format']
+	assembly_type=config.assembly_system['assembly_type']
+	assembly_kccs=config.assembly_system['assembly_kccs']	
+	assembly_kpis=config.assembly_system['assembly_kpis']
+	voxel_dim=config.assembly_system['voxel_dim']
+	point_dim=config.assembly_system['point_dim']
+	voxel_channels=config.assembly_system['voxel_channels']
+	noise_type=config.assembly_system['noise_type']
+	mapping_index=config.assembly_system['mapping_index']
+	file_names_x=config.assembly_system['data_files_x']
+	file_names_y=config.assembly_system['data_files_y']
+	file_names_z=config.assembly_system['data_files_z']
+	system_noise=config.assembly_system['system_noise']
+	aritifical_noise=config.assembly_system['aritifical_noise']
+	data_folder=config.assembly_system['data_folder']
+	kcc_folder=config.assembly_system['kcc_folder']
+	kcc_files=config.assembly_system['kcc_files']
+
+	#Get Out of Sample data for Testing
+	test_file_names_x=config.assembly_system['test_data_files_x']
+	test_file_names_y=config.assembly_system['test_data_files_y']
+	test_file_names_z=config.assembly_system['test_data_files_z']
+	test_kcc_files=config.assembly_system['test_kcc_files']
+
+	print('Parsing from Training Config File')
+
+	model_type=cftrain.model_parameters['model_type']
+	learning_type=cftrain.model_parameters['learning_type'] 
+	output_type=cftrain.model_parameters['output_type']
+	optimizer=cftrain.model_parameters['optimizer']
+	loss_func=cftrain.model_parameters['loss_func']
+	regularizer_coeff=cftrain.model_parameters['regularizer_coeff']
+	activate_tensorboard=cftrain.model_parameters['activate_tensorboard']
+
+	batch_size=cftrain.data_study_params['batch_size']
+	epocs=cftrain.data_study_params['epocs']
+	split_ratio=cftrain.data_study_params['split_ratio']
+	min_train_samples=cftrain.data_study_params['min_train_samples']
+	max_train_samples=cftrain.data_study_params['max_train_samples']
+	train_increment=cftrain.data_study_params['train_increment']
+	tl_flag=cftrain.data_study_params['tl_flag']
+
+	tl_type=cftrain.transfer_learning['tl_type']
+	tl_base=cftrain.transfer_learning['tl_base']
+	tl_app=cftrain.transfer_learning['tl_app']
+	conv_layer_m=cftrain.transfer_learning['conv_layer_m']
+	dense_layer_m=cftrain.transfer_learning['dense_layer_m']
+
+	simulation_platform=cftrain.cae_sim_params['simulation_platform']
+	simulation_engine=cftrain.cae_sim_params['simulation_engine']
+	max_run_length=cftrain.cae_sim_params['max_run_length']
+	case_study=part_type
+
+	print('Creating file Structure....')
+	folder_name=part_type
+	train_path='../trained_models/'+part_type+'/dynamic'
+	pathlib.Path(train_path).mkdir(parents=True, exist_ok=True) 
+
+	model_path=train_path+'/model'
+	pathlib.Path(model_path).mkdir(parents=True, exist_ok=True)
+	
+	logs_path=train_path+'/logs'
+	pathlib.Path(logs_path).mkdir(parents=True, exist_ok=True)
+
+	plots_path=train_path+'/plots'
+	pathlib.Path(plots_path).mkdir(parents=True, exist_ok=True)
+
+	deployment_path=train_path+'/deploy'
+	pathlib.Path(deployment_path).mkdir(parents=True, exist_ok=True)
+
+	print('Initializing....')
+	measurement_system=HexagonWlsScanner(data_type,application,system_noise,part_type,data_format)
+	print('Measurement system initialized')
+	vrm_system=VRMSimulationModel(assembly_type,assembly_kccs,assembly_kpis,part_name,part_type,voxel_dim,voxel_channels,point_dim,aritifical_noise)
+	cae_simulations=CAESimulations(vrm_system,simulation_platform,simulation_engine,max_run_length,case_study)
+	
+	print('Assembly and simulation system initialized')
+	get_data=GetTrainData();
+	deploy_model=DeployModel();
+	metrics_eval=MetricsEval();
+	
+	print('Support systems initialized')
+	
+
+	kcc_struct=kcc_config.kcc_struct
+	sampling_config=sampling_config.sampling_config
+	adaptive_sampling=AdaptiveSampling(sampling_config['sample_dim'],sampling_config['sample_type'],sampling_config['adaptive_sample_dim'],sampling_config['adaptive_runs'])
+
+	test_flag=1
+	
+	if(test_flag==1):
+		print('Generating Test Data...')
+		print('LHS Sampling for test samples')
+		print('Generating initial samples')
+
+		if(adaptive_sampling.sample_type=='lhs'):
+			initial_samples=adaptive_sampling.inital_sampling_lhs(kcc_struct,sampling_config['sample_dim'])
+		else:
+			initial_samples=adaptive_sampling.inital_sampling_uniform_random(kcc_struct,sampling_config['sample_dim'])
+
+		file_name=sampling_config['output_file_name_test']
+		file_path='./sample_input/'+part_type+'/'+file_name
+		np.savetxt(file_path, initial_samples, delimiter=",")
+		print('Sampling Completed...')
+
+		cae_status=cae_simulations.run_simulations(0,'test')
+
+		print("Pre-processing simulated test data")
+		dataset_test=[]
+		dataset_test.append(get_data.data_import(test_file_names_x,data_folder))
+		dataset_test.append(get_data.data_import(test_file_names_y,data_folder))
+		dataset_test.append(get_data.data_import(test_file_names_z,data_folder))
+		point_index=get_data.load_mapping_index(mapping_index)
+
+		kcc_dataset_test=get_data.data_import(test_kcc_files,kcc_folder)
+		input_conv_data_test, kcc_subset_dump_test,kpi_subset_dump_test=get_data.data_convert_voxel_mc(vrm_system,dataset_test,point_index,kcc_dataset_test)
+	
+
+	output_dimension=assembly_kccs
+	eval_metrics_type= ["Mean Absolute Error","Mean Squared Error","Root Mean Squared Error","R Squared"]
+
+	for kcc in kcc_struct:
+		kcc_name=kcc['kcc_name']
+		kcc_id.append(kcc_name)
+
+	print('Running Dynamic Training...')
+
+	combined_conv_data_list=[]
+	combined_kcc_data_list=[]
+
+	eval_metrics_type= ["Mean Absolute Error","Mean Squared Error","Root Mean Squared Error","R Squared"]
+
+	dynamic_train_output=np.zeros((max_run_length,(assembly_kccs+1)*len(eval_metrics_type)+1))
+	dynamic_train_output_test=np.zeros((max_run_length,(assembly_kccs+1)*len(eval_metrics_type)+1))
+
+	for i in range(max_run_length):
+		
+		run_id=i
+		print('Training Run ID: ',i)
+		
+		file_name=sampling_config['output_file_name_train']+'_'+str(i)
+		file_names_x=
+		file_names_y=
+		file_names_z=
+
+		if(i==0):
+			print('Generating initial samples...')
+			initial_samples=adaptive_sampling.inital_sampling_uniform_random(kcc_struct,sampling_config['sample_dim'])
+			file_path='./sample_input/'+part_type+'/'+file_name
+			np.savetxt(file_path, initial_samples, delimiter=",")
+			
+			print('Sampling Completed...')
+
+			cae_status=cae_simulations.run_simulations(i,'train')
+			
+			dataset=[]
+			dataset.append(get_data.data_import(file_names_x,data_folder))
+			dataset.append(get_data.data_import(file_names_y,data_folder))
+			dataset.append(get_data.data_import(file_names_z,data_folder))
+			
+			kcc_dataset=get_data.data_import(kcc_files,kcc_folder)
+			input_conv_data, kcc_subset_dump,kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,dataset,point_index,kcc_dataset)
+
+
+		if(i>=0):
+			print('Adaptive Sampling..')
+
+			#get prediction errors
+			#get uncertainty estimates
+		
+			#Currently using random sampling
+			initial_samples=adaptive_sampling.inital_sampling_uniform_random(kcc_struct,sampling_config['adaptive_sample_dim'])
+			file_path='./sample_input/'+part_type+'/'+file_name
+			np.savetxt(file_path, initial_samples, delimiter=",")
+			
+			print('Sampling Completed...')
+
+			cae_status=cae_simulations.run_simulations(i,'train')
+			
+			dataset=[]
+			dataset.append(get_data.data_import(file_names_x,data_folder))
+			dataset.append(get_data.data_import(file_names_y,data_folder))
+			dataset.append(get_data.data_import(file_names_z,data_folder))
+			
+			kcc_dataset=get_data.data_import(kcc_files,kcc_folder)
+			input_conv_data, kcc_subset_dump,kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,dataset,point_index,kcc_dataset)
+
+
+		combined_conv_data_list.append(input_conv_data)
+		combined_kcc_data_list.append(kcc_subset_dump)
+
+		print('Concatenating dataset')
+
+		combined_conv_data=np.concatenate(combined_conv_data_list,axis=4)
+		combined_kcc_data=np.concatenate(combined_kcc_data_list,axis=1)
+
+		print(combined_conv_data.shape,combined_kcc_data.shape)
+		
+		if(model_type=='Bayesian 3D Convolution Neural Network'):
+			dl_model=Bayes_DLModel(model_type,output_dimension,optimizer,loss_func,regularizer_coeff,output_type)
+			model=dl_model.bayes_cnn_model_3d(voxel_dim,voxel_channels)
+
+		if(model_type=='3D Convolution Neural Network'):
+			
+			if(learning_type=='Basic'):
+				dl_model=DLModel(model_type,output_dimension,optimizer,loss_func,regularizer_coeff,output_type)
+				model=dl_model.cnn_model_3d(voxel_dim,voxel_channels)
+			
+			if(learning_type=='Transfer Learning'):
+				transfer_learning=TransferLearning(tl_type,tl_base,tl_app,model_type,assembly_kccs,optimizer,loss_func,regularizer_coeff,output_type)
+				base_model=transfer_learning.get_trained_model()
+				
+				print('Base Model used for Transfer Learning...')
+				print(base_model.summary())
+				
+				#plot_model(base_model, to_file='model.png')
+
+				transfer_model=transfer_learning.build_transfer_model(base_model)
+
+				if(tl_type=='full_fine_tune'):
+					model=transfer_learning.full_fine_tune(transfer_model)
+
+				if(tl_type=='variable_lr'):
+					model=transfer_learning.set_variable_learning_rates(transfer_model,conv_layer_m,dense_layer_m)
+
+				if(tl_type=='feature_extractor'):
+					model=transfer_learning.set_fixed_train_params(transfer_model)
+		
+		print('Model summary used for training')
+		print(model.summary())
+		
+		train_model=TrainModel(batch_size,epocs,split_ratio)
+		trained_model,eval_metrics,accuracy_metrics_df=train_model.run_train_model(model,input_conv_subset,kcc_subset,model_path,logs_path,plots_path,activate_tensorboard,run_id)

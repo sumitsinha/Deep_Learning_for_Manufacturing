@@ -135,8 +135,6 @@ class DeployModel:
 			fig.update_layout(title_text='Deep Learning for Manufacturing - Model Estimates')
 			py.offline.plot(fig, filename="results.html")
 
-
-
 		return y_pred,y_std
 
 if __name__ == '__main__':

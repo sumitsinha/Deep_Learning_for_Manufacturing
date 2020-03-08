@@ -99,8 +99,8 @@ model_parameters = {
         'model_type':'Bayesian 3D Convolution Neural Network', #other option: 'Bayesian 3D Convolution Neural Network'  
         'learning_type':'Basic', # use 'Transfer Learning' if transfer learning is to be leveraged
         'output_type':'regression',
-        'batch_size': 2,
-        'epocs': 2,
+        'batch_size': 32,
+        'epocs': 100,
         'split_ratio': 0.2,
         'optimizer':'adam',
         'loss_func':'mse',
@@ -110,7 +110,7 @@ model_parameters = {
 cae_sim_params = {
         'simulation_platform':'MatLab',
         'simulation_engine':'VRM',
-        'max_run_length':3,
+        'max_run_length':20,
         'cae_input_path': 'check',
         'cae_output_path':'check',
         #case_study parameter imported from assembly_configration

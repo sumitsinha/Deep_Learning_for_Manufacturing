@@ -83,7 +83,7 @@ class BayesDeployModel:
 		for i in range(len(inference_data)):
 			
 			from scipy.stats import norm
-			epistemic_samples=3
+			epistemic_samples=500
 			inference_sample=inference_data[i,:,:,:,:]
 			print(inference_sample.shape)
 			input_sample=np.array([inference_sample,]*epistemic_samples)
@@ -104,6 +104,7 @@ class BayesDeployModel:
 			output_mean=np.array(output_mean)
 			print(output_mean.shape)
 			pred_plots=0
+			
 			if(pred_plots==1):
 				for j in range(y_pred.shape[1]):
 					plot_data=output_mean[:,j]

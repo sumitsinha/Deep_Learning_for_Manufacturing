@@ -44,7 +44,7 @@ from data_import import GetTrainData
 from core_model_bayes import Bayes_DLModel
 #from cam_viz import CamViz
 
-class DeployModel:
+class BayesDeployModel:
 	"""The Deploy Model class is used to import a trained model and use it to infer on unknown data
 
 	"""
@@ -83,30 +83,40 @@ class DeployModel:
 		for i in range(len(inference_data)):
 			
 			from scipy.stats import norm
-			epistemic_samples=1000
+			epistemic_samples=3
 			inference_sample=inference_data[i,:,:,:,:]
 			print(inference_sample.shape)
 			input_sample=np.array([inference_sample,]*epistemic_samples)
-			#print((input_sample[0,:,:,:,:]==input_sample[50,:,:,:,:]).all())
+			# input_sample=tf.cast(input_sample, tf.float32)
+			# init = tf.global_variables_initializer()
+			# with tf.Session() as sess:
 			output=inference_model(input_sample)
 			output_mean=output.mean()
-
+			# 	sess.run(init)
+			# 	mean=sess.run(output_mean)
+			# 	print(mean)
+			#print((input_sample[0,:,:,:,:]==input_sample[50,:,:,:,:]).all())
+			#output=inference_model(input_sample)
+			#output_mean=output.mean()
+			print(output_mean)
 			pred_mean=np.array(output_mean).mean(axis=0)
 			pred_std=np.array(output_mean).std(axis=0,ddof=1)
 			output_mean=np.array(output_mean)
 			print(output_mean.shape)
-			for j in range(y_pred.shape[1]):
-				plot_data=output_mean[:,j]
-				actual_obv=y_actual[i,j]
-				plt.hist(plot_data, range=(actual_obv-0.2,actual_obv+0.2),bins=40)
-				plt.axvline(x=actual_obv,label="Actual Value = "+str(actual_obv),c='r')
-				plt.axvline(x=pred_mean[j],label="Prediction Mean = "+str(actual_obv),c='c')
-				plt.axvline(x=pred_mean[j]+norm.ppf(0.95)*pred_std[j], label="95 CI = "+str(pred_mean[j]+norm.ppf(0.95)*pred_std[j]),c='b')
-				plt.axvline(x=pred_mean[j]-norm.ppf(0.95)*pred_std[j], label="95 CI = "+str(pred_mean[j]-norm.ppf(0.95)*pred_std[j]),c='b')
-				plt.title("Prediction Distribution for KCC " + str(j) + " sample "+ str(i))
-				#plt.show()
-				plt.savefig("./pred_plots/"+"KCC " + str(j) + " sample "+ str(i)+'.png')
-				plt.clf()
+			pred_plots=0
+			if(pred_plots==1):
+				for j in range(y_pred.shape[1]):
+					plot_data=output_mean[:,j]
+					actual_obv=y_actual[i,j]
+					plt.hist(plot_data, range=(actual_obv-0.2,actual_obv+0.2),bins=40)
+					plt.axvline(x=actual_obv,label="Actual Value = "+str(actual_obv),c='r')
+					plt.axvline(x=pred_mean[j],label="Prediction Mean = "+str(actual_obv),c='c')
+					plt.axvline(x=pred_mean[j]+norm.ppf(0.95)*pred_std[j], label="95 CI = "+str(pred_mean[j]+norm.ppf(0.95)*pred_std[j]),c='b')
+					plt.axvline(x=pred_mean[j]-norm.ppf(0.95)*pred_std[j], label="95 CI = "+str(pred_mean[j]-norm.ppf(0.95)*pred_std[j]),c='b')
+					plt.title("Prediction Distribution for KCC " + str(j) + " sample "+ str(i))
+					#plt.show()
+					plt.savefig("./pred_plots/"+"KCC " + str(j) + " sample "+ str(i)+'.png')
+					plt.clf()
 			y_pred[i,:]=pred_mean
 			y_std[i,:]=pred_std
 			print(pred_mean)
@@ -179,7 +189,7 @@ if __name__ == '__main__':
 	print('Initializing the Assembly System and Measurement System....')
 	measurement_system=HexagonWlsScanner(data_type,application,system_noise,part_type,data_format)
 	vrm_system=VRMSimulationModel(assembly_type,assembly_kccs,assembly_kpis,part_name,part_type,voxel_dim,voxel_channels,point_dim,aritifical_noise)
-	deploy_model=DeployModel()
+	deploy_model=BayesDeployModel()
 	
 	#Generate Paths
 	train_path='../trained_models/'+part_type

@@ -17,11 +17,14 @@
 
 """
 
-sampling_config={'sample_dim':200,
-                'test_sample_dim':200,
-		'adaptive_sample_dim':200,
+sampling_config={'sample_dim':3,
+                'test_sample_dim':1,
+		'adaptive_sample_dim':1,
 		'adaptive_runs':5,	
         'sample_type':'uniform',
-        'output_file_name_test':'inner_rf_samples_dynamic_datagen10_gui_demo_test.csv'
-        'output_file_name_train': 'inner_rf_samples_dynamic_datagen10_gui_demo_train.csv'
+        'output_file_name_test':'inner_rf_samples_dynamic_test_0',
+        'output_file_name_train': 'inner_rf_samples_dynamic_train',
+        'datagen_filename_x':'inner_rf_dynamic_dev_x_3_',
+        'datagen_filename_y':'inner_rf_dynamic_dev_y_3_',
+        'datagen_filename_z':'inner_rf_dynamic_dev_z_3_',
         }

@@ -25,8 +25,8 @@ sys.path.append("../config")
 import pathlib
 import numpy as np
 import pandas as pd
-import tensorflow as tf
-import tensorflow_probability as tfp
+#import tensorflow as tf
+#import tensorflow_probability as tfp
 
 
 #Importing Config files
@@ -42,7 +42,7 @@ from core_model_bayes import Bayes_DLModel
 
 
 
-class TrainModel:
+class BayesTrainModel:
 	"""Train Model Class, the initialization parameters are parsed from modelconfig_train.py file
 		
 		:param batch_size: mini batch size while training the model 
@@ -90,7 +90,7 @@ class TrainModel:
 			:type run_id: int			
 		"""			
 		from sklearn.model_selection import train_test_split
-
+		import tensorflow as tf
 
 		model_file_path=model_path+'/Bayes_trained_model_'+str(run_id)
 		X_train, X_test, y_train, y_test = train_test_split(X_in, Y_out, test_size = self.split_ratio)
@@ -99,7 +99,7 @@ class TrainModel:
 		tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir='C:\\Users\\sinha_s\\Desktop\\dlmfg_package\\dlmfg\\trained_models\\inner_rf_assembly\\logs',histogram_freq=1)
 		checkpointer = tf.keras.callbacks.ModelCheckpoint(model_file_path, verbose=1, save_best_only='mae',save_weights_only=True)
 		#Check pointer to save the best model
-		history=model.fit(X_train, y_train, validation_data=(X_test,y_test), epochs=self.epochs, batch_size=self.batch_size,callbacks=[tensorboard_callback,checkpointer])
+		history=model.fit(X_train, y_train, validation_data=(X_test,y_test), epochs=self.epochs, batch_size=self.batch_size,callbacks=[checkpointer])
 		
 		#y_pred=model.predict(X_test)
 		# y_pred=model(X_test)
@@ -201,7 +201,7 @@ if __name__ == '__main__':
 	kcc_dataset=get_data.data_import(kcc_files,kcc_folder)
 	input_conv_data, kcc_subset_dump,kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,dataset,point_index,kcc_dataset)
 	
-	train_model=TrainModel(batch_size,epocs,split_ratio)
+	train_model=BayesTrainModel(batch_size,epocs,split_ratio)
 	trained_model=train_model.run_train_model(model,input_conv_data,kcc_subset_dump,model_path,logs_path,plots_path,activate_tensorboard)
 	
-	
+

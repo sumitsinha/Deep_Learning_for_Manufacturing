@@ -108,7 +108,10 @@ class GetTrainData():
 		#end_index=50000
 		run_length=end_index-start_index
 		input_conv_data=np.zeros((run_length,voxel_dim,voxel_dim,voxel_dim,dev_channel))
-		kcc_dump=kcc_data.values
+		if isinstance(kcc_data,pd.DataFrame):
+			kcc_dump=kcc_data.values
+		else:
+			kcc_dump=kcc_data
 		#kcc_dump=dataset.iloc[start_index:end_index, point_dim:point_dim+kcc_dim]
 		kpi_dump=dataset[0].iloc[start_index:end_index, point_dim:point_dim+kpi_dim]
 		kpi_dump=kpi_dump.values

@@ -6,12 +6,12 @@ parentdir = os.path.dirname(current_path)
 """ Contains sampling classes and methods to enable active learning between VRM and 3D CNN model """
 
 #Adding Path to various Modules
-sys.path.append("../core")
-sys.path.append("../visualization")
-sys.path.append("../utilities")
-sys.path.append("../datasets")
-sys.path.append("../trained_models")
-sys.path.append("../config")
+# sys.path.append("../core")
+# sys.path.append("../visualization")
+# sys.path.append("../utilities")
+# sys.path.append("../datasets")
+# sys.path.append("../trained_models")
+# sys.path.append("../config")
 
 from pyDOE import lhs
 from scipy.stats import uniform,norm

@@ -39,16 +39,16 @@ class Bayes_DLModel:
 			:param voxel_channels: The number of voxel channels in the input structure, required to build input to the 3D CNN model
 			:type voxel_channels: int (required)
 		"""
-		import tensorflow as tf
-		import tensorflow_probability as tfp
-		tfd = tfp.distributions
-		import numpy as np
+		
 		negloglik = lambda y, rv_y: -rv_y.log_prob(y)
 		
 		aleatoric_std=0.0001
 		
 		#constant aleatoric uncertainty
 
+		import tensorflow as tf
+		import tensorflow_probability as tfp
+		tfd = tfp.distributions
 		def _softplus_inverse(x):
   			"""Helper which computes the function inverse of `tf.nn.softplus`."""
   			return tf.math.log(tf.math.expm1(x))
@@ -73,9 +73,10 @@ class Bayes_DLModel:
 			])
 
 		#negloglik = lambda y, p_y: -p_y.log_prob(y)
-		model.compile(optimizer=tf.optimizers.Adam(),experimental_run_tf_function=False, loss=negloglik,metrics=[tf.keras.metrics.MeanAbsoluteError()])
+		#experimental_run_tf_function=False
+		model.compile(optimizer=tf.keras.optimizers.Adam(),experimental_run_tf_function=False,loss=negloglik,metrics=[tf.keras.metrics.MeanAbsoluteError()])
 		print("3D CNN model successfully compiled")
-		print(model.summary())
+		#print(model.summary())
 		return model
 
 

@@ -20,6 +20,7 @@ sys.path.append("../trained_models")
 sys.path.append("../config")
 sys.path.append("../cae_simulations")
 sys.path.append("../active_learning")
+sys.path.append("../transfer_learning")
 #path_var=os.path.join(os.path.dirname(__file__),"../utilities")
 #sys.path.append(path_var)
 #sys.path.insert(0,parentdir) 
@@ -28,8 +29,14 @@ sys.path.append("../active_learning")
 import pathlib
 import numpy as np
 import pandas as pd
+import plotly as py
+import plotly.graph_objects as go
+import cufflinks as cf
+from tqdm import tqdm
+
 import tensorflow as tf
 import tensorflow_probability as tfp
+#import matlab.engine
 from pyDOE import lhs
 from scipy.stats import uniform,norm
 
@@ -42,11 +49,14 @@ from measurement_system import HexagonWlsScanner
 from assembly_system import VRMSimulationModel
 from wls400a_system import GetInferenceData
 from data_import import GetTrainData
-from core_model_bayes import Bayes_DLModel
-from cae_simulations import CAESimulations
-from sampling_sys import AdaptiveSampling
+
+from sampling_system import AdaptiveSampling
 import kcc_config as kcc_config
 import sampling_config as sampling_config
+
+from metrics_eval import MetricsEval
+#from tl_core import TransferLearning
+
 
 
 
@@ -132,53 +142,27 @@ if __name__ == '__main__':
 	measurement_system=HexagonWlsScanner(data_type,application,system_noise,part_type,data_format)
 	print('Measurement system initialized')
 	vrm_system=VRMSimulationModel(assembly_type,assembly_kccs,assembly_kpis,part_name,part_type,voxel_dim,voxel_channels,point_dim,aritifical_noise)
-	cae_simulations=CAESimulations(vrm_system,simulation_platform,simulation_engine,max_run_length,case_study)
+	
 	
 	print('Assembly and simulation system initialized')
 	get_data=GetTrainData();
-	deploy_model=DeployModel();
+
 	metrics_eval=MetricsEval();
 	
+	point_index=get_data.load_mapping_index(mapping_index)
+
 	print('Support systems initialized')
 	
 
 	kcc_struct=kcc_config.kcc_struct
 	sampling_config=sampling_config.sampling_config
 	adaptive_sampling=AdaptiveSampling(sampling_config['sample_dim'],sampling_config['sample_type'],sampling_config['adaptive_sample_dim'],sampling_config['adaptive_runs'])
-
-	test_flag=1
-	
-	if(test_flag==1):
-		print('Generating Test Data...')
-		print('LHS Sampling for test samples')
-		print('Generating initial samples')
-
-		if(adaptive_sampling.sample_type=='lhs'):
-			initial_samples=adaptive_sampling.inital_sampling_lhs(kcc_struct,sampling_config['sample_dim'])
-		else:
-			initial_samples=adaptive_sampling.inital_sampling_uniform_random(kcc_struct,sampling_config['sample_dim'])
-
-		file_name=sampling_config['output_file_name_test']
-		file_path='./sample_input/'+part_type+'/'+file_name
-		np.savetxt(file_path, initial_samples, delimiter=",")
-		print('Sampling Completed...')
-
-		cae_status=cae_simulations.run_simulations(0,'test')
-
-		print("Pre-processing simulated test data")
-		dataset_test=[]
-		dataset_test.append(get_data.data_import(test_file_names_x,data_folder))
-		dataset_test.append(get_data.data_import(test_file_names_y,data_folder))
-		dataset_test.append(get_data.data_import(test_file_names_z,data_folder))
-		point_index=get_data.load_mapping_index(mapping_index)
-
-		kcc_dataset_test=get_data.data_import(test_kcc_files,kcc_folder)
-		input_conv_data_test, kcc_subset_dump_test,kpi_subset_dump_test=get_data.data_convert_voxel_mc(vrm_system,dataset_test,point_index,kcc_dataset_test)
 	
 
 	output_dimension=assembly_kccs
 	eval_metrics_type= ["Mean Absolute Error","Mean Squared Error","Root Mean Squared Error","R Squared"]
 
+	kcc_id=[]
 	for kcc in kcc_struct:
 		kcc_name=kcc['kcc_name']
 		kcc_id.append(kcc_name)
@@ -190,49 +174,97 @@ if __name__ == '__main__':
 
 	eval_metrics_type= ["Mean Absolute Error","Mean Squared Error","Root Mean Squared Error","R Squared"]
 
-	dynamic_train_output=np.zeros((max_run_length,(assembly_kccs+1)*len(eval_metrics_type)+1))
-	dynamic_train_output_test=np.zeros((max_run_length,(assembly_kccs+1)*len(eval_metrics_type)+1))
+	datastudy_output_test=np.zeros((max_run_length,(assembly_kccs+1)*len(eval_metrics_type)+1))
 
-	for i in range(max_run_length):
+	for i in tqdm(range(max_run_length)):
 		
 		run_id=i
 		print('Training Run ID: ',i)
 		
-		file_name=sampling_config['output_file_name_train']+'_'+str(i)
-		file_names_x=
-		file_names_y=
-		file_names_z=
-
+		file_name=sampling_config['output_file_name_train']+'_'+str(i)+'.csv'
+		
+		file_names_x=sampling_config['datagen_filename_x']+'train'+'_'+str(i)+'.csv'
+		file_names_y=sampling_config['datagen_filename_y']+'train'+'_'+str(i)+'.csv'
+		file_names_z=sampling_config['datagen_filename_z']+'train'+'_'+str(i)+'.csv'
+		file_names_x=[file_names_x]
+		file_names_y=[file_names_y]
+		file_names_z=[file_names_z]
+		
 		if(i==0):
 			print('Generating initial samples...')
+			file_names_x=config.assembly_system['data_files_x']
+			file_names_y=config.assembly_system['data_files_y']
+			file_names_z=config.assembly_system['data_files_z']
+		
+			train_dim=sampling_config['sample_dim']
 			initial_samples=adaptive_sampling.inital_sampling_uniform_random(kcc_struct,sampling_config['sample_dim'])
-			file_path='./sample_input/'+part_type+'/'+file_name
+			file_path=kcc_folder+'/'+file_name
 			np.savetxt(file_path, initial_samples, delimiter=",")
-			
+			train_samples=initial_samples
+			kcc_files=config.assembly_system['kcc_files']
+			train_samples=get_data.data_import(kcc_files,kcc_folder)
 			print('Sampling Completed...')
-
-			cae_status=cae_simulations.run_simulations(i,'train')
+			
+			#cae_status=cae_simulations.run_simulations(i,'train')
 			
 			dataset=[]
 			dataset.append(get_data.data_import(file_names_x,data_folder))
 			dataset.append(get_data.data_import(file_names_y,data_folder))
 			dataset.append(get_data.data_import(file_names_z,data_folder))
 			
-			kcc_dataset=get_data.data_import(kcc_files,kcc_folder)
-			input_conv_data, kcc_subset_dump,kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,dataset,point_index,kcc_dataset)
+			input_conv_data, kcc_subset_dump,kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,dataset,point_index,train_samples)
 
 
-		if(i>=0):
+		if(i>0):
+			
 			print('Adaptive Sampling..')
 
-			#get prediction errors
-			#get uncertainty estimates
-		
-			#Currently using random sampling
-			initial_samples=adaptive_sampling.inital_sampling_uniform_random(kcc_struct,sampling_config['adaptive_sample_dim'])
-			file_path='./sample_input/'+part_type+'/'+file_name
-			np.savetxt(file_path, initial_samples, delimiter=",")
+			test_flag=1
+
+			if(test_flag==1):
+				print('Generating Validation Data...')
+				print('LHS Sampling for test samples')
+				print('Generating initial samples')
+				
+				#get prediction errors
+				#get uncertainty estimates
+				from cae_simulations import CAESimulations
+				cae_simulations=CAESimulations(simulation_platform,simulation_engine,max_run_length,case_study)
+				initial_samples=adaptive_sampling.inital_sampling_lhs(kcc_struct,sampling_config['test_sample_dim'])
+
+				file_name=sampling_config['output_file_name_test']+".csv"
+				file_path=kcc_folder+'/'+file_name
+				file_names_x=sampling_config['datagen_filename_x']+'test'+'_'+str(0)+'.csv'
+				file_names_y=sampling_config['datagen_filename_y']+'test'+'_'+str(0)+'.csv'
+				file_names_z=sampling_config['datagen_filename_z']+'test'+'_'+str(0)+'.csv'
+				file_names_x=[file_names_x]
+				file_names_y=[file_names_y]
+				file_names_z=[file_names_z]
+				
+				np.savetxt(file_path, initial_samples, delimiter=",")
+				print('Sampling Completed...')
+
+				test_samples=initial_samples
+				cae_status=cae_simulations.run_simulations(run_id=0,type_flag='test')
+
+				print("Pre-processing simulated test data")
+				dataset_test=[]
+				dataset_test.append(get_data.data_import(file_names_x,data_folder))
+				dataset_test.append(get_data.data_import(file_names_y,data_folder))
+				dataset_test.append(get_data.data_import(file_names_z,data_folder))
+				
+
+				input_conv_data_test, kcc_subset_dump_test,kpi_subset_dump_test=get_data.data_convert_voxel_mc(vrm_system,dataset_test,point_index,test_samples)
 			
+
+
+			#Currently using random sampling
+			file_name=sampling_config['output_file_name_train']+'_'+str(i)+'.csv'
+			train_dim=train_dim+sampling_config['adaptive_sample_dim']
+			initial_samples=adaptive_sampling.inital_sampling_uniform_random(kcc_struct,sampling_config['adaptive_sample_dim'])
+			file_path=kcc_folder+'/'+file_name
+			np.savetxt(file_path, initial_samples, delimiter=",")
+			train_samples=initial_samples
 			print('Sampling Completed...')
 
 			cae_status=cae_simulations.run_simulations(i,'train')
@@ -242,25 +274,41 @@ if __name__ == '__main__':
 			dataset.append(get_data.data_import(file_names_y,data_folder))
 			dataset.append(get_data.data_import(file_names_z,data_folder))
 			
-			kcc_dataset=get_data.data_import(kcc_files,kcc_folder)
-			input_conv_data, kcc_subset_dump,kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,dataset,point_index,kcc_dataset)
+			input_conv_data, kcc_subset_dump,kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,dataset,point_index,train_samples)
 
 
 		combined_conv_data_list.append(input_conv_data)
 		combined_kcc_data_list.append(kcc_subset_dump)
 
 		print('Concatenating dataset')
+		print(len(combined_conv_data_list))
 
-		combined_conv_data=np.concatenate(combined_conv_data_list,axis=4)
-		combined_kcc_data=np.concatenate(combined_kcc_data_list,axis=1)
-
+		combined_conv_data=np.concatenate(combined_conv_data_list,axis=0)
+		combined_kcc_data=np.concatenate(combined_kcc_data_list,axis=0)
 		print(combined_conv_data.shape,combined_kcc_data.shape)
 		
 		if(model_type=='Bayesian 3D Convolution Neural Network'):
+			
+			from core_model_bayes import Bayes_DLModel
+			from model_train_bayes import BayesTrainModel
+
 			dl_model=Bayes_DLModel(model_type,output_dimension,optimizer,loss_func,regularizer_coeff,output_type)
 			model=dl_model.bayes_cnn_model_3d(voxel_dim,voxel_channels)
 
+			print('Model summary used for training')
+			print(model.summary())
+
+			train_model=BayesTrainModel(batch_size,epocs,split_ratio)
+			trained_model=train_model.run_train_model(model,combined_conv_data,combined_kcc_data,model_path,logs_path,plots_path,activate_tensorboard,run_id)
+			print('Training Complete')
+
+
 		if(model_type=='3D Convolution Neural Network'):
+			from core_model import DLModel
+			from model_deployment import DeployModel
+
+			from model_train import TrainModel
+			deploy_model=DeployModel();
 			
 			if(learning_type=='Basic'):
 				dl_model=DLModel(model_type,output_dimension,optimizer,loss_func,regularizer_coeff,output_type)
@@ -286,8 +334,75 @@ if __name__ == '__main__':
 				if(tl_type=='feature_extractor'):
 					model=transfer_learning.set_fixed_train_params(transfer_model)
 		
-		print('Model summary used for training')
-		print(model.summary())
+			print('Model summary used for training')
+			print(model.summary())
+			
+			train_model=TrainModel(batch_size,epocs,split_ratio)
+			trained_model,eval_metrics,accuracy_metrics_df=train_model.run_train_model(model,combined_conv_data,combined_kcc_data,model_path,logs_path,plots_path,activate_tensorboard,run_id)
+
+		print('Training complete for run: ',i)
+
+		print('Print inferencing from trained model...')
+
+		if(i==0):
+			continue
 		
-		train_model=TrainModel(batch_size,epocs,split_ratio)
-		trained_model,eval_metrics,accuracy_metrics_df=train_model.run_train_model(model,input_conv_subset,kcc_subset,model_path,logs_path,plots_path,activate_tensorboard,run_id)
+		if(model_type=='Bayesian 3D Convolution Neural Network'):
+			
+			from bayes_model_deployment import BayesDeployModel
+			#from tf.keras import backend as K
+			
+			deploy_model=BayesDeployModel()
+			dl_model=Bayes_DLModel(model_type,output_dimension,optimizer,loss_func,regularizer_coeff,output_type)
+			
+			model=dl_model.bayes_cnn_model_3d(voxel_dim,voxel_channels)
+			model_bayes_path=model_path+'/Bayes_trained_model_'+str(run_id)
+			inference_model=deploy_model.get_model(model,model_bayes_path,voxel_dim,voxel_channels)
+
+			y_pred=np.zeros_like(kcc_subset_dump_test)
+			y_pred,y_std=deploy_model.model_inference(input_conv_data_test,inference_model,y_pred,kcc_subset_dump_test)
+			eval_metrics_test,accuracy_metrics_df_test=metrics_eval.metrics_eval_base(y_pred,kcc_subset_dump_test,logs_path,run_id)
+
+		if(model_type=='3D Convolution Neural Network'):
+
+			from keras import backend as K
+			model_test_path=train_path+'/model'+'/trained_model_'+str(run_id)+'.h5'
+			
+			inference_model=deploy_model.get_model(model_test_path)
+			y_pred=deploy_model.model_inference(input_conv_data_test,inference_model);
+			eval_metrics_test,accuracy_metrics_df_test=metrics_eval.metrics_eval_base(y_pred,kcc_subset_dump_test,logs_path,run_id)
+
+		datastudy_output_test[i,0]=train_dim
+		datastudy_output_test[i,1:assembly_kccs+1]=eval_metrics_test["Mean Absolute Error"]
+		datastudy_output_test[i,assembly_kccs+1:(2*assembly_kccs)+1]=eval_metrics_test["Mean Squared Error"]
+		datastudy_output_test[i,(2*assembly_kccs)+1:(3*assembly_kccs)+1]=eval_metrics_test["Root Mean Squared Error"]
+		datastudy_output_test[i,(3*assembly_kccs)+1:(4*assembly_kccs)+1]=eval_metrics_test["R Squared"]
+
+		file_name='test_metrics_data_study_'+str(train_dim)+'_.csv'
+		accuracy_metrics_df_test.to_csv(logs_path+'/'+file_name)
+		print("Model Testing Complete on samples :",train_dim)
+		print("The Model Test Metrics are ")
+		print(eval_metrics_test)
+		#K.clear_session()
+
+
+	for i in range(len(eval_metrics_type)):
+		datastudy_output_test[:,(4*assembly_kccs)+i+1]=np.mean(datastudy_output_test[:,(i*assembly_kccs)+1:((i+1)*assembly_kccs)+1],axis=1)
+	
+	col_names=['Training_Samples']
+	for metric in eval_metrics_type:
+		for kcc in kcc_id:
+			col_names.append(str(metric)+'_'+str(kcc))
+
+	for metric in eval_metrics_type:
+	    col_names.append(str(metric)+"_avg")
+
+	ds_output_df_test=pd.DataFrame(data=datastudy_output_test,columns=col_names)
+	ds_output_df_test.to_csv(logs_path+'/'+'datastudy_output_test.csv')
+	
+	print('Dynamic Training complete')
+
+	print('Plotting Data Study Validation Results: ')
+	fig_test = ds_output_df_test.iplot(x='Training_Samples',asFigure=True)
+	py.offline.plot(fig_test,filename=logs_path+'/'+"dynamic_training_plot_test.html")
+

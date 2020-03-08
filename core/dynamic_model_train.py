@@ -36,7 +36,10 @@ from tqdm import tqdm
 
 import tensorflow as tf
 import tensorflow_probability as tfp
-#import matlab.engine
+A = tf.constant([[3, 2], [5, 2]])
+print('Dummy Tensor flow initialization to load Cudnn Library: ', tf.eye(2,2))
+
+import matlab.engine
 from pyDOE import lhs
 from scipy.stats import uniform,norm
 
@@ -176,6 +179,43 @@ if __name__ == '__main__':
 
 	datastudy_output_test=np.zeros((max_run_length,(assembly_kccs+1)*len(eval_metrics_type)+1))
 
+	test_flag=1
+
+	if(test_flag==1):
+		print('Generating Validation Data...')
+		print('LHS Sampling for test samples')
+		print('Generating initial samples')
+				
+		#get prediction errors
+		#get uncertainty estimates
+		from cae_simulations import CAESimulations
+		cae_simulations=CAESimulations(simulation_platform,simulation_engine,max_run_length,case_study)
+		initial_samples=adaptive_sampling.inital_sampling_lhs(kcc_struct,sampling_config['test_sample_dim'])
+
+		file_name=sampling_config['output_file_name_test']+".csv"
+		file_path=kcc_folder+'/'+file_name
+		file_names_x=sampling_config['datagen_filename_x']+'test'+'_'+str(0)+'.csv'
+		file_names_y=sampling_config['datagen_filename_y']+'test'+'_'+str(0)+'.csv'
+		file_names_z=sampling_config['datagen_filename_z']+'test'+'_'+str(0)+'.csv'
+		file_names_x=[file_names_x]
+		file_names_y=[file_names_y]
+		file_names_z=[file_names_z]
+				
+		np.savetxt(file_path, initial_samples, delimiter=",")
+		print('Sampling Completed...')
+
+		test_samples=initial_samples
+		cae_status=cae_simulations.run_simulations(run_id=0,type_flag='test')
+
+		print("Pre-processing simulated test data")
+		dataset_test=[]
+		dataset_test.append(get_data.data_import(file_names_x,data_folder))
+		dataset_test.append(get_data.data_import(file_names_y,data_folder))
+		dataset_test.append(get_data.data_import(file_names_z,data_folder))
+				
+		input_conv_data_test, kcc_subset_dump_test,kpi_subset_dump_test=get_data.data_convert_voxel_mc(vrm_system,dataset_test,point_index,test_samples)
+
+
 	for i in tqdm(range(max_run_length)):
 		
 		run_id=i
@@ -192,20 +232,15 @@ if __name__ == '__main__':
 		
 		if(i==0):
 			print('Generating initial samples...')
-			file_names_x=config.assembly_system['data_files_x']
-			file_names_y=config.assembly_system['data_files_y']
-			file_names_z=config.assembly_system['data_files_z']
 		
 			train_dim=sampling_config['sample_dim']
 			initial_samples=adaptive_sampling.inital_sampling_uniform_random(kcc_struct,sampling_config['sample_dim'])
 			file_path=kcc_folder+'/'+file_name
 			np.savetxt(file_path, initial_samples, delimiter=",")
 			train_samples=initial_samples
-			kcc_files=config.assembly_system['kcc_files']
-			train_samples=get_data.data_import(kcc_files,kcc_folder)
 			print('Sampling Completed...')
 			
-			#cae_status=cae_simulations.run_simulations(i,'train')
+			cae_status=cae_simulations.run_simulations(i,'train')
 			
 			dataset=[]
 			dataset.append(get_data.data_import(file_names_x,data_folder))
@@ -218,45 +253,6 @@ if __name__ == '__main__':
 		if(i>0):
 			
 			print('Adaptive Sampling..')
-
-			test_flag=1
-
-			if(test_flag==1):
-				print('Generating Validation Data...')
-				print('LHS Sampling for test samples')
-				print('Generating initial samples')
-				
-				#get prediction errors
-				#get uncertainty estimates
-				from cae_simulations import CAESimulations
-				cae_simulations=CAESimulations(simulation_platform,simulation_engine,max_run_length,case_study)
-				initial_samples=adaptive_sampling.inital_sampling_lhs(kcc_struct,sampling_config['test_sample_dim'])
-
-				file_name=sampling_config['output_file_name_test']+".csv"
-				file_path=kcc_folder+'/'+file_name
-				file_names_x=sampling_config['datagen_filename_x']+'test'+'_'+str(0)+'.csv'
-				file_names_y=sampling_config['datagen_filename_y']+'test'+'_'+str(0)+'.csv'
-				file_names_z=sampling_config['datagen_filename_z']+'test'+'_'+str(0)+'.csv'
-				file_names_x=[file_names_x]
-				file_names_y=[file_names_y]
-				file_names_z=[file_names_z]
-				
-				np.savetxt(file_path, initial_samples, delimiter=",")
-				print('Sampling Completed...')
-
-				test_samples=initial_samples
-				cae_status=cae_simulations.run_simulations(run_id=0,type_flag='test')
-
-				print("Pre-processing simulated test data")
-				dataset_test=[]
-				dataset_test.append(get_data.data_import(file_names_x,data_folder))
-				dataset_test.append(get_data.data_import(file_names_y,data_folder))
-				dataset_test.append(get_data.data_import(file_names_z,data_folder))
-				
-
-				input_conv_data_test, kcc_subset_dump_test,kpi_subset_dump_test=get_data.data_convert_voxel_mc(vrm_system,dataset_test,point_index,test_samples)
-			
-
 
 			#Currently using random sampling
 			file_name=sampling_config['output_file_name_train']+'_'+str(i)+'.csv'
@@ -343,9 +339,6 @@ if __name__ == '__main__':
 		print('Training complete for run: ',i)
 
 		print('Print inferencing from trained model...')
-
-		if(i==0):
-			continue
 		
 		if(model_type=='Bayesian 3D Convolution Neural Network'):
 			

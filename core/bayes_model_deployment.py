@@ -19,6 +19,7 @@ sys.path.append("../datasets")
 sys.path.append("../trained_models")
 sys.path.append("../config")
 
+import pathlib
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -64,7 +65,7 @@ class BayesDeployModel:
 
 		return model
 
-	def model_inference(self,inference_data,inference_model,y_pred,y_actual,print_result=1,plot_result=0,append_result=0):
+	def model_inference(self,inference_data,inference_model,y_pred,y_actual,plots_path,run_id=0):
 		"""model_inference method is used to infer from unknown sample(s) using the trained model 
 				
 				:param inference_data: Unknown dataset having same structure as the train dataset
@@ -79,11 +80,14 @@ class BayesDeployModel:
 		"""		
 		#result=inference_model.(inference_data)
 		y_std=np.zeros_like(y_pred)
+		
+		plots_path_run_id=plots_path+'/plots_run_id_'+str(run_id)
+		pathlib.Path(plots_path_run_id).mkdir(parents=True, exist_ok=True)
 
 		for i in range(len(inference_data)):
 			
 			from scipy.stats import norm
-			epistemic_samples=500
+			epistemic_samples=750
 			inference_sample=inference_data[i,:,:,:,:]
 			print(inference_sample.shape)
 			input_sample=np.array([inference_sample,]*epistemic_samples)
@@ -103,7 +107,8 @@ class BayesDeployModel:
 			pred_std=np.array(output_mean).std(axis=0,ddof=1)
 			output_mean=np.array(output_mean)
 			print(output_mean.shape)
-			pred_plots=0
+			
+			pred_plots=1
 			
 			if(pred_plots==1):
 				for j in range(y_pred.shape[1]):
@@ -116,35 +121,12 @@ class BayesDeployModel:
 					plt.axvline(x=pred_mean[j]-norm.ppf(0.95)*pred_std[j], label="95 CI = "+str(pred_mean[j]-norm.ppf(0.95)*pred_std[j]),c='b')
 					plt.title("Prediction Distribution for KCC " + str(j) + " sample "+ str(i))
 					#plt.show()
-					plt.savefig("./pred_plots/"+"KCC " + str(j) + " sample "+ str(i)+'.png')
+					plt.savefig(plots_path_run_id+"/"+ "sample_"+ str(i)+"_KCC_" + str(j) +'.png')
 					plt.clf()
 			y_pred[i,:]=pred_mean
 			y_std[i,:]=pred_std
-			print(pred_mean)
-			print(pred_std)
-
-		if(append_result==1):
-			with open ("user_preds.csv",'a',newline='') as filedata:
-				#fieldnames = ['kcc1','kcc2','kcc3','kcc4','kcc5','kcc6']                            
-				writer = csv.writer(filedata, delimiter=',')
-				writer.writerow(rounded_result[0,:].tolist())
-				#writer.writerow(dict(zip(fieldnames, rounded_result[0,:].tolist()))) 
-				#filedata.write(rounded_result[0,:].tolist())
-		
-		if(plot_result==1):
-			print("Plotting Results in HTML...")
-			import plotly.graph_objects as go
-			import plotly as py
-			result_str = ["%.2f" % number for number in rounded_result[0,:]]
-
-			kcc_str=["X(1): ","X(2): ", "X(3): ", "X(4): ", "X(5): ", "X(6): "]	
-			display_str=np.core.defchararray.add(kcc_str, result_str)	
-			print(display_str)
-			fig = go.Figure(data=go.Scatter(y=rounded_result[0,:], marker=dict(
-			size=30,color=100), mode='markers+text',text=display_str,x=["X(1)","X(2)", "X(3)", "X(4)", "X(5)", "X(6)"]))
-			fig.update_traces( textfont_size=20,textposition='top center')
-			fig.update_layout(title_text='Deep Learning for Manufacturing - Model Estimates')
-			py.offline.plot(fig, filename="results.html")
+			#print(pred_mean)
+			#print(pred_std)
 
 		return y_pred,y_std
 

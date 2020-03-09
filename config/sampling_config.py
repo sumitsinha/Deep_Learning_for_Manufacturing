@@ -17,9 +17,9 @@
 
 """
 
-sampling_config={'sample_dim':200,
+sampling_config={'sample_dim':300,
                 'test_sample_dim':300,
-		'adaptive_sample_dim':100,
+		'adaptive_sample_dim':200,
 		'adaptive_runs':5,	
         'sample_type':'uniform',
         'output_file_name_test':'inner_rf_samples_dynamic_test_0',

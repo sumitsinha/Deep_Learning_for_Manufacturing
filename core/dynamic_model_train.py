@@ -185,7 +185,6 @@ if __name__ == '__main__':
 	if(test_flag==1):
 		print('Generating Validation Data...')
 		print('LHS Sampling for test samples')
-		print('Generating initial samples')
 				
 		#get prediction errors
 		#get uncertainty estimates
@@ -354,7 +353,7 @@ if __name__ == '__main__':
 			inference_model=deploy_model.get_model(model,model_bayes_path,voxel_dim,voxel_channels)
 
 			y_pred=np.zeros_like(kcc_subset_dump_test)
-			y_pred,y_std=deploy_model.model_inference(input_conv_data_test,inference_model,y_pred,kcc_subset_dump_test)
+			y_pred,y_std=deploy_model.model_inference(input_conv_data_test,inference_model,y_pred,kcc_subset_dump_test,plots_path,run_id)
 			eval_metrics_test,accuracy_metrics_df_test=metrics_eval.metrics_eval_base(y_pred,kcc_subset_dump_test,logs_path,run_id)
 
 			std_file_path=logs_path+'/'+'uncertainty_'+str(run_id)+'_.csv'

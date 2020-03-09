@@ -100,7 +100,7 @@ model_parameters = {
         'learning_type':'Basic', # use 'Transfer Learning' if transfer learning is to be leveraged
         'output_type':'regression',
         'batch_size': 32,
-        'epocs': 100,
+        'epocs': 500,
         'split_ratio': 0.2,
         'optimizer':'adam',
         'loss_func':'mse',
@@ -116,12 +116,12 @@ cae_sim_params = {
         #case_study parameter imported from assembly_configration
 }
 data_study_params = {
-	'batch_size':1,
-	'epocs':1,
+	'batch_size':32,
+	'epocs':250,
 	'min_train_samples':100,
         'train_increment':100,
         'max_train_samples':3000,
-	'split_ratio':0.1,
+	'split_ratio':0.2,
         'tl_flag':1
 }
 

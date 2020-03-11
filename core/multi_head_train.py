@@ -1,7 +1,3 @@
-""" The model train file trains the model on the download dataset and other parameters specified in the assemblyconfig file
-The main function runs the training and populates the created file structure with the trained model, logs and plots
-"""
-
 import os
 import sys
 current_path=os.path.dirname(__file__)
@@ -38,12 +34,13 @@ from measurement_system import HexagonWlsScanner
 from assembly_system import VRMSimulationModel
 from wls400a_system import GetInferenceData
 from data_import import GetTrainData
-from core_model import DLModel
+from multi_head_model import Multi_Head_DLModel
 from training_viz import TrainViz
 from metrics_eval import MetricsEval
+#from model_train import TrainModel
 from keras_lr_multiplier import LRMultiplier
 
-class TrainModel:
+class Multi_Head_TrainModel:
 	"""Train Model Class, the initialization parameters are parsed from modelconfig_train.py file
 		
 		:param batch_size: mini batch size while training the model 
@@ -63,7 +60,7 @@ class TrainModel:
 			self.split_ratio=split_ratio
 			
 
-	def run_train_model(self,model,X_in,Y_out,model_path,logs_path,plots_path,activate_tensorboard=0,run_id=0,tl_type='full_fine_tune'):
+	def run_train_model(self,model,X_train,y_train,X_test,y_test,model_path,logs_path,plots_path,activate_tensorboard=0,run_id=0,tl_type='full_fine_tune'):
 		"""run_train_model function trains the model on the dataset and saves the trained model,logs and plots within the file structure, the function prints the training evaluation metrics
 			
 			:param model: 3D CNN model compiled within the Deep Learning Class, refer https://keras.io/models/model/ for more information 
@@ -98,7 +95,7 @@ class TrainModel:
 
 		model_file_path=model_path+'/trained_model_'+str(run_id)+'.h5'
 		
-		X_train, X_test, y_train, y_test = train_test_split(X_in, Y_out, test_size = self.split_ratio)
+		#X_train, X_test, y_train, y_test = train_test_split(X_in, Y_out, test_size = self.split_ratio)
 		print("Data Split Completed")
 		
 		#Checkpointer to save the best model
@@ -110,25 +107,23 @@ class TrainModel:
 			tensorboard = TensorBoard(log_dir=logs_path,histogram_freq=1, write_graph=True, write_images=True)
 			callbacks=[checkpointer,tensorboard]
 		
-		tensorboard = TensorBoard(log_dir=logs_path,histogram_freq=1, write_graph=True, write_images=True)
+		tensorboard = TensorBoard(log_dir='C:\\Users\\SINHA_S\\Desktop\\dlmfg_package\\dlmfg\\trained_models\\inner_rf_assembly\\multi_head\\logs',histogram_freq=1, write_graph=True, write_images=True)
 		history=model.fit(x=X_train, y=y_train, validation_data=(X_test,y_test), epochs=self.epochs, batch_size=self.batch_size,callbacks=callbacks)
 		
 		trainviz=TrainViz()
-		trainviz.training_plot(history,plots_path,run_id)
+		#trainviz.training_plot(history,plots_path,run_id)
 		
 		if(tl_type=='variable_lr'):
 			inference_model=load_model(model_file_path, custom_objects={'LRMultiplier': LRMultiplier})
 		else:
 			inference_model=load_model(model_file_path)
-			
+		
+		print('Compiling test metrics...')
 		y_pred=inference_model.predict(X_test)
 
 		metrics_eval=MetricsEval();
 		eval_metrics,accuracy_metrics_df=metrics_eval.metrics_eval_base(y_pred,y_test,logs_path)
 		return model,eval_metrics,accuracy_metrics_df
-
-	def run_train_model_dynamic():
-		pass
 
 if __name__ == '__main__':
 
@@ -155,6 +150,7 @@ if __name__ == '__main__':
 	data_folder=config.assembly_system['data_folder']
 	kcc_folder=config.assembly_system['kcc_folder']
 	kcc_files=config.assembly_system['kcc_files']
+	test_kcc_files=config.assembly_system['test_kcc_files']
 
 	print('Parsing from Training Config File')
 
@@ -168,10 +164,15 @@ if __name__ == '__main__':
 	regularizer_coeff=cftrain.model_parameters['regularizer_coeff']
 	activate_tensorboard=cftrain.model_parameters['activate_tensorboard']
 	
+	print('Parsing multi-head network')
+
+	assembly_stages=config.assembly_system['assembly_stages']
+	multi_stage_params=config.multi_stage_data_construct
+
 	print('Creating file Structure....')
 	
 	folder_name=part_type
-	train_path='../trained_models/'+part_type
+	train_path='../trained_models/'+part_type+'/multi_head'
 	pathlib.Path(train_path).mkdir(parents=True, exist_ok=True) 
 
 	model_path=train_path+'/model'
@@ -198,33 +199,56 @@ if __name__ == '__main__':
 
 	output_dimension=assembly_kccs
 	
-	dl_model=DLModel(model_type,output_dimension,optimizer,loss_func,regularizer_coeff,output_type)
-	model=dl_model.cnn_model_3d(voxel_dim,voxel_channels)
-	print(model.summary())
-	#sys.exit()
-	print('Training 3D CNN model')
-	
-	if(activate_tensorboard==1):
-		tensorboard_str='tensorboard' + '--logdir '+logs_path
-		print('Visualize at Tensorboard using ', tensorboard_str)
-	print('Importing and Preprocessing Cloud-of-Point Data')
-	
-	dataset=[]
-	dataset.append(get_data.data_import(file_names_x,data_folder))
-	dataset.append(get_data.data_import(file_names_y,data_folder))
-	dataset.append(get_data.data_import(file_names_z,data_folder))
-	point_index=get_data.load_mapping_index(mapping_index)
+	dl_model=Multi_Head_DLModel(model_type,assembly_stages,output_dimension)
+	model=dl_model.multi_head_standard_cnn_model_3d(voxel_dim,voxel_channels)
 
-	kcc_dataset=get_data.data_import(kcc_files,kcc_folder)
-	input_conv_data, kcc_subset_dump,kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,dataset,point_index,kcc_dataset)
+	print('Importing data')
 	
-	train_model=TrainModel(batch_size,epocs,split_ratio)
-	trained_model,eval_metrics,accuracy_metrics_df=train_model.run_train_model(model,input_conv_data,kcc_subset_dump,model_path,logs_path,plots_path,activate_tensorboard)
+	point_index=get_data.load_mapping_index(mapping_index)
+	kcc_dataset=get_data.data_import(kcc_files,kcc_folder)
+	kcc_dataset_test=get_data.data_import(test_kcc_files,kcc_folder)
+
+	x_in=[]
+	x_test=[]
+
+	for stage in multi_stage_params:
+		
+		print('Importing and Pre-Processing Train data for: ','station: ',stage['station_id'],'stage: ',stage['stage_id'])
+		dataset=[]
+		dataset.append(get_data.data_import(stage['data_files_x'],data_folder))
+		dataset.append(get_data.data_import(stage['data_files_y'],data_folder))
+		dataset.append(get_data.data_import(stage['data_files_z'],data_folder))
+		
+		input_conv_data, kcc_subset_dump,kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,dataset,point_index,kcc_dataset)
+		
+		x_in.append(input_conv_data)
+
+	y_out=kcc_subset_dump
+
+	for stage in multi_stage_params:
+		
+		print('Importing and Pre-Processing test data for: ','station: ',stage['station_id'],'stage: ',stage['stage_id'])
+		dataset=[]
+		dataset.append(get_data.data_import(stage['test_data_files_x'],data_folder))
+		dataset.append(get_data.data_import(stage['test_data_files_y'],data_folder))
+		dataset.append(get_data.data_import(stage['test_data_files_z'],data_folder))
+		
+		input_conv_data_test, kcc_subset_dump_test,kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,dataset,point_index,kcc_dataset_test)
+		
+		x_test.append(input_conv_data_test)
+
+	y_test=kcc_subset_dump_test
+	
+	print('Data Import completed')
+	train_model=Multi_Head_TrainModel(batch_size,epocs,split_ratio)
+	
+	trained_model,eval_metrics,accuracy_metrics_df=train_model.run_train_model(model,x_in,y_out,x_test,y_test,model_path,logs_path,plots_path,activate_tensorboard)
 	
 	accuracy_metrics_df.to_csv(logs_path+'/metrics_train.csv')
 
 	print("Model Training Complete..")
 	print("The Model Validation Metrics are ")
+	
 	print(eval_metrics)
 
 	print('Training Completed Successfully')

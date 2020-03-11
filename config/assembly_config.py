@@ -83,6 +83,7 @@ assembly_system = {
         'part_name':'inner_rf',
         'data_format': 'Complete',
         'assembly_type':"multi-Stage",
+        'assembly_stages':2,
         'assembly_kccs':6,
         'assembly_kpis':1,
         'voxel_dim':64,
@@ -95,7 +96,7 @@ assembly_system = {
         'nominal_cop_filename':'inner_rf_nominal_cop.csv',
         'data_folder':'../datasets/inner_rf_assembly',
         'kcc_folder':'../active_learning/sample_input/inner_rf_assembly',
-        'kcc_files':['inner_rf_samples_datagen10_gui_demo_test.csv'],
+        'kcc_files':['inner_rf_samples_datagen10_gui_demo.csv'],
         'test_kcc_files':['inner_rf_samples_datagen10_gui_demo_test.csv'],
         'data_files_x':['output_table_x_gui_demo10_test_3.csv'],
         'data_files_y':['output_table_y_gui_demo10_test_3.csv'],
@@ -104,6 +105,36 @@ assembly_system = {
         'test_data_files_y':['output_table_y_gui_demo10_test_3.csv'],
         'test_data_files_z':['output_table_z_gui_demo10_test_3.csv'],
         }
+
+multi_stage_data_construct=[]
+
+multi_stage_data_construct.append({'station_id':0,
+                'stage_id':0,
+                'stage_type':'positioning',#'clamping','fastening','release'
+                'station_name':'inner_rf_joining',
+                'data_files_x':['output_table_x_gui_demo10_1.csv'],
+                'data_files_y':['output_table_y_gui_demo10_1.csv'],
+                'data_files_z':['output_table_z_gui_demo10_1.csv'],
+                'test_data_files_x':['output_table_x_gui_demo10_test_1.csv'],
+                'test_data_files_y':['output_table_y_gui_demo10_test_1.csv'],
+                'test_data_files_z':['output_table_z_gui_demo10_test_1.csv'],  
+        })
+
+multi_stage_data_construct.append({'station_id':0,
+                'stage_id':4,
+                'stage_type':'release',#'clamping','fastening','release'
+                'station_name':'inner_rf_joining',
+                'data_files_x':['output_table_x_gui_demo10_4.csv'],
+                'data_files_y':['output_table_y_gui_demo10_4.csv'],
+                'data_files_z':['output_table_z_gui_demo10_4.csv'],
+                'test_data_files_x':['output_table_x_gui_demo10_test_4.csv'],
+                'test_data_files_y':['output_table_y_gui_demo10_test_4.csv'],
+                'test_data_files_z':['output_table_z_gui_demo10_test_4.csv'],  
+        })
+
+
+
+
 
 #Assert that all config values conform to the library requirements
 assert type(assembly_system['assembly_kccs']) is int, "Assembly KCCs is not an integer: %r" %assembly_system[assembly_kccs]

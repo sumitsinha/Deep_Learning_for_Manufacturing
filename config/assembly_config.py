@@ -132,6 +132,66 @@ multi_stage_data_construct.append({'station_id':0,
                 'test_data_files_z':['output_table_z_gui_demo10_test_4.csv'],  
         })
 
+multi_stage_sensor_config = {   
+        'eval_metric': 'R2',#MSE, RMSE, R2
+        'eval_metric_threshold' :0.95, #mm
+        'max_stages':4,
+        'inital_stage_list':[3],
+        }
+
+multi_stage_sensor_construct=[]
+
+multi_stage_sensor_construct.append({'station_id':0,
+                'stage_id':0,
+                'stage_type':'positioning',#'clamping','fastening','release'
+                'station_name':'inner_rf_joining',
+                'process_param_ids':[0,1,2],
+                'data_files_x':['output_table_x_gui_demo10_1.csv'],
+                'data_files_y':['output_table_y_gui_demo10_1.csv'],
+                'data_files_z':['output_table_z_gui_demo10_1.csv'],
+                'test_data_files_x':['output_table_x_gui_demo10_test_1.csv'],
+                'test_data_files_y':['output_table_y_gui_demo10_test_1.csv'],
+                'test_data_files_z':['output_table_z_gui_demo10_test_1.csv'],  
+        })
+
+multi_stage_sensor_construct.append({'station_id':0,
+                'stage_id':1,
+                'stage_type':'clamping',#'clamping','fastening','release'
+                'station_name':'inner_rf_joining',
+                'process_param_ids':[3,4,5],
+                'data_files_x':['output_table_x_gui_demo10_2.csv'],
+                'data_files_y':['output_table_y_gui_demo10_2.csv'],
+                'data_files_z':['output_table_z_gui_demo10_2.csv'],
+                'test_data_files_x':['output_table_x_gui_demo10_test_2.csv'],
+                'test_data_files_y':['output_table_y_gui_demo10_test_2.csv'],
+                'test_data_files_z':['output_table_z_gui_demo10_test_2.csv'],  
+        })
+
+multi_stage_sensor_construct.append({'station_id':0,
+                'stage_id':2,
+                'stage_type':'fastening',#'clamping','fastening','release'
+                'station_name':'inner_rf_joining',
+                'process_param_ids':[],
+                'data_files_x':['output_table_x_gui_demo10_3.csv'],
+                'data_files_y':['output_table_y_gui_demo10_3.csv'],
+                'data_files_z':['output_table_z_gui_demo10_3.csv'],
+                'test_data_files_x':['output_table_x_gui_demo10_test_3.csv'],
+                'test_data_files_y':['output_table_y_gui_demo10_test_3.csv'],
+                'test_data_files_z':['output_table_z_gui_demo10_test_3.csv'],  
+        })
+
+multi_stage_sensor_construct.append({'station_id':0,
+                'stage_id':3,
+                'stage_type':'release',#'clamping','fastening','release'
+                'station_name':'inner_rf_joining',
+                'process_param_ids':[],
+                'data_files_x':['output_table_x_gui_demo10_4.csv'],
+                'data_files_y':['output_table_y_gui_demo10_4.csv'],
+                'data_files_z':['output_table_z_gui_demo10_4.csv'],
+                'test_data_files_x':['output_table_x_gui_demo10_test_4.csv'],
+                'test_data_files_y':['output_table_y_gui_demo10_test_4.csv'],
+                'test_data_files_z':['output_table_z_gui_demo10_test_4.csv'],  
+        })
 
 
 

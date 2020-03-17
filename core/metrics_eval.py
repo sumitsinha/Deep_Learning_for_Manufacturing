@@ -3,6 +3,8 @@ from sklearn import metrics
 import numpy as np
 import pandas as pd
 import math
+import sys
+sys.path.append("../config")
 
 class MetricsEval:
 	"""MetricsEval Class
@@ -30,17 +32,18 @@ class MetricsEval:
 		"""
 
 		kcc_dim=test_y.shape[1]
-
+		
+		import kcc_config as kcc_config
+		kcc_struct=kcc_config.kcc_struct
 		# Calculating Regression Based Evaluation Metrics
 		mae_KCCs=np.zeros((kcc_dim))
 		mse_KCCs=np.zeros((kcc_dim))
 		r2_KCCs=np.zeros((kcc_dim))
 
 		kcc_id=[]
-
-		for i in range(kcc_dim):  
-		    kcc_name="KCC_"+str(i+1)
-		    kcc_id.append(kcc_name)
+		for kcc in kcc_struct:
+			kcc_name=kcc['kcc_id']
+			kcc_id.append(kcc_name)
 		    
 		mae_KCCs=metrics.mean_absolute_error(predicted_y, test_y,multioutput='raw_values')
 		mse_KCCs=metrics.mean_squared_error(predicted_y, test_y,multioutput='raw_values')

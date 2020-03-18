@@ -23,6 +23,8 @@ class CAESimulations():
 			
 			#Initiating CAE engine within AI environment
 			eng = matlab.engine.start_matlab()
+			
+			#change to absolute path here
 			eng.cd(r'C:\Users\sinha_s\Desktop\VRM - GUI - datagen\Demos',nargout=0)
 			
 			print("Initiating CAE simulations for run ID: ",run_id)

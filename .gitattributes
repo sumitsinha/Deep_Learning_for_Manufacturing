@@ -2,3 +2,4 @@ docs/* linguist-documentation
 docs/ linguist-documentation
 docs/html/ linguist-documentation
 docs/html/* linguist-documentation
+cae_simulations/cae_matlab/* export-ignore

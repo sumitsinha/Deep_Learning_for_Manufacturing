@@ -2,4 +2,5 @@ docs/* linguist-documentation
 docs/ linguist-documentation
 docs/html/ linguist-documentation
 docs/html/* linguist-documentation
-cae_simulations/cae_matlab/* export-ignore
+cae_simulations/cae_matlab/* linguist-vendored
+cae_simulations/cae_matlab/**/ linguist-vendored

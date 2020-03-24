@@ -190,7 +190,7 @@ if __name__ == '__main__':
 	#copviz.plot_voxelized_data(input_conv_data[0,:,:,:,:],1)
 	# Preparing basic COP
 	base_cop=input_conv_data[0,:,:,:,0]+input_conv_data[0,:,:,:,1]+input_conv_data[0,:,:,:,2]
-	base_cop[base_cop!=0]=0.5
+	base_cop[base_cop!=0]=0.6
 
 	process_parameter_id=np.argmax(abs(y_pred[0,:]))
 
@@ -222,6 +222,7 @@ if __name__ == '__main__':
 	if(plotly_viz==1):
 		import plotly.graph_objects as go
 		import plotly as py
+		import plotly.express as px
 		X, Y, Z = np.mgrid[0:len(base_cop), 0:len(base_cop), 0:len(base_cop)]
 		#input_conv_data[0,:,:,:,0]=0.2
 		values_cop = base_cop
@@ -236,6 +237,7 @@ if __name__ == '__main__':
 		    isomax=1,
 		    opacity=0.1, # needs to be small to see through all surfaces
 		    surface_count=17, # needs to be a large number for good volume rendering
+		    colorscale='Greens'
 		    )
 
 		trace2=go.Volume(
@@ -245,8 +247,9 @@ if __name__ == '__main__':
 		    value=values_grad_cam.flatten(),
 		    isomin=0,
 		    isomax=1,
-		    opacity=0.2, # needs to be small to see through all surfaces
-		    surface_count=27, # needs to be a large number for good volume rendering
+		    opacity=0.1, # needs to be small to see through all surfaces
+		    surface_count=17,
+		    colorscale='orrd' # needs to be a large number for good volume rendering
 		    )
 		data = [trace1,trace2]
 		

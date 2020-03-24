@@ -101,9 +101,9 @@ assembly_system = {
         'data_files_x':['output_table_x_gui_demo10_test_3.csv'],
         'data_files_y':['output_table_y_gui_demo10_test_3.csv'],
         'data_files_z':['output_table_z_gui_demo10_test_3.csv'],
-        'test_data_files_x':['output_table_x_gui_demo10_test_3.csv'],
-        'test_data_files_y':['output_table_y_gui_demo10_test_3.csv'],
-        'test_data_files_z':['output_table_z_gui_demo10_test_3.csv'],
+        'test_data_files_x':['DX_sim_3.csv'],
+        'test_data_files_y':['DY_sim_3.csv'],
+        'test_data_files_z':['DZ_sim_3.csv'],
         }
 
 multi_stage_data_construct=[]

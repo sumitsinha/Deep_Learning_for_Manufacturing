@@ -38,8 +38,11 @@ from assembly_system import PartType
 from wls400a_system import GetInferenceData
 from metrics_eval import MetricsEval
 from data_import import GetTrainData
-#from cam_viz import CamViz
-#from cop_viz import CopViz
+from cam_viz import CamViz
+from cop_viz import CopViz
+import voxel_config as vc
+
+
 
 class DeployModel:
 	"""The Deploy Model class is used to import a trained model and use it to infer on unknown data
@@ -136,7 +139,7 @@ if __name__ == '__main__':
 	kcc_folder=config.assembly_system['kcc_folder']
 	kcc_files=config.assembly_system['test_kcc_files']
 	
-
+	cop_file_name=vc.voxel_parameters['nominal_cop_filename']
 	print('Initializing the Assembly System and Measurement System....')
 	measurement_system=HexagonWlsScanner(data_type,application,system_noise,part_type,data_format)
 	vrm_system=VRMSimulationModel(assembly_type,assembly_kccs,assembly_kpis,part_name,part_type,voxel_dim,voxel_channels,point_dim,aritifical_noise)
@@ -144,7 +147,7 @@ if __name__ == '__main__':
 	
 	#Generate Paths
 	train_path='../trained_models/'+part_type
-	model_path=train_path+'/model'+'/trained_model_0.h5'
+	model_path=train_path+'/model'+'/trained_model_38.h5'
 	logs_path=train_path+'/logs'
 	deploy_path=train_path+'/deploy/'
 
@@ -159,13 +162,20 @@ if __name__ == '__main__':
 	dataset.append(get_data.data_import(file_names_z,data_folder))
 	point_index=get_data.load_mapping_index(mapping_index)
 
-
-
 	#Make an Object of the Measurement System Class
 	measurement_system=HexagonWlsScanner(data_type,application, system_noise,part_type,data_format)
 	#Make an Object of the Assembly System Class
 	assembly_system=PartType(assembly_type,assembly_kccs,assembly_kpis,part_name,part_type,voxel_dim,voxel_channels,point_dim)
 
+	file_path='../resources/nominal_cop_files/'+cop_file_name
+	#Read cop from csv file
+	print('Importing Nominal COP')
+	nominal_cop=vrm_system.get_nominal_cop(file_path)
+
+	#print('Visualizing COP')
+	#plot_file_name='../resources/nominal_cop_files/part_name'+'_nominal_cop.html'
+	#copviz=CopViz(nominal_cop)
+	#copviz.plot_cop(plot_file_name)
 	
 	#Inference from simulated data
 	inference_model=deploy_model.get_model(model_path)
@@ -177,42 +187,78 @@ if __name__ == '__main__':
 
 	y_pred=deploy_model.model_inference(input_conv_data,inference_model,print_result=1);
 
-	evalerror=0
+	#copviz.plot_voxelized_data(input_conv_data[0,:,:,:,:],1)
+	# Preparing basic COP
+	base_cop=input_conv_data[0,:,:,:,0]+input_conv_data[0,:,:,:,1]+input_conv_data[0,:,:,:,2]
+	base_cop[base_cop!=0]=0.5
 
-	if(evalerror==1):
-		metrics_eval=MetricsEval();
-		eval_metrics,accuracy_metrics_df=metrics_eval.metrics_eval_base(y_pred,kcc_dataset,logs_path)
-		
-		print('Evaluation Metrics: ',eval_metrics)
-		accuracy_metrics_df.to_csv(logs_path+'/metrics_test.csv')
-		
-		np.savetxt((deploy_path+"predicted.csv"), y_pred, delimiter=",")
-		print('Predicted Values saved to disk...')
+	process_parameter_id=np.argmax(abs(y_pred[0,:]))
 
-	#Inference from Measurement Data
-
-	#measurement_files=mscofig.ms_parameters['measurement_files']
+	#Code for Grad CAM import
+	get_cam_data=1
 	
-	#Make an object of Get Data Class
-	#get_data=GetInferenceData();
-	
-	#Call functions of the get Data Class
-	#for measurement_file in measurement_files:	
-		#measurement_path=deploy_path+measurement_file
-		#measurement_data=get_data.load_measurement_file(measurement_path)
-		#voxel_point_index=get_data.load_mapping_index(voxel_path)
-		#y_dev_data_filtered=get_data.data_pre_processing(measurement_data,voxel_channels)
-		#input_conv_data=get_data.voxel_mapping(y_dev_data_filtered,voxel_point_index,point_dim,voxel_dim,voxel_channels)
-		#y_pred=deploy_model.model_inference(input_conv_data,inference_model);
-		#print('KCCs for: ',measurement_file)
-		#print(y_pred)
-
-	#Code for Voxel Vizvalization
-
-	#Code for CAM Visualization
-	viz=0
-	if(viz==1):
-		print(inference_model.summary())
+	if(get_cam_data==1):
+		#print(inference_model.summary())
+		print("Plotting Gradient based Class Activation Map for Process Parameter: ",process_parameter_id)
 		camviz=CamViz(inference_model,'conv3d_3')
+		#For explicit plotting change ID here
+		#process_parameter_id=0
+		cop_input=input_conv_data[0:1,:,:,:,:]
+		fmap_eval, grad_wrt_fmap_eval=camviz.grad_cam_3d(cop_input,process_parameter_id)
+		alpha_k_c= grad_wrt_fmap_eval.mean(axis=(0,1,2,3)).reshape((1,1,1,-1))
+		Lc_Grad_CAM = np.maximum(np.sum(fmap_eval*alpha_k_c,axis=-1),0).squeeze()
+		scale_factor = np.array(cop_input.shape[1:4])/np.array(Lc_Grad_CAM.shape)
 
-		grads=camviz.grad_cam_3d(input_conv_data[1:2,:,:,:,:],1)
+		from scipy.ndimage.interpolation import zoom
+		import keras.backend as K
+		
+		_grad_CAM = zoom(Lc_Grad_CAM,scale_factor)
+		arr_min, arr_max = np.min(_grad_CAM), np.max(_grad_CAM)
+		grad_CAM = (_grad_CAM - arr_min) / (arr_max - arr_min + K.epsilon())
+
+	#Code for Grad CAM Plotting
+	plotly_viz=1	
+	
+	if(plotly_viz==1):
+		import plotly.graph_objects as go
+		import plotly as py
+		X, Y, Z = np.mgrid[0:len(base_cop), 0:len(base_cop), 0:len(base_cop)]
+		#input_conv_data[0,:,:,:,0]=0.2
+		values_cop = base_cop
+		values_grad_cam=grad_CAM
+
+		trace1=go.Volume(
+		    x=X.flatten(),
+		    y=Y.flatten(),
+		    z=Z.flatten(),
+		    value=values_cop.flatten(),
+		    isomin=0,
+		    isomax=1,
+		    opacity=0.1, # needs to be small to see through all surfaces
+		    surface_count=17, # needs to be a large number for good volume rendering
+		    )
+
+		trace2=go.Volume(
+		    x=X.flatten(),
+		    y=Y.flatten(),
+		    z=Z.flatten(),
+		    value=values_grad_cam.flatten(),
+		    isomin=0,
+		    isomax=1,
+		    opacity=0.2, # needs to be small to see through all surfaces
+		    surface_count=27, # needs to be a large number for good volume rendering
+		    )
+		data = [trace1,trace2]
+		
+		layout = go.Layout(
+			margin=dict(
+				l=0,
+				r=0,
+				b=0,
+				t=0
+			)
+		)
+		
+		fig = go.Figure(data=data,layout=layout)
+		plot_file_name=deploy_path+'voxel_grad_cam.html'
+		py.offline.plot(fig, filename=plot_file_name)

@@ -1,6 +1,7 @@
 """ Contains classes and methods to visualize the class activation maps of the model for various root causes """
 
 import numpy as np
+#import tensorflow as tf
 import vis
 import keras
 from vis.utils import utils
@@ -45,7 +46,7 @@ class CamViz:
 
 			grad_wrt_fmap_eval /= (np.max(grad_wrt_fmap_eval) + K.epsilon())
 
-			print(grad_wrt_fmap_eval.shape)
+			#print(grad_wrt_fmap_eval.shape)
 			#alpha_k_c = grad_wrt_fmap_eval.mean(axis=(0,1,2)).reshape((1,1,1,-1))
 			#Lc_Grad_CAM = np.maximum(np.sum(fmap_eval*alpha_k_c,axis=-1),0).squeeze()
 

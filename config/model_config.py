@@ -110,14 +110,14 @@ model_parameters = {
 cae_sim_params = {
         'simulation_platform':'MatLab',
         'simulation_engine':'VRM',
-        'max_run_length':20,
+        'max_run_length':15,
         'cae_input_path': 'check',
         'cae_output_path':'check',
         #case_study parameter imported from assembly_configration
 }
 data_study_params = {
 	'batch_size':32,
-	'epocs':250,
+	'epocs':700,
 	'min_train_samples':100,
         'train_increment':100,
         'max_train_samples':3000,

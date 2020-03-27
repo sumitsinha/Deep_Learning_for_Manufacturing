@@ -116,8 +116,8 @@ cae_sim_params = {
         #case_study parameter imported from assembly_configration
 }
 data_study_params = {
-	'batch_size':32,
-	'epocs':700,
+	'batch_size':48,
+	'epocs':1000,
 	'min_train_samples':100,
         'train_increment':100,
         'max_train_samples':3000,

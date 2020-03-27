@@ -5,6 +5,9 @@ import pandas as pd
 
 tfd = tfp.distributions
 
+import sys
+sys.path.append("../config")
+
 class UncertainitySampling():
 
 	def __init__(self,adaptive_samples_dim,num_mix,weight=0.5):
@@ -65,6 +68,7 @@ class UncertainitySampling():
 		gmm_mixture_model=tfd.Mixture(cat=tfd.Categorical(probs=gmm_mixture_coeff),components=components)
 		samples=tfd.Sample(gmm_mixture_model,sample_shape=self.adaptive_samples_dim)
 		output=samples.sample()
+		output=np.array(output) 
 		#np.savetxt('../trained_models/sampling_check/samples.csv', output, delimiter=",")
 		gmm_model_params[:,0]=np.array(gmm_mixture_coeff)
 		
@@ -73,7 +77,11 @@ class UncertainitySampling():
 			gmm_model_params[j,y_actual.shape[1]:]=gmm_variance[j].numpy().flatten()
 
 		#np.savetxt('../trained_models/sampling_check/gmm_model_params.csv', gmm_model_params, delimiter=",")
-		
+		from kcc_config import kcc_struct
+
+		for i,kcc in enumerate(kcc_struct):   
+			output[i,:]= np.clip(output[i,:], kcc['kcc_min'], kcc['kcc_max'])
+
 		return output,gmm_model_params
 
 if __name__ == '__main__':

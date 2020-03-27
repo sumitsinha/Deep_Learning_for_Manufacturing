@@ -193,7 +193,7 @@ if __name__ == '__main__':
 		#get uncertainty estimates
 		from cae_simulations import CAESimulations
 		cae_simulations=CAESimulations(simulation_platform,simulation_engine,max_run_length,case_study)
-		initial_samples=adaptive_sampling.inital_sampling_lhs(kcc_struct,sampling_config['test_sample_dim'])
+		initial_samples=adaptive_sampling.inital_sampling_uniform_random(kcc_struct,sampling_config['test_sample_dim'])
 
 		file_name=sampling_config['output_file_name_test']+".csv"
 		file_path=kcc_folder+'/'+file_name
@@ -226,7 +226,7 @@ if __name__ == '__main__':
 		#get uncertainty estimates
 		from cae_simulations import CAESimulations
 		cae_simulations=CAESimulations(simulation_platform,simulation_engine,max_run_length,case_study)
-		initial_samples=adaptive_sampling.inital_sampling_lhs(kcc_struct,sampling_config['sample_validation_dim'])
+		initial_samples=adaptive_sampling.inital_sampling_uniform_random(kcc_struct,sampling_config['sample_validation_dim'])
 
 		file_name=sampling_config['output_file_name_validate']+".csv"
 		file_path=kcc_folder+'/'+file_name
@@ -294,7 +294,8 @@ if __name__ == '__main__':
 			train_dim=train_dim+sampling_config['adaptive_sample_dim']
 			#initial_samples=adaptive_sampling.inital_sampling_uniform_random(kcc_struct,sampling_config['adaptive_sample_dim'])
 			initial_samples,gmm_model_params=unsap.get_distribution_samples(kcc_subset_dump_validate,y_pred_validate,y_std_validate)
-			np.savetxt(logs_path+'/gmm_model_params_run_'+str(run_id), gmm_model_params, delimiter=",")
+			
+			np.savetxt(logs_path+'/gmm_model_params_run_'+str(run_id)+'.csv', gmm_model_params, delimiter=",")
 			file_path=kcc_folder+'/'+file_name
 			np.savetxt(file_path, initial_samples, delimiter=",")
 			train_samples=initial_samples
@@ -445,12 +446,12 @@ if __name__ == '__main__':
 		datastudy_output_test[i,(2*assembly_kccs)+1:(3*assembly_kccs)+1]=eval_metrics_test["Root Mean Squared Error"]
 		datastudy_output_test[i,(3*assembly_kccs)+1:(4*assembly_kccs)+1]=eval_metrics_test["R Squared"]
 
-		file_name='test_metrics_data_study_'+str(train_dim)+'_.csv'
+		file_name='test_metrics_dynamic_train_'+str(run_id)+'_.csv'
 		accuracy_metrics_df_test.to_csv(logs_path+'/'+file_name)
 		print("Model Testing Complete on samples :",train_dim)
 		print("The Model Test Metrics are ")
 		print(eval_metrics_test)
-		#K.clear_session()
+		K.clear_session()
 
 
 	for i in range(len(eval_metrics_type)):

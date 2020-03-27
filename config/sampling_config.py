@@ -18,11 +18,11 @@
 """
 
 sampling_config={'sample_dim':300,
-                'test_sample_dim':400,
+                'test_sample_dim':200,
                 'sample_validation_dim':300,
 		'adaptive_sample_dim':250,
 		'adaptive_runs':5,
-                'num_mix':5,
+                'num_mix':3,
                 'weight':0.5,
                 'decay_factor':0.1,	
         'sample_type':'uniform',

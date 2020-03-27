@@ -114,7 +114,7 @@ class BayesDeployModel:
 				for j in range(y_pred.shape[1]):
 					plot_data=output_mean[:,j]
 					actual_obv=y_actual[i,j]
-					plt.hist(plot_data, range=(actual_obv-0.2,actual_obv+0.2),bins=40)
+					plt.hist(plot_data, range=(actual_obv-1,actual_obv+1),bins=40)
 					plt.axvline(x=actual_obv,label="Actual Value = "+str(actual_obv),c='r')
 					plt.axvline(x=pred_mean[j],label="Prediction Mean = "+str(actual_obv),c='c')
 					plt.axvline(x=pred_mean[j]+norm.ppf(0.95)*pred_std[j], label="95 CI = "+str(pred_mean[j]+norm.ppf(0.95)*pred_std[j]),c='b')

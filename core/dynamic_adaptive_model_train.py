@@ -381,7 +381,7 @@ if __name__ == '__main__':
 		if(model_type=='Bayesian 3D Convolution Neural Network'):
 			
 			from bayes_model_deployment import BayesDeployModel
-			#from tf.keras import backend as K
+			from tensorflow.keras import backend as K
 			
 			deploy_model=BayesDeployModel()
 			dl_model=Bayes_DLModel(model_type,output_dimension,optimizer,loss_func,regularizer_coeff,output_type)
@@ -410,7 +410,7 @@ if __name__ == '__main__':
 		if(model_type=='Bayesian 3D Convolution Neural Network'):
 			
 			from bayes_model_deployment import BayesDeployModel
-			#from tf.keras import backend as K
+			from tensorflow.keras import backend as K
 			
 			deploy_model=BayesDeployModel()
 			dl_model=Bayes_DLModel(model_type,output_dimension,optimizer,loss_func,regularizer_coeff,output_type)

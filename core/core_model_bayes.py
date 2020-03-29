@@ -43,7 +43,7 @@ class Bayes_DLModel:
 		negloglik = lambda y, rv_y: -rv_y.log_prob(y)
 		
 		aleatoric_std=0.0001
-		
+		aleatoric_tensor=[aleatoric_std] * self.output_dimension
 		#constant aleatoric uncertainty
 
 		import tensorflow as tf
@@ -69,7 +69,7 @@ class Bayes_DLModel:
 			tfp.layers.DenseFlipout(128,activation=tf.nn.relu),
 			tfp.layers.DenseFlipout(64,activation=tf.nn.relu),
 			tfp.layers.DenseFlipout(self.output_dimension),
-			tfp.layers.DistributionLambda(lambda t: tfd.MultivariateNormalDiag(loc=t[..., :self.output_dimension], scale_diag=[aleatoric_std,aleatoric_std,aleatoric_std,aleatoric_std,aleatoric_std,aleatoric_std])),
+			tfp.layers.DistributionLambda(lambda t: tfd.MultivariateNormalDiag(loc=t[..., :self.output_dimension], scale_diag=aleatoric_tensor)),
 			])
 
 		#negloglik = lambda y, p_y: -p_y.log_prob(y)

@@ -56,12 +56,12 @@ class BayesDeployModel:
 				:type model_path: str (required)
 		"""
 		tfd = tfp.distributions
-		try:
-			model.load_weights(model_path)
-			print('Deep Learning Model found and loaded')
-		except:
+
+		model.load_weights(model_path)
+		print('Deep Learning Model found and loaded')
+
 			#print(error)
-			print('Model not found at this path ',model_path, ' Update path in config file if required')
+		#print('Model not found at this path ',model_path, ' Update path in config file if required')
 
 		return model
 
@@ -96,6 +96,7 @@ class BayesDeployModel:
 			# with tf.Session() as sess:
 			output=inference_model(input_sample)
 			output_mean=output.mean()
+			print(output_mean)
 			# 	sess.run(init)
 			# 	mean=sess.run(output_mean)
 			# 	print(mean)
@@ -105,7 +106,8 @@ class BayesDeployModel:
 			pred_mean=np.array(output_mean).mean(axis=0)
 			pred_std=np.array(output_mean).std(axis=0,ddof=1)
 			output_mean=np.array(output_mean)
-			print(output_mean)
+			print(pred_mean)
+			print(pred_std)
 			print(output_mean.shape)
 			
 			pred_plots=1
@@ -179,6 +181,7 @@ if __name__ == '__main__':
 	model_path=train_path+'/model'+'/Bayes_trained_model_0'
 	logs_path=train_path+'/logs'
 	deploy_path=train_path+'/deploy/'
+	plots_path=train_path+'/plots/'
 
 	#Voxel Mapping File
 
@@ -209,7 +212,7 @@ if __name__ == '__main__':
 	input_conv_data, kcc_subset_dump,kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,dataset,point_index,kcc_dataset)
 	y_pred=np.zeros_like(kcc_dataset)
 
-	y_pred,y_std=deploy_model.model_inference(input_conv_data,inference_model,y_pred,kcc_dataset.values);
+	y_pred,y_std=deploy_model.model_inference(input_conv_data,inference_model,y_pred,kcc_dataset.values,plots_path);
 
 	avg_std=np.array(y_std).mean(axis=0)
 

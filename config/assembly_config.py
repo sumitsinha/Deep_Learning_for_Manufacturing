@@ -98,12 +98,12 @@ assembly_system = {
         'kcc_folder':'../active_learning/sample_input/inner_rf_assembly',
         'kcc_files':['inner_rf_samples_datagen10_gui_demo.csv'],
         'test_kcc_files':['inner_rf_samples_datagen10_gui_demo_test.csv'],
-        'data_files_x':['output_table_x_gui_demo10_test_3.csv'],
-        'data_files_y':['output_table_y_gui_demo10_test_3.csv'],
-        'data_files_z':['output_table_z_gui_demo10_test_3.csv'],
-        'test_data_files_x':['DX_sim_3.csv'],
-        'test_data_files_y':['DY_sim_3.csv'],
-        'test_data_files_z':['DZ_sim_3.csv'],
+        'data_files_x':['output_table_x_gui_demo10_3.csv'],
+        'data_files_y':['output_table_y_gui_demo10_3.csv'],
+        'data_files_z':['output_table_z_gui_demo10_3.csv'],
+        'test_data_files_x':['output_table_x_gui_demo10_test_3.csv'],
+        'test_data_files_y':['output_table_y_gui_demo10_test_3.csv'],
+        'test_data_files_z':['output_table_z_gui_demo10_test_3.csv'],
         }
 
 multi_stage_data_construct=[]

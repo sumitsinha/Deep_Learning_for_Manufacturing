@@ -12,8 +12,9 @@ class UncertainitySampling():
 
 	def __init__(self,adaptive_samples_dim,num_mix,weight=0.5):
 		self.adaptive_samples_dim=adaptive_samples_dim
-		self.weight=weight
 		self.num_mix=num_mix
+		self.weight=weight
+		
 	
 	def get_distribution_samples(self,y_actual,y_pred,y_std,weight_fac=0.5):
 

@@ -66,7 +66,7 @@ class Bayes_DLModel:
 			tfp.layers.Convolution3DFlipout(32, kernel_size=(3,3,3),strides=(1,1,1),activation=tf.nn.relu),
 			tf.keras.layers.MaxPooling3D(pool_size=[2, 2, 2]),
 			tf.keras.layers.Flatten(),
-			tfp.layers.DenseFlipout(128,activation=tf.nn.relu),
+			#tfp.layers.DenseFlipout(128,activation=tf.nn.relu),
 			tfp.layers.DenseFlipout(64,activation=tf.nn.relu),
 			tfp.layers.DenseFlipout(self.output_dimension),
 			tfp.layers.DistributionLambda(lambda t: tfd.MultivariateNormalDiag(loc=t[..., :self.output_dimension], scale_diag=aleatoric_tensor)),

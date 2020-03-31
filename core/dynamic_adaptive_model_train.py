@@ -193,28 +193,24 @@ if __name__ == '__main__':
 		#get uncertainty estimates
 		from cae_simulations import CAESimulations
 		cae_simulations=CAESimulations(simulation_platform,simulation_engine,max_run_length,case_study)
-		initial_samples=adaptive_sampling.inital_sampling_uniform_random(kcc_struct,sampling_config['test_sample_dim'])
+		test_samples=adaptive_sampling.inital_sampling_uniform_random(kcc_struct,sampling_config['test_sample_dim'])
 
 		file_name=sampling_config['output_file_name_test']+".csv"
 		file_path=kcc_folder+'/'+file_name
 		file_names_x=sampling_config['datagen_filename_x']+'test'+'_'+str(0)+'.csv'
 		file_names_y=sampling_config['datagen_filename_y']+'test'+'_'+str(0)+'.csv'
-		file_names_z=sampling_config['datagen_filename_z']+'test'+'_'+str(0)+'.csv'
-		file_names_x=[file_names_x]
-		file_names_y=[file_names_y]
-		file_names_z=[file_names_z]
-				
-		np.savetxt(file_path, initial_samples, delimiter=",")
+		file_names_z=sampling_config['datagen_filename_z']+'test'+'_'+str(0)+'.csv'	
+		
+		np.savetxt(file_path, test_samples, delimiter=",")
 		print('Sampling Completed...')
 
-		test_samples=initial_samples
 		cae_status=cae_simulations.run_simulations(run_id=0,type_flag='test')
 
 		print("Pre-processing simulated test data")
 		dataset_test=[]
-		dataset_test.append(get_data.data_import(file_names_x,data_folder))
-		dataset_test.append(get_data.data_import(file_names_y,data_folder))
-		dataset_test.append(get_data.data_import(file_names_z,data_folder))
+		dataset_test.append(get_data.data_import([file_names_x],data_folder))
+		dataset_test.append(get_data.data_import([file_names_y],data_folder))
+		dataset_test.append(get_data.data_import([file_names_z],data_folder))
 				
 		input_conv_data_test, kcc_subset_dump_test,kpi_subset_dump_test=get_data.data_convert_voxel_mc(vrm_system,dataset_test,point_index,test_samples)
 
@@ -226,28 +222,24 @@ if __name__ == '__main__':
 		#get uncertainty estimates
 		from cae_simulations import CAESimulations
 		cae_simulations=CAESimulations(simulation_platform,simulation_engine,max_run_length,case_study)
-		initial_samples=adaptive_sampling.inital_sampling_uniform_random(kcc_struct,sampling_config['sample_validation_dim'])
+		validate_samples=adaptive_sampling.inital_sampling_uniform_random(kcc_struct,sampling_config['sample_validation_dim'])
 
 		file_name=sampling_config['output_file_name_validate']+".csv"
 		file_path=kcc_folder+'/'+file_name
 		file_names_x=sampling_config['datagen_filename_x']+'validate'+'_'+str(0)+'.csv'
 		file_names_y=sampling_config['datagen_filename_y']+'validate'+'_'+str(0)+'.csv'
 		file_names_z=sampling_config['datagen_filename_z']+'validate'+'_'+str(0)+'.csv'
-		file_names_x=[file_names_x]
-		file_names_y=[file_names_y]
-		file_names_z=[file_names_z]
+
 				
 		np.savetxt(file_path, initial_samples, delimiter=",")
 		print('Sampling Completed...')
-
-		validate_samples=initial_samples
 		cae_status=cae_simulations.run_simulations(run_id=0,type_flag='validate')
 
 		print("Pre-processing simulated test data")
 		dataset_validate=[]
-		dataset_validate.append(get_data.data_import(file_names_x,data_folder))
-		dataset_validate.append(get_data.data_import(file_names_y,data_folder))
-		dataset_validate.append(get_data.data_import(file_names_z,data_folder))
+		dataset_validate.append(get_data.data_import([file_names_x],data_folder))
+		dataset_validate.append(get_data.data_import([file_names_y],data_folder))
+		dataset_validate.append(get_data.data_import([file_names_z],data_folder))
 				
 		input_conv_data_validate, kcc_subset_dump_validate,kpi_subset_dump_validate=get_data.data_convert_voxel_mc(vrm_system,dataset_validate,point_index,validate_samples)
 
@@ -293,12 +285,11 @@ if __name__ == '__main__':
 			file_name=sampling_config['output_file_name_train']+'_'+str(i)+'.csv'
 			train_dim=train_dim+sampling_config['adaptive_sample_dim']
 			#initial_samples=adaptive_sampling.inital_sampling_uniform_random(kcc_struct,sampling_config['adaptive_sample_dim'])
-			initial_samples,gmm_model_params=unsap.get_distribution_samples(kcc_subset_dump_validate,y_pred_validate,y_std_validate)
+			adaptive_gen_samples,gmm_model_params=unsap.get_distribution_samples(kcc_subset_dump_validate,y_pred_validate,y_std_validate)
 			
 			np.savetxt(logs_path+'/gmm_model_params_run_'+str(run_id)+'.csv', gmm_model_params, delimiter=",")
 			file_path=kcc_folder+'/'+file_name
-			np.savetxt(file_path, initial_samples, delimiter=",")
-			train_samples=initial_samples
+			np.savetxt(file_path,adaptive_gen_samples, delimiter=",")
 			print('Sampling Completed...')
 
 			cae_status=cae_simulations.run_simulations(i,'train')
@@ -308,7 +299,7 @@ if __name__ == '__main__':
 			dataset.append(get_data.data_import(file_names_y,data_folder))
 			dataset.append(get_data.data_import(file_names_z,data_folder))
 			
-			input_conv_data, kcc_subset_dump,kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,dataset,point_index,train_samples)
+			input_conv_data, kcc_subset_dump,kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,dataset,point_index,adaptive_gen_samples)
 
 
 		combined_conv_data_list.append(input_conv_data)

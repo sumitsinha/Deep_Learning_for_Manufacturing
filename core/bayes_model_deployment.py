@@ -59,8 +59,8 @@ class BayesDeployModel:
 		try:
 			model.load_weights(model_path)
 			print('Deep Learning Model found and loaded')
-		except AssertionError as error:
-			print(error)
+		except:
+			#print(error)
 			print('Model not found at this path ',model_path, ' Update path in config file if required')
 
 		return model
@@ -90,7 +90,7 @@ class BayesDeployModel:
 			epistemic_samples=750
 			inference_sample=inference_data[i,:,:,:,:]
 			print(inference_sample.shape)
-			input_sample=np.array([inference_sample,]*epistemic_samples)
+			input_sample=np.array([inference_sample]*epistemic_samples)
 			# input_sample=tf.cast(input_sample, tf.float32)
 			# init = tf.global_variables_initializer()
 			# with tf.Session() as sess:
@@ -105,6 +105,7 @@ class BayesDeployModel:
 			pred_mean=np.array(output_mean).mean(axis=0)
 			pred_std=np.array(output_mean).std(axis=0,ddof=1)
 			output_mean=np.array(output_mean)
+			print(output_mean)
 			print(output_mean.shape)
 			
 			pred_plots=1

@@ -82,20 +82,9 @@ if __name__ == '__main__':
 	voxel_channels=config.assembly_system['voxel_channels']
 	noise_type=config.assembly_system['noise_type']
 	mapping_index=config.assembly_system['mapping_index']
-	file_names_x=config.assembly_system['data_files_x']
-	file_names_y=config.assembly_system['data_files_y']
-	file_names_z=config.assembly_system['data_files_z']
-	system_noise=config.assembly_system['system_noise']
 	aritifical_noise=config.assembly_system['aritifical_noise']
 	data_folder=config.assembly_system['data_folder']
 	kcc_folder=config.assembly_system['kcc_folder']
-	kcc_files=config.assembly_system['kcc_files']
-
-	#Get Out of Sample data for Testing
-	test_file_names_x=config.assembly_system['test_data_files_x']
-	test_file_names_y=config.assembly_system['test_data_files_y']
-	test_file_names_z=config.assembly_system['test_data_files_z']
-	test_kcc_files=config.assembly_system['test_kcc_files']
 
 	print('Parsing from Training Config File')
 
@@ -147,8 +136,7 @@ if __name__ == '__main__':
 	measurement_system=HexagonWlsScanner(data_type,application,system_noise,part_type,data_format)
 	print('Measurement system initialized')
 	vrm_system=VRMSimulationModel(assembly_type,assembly_kccs,assembly_kpis,part_name,part_type,voxel_dim,voxel_channels,point_dim,aritifical_noise)
-	
-	
+
 	print('Assembly and simulation system initialized')
 	get_data=GetTrainData();
 
@@ -158,7 +146,6 @@ if __name__ == '__main__':
 
 	print('Support systems initialized')
 	
-
 	kcc_struct=kcc_config.kcc_struct
 	sampling_config=sampling_config.sampling_config
 	adaptive_sampling=AdaptiveSampling(sampling_config['sample_dim'],sampling_config['sample_type'],sampling_config['adaptive_sample_dim'],sampling_config['adaptive_runs'])
@@ -229,8 +216,7 @@ if __name__ == '__main__':
 		file_names_x=sampling_config['datagen_filename_x']+'validate'+'_'+str(0)+'.csv'
 		file_names_y=sampling_config['datagen_filename_y']+'validate'+'_'+str(0)+'.csv'
 		file_names_z=sampling_config['datagen_filename_z']+'validate'+'_'+str(0)+'.csv'
-
-				
+			
 		np.savetxt(file_path, initial_samples, delimiter=",")
 		print('Sampling Completed...')
 		cae_status=cae_simulations.run_simulations(run_id=0,type_flag='validate')

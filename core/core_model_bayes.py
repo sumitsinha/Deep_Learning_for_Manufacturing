@@ -42,7 +42,7 @@ class Bayes_DLModel:
 		
 		negloglik = lambda y, rv_y: -rv_y.log_prob(y)
 		
-		aleatoric_std=0.0001
+		aleatoric_std=0.001
 		aleatoric_tensor=[aleatoric_std] * self.output_dimension
 		#constant aleatoric uncertainty
 
@@ -74,7 +74,7 @@ class Bayes_DLModel:
 
 		#negloglik = lambda y, p_y: -p_y.log_prob(y)
 		#experimental_run_tf_function=False
-		model.compile(optimizer=tf.keras.optimizers.Adam(),experimental_run_tf_function=False,loss=negloglik,metrics=[tf.keras.metrics.MeanAbsoluteError()])
+		model.compile(optimizer=tf.keras.optimizers.Adam(lr=0.001),experimental_run_tf_function=False,loss=negloglik,metrics=[tf.keras.metrics.MeanAbsoluteError()])
 		print("3D CNN model successfully compiled")
 		#print(model.summary())
 		return model

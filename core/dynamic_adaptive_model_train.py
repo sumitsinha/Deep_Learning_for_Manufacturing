@@ -443,7 +443,7 @@ if __name__ == '__main__':
 	    col_names.append(str(metric)+"_avg")
 
 	ds_output_df_test=pd.DataFrame(data=datastudy_output_test,columns=col_names)
-	ds_output_df_test.to_csv(logs_path+'/'+'datastudy_output_test.csv')
+	ds_output_df_test.to_csv(logs_path+'/'+'dynamic_training_output_test.csv')
 	
 	print('Dynamic Training complete')
 

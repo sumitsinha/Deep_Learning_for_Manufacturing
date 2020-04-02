@@ -80,7 +80,7 @@ class BayesDeployModel:
 		"""		
 		#result=inference_model.(inference_data)
 		y_std=np.zeros_like(y_pred)
-		
+		y_aleatoric_std=np.zeros_like(y_pred)
 		plots_path_run_id=plots_path+'/plots_run_id_'+str(run_id)
 		pathlib.Path(plots_path_run_id).mkdir(parents=True, exist_ok=True)
 
@@ -96,7 +96,9 @@ class BayesDeployModel:
 			# with tf.Session() as sess:
 			output=inference_model(input_sample)
 			output_mean=output.mean()
-			print(output_mean)
+			aleatoric_std=output.std()
+			#print(output_mean)
+			#print(aleatoric_std)
 			# 	sess.run(init)
 			# 	mean=sess.run(output_mean)
 			# 	print(mean)
@@ -104,11 +106,14 @@ class BayesDeployModel:
 			#output=inference_model(input_sample)
 			#output_mean=output.mean()
 			pred_mean=np.array(output_mean).mean(axis=0)
+			aleatoric_mean=np.array(aleatoric_std).mean(axis=0)
 			pred_std=np.array(output_mean).std(axis=0,ddof=1)
 			output_mean=np.array(output_mean)
+			
 			print(pred_mean)
 			print(pred_std)
-			print(output_mean.shape)
+			print(aleatoric_mean)
+			print(output_mean.shape,aleatoric_std.shape)
 			
 			pred_plots=1
 			
@@ -127,10 +132,11 @@ class BayesDeployModel:
 					plt.clf()
 			y_pred[i,:]=pred_mean
 			y_std[i,:]=pred_std
+			y_aleatoric_std[i,:]=aleatoric_mean
 			#print(pred_mean)
 			#print(pred_std)
 
-		return y_pred,y_std
+		return y_pred,y_std,y_aleatoric_std
 
 if __name__ == '__main__':
 	
@@ -212,12 +218,12 @@ if __name__ == '__main__':
 	input_conv_data, kcc_subset_dump,kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,dataset,point_index,kcc_dataset)
 	y_pred=np.zeros_like(kcc_dataset)
 
-	y_pred,y_std=deploy_model.model_inference(input_conv_data,inference_model,y_pred,kcc_dataset.values,plots_path);
+	y_pred,y_std,y_aleatoric_std=deploy_model.model_inference(input_conv_data,inference_model,y_pred,kcc_dataset.values,plots_path);
 
 	avg_std=np.array(y_std).mean(axis=0)
-
+	avg_aleatoric_std=np.array(y_std).mean(axis=0)
 	print("Average Epistemic Uncertainty of each KCC: ",avg_std)
-	
+	print("Average Aleatoric Uncertainty of each KCC: ",y_aleatoric_std)
 	evalerror=1
 
 	if(evalerror==1):
@@ -232,4 +238,6 @@ if __name__ == '__main__':
 
 		np.savetxt((deploy_path+"pred_std.csv"), y_std, delimiter=",")
 		print('Predicted Standard Deviation Values saved to disk...')
-	
+		
+		np.savetxt((deploy_path+"aleatoric_std.csv"), y_aleatoric_std, delimiter=",")
+		print('Predicted Values saved to disk...')

@@ -42,41 +42,45 @@ class Bayes_DLModel:
 		
 		negloglik = lambda y, rv_y: -rv_y.log_prob(y)
 		
-		aleatoric_std=0.001
+		aleatoric_std=0.0001
 		aleatoric_tensor=[aleatoric_std] * self.output_dimension
 		#constant aleatoric uncertainty
 
 		import tensorflow as tf
 		import tensorflow_probability as tfp
+		import numpy as np
 		tfd = tfp.distributions
 		def _softplus_inverse(x):
   			"""Helper which computes the function inverse of `tf.nn.softplus`."""
   			return tf.math.log(tf.math.expm1(x))
-		
+		kl_divergence_function = (lambda q, p, _: tfd.kl_divergence(q, p) / tf.cast(4200, dtype=tf.float32))
 		if(self.output_type=="regression"):
 			final_layer_avt='linear'
 
 		if(self.output_type=="classification"):
 			final_layer_avt='softmax'
+		
+		c = np.log(np.expm1(1.))
 
 		model = tf.keras.Sequential([
 			tf.keras.layers.InputLayer(input_shape=(voxel_dim,voxel_dim,voxel_dim,deviation_channels)),
-			tfp.layers.Convolution3DFlipout(32, kernel_size=(5,5,5),strides=(2,2,2),activation=tf.nn.relu),
-			tfp.layers.Convolution3DFlipout(32, kernel_size=(4,4,4),strides=(2,2,2),activation=tf.nn.relu),
-			tfp.layers.Convolution3DFlipout(32, kernel_size=(3,3,3),strides=(1,1,1),activation=tf.nn.relu),
+			tfp.layers.Convolution3DFlipout(32, kernel_size=(5,5,5),kernel_divergence_fn=kl_divergence_function,strides=(2,2,2),activation=tf.nn.relu),
+			tfp.layers.Convolution3DFlipout(32, kernel_size=(4,4,4),kernel_divergence_fn=kl_divergence_function,strides=(2,2,2),activation=tf.nn.relu),
+			tfp.layers.Convolution3DFlipout(32, kernel_size=(3,3,3),kernel_divergence_fn=kl_divergence_function,strides=(1,1,1),activation=tf.nn.relu),
 			tf.keras.layers.MaxPooling3D(pool_size=[2, 2, 2]),
 			tf.keras.layers.Flatten(),
-			#tfp.layers.DenseFlipout(128,activation=tf.nn.relu),
-			tfp.layers.DenseFlipout(64,activation=tf.nn.relu),
-			tfp.layers.DenseFlipout(self.output_dimension),
-			tfp.layers.DistributionLambda(lambda t: tfd.MultivariateNormalDiag(loc=t[..., :self.output_dimension], scale_diag=aleatoric_tensor)),
+			tfp.layers.DenseFlipout(128,activation=tf.nn.relu,kernel_divergence_fn=kl_divergence_function),
+			#tfp.layers.DenseFlipout(64,kernel_divergence_fn=kl_divergence_function,activation=tf.nn.relu),
+			tfp.layers.DenseFlipout(2*self.output_dimension,kernel_divergence_fn=kl_divergence_function),
+			tfp.layers.DistributionLambda(lambda t: tfd.Independent(tfd.Normal(loc=t[..., :self.output_dimension],scale=1e-4 + tf.nn.softplus(t[..., self.output_dimension:])))),
 			])
 
 		#negloglik = lambda y, p_y: -p_y.log_prob(y)
 		#experimental_run_tf_function=False
+		#tf.keras.optimizers.Adam(lr=0.001)
 		model.compile(optimizer=tf.keras.optimizers.Adam(lr=0.001),experimental_run_tf_function=False,loss=negloglik,metrics=[tf.keras.metrics.MeanAbsoluteError()])
 		print("3D CNN model successfully compiled")
-		#print(model.summary())
+		print(model.summary())
 		return model
 
 

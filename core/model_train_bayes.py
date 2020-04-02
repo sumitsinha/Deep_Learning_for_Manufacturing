@@ -184,6 +184,19 @@ if __name__ == '__main__':
 	
 	dl_model=Bayes_DLModel(model_type,output_dimension,optimizer,loss_func,regularizer_coeff,output_type)
 	model=dl_model.bayes_cnn_model_3d(voxel_dim,voxel_channels)
+	
+	#Loading Weights
+	weights_flag=1
+
+	if(weights_flag==1):
+		
+		weight_path=train_path+'/model'+'/Bayes_trained_model_0'
+		try:
+			model.load_weights(weight_path)
+		except:
+			print(" Neural Network Weights not found ! random initialization...")
+		else:
+			print("Model weights found and loaded !")
 
 	print('Training 3D CNN model')
 	

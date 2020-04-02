@@ -101,7 +101,7 @@ model_parameters = {
         'output_type':'regression',
         'batch_size': 32,
         'epocs':1000,
-        'split_ratio': 0.2,
+        'split_ratio': 0.3,
         'optimizer':'adam',
         'loss_func':'mse',
         'regularizer_coeff': 0.01,

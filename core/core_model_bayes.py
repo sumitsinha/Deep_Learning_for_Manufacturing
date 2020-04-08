@@ -42,7 +42,7 @@ class Bayes_DLModel:
 		
 		negloglik = lambda y, rv_y: -rv_y.log_prob(y)
 		
-		aleatoric_std=0.0001
+		aleatoric_std=0.001
 		aleatoric_tensor=[aleatoric_std] * self.output_dimension
 		#constant aleatoric uncertainty
 
@@ -53,7 +53,7 @@ class Bayes_DLModel:
 		def _softplus_inverse(x):
   			"""Helper which computes the function inverse of `tf.nn.softplus`."""
   			return tf.math.log(tf.math.expm1(x))
-		kl_divergence_function = (lambda q, p, _: tfd.kl_divergence(q, p) / tf.cast(4200, dtype=tf.float32))
+		kl_divergence_function = (lambda q, p, _: tfd.kl_divergence(q, p) / tf.cast(4800, dtype=tf.float32))
 		if(self.output_type=="regression"):
 			final_layer_avt='linear'
 
@@ -70,9 +70,9 @@ class Bayes_DLModel:
 			tf.keras.layers.MaxPooling3D(pool_size=[2, 2, 2]),
 			tf.keras.layers.Flatten(),
 			tfp.layers.DenseFlipout(128,activation=tf.nn.relu,kernel_divergence_fn=kl_divergence_function),
-			#tfp.layers.DenseFlipout(64,kernel_divergence_fn=kl_divergence_function,activation=tf.nn.relu),
-			tfp.layers.DenseFlipout(2*self.output_dimension,kernel_divergence_fn=kl_divergence_function),
-			tfp.layers.DistributionLambda(lambda t: tfd.Independent(tfd.Normal(loc=t[..., :self.output_dimension],scale=1e-4 + tf.nn.softplus(t[..., self.output_dimension:])))),
+			tfp.layers.DenseFlipout(64,kernel_divergence_fn=kl_divergence_function,activation=tf.nn.relu),
+			tfp.layers.DenseFlipout(self.output_dimension,kernel_divergence_fn=kl_divergence_function),
+			tfp.layers.DistributionLambda(lambda t:tfd.MultivariateNormalDiag(loc=t[..., :self.output_dimension], scale_diag=aleatoric_tensor)),
 			])
 
 		#negloglik = lambda y, p_y: -p_y.log_prob(y)

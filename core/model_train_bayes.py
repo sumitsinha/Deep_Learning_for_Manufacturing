@@ -186,7 +186,7 @@ if __name__ == '__main__':
 	model=dl_model.bayes_cnn_model_3d(voxel_dim,voxel_channels)
 	
 	#Loading Weights
-	weights_flag=1
+	weights_flag=0
 
 	if(weights_flag==1):
 		

@@ -87,7 +87,7 @@ class BayesDeployModel:
 		for i in range(len(inference_data)):
 			
 			from scipy.stats import norm
-			epistemic_samples=750
+			epistemic_samples=1000
 			inference_sample=inference_data[i,:,:,:,:]
 			print(inference_sample.shape)
 			input_sample=np.array([inference_sample]*epistemic_samples)
@@ -96,7 +96,7 @@ class BayesDeployModel:
 			# with tf.Session() as sess:
 			output=inference_model(input_sample)
 			output_mean=output.mean()
-			aleatoric_std=output.std()
+			aleatoric_std=output.stddev()
 			#print(output_mean)
 			#print(aleatoric_std)
 			# 	sess.run(init)
@@ -223,7 +223,7 @@ if __name__ == '__main__':
 	avg_std=np.array(y_std).mean(axis=0)
 	avg_aleatoric_std=np.array(y_std).mean(axis=0)
 	print("Average Epistemic Uncertainty of each KCC: ",avg_std)
-	print("Average Aleatoric Uncertainty of each KCC: ",y_aleatoric_std)
+	print("Average Aleatoric Uncertainty of each KCC: ",avg_aleatoric_std)
 	evalerror=1
 
 	if(evalerror==1):

@@ -6,12 +6,12 @@ parentdir = os.path.dirname(current_path)
 """ Contains sampling classes and methods to enable active learning between VRM and 3D CNN model """
 
 #Adding Path to various Modules
-# sys.path.append("../core")
-# sys.path.append("../visualization")
-# sys.path.append("../utilities")
-# sys.path.append("../datasets")
-# sys.path.append("../trained_models")
-# sys.path.append("../config")
+sys.path.append("../core")
+sys.path.append("../visualization")
+sys.path.append("../utilities")
+sys.path.append("../datasets")
+sys.path.append("../trained_models")
+sys.path.append("../config")
 
 from pyDOE import lhs
 from scipy.stats import uniform,norm
@@ -123,8 +123,10 @@ if __name__ == '__main__':
 		initial_samples=adaptive_sampling.inital_sampling_uniform_random(kcc_struct,sampling_config['sample_dim'])
 
 
+	folder_name=sampling_config['output_folder_name']
 	file_name=sampling_config['output_file_name']
-	file_path='./sample_input/'+file_name
+	
+	file_path='./sample_input/'+folder_name+'/'+file_name+'.csv'
 	np.savetxt(file_path, initial_samples, delimiter=",")
 
 	print('Initial Samples Saved to path: ',file_path)

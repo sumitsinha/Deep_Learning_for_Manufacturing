@@ -51,4 +51,3 @@ download_params={
 	   'id_mapping_index':'1RibrkROYqHLRVljSGfe5jVIhpv_H9abP',
 	   'id_nominal_cop':'1hrTlEnHXHg7T53XvXEjhIPSrRSRJLqoo'
 }
-

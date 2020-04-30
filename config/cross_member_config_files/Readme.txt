@@ -1,0 +1,2 @@
+# Copy the config files from the case study folder (halo_config_files, inner_rf_config_files) to the config folder (Library reads from the root of the config folder) for which ever case study needs to be executed
+# Currently defaults to the inner_rf_assembly case study

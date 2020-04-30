@@ -78,12 +78,11 @@
 
 assembly_system = {	
         'data_type': '3D Point Cloud Data',
-        'application': 'InLine Root Cause Analysis',
-        'part_type': 'inner_rf_assembly',
+        'application': 'In-line Root Cause Analysis',
+        'part_type': 'Inner_Rf_Assembly',
         'part_name':'inner_rf',
         'data_format': 'Complete',
         'assembly_type':"multi-Stage",
-        'assembly_stages':2,
         'assembly_kccs':6,
         'assembly_kpis':1,
         'voxel_dim':64,
@@ -96,122 +95,17 @@ assembly_system = {
         'nominal_cop_filename':'inner_rf_nominal_cop.csv',
         'data_folder':'../datasets/inner_rf_assembly',
         'kcc_folder':'../active_learning/sample_input/inner_rf_assembly',
-        'kcc_files':['inner_rf_samples_datagen10_gui_demo.csv'],
-        'test_kcc_files':['inner_rf_samples_datagen10_gui_demo_test.csv'],
-        'data_files_x':['output_table_x_gui_demo10_3.csv'],
-        'data_files_y':['output_table_y_gui_demo10_3.csv'],
-        'data_files_z':['output_table_z_gui_demo10_3.csv'],
-        'test_data_files_x':['output_table_x_gui_demo10_test_3.csv'],
-        'test_data_files_y':['output_table_y_gui_demo10_test_3.csv'],
-        'test_data_files_z':['output_table_z_gui_demo10_test_3.csv'],
+        'kcc_files':['input_X.csv'],
+        'test_kcc_files':['test_input_X.csv'],
+        'data_files_x':['test_output_table_x.csv'],
+        'data_files_y':['test_output_table_y.csv'],
+        'data_files_z':['test_output_table_z.csv'],
+        'test_data_files_x':['output_table_x.csv'],
+        'test_data_files_y':['output_table_y.csv'],
+        'test_data_files_z':['output_table_z.csv'],
         }
 
-encode_decode_construct = {     
-        'input_data_files_x':['output_table_x_gui_demo10_3.csv'],
-        'input_data_files_y':['output_table_y_gui_demo10_3.csv'],
-        'input_data_files_z':['output_table_z_gui_demo10_3.csv'],
-        'input_test_data_files_x':['output_table_x_gui_demo10_test_3.csv'],
-        'input_test_data_files_y':['output_table_y_gui_demo10_test_3.csv'],
-        'input_test_data_files_z':['output_table_z_gui_demo10_test_3.csv'],
-
-        'output_data_files_x':['output_table_x_gui_demo10_1.csv'],
-        'output_data_files_y':['output_table_y_gui_demo10_1.csv'],
-        'output_data_files_z':['output_table_z_gui_demo10_1.csv'],
-        'output_test_data_files_x':['output_table_x_gui_demo10_test_1.csv'],
-        'output_test_data_files_y':['output_table_y_gui_demo10_test_1.csv'],
-        'output_test_data_files_z':['output_table_z_gui_demo10_test_1.csv'],
-        }
-multi_stage_data_construct=[]
-
-multi_stage_data_construct.append({'station_id':0,
-                'stage_id':0,
-                'stage_type':'positioning',#'clamping','fastening','release'
-                'station_name':'inner_rf_joining',
-                'data_files_x':['output_table_x_gui_demo10_1.csv'],
-                'data_files_y':['output_table_y_gui_demo10_1.csv'],
-                'data_files_z':['output_table_z_gui_demo10_1.csv'],
-                'test_data_files_x':['output_table_x_gui_demo10_test_1.csv'],
-                'test_data_files_y':['output_table_y_gui_demo10_test_1.csv'],
-                'test_data_files_z':['output_table_z_gui_demo10_test_1.csv'],  
-        })
-
-multi_stage_data_construct.append({'station_id':0,
-                'stage_id':4,
-                'stage_type':'release',#'clamping','fastening','release'
-                'station_name':'inner_rf_joining',
-                'data_files_x':['output_table_x_gui_demo10_4.csv'],
-                'data_files_y':['output_table_y_gui_demo10_4.csv'],
-                'data_files_z':['output_table_z_gui_demo10_4.csv'],
-                'test_data_files_x':['output_table_x_gui_demo10_test_4.csv'],
-                'test_data_files_y':['output_table_y_gui_demo10_test_4.csv'],
-                'test_data_files_z':['output_table_z_gui_demo10_test_4.csv'],  
-        })
-
-multi_stage_sensor_config = {   
-        'eval_metric': 'R2',#MSE, RMSE, R2
-        'eval_metric_threshold' :0.95, #mm
-        'max_stages':4,
-        'inital_stage_list':[3],
-        }
-
-multi_stage_sensor_construct=[]
-
-multi_stage_sensor_construct.append({'station_id':0,
-                'stage_id':0,
-                'stage_type':'positioning',#'clamping','fastening','release'
-                'station_name':'inner_rf_joining',
-                'process_param_ids':[0,1,2],
-                'data_files_x':['output_table_x_gui_demo10_1.csv'],
-                'data_files_y':['output_table_y_gui_demo10_1.csv'],
-                'data_files_z':['output_table_z_gui_demo10_1.csv'],
-                'test_data_files_x':['output_table_x_gui_demo10_test_1.csv'],
-                'test_data_files_y':['output_table_y_gui_demo10_test_1.csv'],
-                'test_data_files_z':['output_table_z_gui_demo10_test_1.csv'],  
-        })
-
-multi_stage_sensor_construct.append({'station_id':0,
-                'stage_id':1,
-                'stage_type':'clamping',#'clamping','fastening','release'
-                'station_name':'inner_rf_joining',
-                'process_param_ids':[3,4,5],
-                'data_files_x':['output_table_x_gui_demo10_2.csv'],
-                'data_files_y':['output_table_y_gui_demo10_2.csv'],
-                'data_files_z':['output_table_z_gui_demo10_2.csv'],
-                'test_data_files_x':['output_table_x_gui_demo10_test_2.csv'],
-                'test_data_files_y':['output_table_y_gui_demo10_test_2.csv'],
-                'test_data_files_z':['output_table_z_gui_demo10_test_2.csv'],  
-        })
-
-multi_stage_sensor_construct.append({'station_id':0,
-                'stage_id':2,
-                'stage_type':'fastening',#'clamping','fastening','release'
-                'station_name':'inner_rf_joining',
-                'process_param_ids':[],
-                'data_files_x':['output_table_x_gui_demo10_3.csv'],
-                'data_files_y':['output_table_y_gui_demo10_3.csv'],
-                'data_files_z':['output_table_z_gui_demo10_3.csv'],
-                'test_data_files_x':['output_table_x_gui_demo10_test_3.csv'],
-                'test_data_files_y':['output_table_y_gui_demo10_test_3.csv'],
-                'test_data_files_z':['output_table_z_gui_demo10_test_3.csv'],  
-        })
-
-multi_stage_sensor_construct.append({'station_id':0,
-                'stage_id':3,
-                'stage_type':'release',#'clamping','fastening','release'
-                'station_name':'inner_rf_joining',
-                'process_param_ids':[],
-                'data_files_x':['output_table_x_gui_demo10_4.csv'],
-                'data_files_y':['output_table_y_gui_demo10_4.csv'],
-                'data_files_z':['output_table_z_gui_demo10_4.csv'],
-                'test_data_files_x':['output_table_x_gui_demo10_test_4.csv'],
-                'test_data_files_y':['output_table_y_gui_demo10_test_4.csv'],
-                'test_data_files_z':['output_table_z_gui_demo10_test_4.csv'],  
-        })
-
-
-
-
-#Assert that all config values conform to the library requirements
+#Assert that all config values conform to the libarary requirements
 assert type(assembly_system['assembly_kccs']) is int, "Assembly KCCs is not an integer: %r" %assembly_system[assembly_kccs]
 assert type(assembly_system['assembly_kpis']) is int, "Assembly KPIs is not an integer: %r" % assembly_system[assembly_kpis]
 assert type(assembly_system['voxel_dim']) is int, "Voxel Dim is not an integer: %r" % assembly_system[voxel_dim]

@@ -26,7 +26,7 @@ class Encode_Decode_Model:
 		self.output_dimension=output_dimension
 
 
-	def encode_decode_3d(self,filter_root, depth, n_class=3, input_size=(64, 64, 64, 3), activation='relu', batch_norm=False, final_activation='linear'):
+	def encode_decode_3d(self,filter_root, depth,input_size=(64,64,64,3), n_class=3):
 		"""Build the 3D Model using the specified loss function, the inputs are parsed from the assemblyconfig_<case_study_name>.py file
 
 			:param voxel_dim: The voxel dimension of the input, required to build input to the 3D CNN model
@@ -43,7 +43,7 @@ class Encode_Decode_Model:
 		
 		import tensorflow.keras.backend as K 
 		from tensorflow.keras.models import Model
-		from tensorflow.keras.layers import Conv3D, MaxPooling3D, Add, BatchNormalization, Input, Activation, Lambda, Concatenate, Flatten, Dense
+		from tensorflow.keras.layers import Conv3D, MaxPooling3D, Add, BatchNormalization, Input, Activation, Lambda, Concatenate, Flatten, Dense,UpSampling3D,GlobalAveragePooling3D
 		from tensorflow.keras.utils import plot_model
 		
 		"""
@@ -69,6 +69,9 @@ class Encode_Decode_Model:
 		Conv = Conv3D
 		MaxPooling = MaxPooling3D
 		UpSampling = UpSampling3D
+		
+		activation='relu'
+		final_activation='linear'
 
 		# Down sampling
 		for i in range(depth):
@@ -99,8 +102,11 @@ class Encode_Decode_Model:
 			else:
 				x = act2
 
-		feature_vector=Flatten()(x)
-		process_parameter=Dense(self.output_dimension)(feature_vector)
+		feature_vector=Conv(self.output_dimension, 1, padding='same', activation=final_activation, name='Process_Parameter_output')(x)
+		process_parameter=GlobalAveragePooling3D()(feature_vector)
+		
+		#feature_vector=Flatten()(x)
+		#process_parameter=Dense(self.output_dimension)(feature_vector)
 		
 		# Upsampling
 		for i in range(depth - 2, -1, -1):
@@ -134,8 +140,19 @@ class Encode_Decode_Model:
 
 		model=Model(inputs, outputs=[process_parameter,output], name='Res-UNet')
 		
-		print(model.summary())
-		plot_model(model,to_file='unet_3D.png',show_shapes=True, show_layer_names=True)
+		print("U-Net Based 3D Encoder Decoder Model Compiled")
+		#print(model.summary())
+		#plot_model(model,to_file='unet_3D.png',show_shapes=True, show_layer_names=True)
+		
+		
+		mse_basic = tf.keras.losses.MeanSquaredError()
+		msle = tf.keras.losses.MeanSquaredLogarithmicError()
+		
+		def mse_scaled(y_true,y_pred):
+			return K.mean(K.square((y_pred - y_true)/10))
+
+		model.compile(optimizer=tf.keras.optimizers.Adam(),experimental_run_tf_function=False,loss=[tf.keras.losses.MeanSquaredError(),mse_scaled],metrics=[tf.keras.losses.MeanSquaredError(),mse_scaled,msle,tf.keras.metrics.MeanAbsoluteError()])
+		#print(model.summary())
 		return model
 
 if (__name__=="__main__"):

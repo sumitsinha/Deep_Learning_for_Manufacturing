@@ -96,24 +96,39 @@
 
 
 model_parameters = {	
-        'model_type':'3D Convolution Neural Network',
+        'model_type':'Bayesian 3D Convolution Neural Network', #other option: 'Bayesian 3D Convolution Neural Network'  
+        'learning_type':'Basic', # use 'Transfer Learning' if transfer learning is to be leveraged
         'output_type':'regression',
         'batch_size': 32,
-        'epocs': 50,
-        'split_ratio': 0.3,
+        'epocs':1500,
+        'split_ratio': 0.2,
         'optimizer':'adam',
         'loss_func':'mse',
         'regularizer_coeff': 0.01,
         'activate_tensorboard':0
         }
+cae_sim_params = {
+        'simulation_platform':'MatLab',
+        'simulation_engine':'VRM',
+        'max_run_length':15,
+        'cae_input_path': 'check',
+        'cae_output_path':'check',
+        #case_study parameter imported from assembly_configration
+}
 
+encode_decode_params ={
+        'model_depth':3,
+        'inital_filter_dim':8,
+
+}
 data_study_params = {
-	'batch_size':32,
-	'epocs':50,
+	'batch_size':48,
+	'epocs':1000,
 	'min_train_samples':100,
         'train_increment':100,
         'max_train_samples':3000,
-	'split_ratio':0.2
+	'split_ratio':0.2,
+        'tl_flag':1
 }
 
 kmc_params={
@@ -126,12 +141,13 @@ kmc_params={
 
 bm_params={
         'max_models':10,
-        'runs':3
+        'runs':15,
+        'split_ratio': 0.2
 }
 
 transfer_learning={
         'tl_type':'full_fine_tune', #options 'full_fine_tune', variable_lr', 'feature_extractor'
-        'tl_base':'model_pointnet_64.h5',
+        'tl_base':'model_pointnet_64_halo.h5',
         'tl_app':'halo_deploy',
         'conv_layer_m':0.1,
         'dense_layer_m':1, 

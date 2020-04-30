@@ -26,8 +26,8 @@ import pathlib
 import numpy as np
 import pandas as pd
 import tensorflow as tf
-#from keras import backend as K
-#K.clear_session()
+from tensorflow.keras import backend as K
+K.clear_session()
 
 #Importing Config files
 import assembly_config as config
@@ -38,12 +38,12 @@ from measurement_system import HexagonWlsScanner
 from assembly_system import VRMSimulationModel
 from wls400a_system import GetInferenceData
 from data_import import GetTrainData
-from core_model import DLModel
+from encode_decode_model import Encode_Decode_Model
 from training_viz import TrainViz
 from metrics_eval import MetricsEval
-#from keras_lr_multiplier import LRMultiplier
+from keras_lr_multiplier import LRMultiplier
 
-class TrainModel:
+class Unet_TrainModel:
 	"""Train Model Class, the initialization parameters are parsed from modelconfig_train.py file
 		
 		:param batch_size: mini batch size while training the model 
@@ -63,7 +63,7 @@ class TrainModel:
 			self.split_ratio=split_ratio
 			
 
-	def run_train_model(self,model,X_in,Y_out,model_path,logs_path,plots_path,activate_tensorboard=0,run_id=0,tl_type='full_fine_tune'):
+	def unet_run_train_model(self,model,X_in,Y_out,Y_cop,X_in_test,Y_out_test,Y_cop_test,model_path,logs_path,plots_path,activate_tensorboard=0,run_id=0,tl_type='full_fine_tune'):
 		"""run_train_model function trains the model on the dataset and saves the trained model,logs and plots within the file structure, the function prints the training evaluation metrics
 			
 			:param model: 3D CNN model compiled within the Deep Learning Class, refer https://keras.io/models/model/ for more information 
@@ -91,45 +91,29 @@ class TrainModel:
 			:type run_id: int			
 		"""			
 		import tensorflow as tf
-		from sklearn.model_selection import train_test_split
 		from tensorflow.keras.models import load_model
-		from tensorflow.keras.callbacks import ModelCheckpoint
-		from tensorflow.keras.callbacks import TensorBoard
-
-		model_file_path=model_path+'/trained_model_'+str(run_id)+'.h5'
+		import tensorflow.keras.backend as K 
+		#model_file_path=model_path+'/unet_trained_model_'+str(run_id)+'.h5'
+		model_file_path=model_path+'/unet_trained_model_'+str(run_id)
 		
-		X_train, X_test, y_train, y_test = train_test_split(X_in, Y_out, test_size = self.split_ratio)
-		print("Data Split Completed")
+		#tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir='C:\\Users\\sinha_s\\Desktop\\dlmfg_package\\dlmfg\\trained_models\\inner_rf_assembly\\logs',histogram_freq=1)
+		checkpointer = tf.keras.callbacks.ModelCheckpoint(model_file_path, verbose=1, save_best_only='mae',save_weights_only=True)
+		#Check pointer to save the best model
+		history=model.fit(x=X_in,y=[Y_out,Y_cop], validation_data=(X_in_test,[Y_out_test,Y_cop_test]), epochs=self.epochs, batch_size=self.batch_size,callbacks=[checkpointer])
 		
-		#Checkpointer to save the best model
-		checkpointer = ModelCheckpoint(model_file_path, verbose=1, save_best_only='mae')
-		callbacks=[checkpointer]
+		def mse_scaled(y_true,y_pred):
+			return K.mean(K.square((y_pred - y_true)/10))
 		
-		if(activate_tensorboard==1):
-			#Activating Tensorboard for Visualization
-			tensorboard = TensorBoard(log_dir=logs_path,histogram_freq=1, write_graph=True, write_images=True)
-			callbacks=[checkpointer,tensorboard]
-		
-		tensorboard = TensorBoard(log_dir=logs_path,histogram_freq=1, write_graph=True, write_images=True)
-		history=model.fit(x=X_train, y=y_train, validation_data=(X_test,y_test), epochs=self.epochs, batch_size=self.batch_size,callbacks=callbacks)
-		
-		trainviz=TrainViz()
-		trainviz.training_plot(history,plots_path,run_id)
-		
-		if(tl_type=='variable_lr'):
-			inference_model=load_model(model_file_path, custom_objects={'LRMultiplier': LRMultiplier})
-		else:
-			inference_model=load_model(model_file_path)
-			
-		y_pred=inference_model.predict(X_test)
+		#inference_model=load_model(model_file_path,custom_objects={'mse_scaled': mse_scaled} )
+		model.load_weights(model_file_path)
+		y_pred,y_cop_pred=model.predict(X_in_test)
 
 		metrics_eval=MetricsEval();
-		eval_metrics,accuracy_metrics_df=metrics_eval.metrics_eval_base(y_pred,y_test,logs_path)
+		eval_metrics,accuracy_metrics_df=metrics_eval.metrics_eval_base(y_pred,Y_out_test,logs_path)
+		
 		return model,eval_metrics,accuracy_metrics_df
 
-	def run_train_model_dynamic():
-		pass
-
+		
 if __name__ == '__main__':
 
 	print('Parsing from Assembly Config File....')
@@ -147,14 +131,13 @@ if __name__ == '__main__':
 	voxel_channels=config.assembly_system['voxel_channels']
 	noise_type=config.assembly_system['noise_type']
 	mapping_index=config.assembly_system['mapping_index']
-	file_names_x=config.assembly_system['data_files_x']
-	file_names_y=config.assembly_system['data_files_y']
-	file_names_z=config.assembly_system['data_files_z']
+
 	system_noise=config.assembly_system['system_noise']
 	aritifical_noise=config.assembly_system['aritifical_noise']
 	data_folder=config.assembly_system['data_folder']
 	kcc_folder=config.assembly_system['kcc_folder']
 	kcc_files=config.assembly_system['kcc_files']
+	test_kcc_files=config.assembly_system['test_kcc_files']
 
 	print('Parsing from Training Config File')
 
@@ -174,6 +157,9 @@ if __name__ == '__main__':
 	train_path='../trained_models/'+part_type
 	pathlib.Path(train_path).mkdir(parents=True, exist_ok=True) 
 
+	train_path=train_path+'/unet_model'
+	pathlib.Path(train_path).mkdir(parents=True, exist_ok=True) 
+
 	model_path=train_path+'/model'
 	pathlib.Path(model_path).mkdir(parents=True, exist_ok=True)
 	
@@ -188,46 +174,90 @@ if __name__ == '__main__':
 
 	#Objects of Measurement System, Assembly System, Get Inference Data
 	print('Initializing the Assembly System and Measurement System....')
-	
+
 	measurement_system=HexagonWlsScanner(data_type,application,system_noise,part_type,data_format)
 	vrm_system=VRMSimulationModel(assembly_type,assembly_kccs,assembly_kpis,part_name,part_type,voxel_dim,voxel_channels,point_dim,aritifical_noise)
-	get_data=GetTrainData();
+	get_data=GetTrainData()
 
 	#print(input_conv_data.shape,kcc_subset_dump.shape)
-	print('Building 3D CNN model')
+	print('Building Unet Model')
 
 	output_dimension=assembly_kccs
-	
-	dl_model=DLModel(model_type,output_dimension,optimizer,loss_func,regularizer_coeff,output_type)
-	model=dl_model.cnn_model_3d(voxel_dim,voxel_channels)
+	input_size=(voxel_dim,voxel_dim,voxel_dim,voxel_channels)
+
+	model_depth=cftrain.encode_decode_params['model_depth']
+	inital_filter_dim=cftrain.encode_decode_params['inital_filter_dim']
+
+	dl_model_unet=Encode_Decode_Model(output_dimension)
+	model=dl_model_unet.encode_decode_3d(inital_filter_dim,model_depth,input_size,voxel_channels)
+
 	print(model.summary())
 	#sys.exit()
-	print('Training 3D CNN model')
 	
+	#importing file names for model input
+	input_file_names_x=config.encode_decode_construct['input_data_files_x']
+	input_file_names_y=config.encode_decode_construct['input_data_files_y']
+	input_file_names_z=config.encode_decode_construct['input_data_files_z']
+
+	test_input_file_names_x=config.encode_decode_construct['input_test_data_files_x']
+	test_input_file_names_y=config.encode_decode_construct['input_test_data_files_y']
+	test_input_file_names_z=config.encode_decode_construct['input_test_data_files_z']
+
+	#importing file names for model output
+	output_file_names_x=config.encode_decode_construct['output_data_files_x']
+	output_file_names_y=config.encode_decode_construct['output_data_files_y']
+	output_file_names_z=config.encode_decode_construct['output_data_files_z']
+
+	test_output_file_names_x=config.encode_decode_construct['output_test_data_files_x']
+	test_output_file_names_y=config.encode_decode_construct['output_test_data_files_y']
+	test_output_file_names_z=config.encode_decode_construct['output_test_data_files_z']
+
 	if(activate_tensorboard==1):
 		tensorboard_str='tensorboard' + '--logdir '+logs_path
 		print('Visualize at Tensorboard using ', tensorboard_str)
+	
 	print('Importing and Preprocessing Cloud-of-Point Data')
 	
-	dataset=[]
-	dataset.append(get_data.data_import(file_names_x,data_folder))
-	dataset.append(get_data.data_import(file_names_y,data_folder))
-	dataset.append(get_data.data_import(file_names_z,data_folder))
 	point_index=get_data.load_mapping_index(mapping_index)
+	
+	input_dataset=[]
+	input_dataset.append(get_data.data_import(input_file_names_x,data_folder))
+	input_dataset.append(get_data.data_import(input_file_names_y,data_folder))
+	input_dataset.append(get_data.data_import(input_file_names_z,data_folder))
+	
+	test_input_dataset=[]
+	test_input_dataset.append(get_data.data_import(test_input_file_names_x,data_folder))
+	test_input_dataset.append(get_data.data_import(test_input_file_names_y,data_folder))
+	test_input_dataset.append(get_data.data_import(test_input_file_names_z,data_folder))
+
+	output_dataset=[]
+	output_dataset.append(get_data.data_import(output_file_names_x,data_folder))
+	output_dataset.append(get_data.data_import(output_file_names_y,data_folder))
+	output_dataset.append(get_data.data_import(output_file_names_z,data_folder))
+	
+	test_output_dataset=[]
+	test_output_dataset.append(get_data.data_import(test_output_file_names_x,data_folder))
+	test_output_dataset.append(get_data.data_import(test_output_file_names_y,data_folder))
+	test_output_dataset.append(get_data.data_import(test_output_file_names_z,data_folder))
 
 	kcc_dataset=get_data.data_import(kcc_files,kcc_folder)
-	input_conv_data, kcc_subset_dump,kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,dataset,point_index,kcc_dataset)
+	test_kcc_dataset=get_data.data_import(test_kcc_files,kcc_folder)
 	
-	train_model=TrainModel(batch_size,epocs,split_ratio)
-	trained_model,eval_metrics,accuracy_metrics_df=train_model.run_train_model(model,input_conv_data,kcc_subset_dump,model_path,logs_path,plots_path,activate_tensorboard)
+	#Pre-processing to point cloud data
+	input_conv_data, kcc_subset_dump,kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,input_dataset,point_index,kcc_dataset)
+	test_input_conv_data, test_kcc_subset_dump,test_kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,test_input_dataset,point_index,test_kcc_dataset)
+
+	output_conv_data, kcc_subset_dump,kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,output_dataset,point_index,kcc_dataset)
+	test_output_conv_data, test_kcc_subset_dump,test_kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,test_output_dataset,point_index,test_kcc_dataset)
+
+	unet_train_model=Unet_TrainModel(batch_size,epocs,split_ratio)
 	
-	accuracy_metrics_df.to_csv(logs_path+'/metrics_train.csv')
+	trained_model,eval_metrics,accuracy_metrics_df=unet_train_model.unet_run_train_model(model,input_conv_data,kcc_subset_dump,output_conv_data,test_input_conv_data,test_kcc_subset_dump,test_output_conv_data,model_path,logs_path,plots_path,activate_tensorboard)
+	
+	accuracy_metrics_df.to_csv(logs_path+'/metrics_test.csv')
 
 	print("Model Training Complete..")
 	print("The Model Validation Metrics are ")
 	print(eval_metrics)
 
 	print('Training Completed Successfully')
-
-
-

@@ -39,9 +39,9 @@ class DLModel:
 			:param voxel_channels: The number of voxel channels in the input structure, required to build input to the 3D CNN model
 			:type voxel_channels: int (required)
 		"""
-		from keras.layers import Conv3D, MaxPool3D, Flatten, Dense, Dropout
-		from keras.models import Sequential
-		from keras import regularizers
+		from tensorflow.keras.layers import Conv3D, MaxPool3D, Flatten, Dense, Dropout
+		from tensorflow.keras.models import Sequential
+		from tensorflow.keras import regularizers
 
 		if(self.output_type=="regression"):
 			final_layer_avt='linear'
@@ -73,9 +73,9 @@ class DLModel:
 			:param voxel_channels: The number of voxel channels in the input structure, required to build input to the 3D CNN model
 			:type voxel_channels: int (required)
 		"""
-		from keras.layers import Conv3D, MaxPool3D, Flatten, Dense, Dropout, Input
-		from keras.models import Model
-		from keras import regularizers
+		from tensorflow.keras.layers import Conv3D, MaxPool3D, Flatten, Dense, Dropout, Input
+		from tensorflow.keras.models import Model
+		from tensorflow.keras import regularizers
 
 		inputs = Input(shape=(None,None,None,3,))
 		cnn3d_1=Conv3D(32, kernel_size=(5,5,5),strides=(2,2,2),activation='relu')(inputs)
@@ -112,8 +112,8 @@ class DLModel:
 		    loss = tf.reduce_mean(0.5 * tf.exp(-1 * log_variance) * tf.square(tf.abs(y_true - prediction))+ 0.5 * log_variance)
 		    return loss
 		
-		from keras.layers import Conv3D, MaxPool3D, Flatten, Dense
-		from keras.models import Sequential
+		from tensorflow.keras.layers import Conv3D, MaxPool3D, Flatten, Dense
+		from tensorflow.keras.models import Sequential
 
 		model = Sequential()
 		model.add(Conv3D(32, kernel_size=(5,5,5),strides=(2,2,2),activation='relu',input_shape=(voxel_dim,voxel_dim,voxel_dim,deviation_channels)))
@@ -147,8 +147,8 @@ class DLModel:
 
 		assert self.model_type=="regression","Mixture Density Network Should be a Regression Model"
 		
-		from keras.layers import Conv3D, MaxPool3D, Flatten, Dense
-		from keras.models import Sequential
+		from tensorflow.keras.layers import Conv3D, MaxPool3D, Flatten, Dense
+		from tensorflow.keras.models import Sequential
 		import mdn
 
 		model = Sequential()

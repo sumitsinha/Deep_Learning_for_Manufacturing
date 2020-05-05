@@ -176,7 +176,7 @@ if __name__ == '__main__':
 
 	print('Visualizing COP')
 	
-	plot_file_name='../resources/nominal_cop_files/part_name'+'_nominal_cop.html'
+	plot_file_name='../resources/nominal_cop_files/'+part_name+'_nominal_cop.html'
 	copviz=CopViz(nominal_cop)
 	copviz.plot_cop(plot_file_name)
 

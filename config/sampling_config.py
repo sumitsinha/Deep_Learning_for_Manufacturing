@@ -17,7 +17,7 @@
 
 """
 
-sampling_config={'sample_dim':500,
+sampling_config={'sample_dim':5000,
                 'test_sample_dim':200,
                 'sample_validation_dim':300,
 		'adaptive_sample_dim':250,
@@ -27,11 +27,11 @@ sampling_config={'sample_dim':500,
                 'decay_factor':0.1,	
         'output_folder_name':'cross_member_assembly',
         'sample_type':'uniform',
-        'output_file_name':'cross_member_samples_datagen1_test',
+        'output_file_name':'cross_member_samples_datagen1',
         'output_file_name_test':'cross_member__samples_dynamic_test_0',
         'output_file_name_validate':'cross_member_samples_dynamic_validate_0',
         'output_file_name_train': 'cross_member_samples_dynamic_train',
-        'datagen_filename_x':'cross_member_dynamic_dev_x_3_',
-        'datagen_filename_y':'cross_member_dynamic_dev_y_3_',
-        'datagen_filename_z':'cross_member_dynamic_dev_z_3_',
+        'datagen_filename_x':'cross_member_dynamic_dev_x_11_',
+        'datagen_filename_y':'cross_member_dynamic_dev_y_11_',
+        'datagen_filename_z':'cross_member_dynamic_dev_z_11_',
         }

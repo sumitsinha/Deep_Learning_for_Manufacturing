@@ -64,6 +64,73 @@ class DLModel:
 		print("3D CNN model successfully compiled")
 		return model
 
+	def resnet_3d_cnn(self,voxel_dim,deviation_channels,w_val=0):
+
+		if(w_val==0):
+			w_val=np.zeros(self.output_dimension)
+			w_val[:]=1/self.output_dimension
+
+
+		def weighted_mse(val):
+			def loss(yTrue,yPred):
+
+				#val = np.array([0.1,0.1,0.1,0.1,0.1]) 
+				w_var = K.variable(value=val, dtype='float32', 
+											 name='weight_vec')
+				#weight_vec = K.ones_like(yTrue[0,:]) #a simple vector with ones shaped as (60,)
+				#idx = K.cumsum(ones) #similar to a 'range(1,61)'
+
+				return K.mean((w_var)*K.square(yTrue-yPred))
+			return loss
+
+		input_size=(voxel_dim,voxel_dim,voxel_dim,deviation_channels)
+		inputs = Input(input_size)
+		x = inputs
+		y = Conv3D(32, kernel_size=(4,4,4),strides=(2,2,2), name="conv_block_1")(x)
+		res1=y
+		
+		y = LeakyReLU()(y)
+		y = Conv3D(32, kernel_size=(3,3,3),strides=(1,1,1), padding='same',name="conv_block_2")(y)
+		y = LeakyReLU()(y)
+		y = Conv3D(32, kernel_size=(3,3,3),strides=(1,1,1), padding='same',name="conv_block_3")(y)
+		y = Add()([res1, y])
+		y = LeakyReLU()(y)
+		
+		y = Conv3D(32, kernel_size=(3,3,3),strides=(1,1,1), name="conv_block_4")(y)
+		res2=y
+		y = LeakyReLU()(y)
+		
+		y = Conv3D(32, kernel_size=(3,3,3),strides=(1,1,1), padding='same',name="conv_block_5")(y)
+		y = LeakyReLU()(y)
+		
+		y = Conv3D(32, kernel_size=(3,3,3),strides=(1,1,1), padding='same',name="conv_block_6")(y)
+		y = Add()([res2, y])
+		y = LeakyReLU()(y)
+		
+		y = Conv3D(32, kernel_size=(3,3,3),strides=(1,1,1), name="conv_block_7")(y)
+		res3=y
+		y = LeakyReLU()(y)
+		
+		y = Conv3D(32, kernel_size=(3,3,3),strides=(1,1,1),padding='same', name="conv_block_8")(y)
+		y = LeakyReLU()(y)
+		
+		y = Conv3D(32, kernel_size=(3,3,3),strides=(1,1,1),padding='same', name="conv_block_9")(y)
+		
+		y = Add()([res3, y])
+		y = LeakyReLU()(y)
+		
+		y=Flatten()(y)
+		
+		output=Dense(self.output_dimension)(y)
+		
+		model=Model(inputs, outputs=output, name='Res_3D_CNN')
+		
+		model.compile(loss=weighted_mse(w_val), optimizer=self.optimizer, metrics=['mae'])
+		
+		#print(model.summary())
+		
+		return model
+		
 	def cnn_model_3d_tl(self,voxel_dim,deviation_channels):
 		"""Build the 3D Model with GlobalMAxPooling3D instead of flatten, this enables input for different voxel dimensions, to be used when the model needs to be leveraged for transfer learning with different size input
 
@@ -107,10 +174,10 @@ class DLModel:
 			final_layer_avt='softmax'
 
 		def myloss(y_true, y_pred):
-		    prediction = y_pred[:,0:self.output_dimension]
-		    log_variance = y_pred[:,self.output_dimension:self.output_dimension+1]
-		    loss = tf.reduce_mean(0.5 * tf.exp(-1 * log_variance) * tf.square(tf.abs(y_true - prediction))+ 0.5 * log_variance)
-		    return loss
+			prediction = y_pred[:,0:self.output_dimension]
+			log_variance = y_pred[:,self.output_dimension:self.output_dimension+1]
+			loss = tf.reduce_mean(0.5 * tf.exp(-1 * log_variance) * tf.square(tf.abs(y_true - prediction))+ 0.5 * log_variance)
+			return loss
 		
 		from tensorflow.keras.layers import Conv3D, MaxPool3D, Flatten, Dense
 		from tensorflow.keras.models import Sequential

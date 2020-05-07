@@ -98,12 +98,12 @@ assembly_system = {
         'kcc_folder':'../active_learning/sample_input/cross_member_assembly',
         'kcc_files':['cross_member_samples_datagen1.csv'],
         'test_kcc_files':['cross_member_samples_datagen1_test.csv'],
-        'data_files_x':['DX_crossmember_datagen1_11.csv'],
-        'data_files_y':['DY_crossmember_datagen1_11.csv'],
-        'data_files_z':['DZ_crossmember_datagen1_11.csv'],
-        'test_data_files_x':['DX_crossmember_test_11.csv'],
-        'test_data_files_y':['DY_crossmember_test_11.csv'],
-        'test_data_files_z':['DZ_crossmember_test_11.csv'],
+        'data_files_x':['DX_crossmember_datagen2_11.csv'],
+        'data_files_y':['DY_crossmember_datagen2_11.csv'],
+        'data_files_z':['DZ_crossmember_datagen2_11.csv'],
+        'test_data_files_x':['DX_crossmember_test2_11.csv'],
+        'test_data_files_y':['DY_crossmember_test2_11.csv'],
+        'test_data_files_z':['DZ_crossmember_test2_11.csv'],
         }
 
 encode_decode_construct = {     

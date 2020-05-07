@@ -66,6 +66,12 @@ class DLModel:
 
 	def resnet_3d_cnn(self,voxel_dim,deviation_channels,w_val=0):
 
+		import numpy as np
+		import tensorflow.keras.backend as K 
+		from tensorflow.keras.models import Model
+		from tensorflow.keras import regularizers
+		from tensorflow.keras.layers import Conv3D, MaxPooling3D, Add, BatchNormalization, Input, LeakyReLU,Activation, Lambda, Concatenate, Flatten, Dense,UpSampling3D,GlobalAveragePooling3D
+
 		if(w_val==0):
 			w_val=np.zeros(self.output_dimension)
 			w_val[:]=1/self.output_dimension
@@ -96,7 +102,7 @@ class DLModel:
 		y = Add()([res1, y])
 		y = LeakyReLU()(y)
 		
-		y = Conv3D(32, kernel_size=(3,3,3),strides=(1,1,1), name="conv_block_4")(y)
+		y = Conv3D(32, kernel_size=(3,3,3),strides=(2,2,2), name="conv_block_4")(y)
 		res2=y
 		y = LeakyReLU()(y)
 		
@@ -107,7 +113,7 @@ class DLModel:
 		y = Add()([res2, y])
 		y = LeakyReLU()(y)
 		
-		y = Conv3D(32, kernel_size=(3,3,3),strides=(1,1,1), name="conv_block_7")(y)
+		y = Conv3D(32, kernel_size=(3,3,3),strides=(2,2,2), name="conv_block_7")(y)
 		res3=y
 		y = LeakyReLU()(y)
 		
@@ -121,11 +127,13 @@ class DLModel:
 		
 		y=Flatten()(y)
 		
+		y=Dense(128,kernel_regularizer=regularizers.l2(self.regularizer_coeff),activation='relu')(y)
+		y=Dense(64,kernel_regularizer=regularizers.l2(self.regularizer_coeff),activation='relu')(y)
 		output=Dense(self.output_dimension)(y)
 		
 		model=Model(inputs, outputs=output, name='Res_3D_CNN')
 		
-		model.compile(loss=weighted_mse(w_val), optimizer=self.optimizer, metrics=['mae'])
+		model.compile(loss=self.loss_function, optimizer=self.optimizer, metrics=['mae'])
 		
 		#print(model.summary())
 		

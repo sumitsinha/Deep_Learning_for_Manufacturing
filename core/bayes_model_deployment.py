@@ -87,7 +87,7 @@ class BayesDeployModel:
 		for i in range(len(inference_data)):
 			
 			from scipy.stats import norm
-			epistemic_samples=1000
+			epistemic_samples=1500
 			inference_sample=inference_data[i,:,:,:,:]
 			print(inference_sample.shape)
 			input_sample=np.array([inference_sample]*epistemic_samples)
@@ -234,10 +234,15 @@ if __name__ == '__main__':
 		accuracy_metrics_df.to_csv(logs_path+'/metrics_test.csv')
 		
 		np.savetxt((deploy_path+"predicted.csv"), y_pred, delimiter=",")
-		print('Predicted Values saved to disk...')
+		#print('Predicted Values saved to disk...')
 
 		np.savetxt((deploy_path+"pred_std.csv"), y_std, delimiter=",")
-		print('Predicted Standard Deviation Values saved to disk...')
+		#print('Predicted Standard Deviation Values saved to disk...')
 		
 		np.savetxt((deploy_path+"aleatoric_std.csv"), y_aleatoric_std, delimiter=",")
-		print('Predicted Values saved to disk...')
+		#print('Predicted Values saved to disk...')
+
+		np.savetxt((deploy_path+"aleatoric_std_avg.csv"), avg_aleatoric_std, delimiter=",")
+		np.savetxt((deploy_path+"epistemic_std_avg.csv"), avg_std, delimiter=",")
+
+		print('Model Logs saved to disk...')

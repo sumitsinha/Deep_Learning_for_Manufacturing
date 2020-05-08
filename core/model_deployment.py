@@ -96,11 +96,15 @@ class DeployModel:
 			import plotly as py
 			result_str = ["%.2f" % number for number in rounded_result[0,:]]
 
-			kcc_str=["X(1): ","X(2): ", "X(3): ", "X(4): ", "X(5): ", "X(6): "]	
+			kcc_str=[]
+			for i in range(rounded_result.shape[1]):
+				kcc_str.append("X("+str(i)+"): ")
+			#kcc_str=["X(1): ","X(2): ", "X(3): ", "X(4): ", "X(5): ", "X(6): "]	
+			
 			display_str=np.core.defchararray.add(kcc_str, result_str)	
 			print(display_str)
 			fig = go.Figure(data=go.Scatter(y=rounded_result[0,:], marker=dict(
-			size=30,color=100), mode='markers+text',text=display_str,x=["X(1)","X(2)", "X(3)", "X(4)", "X(5)", "X(6)"]))
+			size=30,color=100), mode='markers+text',text=display_str,x=kcc_str))
 			fig.update_traces( textfont_size=20,textposition='top center')
 			fig.update_layout(title_text='Deep Learning for Manufacturing - Model Estimates')
 			py.offline.plot(fig, filename="results.html")
@@ -160,7 +164,6 @@ if __name__ == '__main__':
 	point_index=get_data.load_mapping_index(mapping_index)
 
 
-
 	#Make an Object of the Measurement System Class
 	measurement_system=HexagonWlsScanner(data_type,application, system_noise,part_type,data_format)
 	#Make an Object of the Assembly System Class
@@ -171,8 +174,6 @@ if __name__ == '__main__':
 	inference_model=deploy_model.get_model(model_path)
 	print(inference_model.summary())
 	
-
-
 	input_conv_data, kcc_subset_dump,kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,dataset,point_index)
 
 	y_pred=deploy_model.model_inference(input_conv_data,inference_model,print_result=0);

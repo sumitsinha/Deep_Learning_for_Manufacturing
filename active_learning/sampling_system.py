@@ -86,6 +86,18 @@ class AdaptiveSampling():
 			initial_samples[:,index]=np.random.uniform(kcc['kcc_min'],kcc['kcc_max'],sample_dim)
 			index=index+1
 
+		pp_making=0
+
+		if(pp_masking==1):
+			import random
+			mask_array=np.zeros_like(initial_samples)
+			
+			for i in range(initial_samples.shape[0]):
+				random_index=random.randint(0,initial_samples.shape[1]-1)
+				mask_array[i,random_index]=initial_samples[i,random_index]
+
+			return mask_array
+
 		return initial_samples
 	
 	def adpative_samples_gen(self,kcc_struct,run_id):

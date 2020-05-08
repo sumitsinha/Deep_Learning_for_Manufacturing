@@ -23,7 +23,7 @@ import csv
 import logging
 tf.get_logger().setLevel(logging.ERROR)
 
-from keras.models import load_model
+from tensorflow.keras.models import load_model
 
 
 #Importing Config files
@@ -51,7 +51,7 @@ class DeployModel:
 				:param model_path: Path to the trained model, ideally it should be same as the train model path output
 				:type model_path: str (required)
 		"""
-
+		from tensorflow.keras.models import load_model
 		try:
 			inference_model=load_model(model_path)
 			print('Deep Learning Model found and loaded')
@@ -170,16 +170,17 @@ if __name__ == '__main__':
 	#Inference from simulated data
 	inference_model=deploy_model.get_model(model_path)
 	print(inference_model.summary())
-	#kcc_dataset=get_data.data_import(kcc_files,kcc_folder)
+	
 
 
 	input_conv_data, kcc_subset_dump,kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,dataset,point_index)
 
-	y_pred=deploy_model.model_inference(input_conv_data,inference_model,print_result=1);
+	y_pred=deploy_model.model_inference(input_conv_data,inference_model,print_result=0);
 
-	evalerror=0
+	evalerror=1
 
 	if(evalerror==1):
+		kcc_dataset=get_data.data_import(kcc_files,kcc_folder)
 		metrics_eval=MetricsEval();
 		eval_metrics,accuracy_metrics_df=metrics_eval.metrics_eval_base(y_pred,kcc_dataset,logs_path)
 		

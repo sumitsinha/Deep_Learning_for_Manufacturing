@@ -49,7 +49,7 @@ from metrics_eval import MetricsEval
 from model_train import TrainModel
 from model_deployment import DeployModel
 from metrics_eval import MetricsEval
-from tl_core import TransferLearning
+#from tl_core import TransferLearning
 	
 if __name__ == '__main__':
 
@@ -190,7 +190,7 @@ if __name__ == '__main__':
 		
 		if(tl_flag==0):
 			dl_model=DLModel(model_type,output_dimension,optimizer,loss_func,regularizer_coeff,output_type)
-			model=dl_model.cnn_model_3d(voxel_dim,voxel_channels)
+			model=dl_model.resnet_3d_cnn(voxel_dim,voxel_channels)
 
 		if(tl_flag==1):
 			transfer_learning=TransferLearning(tl_type,tl_base,tl_app,model_type,assembly_kccs,optimizer,loss_func,regularizer_coeff,output_type)

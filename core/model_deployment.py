@@ -61,7 +61,7 @@ class DeployModel:
 
 		return inference_model
 
-	def model_inference(self,inference_data,inference_model,print_result=0,plot_result=0,append_result=0):
+	def model_inference(self,inference_data,inference_model,deploy_path,print_result=1,plot_result=1,get_cam_data=1,append_result=0):
 		"""model_inference method is used to infer from unknown sample(s) using the trained model 
 				
 				:param inference_data: Unknown dataset having same structure as the train dataset
@@ -107,8 +107,83 @@ class DeployModel:
 			size=30,color=100), mode='markers+text',text=display_str,x=kcc_str))
 			fig.update_traces( textfont_size=20,textposition='top center')
 			fig.update_layout(title_text='Deep Learning for Manufacturing - Model Estimates')
-			py.offline.plot(fig, filename="results.html")
+			py.offline.plot(fig, filename=deploy_path+"results.html")
 
+		if(get_cam_data==1):
+			#print(inference_model.summary())
+			from cam_viz import CamViz
+			from cop_viz import CopViz
+			input_conv_data=inference_data
+			base_cop=input_conv_data[0,:,:,:,0]+input_conv_data[0,:,:,:,1]+input_conv_data[0,:,:,:,2]
+			base_cop[base_cop!=0]=0.6
+
+			process_parameter_id=np.argmax(abs(result[0,:]))
+			print("Plotting Gradient based Class Activation Map for Process Parameter: ",process_parameter_id)
+			camviz=CamViz(inference_model,'conv_block_9')
+			#For explicit plotting change ID here
+			#process_parameter_id=0
+			cop_input=input_conv_data[0:1,:,:,:,:]
+			fmap_eval, grad_wrt_fmap_eval=camviz.grad_cam_3d(cop_input,process_parameter_id)
+			alpha_k_c= grad_wrt_fmap_eval.mean(axis=(0,1,2,3)).reshape((1,1,1,-1))
+			Lc_Grad_CAM = np.maximum(np.sum(fmap_eval*alpha_k_c,axis=-1),0).squeeze()
+			scale_factor = np.array(cop_input.shape[1:4])/np.array(Lc_Grad_CAM.shape)
+
+			from scipy.ndimage.interpolation import zoom
+			import tensorflow.keras.backend as K
+			
+			_grad_CAM = zoom(Lc_Grad_CAM,scale_factor)
+			arr_min, arr_max = np.min(_grad_CAM), np.max(_grad_CAM)
+			grad_CAM = (_grad_CAM - arr_min) / (arr_max - arr_min + K.epsilon())
+
+		#Code for Grad CAM Plotting
+		plotly_viz=1	
+		
+		if(plotly_viz==1):
+			import plotly.graph_objects as go
+			import plotly as py
+			import plotly.express as px
+			X, Y, Z = np.mgrid[0:len(base_cop), 0:len(base_cop), 0:len(base_cop)]
+			#input_conv_data[0,:,:,:,0]=0.2
+			values_cop = base_cop
+			values_grad_cam=grad_CAM
+
+			trace1=go.Volume(
+				x=X.flatten(),
+				y=Y.flatten(),
+				z=Z.flatten(),
+				value=values_cop.flatten(),
+				isomin=0,
+				isomax=1,
+				opacity=0.1, # needs to be small to see through all surfaces
+				surface_count=17, # needs to be a large number for good volume rendering
+				colorscale='Greens'
+				)
+
+			trace2=go.Volume(
+				x=X.flatten(),
+				y=Y.flatten(),
+				z=Z.flatten(),
+				value=values_grad_cam.flatten(),
+				isomin=0,
+				isomax=1,
+				opacity=0.1, # needs to be small to see through all surfaces
+				surface_count=17,
+				colorscale='orrd' # needs to be a large number for good volume rendering
+				)
+			data = [trace1,trace2]
+			
+			layout = go.Layout(
+				margin=dict(
+					l=0,
+					r=0,
+					b=0,
+					t=0
+				)
+			)
+			
+			fig = go.Figure(data=data,layout=layout)
+			plot_file_name=deploy_path+'voxel_grad_cam.html'
+			py.offline.plot(fig, filename=plot_file_name)
 
 
 		return result
@@ -176,9 +251,9 @@ if __name__ == '__main__':
 	
 	input_conv_data, kcc_subset_dump,kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,dataset,point_index)
 
-	y_pred=deploy_model.model_inference(input_conv_data,inference_model,print_result=0);
+	y_pred=deploy_model.model_inference(input_conv_data,inference_model,deploy_path,print_result=1,plot_result=1);
 
-	evalerror=1
+	evalerror=0
 
 	if(evalerror==1):
 		kcc_dataset=get_data.data_import(kcc_files,kcc_folder)

@@ -23,7 +23,7 @@ import csv
 import logging
 tf.get_logger().setLevel(logging.ERROR)
 
-from keras.models import load_model
+from tensorflow.keras.models import load_model
 
 
 #Importing Config files
@@ -64,7 +64,7 @@ class DeployModel:
 
 		return inference_model
 
-	def model_inference(self,inference_data,inference_model,print_result=0,plot_result=0,append_result=0):
+	def model_inference(self,inference_data,inference_model,deploy_path,print_result=1,plot_result=1,append_result=0):
 		"""model_inference method is used to infer from unknown sample(s) using the trained model 
 				
 				:param inference_data: Unknown dataset having same structure as the train dataset
@@ -99,14 +99,16 @@ class DeployModel:
 			import plotly as py
 			result_str = ["%.2f" % number for number in rounded_result[0,:]]
 
-			kcc_str=["X(1): ","X(2): ", "X(3): ", "X(4): ", "X(5): ", "X(6): "]	
+			kcc_str=[]
+			for i in range(rounded_result.shape[1]):
+				kcc_str.append("X("+str(i)+"): ")
 			display_str=np.core.defchararray.add(kcc_str, result_str)	
 			print(display_str)
 			fig = go.Figure(data=go.Scatter(y=rounded_result[0,:], marker=dict(
-			size=30,color=100), mode='markers+text',text=display_str,x=["X(1)","X(2)", "X(3)", "X(4)", "X(5)", "X(6)"]))
+			size=30,color=100), mode='markers+text',text=display_str,x=kcc_str))
 			fig.update_traces( textfont_size=20,textposition='top center')
 			fig.update_layout(title_text='Deep Learning for Manufacturing - Model Estimates')
-			py.offline.plot(fig, filename="results.html")
+			py.offline.plot(fig, filename=deploy_path+"results.html")
 
 
 
@@ -147,7 +149,7 @@ if __name__ == '__main__':
 	
 	#Generate Paths
 	train_path='../trained_models/'+part_type
-	model_path=train_path+'/model'+'/trained_model_38.h5'
+	model_path=train_path+'/model'+'/trained_model_0.h5'
 	logs_path=train_path+'/logs'
 	deploy_path=train_path+'/deploy/'
 
@@ -174,7 +176,7 @@ if __name__ == '__main__':
 
 	#print('Visualizing COP')
 	#plot_file_name='../resources/nominal_cop_files/part_name'+'_nominal_cop.html'
-	#copviz=CopViz(nominal_cop)
+	copviz=CopViz(nominal_cop)
 	#copviz.plot_cop(plot_file_name)
 	
 	#Inference from simulated data
@@ -185,7 +187,9 @@ if __name__ == '__main__':
 
 	input_conv_data, kcc_subset_dump,kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,dataset,point_index)
 
-	y_pred=deploy_model.model_inference(input_conv_data,inference_model,print_result=1);
+	y_pred=deploy_model.model_inference(input_conv_data,inference_model,deploy_path,print_result=1,plot_result=1);
+
+	#Plot Voxels
 
 	#copviz.plot_voxelized_data(input_conv_data[0,:,:,:,:],1)
 	# Preparing basic COP
@@ -200,7 +204,7 @@ if __name__ == '__main__':
 	if(get_cam_data==1):
 		#print(inference_model.summary())
 		print("Plotting Gradient based Class Activation Map for Process Parameter: ",process_parameter_id)
-		camviz=CamViz(inference_model,'conv3d_3')
+		camviz=CamViz(inference_model,'conv_block_9')
 		#For explicit plotting change ID here
 		#process_parameter_id=0
 		cop_input=input_conv_data[0:1,:,:,:,:]
@@ -210,7 +214,7 @@ if __name__ == '__main__':
 		scale_factor = np.array(cop_input.shape[1:4])/np.array(Lc_Grad_CAM.shape)
 
 		from scipy.ndimage.interpolation import zoom
-		import keras.backend as K
+		import tensorflow.keras.backend as K
 		
 		_grad_CAM = zoom(Lc_Grad_CAM,scale_factor)
 		arr_min, arr_max = np.min(_grad_CAM), np.max(_grad_CAM)
@@ -229,28 +233,28 @@ if __name__ == '__main__':
 		values_grad_cam=grad_CAM
 
 		trace1=go.Volume(
-		    x=X.flatten(),
-		    y=Y.flatten(),
-		    z=Z.flatten(),
-		    value=values_cop.flatten(),
-		    isomin=0,
-		    isomax=1,
-		    opacity=0.1, # needs to be small to see through all surfaces
-		    surface_count=17, # needs to be a large number for good volume rendering
-		    colorscale='Greens'
-		    )
+			x=X.flatten(),
+			y=Y.flatten(),
+			z=Z.flatten(),
+			value=values_cop.flatten(),
+			isomin=0,
+			isomax=1,
+			opacity=0.1, # needs to be small to see through all surfaces
+			surface_count=17, # needs to be a large number for good volume rendering
+			colorscale='Greens'
+			)
 
 		trace2=go.Volume(
-		    x=X.flatten(),
-		    y=Y.flatten(),
-		    z=Z.flatten(),
-		    value=values_grad_cam.flatten(),
-		    isomin=0,
-		    isomax=1,
-		    opacity=0.1, # needs to be small to see through all surfaces
-		    surface_count=17,
-		    colorscale='orrd' # needs to be a large number for good volume rendering
-		    )
+			x=X.flatten(),
+			y=Y.flatten(),
+			z=Z.flatten(),
+			value=values_grad_cam.flatten(),
+			isomin=0,
+			isomax=1,
+			opacity=0.1, # needs to be small to see through all surfaces
+			surface_count=17,
+			colorscale='orrd' # needs to be a large number for good volume rendering
+			)
 		data = [trace1,trace2]
 		
 		layout = go.Layout(

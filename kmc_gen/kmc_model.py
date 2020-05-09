@@ -76,10 +76,10 @@ def kmc_model_build(tree_based_model,point_data,selected_kcc,kcc_name,split_rati
 	print('KMC Generation for selected :', kcc_name)
 
 	if(tree_based_model=='rf'):
-		model=RandomForestRegressor(n_estimators=1000,max_depth=700,n_jobs=-1,verbose=True)
+		model=RandomForestRegressor(n_estimators=500,max_depth=300,n_jobs=-1,verbose=True)
 	
 	if(tree_based_model=='xgb'):
-		model=xgb.XGBRegressor(colsample_bytree=0.4,gamma=0.045,learning_rate=0.07,max_depth=500,min_child_weight=1.5,n_estimators=500,reg_alpha=0.65,reg_lambda=0.45,subsample=0.95,n_jobs=-1,verbose=True)
+		model=xgb.XGBRegressor(colsample_bytree=0.4,gamma=0.045,learning_rate=0.07,max_depth=500,min_child_weight=1.5,n_estimators=150,reg_alpha=0.65,reg_lambda=0.45,subsample=0.95,n_jobs=-1,verbose=True)
 	
 	model.fit(train,target)
 	#%%

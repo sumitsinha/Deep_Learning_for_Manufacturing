@@ -63,7 +63,7 @@ def import_data_demo(get_data,point_index,file_names_x,file_names_y,file_names_z
 
 	#return input_conv_data,dataset
 
-def plot_data(dataset,nominal_cop):
+def plot_data(dataset,nominal_cop,deploy_path):
 	
 	print('Visualizing Cloud-of-Point data')
 	x_dev=dataset[0].values
@@ -76,7 +76,7 @@ def plot_data(dataset,nominal_cop):
 	dev[:,2]=z_dev[0,0:(z_dev.shape[1]-1)]
 
 	sample_cop=nominal_cop+dev
-	plot_file_name='../resources/nominal_cop_files/inner_rf'+'_sample_cop.html'
+	plot_file_name=deploy_path+'_sample_cop.html'
 	copviz=CopViz(sample_cop)
 	copviz.plot_cop(plot_file_name)
 
@@ -90,6 +90,9 @@ def browse_button(get_data,point_index,file_names_x,file_names_y,file_names_z,da
 
 def show_leaderboard():
 	os.system('python -W ignore ../leaderboard/leaderboard_gen.py')
+
+def deploy_model_visual():
+	os.system('python -W ignore model_deploy_visual.py')
 
 if __name__ == '__main__':
 	
@@ -161,14 +164,17 @@ if __name__ == '__main__':
 	F=Button(window,text="Load Data",command= lambda: import_data_demo(get_data,point_index,file_names_x,file_names_y,file_names_z,data_folder))
 	F.grid(row=0, column=2)
 
-	A=Button(window,text="Plot Data",command= lambda:plot_data(dataset,nominal_cop))
+	A=Button(window,text="Plot Data",command= lambda:plot_data(dataset,nominal_cop,deploy_path))
 	A.grid(row=0, column=3)
 
-	B=Button(window,text="Run Model",command= lambda:deploy_model.model_inference(input_conv_data,inference_model))
+	B=Button(window,text="Run Model",command= lambda:deploy_model.model_inference(input_conv_data,inference_model,deploy_path))
 	B.grid(row=0, column=4)
 
-	L=Button(window,text="Show Leader Board",command= show_leaderboard)
-	L.grid(row=3, column=3)
+	#V=Button(window,text="Model Insight: CAM",command= deploy_model_visual)
+	#V.grid(row=0, column=5)
+
+	#L=Button(window,text="Show Leader Board",command= show_leaderboard)
+	#L.grid(row=3, column=3)
 
 	window.mainloop()
 

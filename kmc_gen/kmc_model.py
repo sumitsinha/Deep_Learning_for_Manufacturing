@@ -104,7 +104,7 @@ def kmc_model_build(tree_based_model,point_data,selected_kcc,kcc_name,split_rati
 	
 	node_IDs = pd.DataFrame(data=threshold_data,columns=['node_id','Feature_Importance'])
 	node_IDs = node_IDs.sort_values('Feature_Importance', ascending=False)
-	filtered_nodeIDs=node_IDs.loc[node_IDs['Feature_Importance'] != 0]
+	filtered_nodeIDs=node_IDs.loc[node_IDs['Feature_Importance'] >= 0.01]
 	
 	filtered_nodeIDs_x=filtered_nodeIDs.loc[filtered_nodeIDs['node_id']<=point_data.shape[1]/3]
 	filtered_nodeIDs_y=filtered_nodeIDs.loc[(filtered_nodeIDs['node_id']>point_data.shape[1]/3) & (filtered_nodeIDs['node_id']<=point_data.shape[1]*2/3)]

@@ -86,17 +86,9 @@ class AdaptiveSampling():
 			initial_samples[:,index]=np.random.uniform(kcc['kcc_min'],kcc['kcc_max'],sample_dim)
 			index=index+1
 
-		pp_making=0
+		pp_making=1
 
-		if(pp_masking==1):
-			import random
-			mask_array=np.zeros_like(initial_samples)
-			
-			for i in range(initial_samples.shape[0]):
-				random_index=random.randint(0,initial_samples.shape[1]-1)
-				mask_array[i,random_index]=initial_samples[i,random_index]
 
-			return mask_array
 
 		return initial_samples
 	
@@ -134,10 +126,21 @@ if __name__ == '__main__':
 	else:
 		initial_samples=adaptive_sampling.inital_sampling_uniform_random(kcc_struct,sampling_config['sample_dim'])
 
+	pp_masking=sampling_config['pp_masking']
 
 	folder_name=sampling_config['output_folder_name']
 	file_name=sampling_config['output_file_name']
 	
+	if(pp_masking==1):
+		import random
+		mask_array=np.zeros_like(initial_samples)
+			
+		for i in range(initial_samples.shape[0]):
+			random_index=random.randint(0,initial_samples.shape[1]-1)
+			mask_array[i,random_index]=initial_samples[i,random_index]
+
+		initial_samples=mask_array
+			
 	file_path='./sample_input/'+folder_name+'/'+file_name+'.csv'
 	np.savetxt(file_path, initial_samples, delimiter=",")
 

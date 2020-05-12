@@ -28,98 +28,6 @@ kcc_struct.append({'kcc_id':0,
                   'kcc_name':'pv3_1',
                  'kcc_type':1,
                  'kcc_nominal':0,
-                 'kcc_max':4,
-                 'kcc_min':-4   
-        })
-
-kcc_struct.append({'kcc_id':1,
-                  'kcc_name':'pv3_2',
-                 'kcc_type':1,
-                 'kcc_nominal':0,
-                 'kcc_max':4,
-                 'kcc_min':-4   
-        })
-
-kcc_struct.append({'kcc_id':2,
-                  'kcc_name':'pv4_3',
-                 'kcc_type':1,
-                 'kcc_nominal':0,
-                 'kcc_max':4,
-                 'kcc_min':-4   
-        })
-
-kcc_struct.append({'kcc_id':3,
-                  'kcc_name':'pv4_4',
-                 'kcc_type':1,
-                 'kcc_nominal':0,
-                 'kcc_max':4,
-                 'kcc_min':-4   
-        })
-
-kcc_struct.append({'kcc_id':4,
-                  'kcc_name':'rot_pinhole',
-                 'kcc_type':1,
-                 'kcc_nominal':0,
-                 'kcc_max':2,
-                 'kcc_min':-2   
-        })
-
-kcc_struct.append({'kcc_id':5,
-                  'kcc_name':'clamp_1',
-                 'kcc_type':1,
-                 'kcc_nominal':0,
-                 'kcc_max':4,
-                 'kcc_min':-4   
-        })
-
-kcc_struct.append({'kcc_id':6,
-                  'kcc_name':'clamp_2',
-                 'kcc_type':1,
-                 'kcc_nominal':0,
-                 'kcc_max':4,
-                 'kcc_min':-4   
-        })
-kcc_struct.append({'kcc_id':7,
-                  'kcc_name':'clamp_3',
-                 'kcc_type':1,
-                 'kcc_nominal':0,
-                 'kcc_max':6,
-                 'kcc_min':-6   
-        })
-kcc_struct.append({'kcc_id':8,
-                  'kcc_name':'clamp_4',
-                 'kcc_type':1,
-                 'kcc_nominal':0,
-                 'kcc_max':2,
-                 'kcc_min':-2   
-        })
-kcc_struct.append({'kcc_id':9,
-                  'kcc_name':'clamp_5',
-                 'kcc_type':1,
-                 'kcc_nominal':0,
-                 'kcc_max':4,
-                 'kcc_min':-4   
-        })
-kcc_struct.append({'kcc_id':10,
-                  'kcc_name':'clamp_6',
-                 'kcc_type':1,
-                 'kcc_nominal':0,
-                 'kcc_max':4,
-                 'kcc_min':-4   
-        })
-kcc_struct.append({'kcc_id':11,
-                  'kcc_name':'clamp_7',
-                 'kcc_type':1,
-                 'kcc_nominal':0,
-                 'kcc_max':4,
-                 'kcc_min':-4   
-        })
-
-"""
-kcc_struct.append({'kcc_id':0,
-                  'kcc_name':'pv3_1',
-                 'kcc_type':1,
-                 'kcc_nominal':0,
                  'kcc_max':2,
                  'kcc_min':-2   
         })
@@ -205,5 +113,99 @@ kcc_struct.append({'kcc_id':11,
                  'kcc_nominal':0,
                  'kcc_max':2,
                  'kcc_min':-2   
+        })
+
+"""
+
+
+kcc_struct.append({'kcc_id':0,
+                  'kcc_name':'pv3_1',
+                 'kcc_type':1,
+                 'kcc_nominal':0,
+                 'kcc_max':4,
+                 'kcc_min':-4   
+        })
+
+kcc_struct.append({'kcc_id':1,
+                  'kcc_name':'pv3_2',
+                 'kcc_type':1,
+                 'kcc_nominal':0,
+                 'kcc_max':4,
+                 'kcc_min':-4   
+        })
+
+kcc_struct.append({'kcc_id':2,
+                  'kcc_name':'pv4_3',
+                 'kcc_type':1,
+                 'kcc_nominal':0,
+                 'kcc_max':4,
+                 'kcc_min':-4   
+        })
+
+kcc_struct.append({'kcc_id':3,
+                  'kcc_name':'pv4_4',
+                 'kcc_type':1,
+                 'kcc_nominal':0,
+                 'kcc_max':4,
+                 'kcc_min':-4   
+        })
+
+kcc_struct.append({'kcc_id':4,
+                  'kcc_name':'rot_pinhole',
+                 'kcc_type':1,
+                 'kcc_nominal':0,
+                 'kcc_max':2,
+                 'kcc_min':-2   
+        })
+
+kcc_struct.append({'kcc_id':5,
+                  'kcc_name':'clamp_1',
+                 'kcc_type':1,
+                 'kcc_nominal':0,
+                 'kcc_max':4,
+                 'kcc_min':-4   
+        })
+
+kcc_struct.append({'kcc_id':6,
+                  'kcc_name':'clamp_2',
+                 'kcc_type':1,
+                 'kcc_nominal':0,
+                 'kcc_max':4,
+                 'kcc_min':-4   
+        })
+kcc_struct.append({'kcc_id':7,
+                  'kcc_name':'clamp_3',
+                 'kcc_type':1,
+                 'kcc_nominal':0,
+                 'kcc_max':6,
+                 'kcc_min':-6   
+        })
+kcc_struct.append({'kcc_id':8,
+                  'kcc_name':'clamp_4',
+                 'kcc_type':1,
+                 'kcc_nominal':0,
+                 'kcc_max':2,
+                 'kcc_min':-2   
+        })
+kcc_struct.append({'kcc_id':9,
+                  'kcc_name':'clamp_5',
+                 'kcc_type':1,
+                 'kcc_nominal':0,
+                 'kcc_max':4,
+                 'kcc_min':-4   
+        })
+kcc_struct.append({'kcc_id':10,
+                  'kcc_name':'clamp_6',
+                 'kcc_type':1,
+                 'kcc_nominal':0,
+                 'kcc_max':4,
+                 'kcc_min':-4   
+        })
+kcc_struct.append({'kcc_id':11,
+                  'kcc_name':'clamp_7',
+                 'kcc_type':1,
+                 'kcc_nominal':0,
+                 'kcc_max':4,
+                 'kcc_min':-4   
         })
 """

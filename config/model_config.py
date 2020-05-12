@@ -123,10 +123,10 @@ encode_decode_params ={
 }
 data_study_params = {
 	'batch_size':64,
-	'epocs':150,
-	'min_train_samples':500,
-        'train_increment':300,
-        'max_train_samples':4000,
+	'epocs':500,
+	'min_train_samples':400,
+        'train_increment':200,
+        'max_train_samples':5000,
 	'split_ratio':0.2,
         'tl_flag':0
 }

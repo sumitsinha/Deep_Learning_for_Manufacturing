@@ -235,7 +235,7 @@ if __name__ == '__main__':
 		#Inferring on test dataset
 		model_test_path=train_path+'/model'+'/trained_model_'+str(run_id)+'.h5'
 		inference_model=deploy_model.get_model(model_test_path)
-		y_pred=deploy_model.model_inference(input_conv_data_test,inference_model);
+		y_pred=deploy_model.model_inference(input_conv_data_test,inference_model,deployment_path);
 		eval_metrics_test,accuracy_metrics_df_test=metrics_eval.metrics_eval_base(y_pred,kcc_subset_dump_test,logs_path,run_id)
 
 		datastudy_output_test[i,0]=train_dim

@@ -61,7 +61,7 @@ class DeployModel:
 
 		return inference_model
 
-	def model_inference(self,inference_data,inference_model,deploy_path,print_result=1,plot_result=1,get_cam_data=1,append_result=0):
+	def model_inference(self,inference_data,inference_model,deploy_path,print_result=0,plot_result=0,get_cam_data=0,append_result=0):
 		"""model_inference method is used to infer from unknown sample(s) using the trained model 
 				
 				:param inference_data: Unknown dataset having same structure as the train dataset
@@ -253,7 +253,7 @@ if __name__ == '__main__':
 
 	y_pred=deploy_model.model_inference(input_conv_data,inference_model,deploy_path,print_result=1,plot_result=1);
 
-	evalerror=0
+	evalerror=1
 
 	if(evalerror==1):
 		kcc_dataset=get_data.data_import(kcc_files,kcc_folder)

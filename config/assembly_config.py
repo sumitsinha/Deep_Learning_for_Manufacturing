@@ -101,9 +101,9 @@ assembly_system = {
         'data_files_x':['DX_crossmember_datagen2_11.csv'],
         'data_files_y':['DY_crossmember_datagen2_11.csv'],
         'data_files_z':['DZ_crossmember_datagen2_11.csv'],
-        'test_data_files_x':['DX_sim_11.csv'],
-        'test_data_files_y':['DY_sim_11.csv'],
-        'test_data_files_z':['DZ_sim_11.csv'],
+        'test_data_files_x':['DX_crossmember_test1_11.csv'],
+        'test_data_files_y':['DY_crossmember_test1_11.csv'],
+        'test_data_files_z':['DZ_crossmember_test1_11.csv'],
         }
 
 encode_decode_construct = {     

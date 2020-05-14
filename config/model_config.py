@@ -96,7 +96,7 @@
 
 
 model_parameters = {	
-        'model_type':'3D Convolution Neural Network', #other option: 'Bayesian 3D Convolution Neural Network'  
+        'model_type':'Bayesian 3D Convolution Neural Network', #other option: 'Bayesian 3D Convolution Neural Network'  
         'learning_type':'Basic', # use 'Transfer Learning' if transfer learning is to be leveraged
         'output_type':'regression',
         'batch_size': 64,

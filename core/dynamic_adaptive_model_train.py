@@ -63,8 +63,6 @@ from uncertainity_sampling import UncertainitySampling
 #from tl_core import TransferLearning
 
 
-
-
 if __name__ == '__main__':
 
 	print('Parsing from Assembly Config File....')
@@ -85,6 +83,7 @@ if __name__ == '__main__':
 	aritifical_noise=config.assembly_system['aritifical_noise']
 	data_folder=config.assembly_system['data_folder']
 	kcc_folder=config.assembly_system['kcc_folder']
+	system_noise=config.assembly_system['system_noise']
 
 	print('Parsing from Training Config File')
 
@@ -174,7 +173,7 @@ if __name__ == '__main__':
 
 	if(test_flag==1):
 		print('Generating Testing Data...')
-		print('LHS Sampling for test samples')
+		print('Sampling for test samples')
 				
 		#get prediction errors
 		#get uncertainty estimates
@@ -217,7 +216,7 @@ if __name__ == '__main__':
 		file_names_y=sampling_config['datagen_filename_y']+'validate'+'_'+str(0)+'.csv'
 		file_names_z=sampling_config['datagen_filename_z']+'validate'+'_'+str(0)+'.csv'
 			
-		np.savetxt(file_path, initial_samples, delimiter=",")
+		np.savetxt(file_path, validate_samples, delimiter=",")
 		print('Sampling Completed...')
 		cae_status=cae_simulations.run_simulations(run_id=0,type_flag='validate')
 

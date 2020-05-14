@@ -22,6 +22,19 @@
         :type kcc_struct[index]['kcc_min']: float (required)
 """
 
+def get_kcc_struct(path='../config/',filename='kcc_config.csv'):
+    import pandas as pd
+    kcc_df=pd.read_csv(path+filename)
+    kcc_struct=[]
+
+    for index,row in kcc_df.iterrows():
+        kcc_dict={'kcc_id':row['kcc_id'],'kcc_name':row['kcc_name'],'kcc_type':row['kcc_type'],'kcc_nominal':row['kcc_nominal']
+                 ,'kcc_max':row['kcc_max'],'kcc_min':row['kcc_min']
+                 }
+        kcc_struct.append(kcc_dict)
+    
+    return kcc_struct
+
 kcc_struct=[]
 
 kcc_struct.append({'kcc_id':0,

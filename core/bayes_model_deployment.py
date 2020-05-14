@@ -65,7 +65,7 @@ class BayesDeployModel:
 
 		return model
 
-	def model_inference(self,inference_data,inference_model,y_pred,y_actual,plots_path,run_id=0):
+	def model_inference(self,inference_data,inference_model,y_pred,y_actual,plots_path,epistemic_samples=1000,run_id=0):
 		"""model_inference method is used to infer from unknown sample(s) using the trained model 
 				
 				:param inference_data: Unknown dataset having same structure as the train dataset
@@ -87,7 +87,6 @@ class BayesDeployModel:
 		for i in range(len(inference_data)):
 			
 			from scipy.stats import norm
-			epistemic_samples=1500
 			inference_sample=inference_data[i,:,:,:,:]
 			print(inference_sample.shape)
 			input_sample=np.array([inference_sample]*epistemic_samples)
@@ -221,7 +220,7 @@ if __name__ == '__main__':
 	y_pred,y_std,y_aleatoric_std=deploy_model.model_inference(input_conv_data,inference_model,y_pred,kcc_dataset.values,plots_path);
 
 	avg_std=np.array(y_std).mean(axis=0)
-	avg_aleatoric_std=np.array(y_std).mean(axis=0)
+	avg_aleatoric_std=np.array(y_aleatoric_std).mean(axis=0)
 	print("Average Epistemic Uncertainty of each KCC: ",avg_std)
 	print("Average Aleatoric Uncertainty of each KCC: ",avg_aleatoric_std)
 	evalerror=1

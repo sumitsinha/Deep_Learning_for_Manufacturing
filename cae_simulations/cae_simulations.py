@@ -25,16 +25,24 @@ class CAESimulations():
 			eng = matlab.engine.start_matlab()
 			
 			#change to absolute path here
-			eng.cd(r'C:\Users\sinha_s\Desktop\VRM - GUI - datagen\Demos',nargout=0)
-			
+			#eng.cd(r'C:\Users\sinha_s\Desktop\VRM - GUI - datagen\Demos',nargout=0)
+			#Chnaging to Cross Member Assembly
+			eng.cd(r'C:\Users\SINHA_S\Desktop\cross_member_datagen\Demos\Fixture simulation\Multi station\[4] Cross member',nargout=0)
+
 			print("Initiating CAE simulations for run ID: ",run_id)
 			print("Displaying MatLab console output")
 			
 			#file_identifier=str(run_id)+'_'+type_flag
 			
 			#Running CAE Simulations
+
+			#Inner RF Assembly
 			if(self.case_study=='inner_rf_assembly'):
 				eng.main_multi_station_door_hinge(run_id,type_flag,nargout=0)
+
+			#Cross Member Assembly
+			if(self.case_study=='cross_member_assembly'):
+				eng.fixture_simulation_multi_station_cross_member_simulation_dlmfg(run_id,type_flag,nargout=0)
 			print("CAE simulations complete...")
 			eng.quit()
 

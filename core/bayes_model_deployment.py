@@ -90,6 +90,7 @@ class BayesDeployModel:
 			inference_sample=inference_data[i,:,:,:,:]
 			print(inference_sample.shape)
 			input_sample=np.array([inference_sample]*epistemic_samples)
+			print(input_sample.shape)
 			# input_sample=tf.cast(input_sample, tf.float32)
 			# init = tf.global_variables_initializer()
 			# with tf.Session() as sess:

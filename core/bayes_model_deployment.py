@@ -137,6 +137,21 @@ class BayesDeployModel:
 			#print(pred_std)
 
 		return y_pred,y_std,y_aleatoric_std
+	
+	def model_mean_eval(self,inference_data,inference_model):
+
+		def take_mean(f, *args, **kwargs):
+		  """Tracer which sets each random variable's value to its mean."""
+		  rv = f(*args, **kwargs)
+		  rv._value = rv.distribution.mean()
+		  return rv
+
+		#import tensorflow_probability.edward2 as ed
+		import edward2 as ed
+		with ed.trace(take_mean):
+			y_pred = inference_model(inference_data)
+
+		return y_pred
 
 if __name__ == '__main__':
 	
@@ -218,7 +233,25 @@ if __name__ == '__main__':
 	input_conv_data, kcc_subset_dump,kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,dataset,point_index,kcc_dataset)
 	y_pred=np.zeros_like(kcc_dataset)
 
-	y_pred,y_std,y_aleatoric_std=deploy_model.model_inference(input_conv_data,inference_model,y_pred,kcc_dataset.values,plots_path);
+	mean_eval=0
+	
+	#Predict by setting all model param distributions to mean
+	#Question asked on tensorflow, waiting for solution....
+	#Evaluate mean vector
+	if(mean_eval==1):
+		
+		y_pred=deploy_model.model_mean_eval(input_conv_data,inference_model)
+		metrics_eval=MetricsEval();
+		eval_metrics,accuracy_metrics_df=metrics_eval.metrics_eval_base(y_pred,kcc_dataset,logs_path)
+		
+		print('Evaluation Metrics: ',eval_metrics)
+		accuracy_metrics_df.to_csv(logs_path+'/metrics_test.csv')
+		
+		np.savetxt((deploy_path+"predicted.csv"), y_pred, delimiter=",")
+		#print('Predicted Values saved to disk...')
+		sys.exit()
+	
+	y_pred,y_std,y_aleatoric_std=deploy_model.model_inference(input_conv_data,inference_model,y_pred,kcc_dataset.values,plots_path)
 
 	avg_std=np.array(y_std).mean(axis=0)
 	avg_aleatoric_std=np.array(y_aleatoric_std).mean(axis=0)
@@ -246,3 +279,4 @@ if __name__ == '__main__':
 		np.savetxt((deploy_path+"epistemic_std_avg.csv"), avg_std, delimiter=",")
 
 		print('Model Logs saved to disk...')
+

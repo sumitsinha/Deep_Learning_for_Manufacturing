@@ -135,10 +135,7 @@ class DeployModel:
 			arr_min, arr_max = np.min(_grad_CAM), np.max(_grad_CAM)
 			grad_CAM = (_grad_CAM - arr_min) / (arr_max - arr_min + K.epsilon())
 
-		#Code for Grad CAM Plotting
-		plotly_viz=1	
-		
-		if(plotly_viz==1):
+			#Code for Grad CAM Plotting
 			import plotly.graph_objects as go
 			import plotly as py
 			import plotly.express as px

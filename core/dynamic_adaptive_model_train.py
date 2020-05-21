@@ -371,7 +371,7 @@ if __name__ == '__main__':
 			plots_path_validate=plots_path+'/validation_sampling'
 			pathlib.Path(plots_path_validate).mkdir(parents=True, exist_ok=True)
 
-			y_pred_validate,y_std_validate=deploy_model.model_inference(input_conv_data_validate,inference_model,y_pred,kcc_subset_dump_validate,plots_path_validate,epistemic_samples=1000,run_id=run_id)
+			y_pred_validate,y_std_validate,y_aleatoric_std=deploy_model.model_inference(input_conv_data_validate,inference_model,y_pred,kcc_subset_dump_validate,plots_path_validate,epistemic_samples=1000,run_id=run_id)
 			#eval_metrics_test,accuracy_metrics_df_test=metrics_eval.metrics_eval_base(y_pred,kcc_subset_dump_test,logs_path,run_id)
 
 			std_file_path=logs_path+'/'+'uncertainty_validate_'+str(run_id)+'_.csv'
@@ -398,7 +398,7 @@ if __name__ == '__main__':
 			plots_path_test=plots_path+'/test'
 			pathlib.Path(plots_path_test).mkdir(parents=True, exist_ok=True)
 			y_pred=np.zeros_like(kcc_subset_dump_test)
-			y_pred,y_std=deploy_model.model_inference(input_conv_data_test,inference_model,y_pred,kcc_subset_dump_test,plots_path_test,epistemic_samples=1000,run_id=run_id)
+			y_pred,y_std,y_aleatoric_std=deploy_model.model_inference(input_conv_data_test,inference_model,y_pred,kcc_subset_dump_test,plots_path_test,epistemic_samples=1000,run_id=run_id)
 			eval_metrics_test,accuracy_metrics_df_test=metrics_eval.metrics_eval_base(y_pred,kcc_subset_dump_test,logs_path,run_id)
 
 			std_file_path=logs_path+'/'+'uncertainty_test_'+str(run_id)+'_.csv'

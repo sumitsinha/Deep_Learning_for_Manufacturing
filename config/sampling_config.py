@@ -17,10 +17,10 @@
 
 """
 
-sampling_config={'sample_dim':300,
-                'test_sample_dim':300,
-                'sample_validation_dim':300,
-		'adaptive_sample_dim':300,
+sampling_config={'sample_dim':50,
+                'test_sample_dim':10,
+                'sample_validation_dim':100,
+		'adaptive_sample_dim':50,
 		'adaptive_runs':5,
                 'num_mix':3,
                 'weight':0.5,

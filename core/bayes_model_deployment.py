@@ -147,11 +147,12 @@ class BayesDeployModel:
 		  return rv
 
 		#import tensorflow_probability.edward2 as ed
-		import edward2 as ed
-		with ed.trace(take_mean):
+		from edward2 import trace
+		with trace(take_mean):
 			y_pred = inference_model(inference_data)
 
-		return y_pred
+		#Edward Trace returns a Distribution object from the model: Output Lambda
+		return y_pred.mean()
 
 if __name__ == '__main__':
 	
@@ -233,7 +234,7 @@ if __name__ == '__main__':
 	input_conv_data, kcc_subset_dump,kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,dataset,point_index,kcc_dataset)
 	y_pred=np.zeros_like(kcc_dataset)
 
-	mean_eval=0
+	mean_eval=1
 	
 	#Predict by setting all model param distributions to mean
 	#Question asked on tensorflow, waiting for solution....

@@ -138,6 +138,8 @@ class DLModel:
 		#print(model.summary())
 		
 		return model
+
+	
 		
 	def cnn_model_3d_tl(self,voxel_dim,deviation_channels):
 		"""Build the 3D Model with GlobalMAxPooling3D instead of flatten, this enables input for different voxel dimensions, to be used when the model needs to be leveraged for transfer learning with different size input

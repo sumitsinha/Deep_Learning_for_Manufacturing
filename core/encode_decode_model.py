@@ -455,10 +455,97 @@ class Encode_Decode_Model:
 		#print(model.summary())
 		return model
 
+	def resnet_3d_cnn_hybrid(self,voxel_dim=64,deviation_channels=3,w_val=0,categoric_outputs=5):
+
+			import numpy as np
+			import tensorflow as tf
+			import tensorflow.keras.backend as K 
+			from tensorflow.keras.models import Model
+			from tensorflow.keras import regularizers
+			from tensorflow.keras.layers import Conv3D, MaxPooling3D, Add, BatchNormalization, Input, LeakyReLU,Activation, Lambda, Concatenate, Flatten, Dense,UpSampling3D,GlobalAveragePooling3D
+			from tensorflow.keras.utils import plot_model
+			
+			if(w_val==0):
+				w_val=np.zeros(self.output_dimension)
+				w_val[:]=1/self.output_dimension
+
+
+			def weighted_mse(val):
+				def loss(yTrue,yPred):
+
+					#val = np.array([0.1,0.1,0.1,0.1,0.1]) 
+					w_var = K.variable(value=val, dtype='float32', 
+												 name='weight_vec')
+					#weight_vec = K.ones_like(yTrue[0,:]) #a simple vector with ones shaped as (60,)
+					#idx = K.cumsum(ones) #similar to a 'range(1,61)'
+
+					return K.mean((w_var)*K.square(yTrue-yPred))
+				return loss
+
+			input_size=(voxel_dim,voxel_dim,voxel_dim,deviation_channels)
+			inputs = Input(input_size)
+			x = inputs
+			y = Conv3D(32, kernel_size=(4,4,4),strides=(2,2,2), name="conv_block_1")(x)
+			res1=y
+			
+			y = LeakyReLU()(y)
+			y = Conv3D(32, kernel_size=(3,3,3),strides=(1,1,1), padding='same',name="conv_block_2")(y)
+			y = LeakyReLU()(y)
+			y = Conv3D(32, kernel_size=(3,3,3),strides=(1,1,1), padding='same',name="conv_block_3")(y)
+			y = Add()([res1, y])
+			y = LeakyReLU()(y)
+			
+			y = Conv3D(32, kernel_size=(3,3,3),strides=(2,2,2), name="conv_block_4")(y)
+			res2=y
+			y = LeakyReLU()(y)
+			
+			y = Conv3D(32, kernel_size=(3,3,3),strides=(1,1,1), padding='same',name="conv_block_5")(y)
+			y = LeakyReLU()(y)
+			
+			y = Conv3D(32, kernel_size=(3,3,3),strides=(1,1,1), padding='same',name="conv_block_6")(y)
+			y = Add()([res2, y])
+			y = LeakyReLU()(y)
+			
+			y = Conv3D(32, kernel_size=(3,3,3),strides=(2,2,2), name="conv_block_7")(y)
+			res3=y
+			y = LeakyReLU()(y)
+			
+			y = Conv3D(32, kernel_size=(3,3,3),strides=(1,1,1),padding='same', name="conv_block_8")(y)
+			y = LeakyReLU()(y)
+			
+			y = Conv3D(32, kernel_size=(3,3,3),strides=(1,1,1),padding='same', name="conv_block_9")(y)
+			
+			y = Add()([res3, y])
+			y = LeakyReLU()(y)
+			
+			y=Flatten()(y)
+			
+			y=Dense(128,kernel_regularizer=regularizers.l2(0.01),activation='relu')(y)
+			y=Dense(64,kernel_regularizer=regularizers.l2(0.01),activation='relu')(y)
+			
+			output_regression=Dense(self.output_dimension-categoric_outputs,name="regression_output")(y)
+			output_classification=Dense(categoric_outputs,activation="sigmoid",name="classification_output")(y)		
+			
+			output=[output_regression,output_classification]
+
+			model=Model(inputs, outputs=output, name='Res_3D_CNN_hybrid')
+			
+			loss_regression=tf.keras.losses.MeanSquaredError()
+			loss_classification=tf.keras.losses.BinaryCrossentropy()
+			
+			loss_list=[loss_regression,loss_classification]
+
+			model.compile(loss=loss_list, optimizer=tf.keras.optimizers.Adam(),experimental_run_tf_function=False, metrics=[tf.keras.metrics.MeanAbsoluteError(),tf.keras.metrics.Accuracy()])
+			
+			plot_model(model,to_file='resnet_3d_cnn_hybrid.png',show_shapes=True, show_layer_names=True)
+			print(model.summary())
+			
+			return model
+
 if (__name__=="__main__"):
 	
 	print('Model Summary')
 	enc_dec=Encode_Decode_Model(12)
 
 	#model=enc_dec.encode_decode_3d(16,4)
-	model=enc_dec.encode_decode_3d_multi_output_attention(16,4)
+	model=enc_dec.resnet_3d_cnn_hybrid()

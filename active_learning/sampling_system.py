@@ -59,12 +59,20 @@ class AdaptiveSampling():
 
 		samples =lhs(kcc_dim,samples=sample_dim,criterion='center')
 		initial_samples=np.zeros_like(samples)
+		inital_samples_type=np.zeros((sample_dim,kcc_dim))
 		index=0
 		for kcc in kcc_struct:   
-			initial_samples[:,index]=samples[:,index]*(kcc['kcc_max']-kcc['kcc_min'])+kcc['kcc_min']
-			index=index+1
+			if(kcc['kcc_type']==0):
+				initial_samples[:,index]=np.random.uniform(kcc['kcc_min'],kcc['kcc_max'],sample_dim)
+				
+			
+			if(kcc['kcc_type']==1):
+				initial_samples[:,index]=np.random.randint(2, size=sample_dim)
+				#flagging for categoric
+				inital_samples_type[:,index]=1
 
-		return initial_samples
+			index=index+1
+		return initial_samples,inital_samples_type
 
 	def inital_sampling_uniform_random(self,kcc_struct,sample_dim):
 		"""Generates multi-variate uniform random samples for each KCC and scales then based on the KCC maximum and minimum value
@@ -81,14 +89,23 @@ class AdaptiveSampling():
 		kcc_dim=len(kcc_struct)
 		sample_type=self.sample_type
 		initial_samples=np.zeros((sample_dim,kcc_dim))
+		inital_samples_type=np.zeros((sample_dim,kcc_dim))
 		index=0
 		for kcc in kcc_struct:
-			initial_samples[:,index]=np.random.uniform(kcc['kcc_min'],kcc['kcc_max'],sample_dim)
+			
+			if(kcc['kcc_type']==0):
+				initial_samples[:,index]=np.random.uniform(kcc['kcc_min'],kcc['kcc_max'],sample_dim)
+				
+			
+			if(kcc['kcc_type']==1):
+				initial_samples[:,index]=np.random.randint(2, size=sample_dim)
+				#flagging for categoric
+				inital_samples_type[:,index]=1
+
 			index=index+1
+		#pp_making=1
 
-		pp_making=1
-
-		return initial_samples
+		return initial_samples, inital_samples_type
 	
 	def adpative_samples_gen(self,kcc_struct,run_id):
 		"""Adaptive samples based on model uncertainty, currently this is Work in Progress
@@ -112,7 +129,8 @@ class AdaptiveSampling():
 
 if __name__ == '__main__':
 	
-	kcc_struct=kcc_config.kcc_struct
+	#kcc_struct=kcc_config.kcc_struct
+	kcc_struct=kcc_config.get_kcc_struct()
 	sampling_config=sampling_config.sampling_config
 
 	adaptive_sampling=AdaptiveSampling(sampling_config['sample_dim'],sampling_config['sample_type'],sampling_config['adaptive_sample_dim'],sampling_config['adaptive_runs'])
@@ -122,7 +140,7 @@ if __name__ == '__main__':
 	if(adaptive_sampling.sample_type=='lhs'):
 		initial_samples=adaptive_sampling.inital_sampling_lhs(kcc_struct,sampling_config['sample_dim'])
 	else:
-		initial_samples=adaptive_sampling.inital_sampling_uniform_random(kcc_struct,sampling_config['sample_dim'])
+		initial_samples,inital_samples_type=adaptive_sampling.inital_sampling_uniform_random(kcc_struct,sampling_config['sample_dim'])
 
 	pp_masking=sampling_config['pp_masking']
 
@@ -142,6 +160,9 @@ if __name__ == '__main__':
 	file_path='./sample_input/'+folder_name+'/'+file_name+'.csv'
 	np.savetxt(file_path, initial_samples, delimiter=",")
 
+	file_path='./sample_input/'+folder_name+'/'+file_name+'_type'+'.csv'
+	np.savetxt(file_path, inital_samples_type, delimiter=",")
+	
 	print('Initial Samples Saved to path: ',file_path)
 
 	#WIP to integrate adaptive sampling from VRM Oracle

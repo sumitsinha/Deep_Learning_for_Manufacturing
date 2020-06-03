@@ -99,8 +99,8 @@ model_parameters = {
         'model_type':'Bayesian 3D Convolution Neural Network', #other option: 'Bayesian 3D Convolution Neural Network'  
         'learning_type':'Basic', # use 'Transfer Learning' if transfer learning is to be leveraged
         'output_type':'regression',
-        'batch_size': 64,
-        'epocs':1000,
+        'batch_size': 32,
+        'epocs':500,
         'split_ratio': 0.2,
         'optimizer':'adam',
         'loss_func':'mse',
@@ -117,12 +117,13 @@ cae_sim_params = {
 }
 
 encode_decode_params ={
-        'model_depth':3,
-        'inital_filter_dim':8,
-
+        'model_depth':4,
+        'inital_filter_dim':16,
+        'kcc_sublist':0,#[0,1,2,3,4,5,6,7,8,9,10,11] use a list in case only a selected sublist of KCCs have to be used: 0 means all KCCs
+        'output_heads':2
 }
 data_study_params = {
-	'batch_size':64,
+	'batch_size':32,
 	'epocs':500,
 	'min_train_samples':400,
         'train_increment':200,

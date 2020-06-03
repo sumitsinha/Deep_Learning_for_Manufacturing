@@ -32,7 +32,6 @@ K.clear_session()
 #Importing Config files
 import assembly_config as config
 import model_config as cftrain
-import voxel_config as vc
 
 #Importing required modules from the package
 from measurement_system import HexagonWlsScanner
@@ -43,9 +42,8 @@ from encode_decode_model import Encode_Decode_Model
 from training_viz import TrainViz
 from metrics_eval import MetricsEval
 from keras_lr_multiplier import LRMultiplier
-from point_cloud_construction import GetPointCloud
 
-class Unet_DeployModel:
+class Unet_TrainModel:
 	"""Train Model Class, the initialization parameters are parsed from modelconfig_train.py file
 		
 		:param batch_size: mini batch size while training the model 
@@ -59,8 +57,13 @@ class Unet_DeployModel:
 
 		The class contains run_train_model method
 	"""	
+	def __init__(self,batch_size,epochs,split_ratio):
+			self.batch_size=batch_size
+			self.epochs=epochs
+			self.split_ratio=split_ratio
 			
-	def unet_run_model(self,model,X_in_test,model_path,logs_path,plots_path,test_result=0,Y_out_test=0,y_cop_test=0,activate_tensorboard=0,run_id=0,tl_type='full_fine_tune'):
+
+	def unet_run_train_model(self,model,X_in,Y_out_list,X_in_test,Y_out_test_list,model_path,logs_path,plots_path,activate_tensorboard=0,run_id=0,tl_type='full_fine_tune'):
 		"""run_train_model function trains the model on the dataset and saves the trained model,logs and plots within the file structure, the function prints the training evaluation metrics
 			
 			:param model: 3D CNN model compiled within the Deep Learning Class, refer https://keras.io/models/model/ for more information 
@@ -94,124 +97,24 @@ class Unet_DeployModel:
 		model_file_path=model_path+'/unet_trained_model_'+str(run_id)
 		
 		#tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir='C:\\Users\\sinha_s\\Desktop\\dlmfg_package\\dlmfg\\trained_models\\inner_rf_assembly\\logs',histogram_freq=1)
+		checkpointer = tf.keras.callbacks.ModelCheckpoint(model_file_path, verbose=1, save_best_only=True,monitor='val_loss',save_weights_only=True)
+		#Check pointer to save the best model
+		history=model.fit(x=X_in,y=Y_out_list, validation_data=(X_in_test,Y_out_test_list), epochs=self.epochs, batch_size=self.batch_size,callbacks=[checkpointer])
+		
+		def mse_scaled(y_true,y_pred):
+			return K.mean(K.square((y_pred - y_true)/10))
 		
 		#inference_model=load_model(model_file_path,custom_objects={'mse_scaled': mse_scaled} )
 		model.load_weights(model_file_path)
-		print("Trained Model Weights loaded successfully")
-		print("Conducting Inference...")
-		y_pred,y_cop_pred=model.predict(X_in_test)
-		print("Inference Completed !")
+		model_outputs=model.predict(X_in_test)
+		y_pred=model_outputs[0]
 		
-		if(test_result==1):
-			metrics_eval=MetricsEval();
-			eval_metrics,accuracy_metrics_df=metrics_eval.metrics_eval_base(y_pred,Y_out_test,logs_path)
-			
-			#y_cop_pred_flat=y_cop_pred.flatten()
-			#y_cop_test_flat=y_cop_test.flatten()
-
-			#combined_array=np.stack([y_cop_test_flat,y_cop_pred_flat],axis=1)
-			#filtered_array=combined_array[np.where(combined_array[:,0] >= 0.05)]
-			#y_cop_test_vector=filtered_array[:,0:1]
-			#y_cop_pred_vector=filtered_array[:,1:2]
-
-			y_cop_pred_vector=np.reshape(y_cop_pred,(y_cop_pred.shape[0],-1))
-			y_cop_test_vector=np.reshape(y_cop_test,(y_cop_test.shape[0],-1))
-			y_cop_pred_vector=y_cop_pred_vector.T
-			y_cop_test_vector=y_cop_test_vector.T
-			print(y_cop_pred_vector.shape)
-			#y_cop_test_flat=y_cop_test.flatten()
-			
-			eval_metrics_cop,accuracy_metrics_df_cop=metrics_eval.metrics_eval_cop(y_cop_pred_vector,y_cop_test_vector,logs_path)
-
-			return y_pred,y_cop_pred,model,eval_metrics,accuracy_metrics_df,eval_metrics_cop,accuracy_metrics_df_cop
+		metrics_eval=MetricsEval();
+		eval_metrics,accuracy_metrics_df=metrics_eval.metrics_eval_base(y_pred,Y_out_test_list[0],logs_path)
 		
-		return y_pred,y_cop_pred,model
+		return model,eval_metrics,accuracy_metrics_df
 
-
-def plot_decode_cop_voxel(base_cop,plot_file_name):
-	
-	import plotly.graph_objects as go
-	import plotly as py
-	import plotly.express as px
-	X, Y, Z = np.mgrid[0:len(base_cop), 0:len(base_cop), 0:len(base_cop)]
-		#input_conv_data[0,:,:,:,0]=0.2
-	values_cop = base_cop.flatten()
-
-	from sklearn.preprocessing import MinMaxScaler
-	scaler = MinMaxScaler()
-	scaled_values=scaler.fit_transform(values_cop.reshape(-1, 1))
-	trace1=go.Volume(
-			x=X.flatten(),
-			y=Y.flatten(),
-			z=Z.flatten(),
-			value=scaled_values[:,0],
-			isomin=0,
-			isomax=1,
-			opacity=0.1, # needs to be small to see through all surfaces
-			surface_count=17, # needs to be a large number for good volume rendering
-			colorscale='Greens'
-	)
-
-	layout = go.Layout(
-			margin=dict(
-				l=0,
-				r=0,
-				b=0,
-				t=0
-			)
-		)
 		
-	data=[trace1]
-
-	fig = go.Figure(data=data,layout=layout)
-	py.offline.plot(fig, filename=plot_file_name)
-
-def plot_decode_cop_dev(nominal_cop,dev_vector,plot_file_name):
-	
-	import plotly.graph_objects as go
-	import plotly as py
-	import plotly.express as px
-
-	#input_conv_data[0,:,:,:,0]=0.2
-	values_cop = dev_vector.flatten()
-
-
-	from sklearn.preprocessing import MinMaxScaler
-	scaler = MinMaxScaler()
-	scaled_values=scaler.fit_transform(values_cop.reshape(-1, 1))
-	trace1=go.Scatter3d(
-			x=nominal_cop[:,0],
-			y=nominal_cop[:,1],
-			z=nominal_cop[:,2],
-			hoverinfo="text",
-			hovertext=dev_vector,
-			mode='markers',
-    		marker=dict(
-    			showscale=True,
-        		size=12,
-        		#color=scaled_values[:,0],   
-        		color=dev_vector,        # set color to an array/list of desired values
-       			colorscale='Viridis',   # choose a colorscale
-        		opacity=0.6
-        		)
-   
-	)
-
-	layout = go.Layout(
-			margin=dict(
-				l=0,
-				r=0,
-				b=0,
-				t=0
-			)
-		)
-		
-	data=[trace1]
-
-	fig = go.Figure(data=data,layout=layout)
-	#print(plot_file_name)
-	py.offline.plot(fig, filename=plot_file_name)
-
 if __name__ == '__main__':
 
 	print('Parsing from Assembly Config File....')
@@ -255,7 +158,7 @@ if __name__ == '__main__':
 	train_path='../trained_models/'+part_type
 	pathlib.Path(train_path).mkdir(parents=True, exist_ok=True) 
 
-	train_path=train_path+'/unet_model'
+	train_path=train_path+'/unet_model_multi_output'
 	pathlib.Path(train_path).mkdir(parents=True, exist_ok=True) 
 
 	model_path=train_path+'/model'
@@ -277,29 +180,46 @@ if __name__ == '__main__':
 	vrm_system=VRMSimulationModel(assembly_type,assembly_kccs,assembly_kpis,part_name,part_type,voxel_dim,voxel_channels,point_dim,aritifical_noise)
 	get_data=GetTrainData()
 
-	kcc_sublist=cftrain.encode_decode_params['kcc_sublist']
+	#print(input_conv_data.shape,kcc_subset_dump.shape)
+	print('Building Unet Model')
 
+	kcc_sublist=cftrain.encode_decode_params['kcc_sublist']
+	output_heads=cftrain.encode_decode_params['output_heads']
+	encode_decode_multi_output_construct=config.encode_decode_multi_output_construct
+	
+	if(output_heads==len(encode_decode_multi_output_construct)):
+		print("Valid Output Stages and heads")
+	else:
+		print("Inconsistent model setting")
+
+	print("KCC sub-listing: ",kcc_sublist)
+	
 	#Check for KCC sub-listing
 	if(kcc_sublist!=0):
 		output_dimension=len(kcc_sublist)
 	else:
 		output_dimension=assembly_kccs
+	
+	print("Process Parameter Dimension: ",output_dimension)
 
-	#print(input_conv_data.shape,kcc_subset_dump.shape)
-	print('Building Unet Model')
-
-	output_dimension=assembly_kccs
 	input_size=(voxel_dim,voxel_dim,voxel_dim,voxel_channels)
 
 	model_depth=cftrain.encode_decode_params['model_depth']
 	inital_filter_dim=cftrain.encode_decode_params['inital_filter_dim']
 
 	dl_model_unet=Encode_Decode_Model(output_dimension)
-	model=dl_model_unet.encode_decode_3d(inital_filter_dim,model_depth,input_size,voxel_channels)
+	
+	#changed to attention model
+	model=dl_model_unet.encode_decode_3d_multi_output_attention(inital_filter_dim,model_depth,input_size,output_heads,voxel_channels)
 
 	print(model.summary())
 	#sys.exit()
 	
+	#importing file names for model input
+	input_file_names_x=config.encode_decode_construct['input_data_files_x']
+	input_file_names_y=config.encode_decode_construct['input_data_files_y']
+	input_file_names_z=config.encode_decode_construct['input_data_files_z']
+
 	test_input_file_names_x=config.encode_decode_construct['input_test_data_files_x']
 	test_input_file_names_y=config.encode_decode_construct['input_test_data_files_y']
 	test_input_file_names_z=config.encode_decode_construct['input_test_data_files_z']
@@ -313,89 +233,72 @@ if __name__ == '__main__':
 	
 	point_index=get_data.load_mapping_index(mapping_index)
 	
-	get_point_cloud=GetPointCloud()
-
-	cop_file_name=vc.voxel_parameters['nominal_cop_filename']
-	cop_file_path='../resources/nominal_cop_files/'+cop_file_name
-	#Read cop from csv file
-	print('Importing Nominal COP')
-	nominal_cop=vrm_system.get_nominal_cop(cop_file_path)
-
+	input_dataset=[]
+	input_dataset.append(get_data.data_import(input_file_names_x,data_folder))
+	input_dataset.append(get_data.data_import(input_file_names_y,data_folder))
+	input_dataset.append(get_data.data_import(input_file_names_z,data_folder))
+	
 	test_input_dataset=[]
 	test_input_dataset.append(get_data.data_import(test_input_file_names_x,data_folder))
 	test_input_dataset.append(get_data.data_import(test_input_file_names_y,data_folder))
 	test_input_dataset.append(get_data.data_import(test_input_file_names_z,data_folder))
+
+
+	kcc_dataset=get_data.data_import(kcc_files,kcc_folder)
+	test_kcc_dataset=get_data.data_import(test_kcc_files,kcc_folder)
 	
+	if(kcc_sublist!=0):
+		print("Sub-setting Process Parameters: ",kcc_sublist)
+		kcc_dataset=kcc_dataset.iloc[:,kcc_sublist]
+		test_kcc_dataset=test_kcc_dataset[:,kcc_sublist]
+	else:
+		print("Using all Process Parameters")
+	
+	#Pre-processing to point cloud data
+	input_conv_data, kcc_subset_dump,kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,input_dataset,point_index,kcc_dataset)
+	test_input_conv_data, test_kcc_subset_dump,test_kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,test_input_dataset,point_index,test_kcc_dataset)
 
-	#Test output files
-	deploy_output=1
+	Y_out_list=[]
+	Y_out_list.append(kcc_subset_dump)
+	Y_out_test_list=[]
+	Y_out_test_list.append(test_kcc_subset_dump)
+	
+	for encode_decode_construct in encode_decode_multi_output_construct:
+		#importing file names for model output
+		print("Importing output data for stage: ",encode_decode_construct)
+		
+		output_file_names_x=encode_decode_construct['output_data_files_x']
+		output_file_names_y=encode_decode_construct['output_data_files_y']
+		output_file_names_z=encode_decode_construct['output_data_files_z']
 
-	if(deploy_output==1):
-		test_output_file_names_x=config.encode_decode_construct['output_test_data_files_x']
-		test_output_file_names_y=config.encode_decode_construct['output_test_data_files_y']
-		test_output_file_names_z=config.encode_decode_construct['output_test_data_files_z']
+		test_output_file_names_x=encode_decode_construct['output_test_data_files_x']
+		test_output_file_names_y=encode_decode_construct['output_test_data_files_y']
+		test_output_file_names_z=encode_decode_construct['output_test_data_files_z']
+
+		output_dataset=[]
+		output_dataset.append(get_data.data_import(output_file_names_x,data_folder))
+		output_dataset.append(get_data.data_import(output_file_names_y,data_folder))
+		output_dataset.append(get_data.data_import(output_file_names_z,data_folder))
+	
 		test_output_dataset=[]
 		test_output_dataset.append(get_data.data_import(test_output_file_names_x,data_folder))
 		test_output_dataset.append(get_data.data_import(test_output_file_names_y,data_folder))
 		test_output_dataset.append(get_data.data_import(test_output_file_names_z,data_folder))
-
-	#kcc_dataset=get_data.data_import(kcc_files,kcc_folder)
-	test_input_conv_data, test_kcc_subset_dump_dummy,test_kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,test_input_dataset,point_index)
-	
-	if(deploy_output==1):
-		test_kcc_dataset=get_data.data_import(test_kcc_files,kcc_folder)
 		
-		if(kcc_sublist!=0):
-			print("Sub-setting Process Parameters: ",kcc_sublist)
-			test_kcc_dataset=test_kcc_dataset[:,kcc_sublist]
-		else:
-			print("Using all Process Parameters")
-		
+		output_conv_data, kcc_subset_dump,kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,output_dataset,point_index,kcc_dataset)
 		test_output_conv_data, test_kcc_subset_dump,test_kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,test_output_dataset,point_index,test_kcc_dataset)
+		
+		Y_out_list.append(output_conv_data)
+		Y_out_test_list.append(test_output_conv_data)
+
+	unet_train_model=Unet_TrainModel(batch_size,epocs,split_ratio)
 	
-	#Pre-processing to point cloud data
-
+	trained_model,eval_metrics,accuracy_metrics_df=unet_train_model.unet_run_train_model(model,input_conv_data,Y_out_list,test_input_conv_data,Y_out_test_list,model_path,logs_path,plots_path,activate_tensorboard)
 	
-	unet_deploy_model=Unet_DeployModel()
+	accuracy_metrics_df.to_csv(logs_path+'/metrics_test.csv')
 
-	if(deploy_output==1):
-		y_pred,y_cop_pred,model,eval_metrics,accuracy_metrics_df,eval_metrics_cop,accuracy_metrics_df_cop=unet_deploy_model.unet_run_model(model,test_input_conv_data,model_path,logs_path,plots_path,deploy_output,test_kcc_subset_dump,test_output_conv_data)
-		
-		accuracy_metrics_df.to_csv(logs_path+'/metrics_test_KCC.csv')
-		accuracy_metrics_df_cop.to_csv(logs_path+'/metrics_test_cop.csv')
-		print("Model Deployment Complete")
-		print("The Model KCC Validation Metrics are ")
-		print(accuracy_metrics_df.mean())
-		print("The Model KCC metrics summary ")
-		print(eval_metrics)
-		print("The Model Segmentation Validation Metrics are ")
-		print(accuracy_metrics_df_cop.mean())
-		accuracy_metrics_df_cop.mean().to_csv(logs_path+'/metrics_test_cop_summary.csv')
-		accuracy_metrics_df.mean().to_csv(logs_path+'/metrics_test_kcc_summary.csv')
-		print("Plotting Cloud-of-Point for comparison")
+	print("Model Training Complete..")
+	print("The Model Validation Metrics are ")
+	print(eval_metrics)
 
-		part_id=5
-
-		y_cop_pred_plot=y_cop_pred[part_id,:,:,:,:]
-		y_cop_actual_plot=test_input_conv_data[part_id,:,:,:,:]
-
-		dev_actual=get_point_cloud.getcopdev(test_input_conv_data[part_id,:,:,:,:],point_index,nominal_cop)
-		dev_pred=get_point_cloud.getcopdev(y_cop_pred[part_id,:,:,:,:],point_index,nominal_cop)
-		
-		filenamestr_pred=["/pred_plot_x.html","/pred_plot_y.html","/pred_plot_z.html"]
-		filenamestr_actual=["/actual_plot_x.html","/actual_plot_y.html","/actual_plot_z.html"]
-		
-		print("Plotting All components for sample id: ",part_id)	
-		
-		for i in range(3):
-			pass
-			#pred Plot
-			plot_decode_cop_dev(nominal_cop,dev_pred[:,i],plot_file_name=deployment_path+filenamestr_pred[i])
-			plot_decode_cop_dev(nominal_cop,dev_actual[:,i],plot_file_name=deployment_path+filenamestr_actual[i])
-
-
-	if(deploy_output==0):
-		y_pred,y_cop_pred,model=unet_deploy_model.unet_run_model(model,test_input_conv_data,model_path,logs_path,deploy_output,plots_path)
-
-		print('Predicted KCCs')
-		print(y_pred)
+	print('Training Completed Successfully')

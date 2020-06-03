@@ -88,6 +88,7 @@ class CamViz:
 			fmap_eval=conv_output.numpy()
 			grad_wrt_fmap_eval=grads.numpy()
 			grad_wrt_fmap_eval /= (np.max(grad_wrt_fmap_eval) + K.epsilon())
+			#should feature map be normalized?
 			return fmap_eval, grad_wrt_fmap_eval
 
 

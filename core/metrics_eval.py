@@ -91,14 +91,29 @@ class MetricsEval:
 		r2_KCCs = metrics.r2_score(predicted_y, test_y,multioutput='raw_values')
 
 		rmse_KCCs=np.sqrt(mse_KCCs)
+		
+		r2_adjusted=np.zeros(kcc_dim)
+
+		from tqdm import tqdm
+		for i in tqdm(range(kcc_dim)):
+			y_cop_test_flat=test_y[:,i]
+			y_cop_pred_flat=predicted_y[:,i]
+			combined_array=np.stack([y_cop_test_flat,y_cop_pred_flat],axis=1)
+			filtered_array=combined_array[np.where(abs(combined_array[:,0]) >= 0.01)]
+			y_cop_test_vector=filtered_array[:,0:1]
+			y_cop_pred_vector=filtered_array[:,1:2]
+			#print(y_cop_pred_vector.shape)
+			r2_adjusted[i] = metrics.r2_score(y_cop_test_vector,y_cop_pred_vector,multioutput='raw_values')[0]
+		
 		eval_metrics= {
 			"Mean Absolute Error" : mae_KCCs,
 			"Mean Squared Error" : mse_KCCs,
 			"Root Mean Squared Error" : rmse_KCCs,
-			"R Squared" : r2_KCCs
+			"R Squared" : r2_KCCs,
+			"R Squared Adjusted" : r2_adjusted
 		}
 		
-		accuracy_metrics_df=pd.DataFrame({'MAE':mae_KCCs,'MSE':mse_KCCs,'RMSE':rmse_KCCs,'R2':r2_KCCs},columns=['MAE','MSE','RMSE','R2'])
+		accuracy_metrics_df=pd.DataFrame({'MAE':mae_KCCs,'MSE':mse_KCCs,'RMSE':rmse_KCCs,'R2':r2_KCCs,"R2_Adjusted":r2_adjusted},columns=['MAE','MSE','RMSE','R2',"R2_Adjusted"])
 		#accuracy_metrics_df.to_csv(logs_path+'/metrics.csv') #moved to function call
 		return eval_metrics,accuracy_metrics_df
 		

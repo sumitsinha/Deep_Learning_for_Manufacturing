@@ -60,7 +60,7 @@ class Unet_DeployModel:
 		The class contains run_train_model method
 	"""	
 			
-	def unet_run_model(self,model,X_in_test,model_path,logs_path,plots_path,test_result=0,Y_out_test=0,y_cop_test=0,activate_tensorboard=0,run_id=0,tl_type='full_fine_tune'):
+	def unet_run_model(self,model,X_in_test,model_path,logs_path,plots_path,test_result=0,Y_out_test_list=0,activate_tensorboard=0,run_id=0,tl_type='full_fine_tune'):
 		"""run_train_model function trains the model on the dataset and saves the trained model,logs and plots within the file structure, the function prints the training evaluation metrics
 			
 			:param model: 3D CNN model compiled within the Deep Learning Class, refer https://keras.io/models/model/ for more information 
@@ -99,12 +99,13 @@ class Unet_DeployModel:
 		model.load_weights(model_file_path)
 		print("Trained Model Weights loaded successfully")
 		print("Conducting Inference...")
-		y_pred,y_cop_pred=model.predict(X_in_test)
+		model_outputs=model.predict(X_in_test)
+		y_pred=model_outputs[0]
 		print("Inference Completed !")
 		
 		if(test_result==1):
 			metrics_eval=MetricsEval();
-			eval_metrics,accuracy_metrics_df=metrics_eval.metrics_eval_base(y_pred,Y_out_test,logs_path)
+			eval_metrics,accuracy_metrics_df=metrics_eval.metrics_eval_base(y_pred,Y_out_test_list[0],logs_path)
 			
 			#y_cop_pred_flat=y_cop_pred.flatten()
 			#y_cop_test_flat=y_cop_test.flatten()
@@ -114,18 +115,26 @@ class Unet_DeployModel:
 			#y_cop_test_vector=filtered_array[:,0:1]
 			#y_cop_pred_vector=filtered_array[:,1:2]
 
-			y_cop_pred_vector=np.reshape(y_cop_pred,(y_cop_pred.shape[0],-1))
-			y_cop_test_vector=np.reshape(y_cop_test,(y_cop_test.shape[0],-1))
-			y_cop_pred_vector=y_cop_pred_vector.T
-			y_cop_test_vector=y_cop_test_vector.T
-			print(y_cop_pred_vector.shape)
-			#y_cop_test_flat=y_cop_test.flatten()
+			eval_metrics_cop_list=[]
+			accuracy_metrics_df_cop_list=[]
 			
-			eval_metrics_cop,accuracy_metrics_df_cop=metrics_eval.metrics_eval_cop(y_cop_pred_vector,y_cop_test_vector,logs_path)
-
-			return y_pred,y_cop_pred,model,eval_metrics,accuracy_metrics_df,eval_metrics_cop,accuracy_metrics_df_cop
+			for i in range(1,len(model_outputs)):
+				y_cop_pred=model_outputs[i]
+				y_cop_test=Y_out_test_list[i]
+				y_cop_pred_vector=np.reshape(y_cop_pred,(y_cop_pred.shape[0],-1))
+				y_cop_test_vector=np.reshape(y_cop_test,(y_cop_test.shape[0],-1))
+				y_cop_pred_vector=y_cop_pred_vector.T
+				y_cop_test_vector=y_cop_test_vector.T
+				print(y_cop_pred_vector.shape)
+				#y_cop_test_flat=y_cop_test.flatten()
+				
+				eval_metrics_cop,accuracy_metrics_df_cop=metrics_eval.metrics_eval_cop(y_cop_pred_vector,y_cop_test_vector,logs_path)
+				eval_metrics_cop_list.append(eval_metrics_cop)
+				accuracy_metrics_df_cop_list.append(accuracy_metrics_df_cop)
+			
+			return y_pred,model_outputs,model,eval_metrics,accuracy_metrics_df,eval_metrics_cop_list,accuracy_metrics_df_cop_list
 		
-		return y_pred,y_cop_pred,model
+		return y_pred,model_outputs,model
 
 
 def plot_decode_cop_voxel(base_cop,plot_file_name):
@@ -183,17 +192,18 @@ def plot_decode_cop_dev(nominal_cop,dev_vector,plot_file_name):
 			x=nominal_cop[:,0],
 			y=nominal_cop[:,1],
 			z=nominal_cop[:,2],
+			#surfacecolor=dev_vector,
 			hoverinfo="text",
 			hovertext=dev_vector,
 			mode='markers',
-    		marker=dict(
-    			showscale=True,
-        		size=12,
-        		#color=scaled_values[:,0],   
-        		color=dev_vector,        # set color to an array/list of desired values
-       			colorscale='Viridis',   # choose a colorscale
-        		opacity=0.6
-        		)
+			marker=dict(
+				showscale=True,
+				size=12,
+				#color=scaled_values[:,0],   
+				color=dev_vector,        # set color to an array/list of desired values
+				colorscale='Viridis',   # choose a colorscale
+				opacity=0.6
+				)
    
 	)
 
@@ -255,7 +265,7 @@ if __name__ == '__main__':
 	train_path='../trained_models/'+part_type
 	pathlib.Path(train_path).mkdir(parents=True, exist_ok=True) 
 
-	train_path=train_path+'/unet_model'
+	train_path=train_path+'/unet_model_multi_output'
 	pathlib.Path(train_path).mkdir(parents=True, exist_ok=True) 
 
 	model_path=train_path+'/model'
@@ -278,6 +288,13 @@ if __name__ == '__main__':
 	get_data=GetTrainData()
 
 	kcc_sublist=cftrain.encode_decode_params['kcc_sublist']
+	output_heads=cftrain.encode_decode_params['output_heads']
+	encode_decode_multi_output_construct=config.encode_decode_multi_output_construct
+	
+	if(output_heads==len(encode_decode_multi_output_construct)):
+		print("Valid Output Stages and heads")
+	else:
+		print("Inconsistent model setting")
 
 	#Check for KCC sub-listing
 	if(kcc_sublist!=0):
@@ -295,7 +312,7 @@ if __name__ == '__main__':
 	inital_filter_dim=cftrain.encode_decode_params['inital_filter_dim']
 
 	dl_model_unet=Encode_Decode_Model(output_dimension)
-	model=dl_model_unet.encode_decode_3d(inital_filter_dim,model_depth,input_size,voxel_channels)
+	model=dl_model_unet.encode_decode_3d_multi_output_attention(inital_filter_dim,model_depth,input_size,output_heads,voxel_channels)
 
 	print(model.summary())
 	#sys.exit()
@@ -303,7 +320,6 @@ if __name__ == '__main__':
 	test_input_file_names_x=config.encode_decode_construct['input_test_data_files_x']
 	test_input_file_names_y=config.encode_decode_construct['input_test_data_files_y']
 	test_input_file_names_z=config.encode_decode_construct['input_test_data_files_z']
-
 
 	if(activate_tensorboard==1):
 		tensorboard_str='tensorboard' + '--logdir '+logs_path
@@ -325,24 +341,15 @@ if __name__ == '__main__':
 	test_input_dataset.append(get_data.data_import(test_input_file_names_x,data_folder))
 	test_input_dataset.append(get_data.data_import(test_input_file_names_y,data_folder))
 	test_input_dataset.append(get_data.data_import(test_input_file_names_z,data_folder))
-	
-
-	#Test output files
-	deploy_output=1
-
-	if(deploy_output==1):
-		test_output_file_names_x=config.encode_decode_construct['output_test_data_files_x']
-		test_output_file_names_y=config.encode_decode_construct['output_test_data_files_y']
-		test_output_file_names_z=config.encode_decode_construct['output_test_data_files_z']
-		test_output_dataset=[]
-		test_output_dataset.append(get_data.data_import(test_output_file_names_x,data_folder))
-		test_output_dataset.append(get_data.data_import(test_output_file_names_y,data_folder))
-		test_output_dataset.append(get_data.data_import(test_output_file_names_z,data_folder))
 
 	#kcc_dataset=get_data.data_import(kcc_files,kcc_folder)
 	test_input_conv_data, test_kcc_subset_dump_dummy,test_kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,test_input_dataset,point_index)
 	
+	#Test output files
+	deploy_output=1
+	
 	if(deploy_output==1):
+		
 		test_kcc_dataset=get_data.data_import(test_kcc_files,kcc_folder)
 		
 		if(kcc_sublist!=0):
@@ -351,51 +358,78 @@ if __name__ == '__main__':
 		else:
 			print("Using all Process Parameters")
 		
-		test_output_conv_data, test_kcc_subset_dump,test_kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,test_output_dataset,point_index,test_kcc_dataset)
-	
-	#Pre-processing to point cloud data
+		Y_out_test_list=[None]
+		#Y_out_test_list.append(test_kcc_subset_dump)
+		
+		for encode_decode_construct in encode_decode_multi_output_construct:
+		#importing file names for model output
+			print("Importing output data for stage: ",encode_decode_construct)
+			
+			test_output_file_names_x=encode_decode_construct['output_test_data_files_x']
+			test_output_file_names_y=encode_decode_construct['output_test_data_files_y']
+			test_output_file_names_z=encode_decode_construct['output_test_data_files_z']
+			test_output_dataset=[]
+			test_output_dataset.append(get_data.data_import(test_output_file_names_x,data_folder))
+			test_output_dataset.append(get_data.data_import(test_output_file_names_y,data_folder))
+			test_output_dataset.append(get_data.data_import(test_output_file_names_z,data_folder))
 
+			test_output_conv_data, test_kcc_subset_dump,test_kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,test_output_dataset,point_index,test_kcc_dataset)
+			Y_out_test_list[0]=test_kcc_subset_dump
+			Y_out_test_list.append(test_output_conv_data)
+
+	#Pre-processing to point cloud data
 	
 	unet_deploy_model=Unet_DeployModel()
 
 	if(deploy_output==1):
-		y_pred,y_cop_pred,model,eval_metrics,accuracy_metrics_df,eval_metrics_cop,accuracy_metrics_df_cop=unet_deploy_model.unet_run_model(model,test_input_conv_data,model_path,logs_path,plots_path,deploy_output,test_kcc_subset_dump,test_output_conv_data)
+		y_pred,model_outputs,model,eval_metrics,accuracy_metrics_df,eval_metrics_cop_list,accuracy_metrics_df_cop_list=unet_deploy_model.unet_run_model(model,test_input_conv_data,model_path,logs_path,plots_path,deploy_output,Y_out_test_list)
 		
 		accuracy_metrics_df.to_csv(logs_path+'/metrics_test_KCC.csv')
-		accuracy_metrics_df_cop.to_csv(logs_path+'/metrics_test_cop.csv')
+		
 		print("Model Deployment Complete")
 		print("The Model KCC Validation Metrics are ")
-		print(accuracy_metrics_df.mean())
-		print("The Model KCC metrics summary ")
-		print(eval_metrics)
-		print("The Model Segmentation Validation Metrics are ")
-		print(accuracy_metrics_df_cop.mean())
-		accuracy_metrics_df_cop.mean().to_csv(logs_path+'/metrics_test_cop_summary.csv')
+
+		print(accuracy_metrics_df)
 		accuracy_metrics_df.mean().to_csv(logs_path+'/metrics_test_kcc_summary.csv')
-		print("Plotting Cloud-of-Point for comparison")
 
-		part_id=5
+		print("The Model KCC metrics summary ")
+		print(accuracy_metrics_df.mean())
 
-		y_cop_pred_plot=y_cop_pred[part_id,:,:,:,:]
-		y_cop_actual_plot=test_input_conv_data[part_id,:,:,:,:]
-
-		dev_actual=get_point_cloud.getcopdev(test_input_conv_data[part_id,:,:,:,:],point_index,nominal_cop)
-		dev_pred=get_point_cloud.getcopdev(y_cop_pred[part_id,:,:,:,:],point_index,nominal_cop)
+		index=1
 		
-		filenamestr_pred=["/pred_plot_x.html","/pred_plot_y.html","/pred_plot_z.html"]
-		filenamestr_actual=["/actual_plot_x.html","/actual_plot_y.html","/actual_plot_z.html"]
-		
-		print("Plotting All components for sample id: ",part_id)	
-		
-		for i in range(3):
-			pass
-			#pred Plot
-			plot_decode_cop_dev(nominal_cop,dev_pred[:,i],plot_file_name=deployment_path+filenamestr_pred[i])
-			plot_decode_cop_dev(nominal_cop,dev_actual[:,i],plot_file_name=deployment_path+filenamestr_actual[i])
+		for accuracy_metrics_df_cop in accuracy_metrics_df_cop_list:
+			
+			accuracy_metrics_df_cop.to_csv(logs_path+'/metrics_test_cop_'+str(index)+'.csv')
+			print("The Model Segmentation Validation Metrics are ")
+			print(accuracy_metrics_df_cop.mean())
+			accuracy_metrics_df_cop.mean().to_csv(logs_path+'/metrics_test_cop_summary_'+str(index)+'.csv')
+			
+			print("Plotting Cloud-of-Point for comparison")
 
+			part_id=45
+
+			y_cop_pred=model_outputs[index]
+			y_cop_pred_plot=y_cop_pred[part_id,:,:,:,:]
+			y_cop_actual_plot=test_input_conv_data[part_id,:,:,:,:]
+
+			dev_actual=get_point_cloud.getcopdev(test_input_conv_data[part_id,:,:,:,:],point_index,nominal_cop)
+			dev_pred=get_point_cloud.getcopdev(y_cop_pred[part_id,:,:,:,:],point_index,nominal_cop)
+			
+			filenamestr_pred=["/pred_plot_x"+str(index)+".html","/pred_plot_y"+str(index)+".html","/pred_plot_z"+str(index)+".html"]
+			filenamestr_actual=["/actual_plot_x"+str(index)+".html","/actual_plot_y"+str(index)+".html","/actual_plot_z"+str(index)+".html"]
+			
+			print("Plotting All components for sample id: ",part_id)	
+			
+			for i in range(3):
+				#pass
+				#pred Plot
+				plot_decode_cop_dev(nominal_cop,dev_pred[:,i],plot_file_name=deployment_path+filenamestr_pred[i])
+				plot_decode_cop_dev(nominal_cop,dev_actual[:,i],plot_file_name=deployment_path+filenamestr_actual[i])
+
+			index=index+1
 
 	if(deploy_output==0):
-		y_pred,y_cop_pred,model=unet_deploy_model.unet_run_model(model,test_input_conv_data,model_path,logs_path,deploy_output,plots_path)
+		y_pred,y_cop_pred_list,model=unet_deploy_model.unet_run_model(model,test_input_conv_data,model_path,logs_path,plots_path,deploy_output)
 
 		print('Predicted KCCs')
 		print(y_pred)

@@ -204,7 +204,7 @@ if __name__ == '__main__':
 	if(get_cam_data==1):
 		#print(inference_model.summary())
 		print("Plotting Gradient based Class Activation Map for Process Parameter: ",process_parameter_id)
-		camviz=CamViz(inference_model,'conv_block_9')
+		camviz=CamViz(inference_model,'conv_block_1')
 		#For explicit plotting change ID here
 		#process_parameter_id=0
 		cop_input=input_conv_data[0:1,:,:,:,:]
@@ -222,7 +222,46 @@ if __name__ == '__main__':
 
 	#Code for Grad CAM Plotting
 	plotly_viz=1	
-	
+	fmap_viz=1
+
+	if(fmap_viz==1):
+		import plotly.graph_objects as go
+		import plotly as py
+		import plotly.express as px
+		
+		fmap_eval_base=fmap_eval_base.mean(axis=4)
+		print(fmap_eval_base.shape)
+		X, Y, Z = np.mgrid[0:len(fmap_eval_base), 0:len(fmap_eval_base), 0:len(fmap_eval_base)]
+		#input_conv_data[0,:,:,:,0]=0.2
+		#values_cop = base_cop
+		
+		trace1=go.Volume(
+			x=X.flatten(),
+			y=Y.flatten(),
+			z=Z.flatten(),
+			value=fmap_eval_base.flatten(),
+			isomin=np.minimum(fmap_eval_base.flatten()),
+			isomax=np.maximum(fmap_eval_base.flatten()),
+			opacity=0.2, # needs to be small to see through all surfaces
+			surface_count=17, # needs to be a large number for good volume rendering
+			colorscale='RdBu'
+			)
+
+		data = [trace1]
+		
+		layout = go.Layout(
+			margin=dict(
+				l=0,
+				r=0,
+				b=0,
+				t=0
+			)
+		)
+		
+		fig = go.Figure(data=data,layout=layout)
+		plot_file_name=deploy_path+'feature_map.html'
+		py.offline.plot(fig, filename=plot_file_name)
+
 	if(plotly_viz==1):
 		import plotly.graph_objects as go
 		import plotly as py
@@ -239,7 +278,7 @@ if __name__ == '__main__':
 			value=values_cop.flatten(),
 			isomin=0,
 			isomax=1,
-			opacity=0.1, # needs to be small to see through all surfaces
+			opacity=0.2, # needs to be small to see through all surfaces
 			surface_count=17, # needs to be a large number for good volume rendering
 			colorscale='Greens'
 			)
@@ -251,7 +290,7 @@ if __name__ == '__main__':
 			value=values_grad_cam.flatten(),
 			isomin=0,
 			isomax=1,
-			opacity=0.1, # needs to be small to see through all surfaces
+			opacity=0.3, # needs to be small to see through all surfaces
 			surface_count=17,
 			colorscale='orrd' # needs to be a large number for good volume rendering
 			)

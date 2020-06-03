@@ -88,8 +88,6 @@ class AdaptiveSampling():
 
 		pp_making=1
 
-
-
 		return initial_samples
 	
 	def adpative_samples_gen(self,kcc_struct,run_id):

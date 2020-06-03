@@ -182,7 +182,18 @@ if __name__ == '__main__':
 	#print(input_conv_data.shape,kcc_subset_dump.shape)
 	print('Building Unet Model')
 
-	output_dimension=assembly_kccs
+	kcc_sublist=cftrain.encode_decode_params['kcc_sublist']
+
+	print("KCC sub-listing: ",kcc_sublist)
+	
+	#Check for KCC sub-listing
+	if(kcc_sublist!=0):
+		output_dimension=len(kcc_sublist)
+	else:
+		output_dimension=assembly_kccs
+	
+	print("Process Parameter Dimension: ",output_dimension)
+
 	input_size=(voxel_dim,voxel_dim,voxel_dim,voxel_channels)
 
 	model_depth=cftrain.encode_decode_params['model_depth']
@@ -242,6 +253,13 @@ if __name__ == '__main__':
 
 	kcc_dataset=get_data.data_import(kcc_files,kcc_folder)
 	test_kcc_dataset=get_data.data_import(test_kcc_files,kcc_folder)
+	
+	if(kcc_sublist!=0):
+		print("Sub-setting Process Parameters: ",kcc_sublist)
+		kcc_dataset=kcc_dataset.iloc[:,kcc_sublist]
+		test_kcc_dataset=test_kcc_dataset[:,kcc_sublist]
+	else:
+		print("Using all Process Parameters")
 	
 	#Pre-processing to point cloud data
 	input_conv_data, kcc_subset_dump,kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,input_dataset,point_index,kcc_dataset)

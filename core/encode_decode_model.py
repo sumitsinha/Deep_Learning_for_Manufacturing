@@ -464,7 +464,7 @@ class Encode_Decode_Model:
 			from tensorflow.keras import regularizers
 			from tensorflow.keras.layers import Conv3D, MaxPooling3D, Add, BatchNormalization, Input, LeakyReLU,Activation, Lambda, Concatenate, Flatten, Dense,UpSampling3D,GlobalAveragePooling3D
 			from tensorflow.keras.utils import plot_model
-			
+
 			if(w_val==0):
 				w_val=np.zeros(self.output_dimension)
 				w_val[:]=1/self.output_dimension
@@ -530,7 +530,11 @@ class Encode_Decode_Model:
 
 			model=Model(inputs, outputs=output, name='Res_3D_CNN_hybrid')
 			
-			loss_regression=tf.keras.losses.MeanSquaredError()
+			def mse_scaled(y_true,y_pred):
+				return K.mean(K.square((y_pred - y_true)*100))
+			
+			#loss_regression=tf.keras.losses.MeanSquaredError()
+			loss_regression=mse_scaled
 			loss_classification=tf.keras.losses.BinaryCrossentropy()
 			
 			loss_list=[loss_regression,loss_classification]

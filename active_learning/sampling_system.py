@@ -140,7 +140,7 @@ if __name__ == '__main__':
 	if(adaptive_sampling.sample_type=='lhs'):
 		initial_samples=adaptive_sampling.inital_sampling_lhs(kcc_struct,sampling_config['sample_dim'])
 	else:
-		initial_samples,inital_samples_type=adaptive_sampling.inital_sampling_uniform_random(kcc_struct,sampling_config['sample_dim'])
+		initial_samples,initial_samples_type=adaptive_sampling.inital_sampling_uniform_random(kcc_struct,sampling_config['sample_dim'])
 
 	pp_masking=sampling_config['pp_masking']
 
@@ -157,11 +157,42 @@ if __name__ == '__main__':
 
 		initial_samples=mask_array
 			
+	post_process=1
+	
+	if(post_process==1):
+		
+		base_str="tooling_flag_"
+		check_str=["tooling_x_","tooling_y_","tooling_z_"]
+		tooling_flag_index=[]
+		tooling_param_index=[]
+		
+		for kcc in kcc_struct:
+			
+			if(base_str in kcc['kcc_name']):
+				#id_val=kcc['kcc_name'][-1]
+				#id_val=kcc['kcc_name'].substring(kcc['kcc_name'].lastIndexOf('_')+1,len(kcc['kcc_name']))
+				id_val=kcc['kcc_name'].rsplit('_', 1)[-1]
+				temp_list=[]
+				tooling_flag_index.append(kcc['kcc_id'])        
+				for kcc_sub in kcc_struct:
+					#print(check_str[0]+id_val)
+					if(kcc_sub['kcc_name']==check_str[0]+id_val or kcc_sub['kcc_name']==check_str[1]+id_val or kcc_sub['kcc_name']==check_str[2]+id_val):
+						temp_list.append(kcc_sub['kcc_id'])
+				tooling_param_index.append(temp_list)
+
+		for i in range(len(initial_samples)):
+
+			for j,item in enumerate(tooling_flag_index):
+				if(initial_samples[i,item]==0):
+					initial_samples[i,tooling_param_index[j]]=0
+
+		print("Post Processing Compeleted !")
+
 	file_path='./sample_input/'+folder_name+'/'+file_name+'.csv'
 	np.savetxt(file_path, initial_samples, delimiter=",")
 
 	file_path='./sample_input/'+folder_name+'/'+file_name+'_type'+'.csv'
-	np.savetxt(file_path, inital_samples_type, delimiter=",")
+	np.savetxt(file_path, initial_samples_type, delimiter=",")
 	
 	print('Initial Samples Saved to path: ',file_path)
 

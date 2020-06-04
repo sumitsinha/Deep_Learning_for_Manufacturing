@@ -34,17 +34,20 @@ class MetricsEval:
 		kcc_dim=test_y.shape[1]
 		
 		import kcc_config as kcc_config
-		kcc_struct=kcc_config.kcc_struct
+		kcc_struct=kcc_config.get_kcc_struct()
 		# Calculating Regression Based Evaluation Metrics
 		mae_KCCs=np.zeros((kcc_dim))
 		mse_KCCs=np.zeros((kcc_dim))
 		r2_KCCs=np.zeros((kcc_dim))
-
+		#print(kcc_dim)
 		kcc_id=[]
+		
 		for kcc in kcc_struct:
-			kcc_name=kcc['kcc_id']
-			kcc_id.append(kcc_name)
-		    
+			
+			if(kcc['kcc_type']==0):
+				kcc_name=kcc['kcc_id']
+				kcc_id.append(kcc_name)
+			
 		mae_KCCs=metrics.mean_absolute_error(predicted_y, test_y,multioutput='raw_values')
 		mse_KCCs=metrics.mean_squared_error(predicted_y, test_y,multioutput='raw_values')
 		r2_KCCs = metrics.r2_score(predicted_y, test_y,multioutput='raw_values')
@@ -56,8 +59,81 @@ class MetricsEval:
 			"Root Mean Squared Error" : rmse_KCCs,
 			"R Squared" : r2_KCCs
 		}
-		
+
+		#print(len(kcc_id),len(mae_KCCs),len(mae_KCCs),len(rmse_KCCs),len(r2_KCCs))
+		#print(eval_metrics)
 		accuracy_metrics_df=pd.DataFrame({'KCC_ID':kcc_id,'MAE':mae_KCCs,'MSE':mse_KCCs,'RMSE':rmse_KCCs,'R2':r2_KCCs},columns=['KCC_ID','MAE','MSE','RMSE','R2'])
+		accuracy_metrics_df=accuracy_metrics_df.set_index('KCC_ID')
+		#accuracy_metrics_df.to_csv(logs_path+'/metrics.csv') #moved to function call
+		return eval_metrics,accuracy_metrics_df
+
+	def metrics_eval_classification(self,y_pred, y_true,logs_path,run_id=0):
+		"""Get predicted and actual value for all KCCs and return regression metrics namely: Mean Absolute Error, Mean Squared Error, Root Mean Squared Error, R-Squared Value
+			
+			:param predicted_y: predicted values for the process parameters 
+			:type conn_str: numpy.array [test_samples*kccs] (required)
+
+			:param predicted_y: actual values for the process parameters 
+			:type conn_str: numpy.array [test_samples*kccs] (required)
+
+			:param logs_path: Logs path to save the evaluation metrics
+			:type logs_path: str (required)
+
+			:returns: dictionary of all metrics for each KCC
+			:rtype: dict
+
+			:returns: dataframe of all metrics for each KCC
+			:rtype: pandas.dataframe
+		"""
+
+		kcc_dim=y_true.shape[1]
+		
+		import kcc_config as kcc_config
+		kcc_struct=kcc_config.get_kcc_struct()
+		# Calculating Regression Based Evaluation Metrics
+
+		kcc_id=[]
+		
+		for kcc in kcc_struct:
+			if(kcc['kcc_type']==1):
+				kcc_name=kcc['kcc_id']
+				kcc_id.append(kcc_name)
+			
+		acc_kccs=[]
+		f1_kccs=[]
+		pre_kccs=[]
+		recall_kccs=[]
+		roc_auc_kccs=[]
+		kappa_kccs=[]
+
+		from sklearn.metrics import accuracy_score,f1_score,precision_score,recall_score,roc_auc_score,cohen_kappa_score
+
+		for i in range(y_true.shape[1]):
+			
+			#Binary Prediction arrray
+			y_pred_bin=np.where(y_pred[:,i] > 0.5, 1, 0)
+			
+			acc_kccs.append(accuracy_score(y_true[:,i],y_pred_bin))
+			f1_kccs.append(f1_score(y_true[:,i],y_pred_bin))
+			pre_kccs.append(precision_score(y_true[:,i],y_pred_bin))
+			recall_kccs.append(recall_score(y_true[:,i],y_pred_bin))
+			kappa_kccs.append(cohen_kappa_score(y_true[:,i],y_pred_bin))
+			
+			#Probablity based Scoring
+			roc_auc_kccs.append(roc_auc_score(y_true[:,i],y_pred[:,i]))
+
+		eval_metrics= {
+			"KCC_ID":kcc_id,
+			"Accuracy" : acc_kccs,
+			"F1" : f1_kccs,
+			"Precision" : pre_kccs,
+			"Recall" : recall_kccs,
+			"ROC_AUC":roc_auc_kccs,
+			"Kappa":kappa_kccs
+		}
+		
+		accuracy_metrics_df=pd.DataFrame.from_dict(eval_metrics)
+		accuracy_metrics_df=accuracy_metrics_df.set_index('KCC_ID')
 		#accuracy_metrics_df.to_csv(logs_path+'/metrics.csv') #moved to function call
 		return eval_metrics,accuracy_metrics_df
 
@@ -134,9 +210,9 @@ class MetricsEval:
 			kcc_id=[]
 
 			for i in range(kcc_dim):  
-			    kcc_name="KCC_"+str(i+1)
-			    kcc_id.append(kcc_name)
-		    
+				kcc_name="KCC_"+str(i+1)
+				kcc_id.append(kcc_name)
+			
 			mae_KCCs=metrics.mean_absolute_error(predicted_y_sub, test_y,multioutput='raw_values')
 			mse_KCCs=metrics.mean_squared_error(predicted_y_sub, test_y,multioutput='raw_values')
 			r2_KCCs = metrics.r2_score(predicted_y_sub, test_y,multioutput='raw_values')

@@ -455,7 +455,7 @@ class Encode_Decode_Model:
 		#print(model.summary())
 		return model
 
-	def resnet_3d_cnn_hybrid(self,voxel_dim=64,deviation_channels=3,w_val=0,categoric_outputs=5):
+	def resnet_3d_cnn_hybrid(self,voxel_dim=64,deviation_channels=3,categoric_outputs=25,w_val=0):
 
 			import numpy as np
 			import tensorflow as tf
@@ -531,7 +531,7 @@ class Encode_Decode_Model:
 			model=Model(inputs, outputs=output, name='Res_3D_CNN_hybrid')
 			
 			def mse_scaled(y_true,y_pred):
-				return K.mean(K.square((y_pred - y_true)*100))
+				return K.mean(K.square((y_pred - y_true)))
 			
 			#loss_regression=tf.keras.losses.MeanSquaredError()
 			loss_regression=mse_scaled
@@ -541,8 +541,8 @@ class Encode_Decode_Model:
 
 			model.compile(loss=loss_list, optimizer=tf.keras.optimizers.Adam(),experimental_run_tf_function=False, metrics=[tf.keras.metrics.MeanAbsoluteError(),tf.keras.metrics.Accuracy()])
 			
-			plot_model(model,to_file='resnet_3d_cnn_hybrid.png',show_shapes=True, show_layer_names=True)
-			print(model.summary())
+			#plot_model(model,to_file='resnet_3d_cnn_hybrid.png',show_shapes=True, show_layer_names=True)
+			#print(model.summary())
 			
 			return model
 

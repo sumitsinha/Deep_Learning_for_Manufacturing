@@ -33,8 +33,9 @@ class MetricsEval:
 
 		kcc_dim=test_y.shape[1]
 		
-		import kcc_config as kcc_config
+		#import kcc_config as kcc_config
 		kcc_struct=kcc_config.get_kcc_struct()
+		kcc_struct=kcc_config.kcc_struct
 		# Calculating Regression Based Evaluation Metrics
 		mae_KCCs=np.zeros((kcc_dim))
 		mse_KCCs=np.zeros((kcc_dim))
@@ -54,6 +55,7 @@ class MetricsEval:
 
 		rmse_KCCs=np.sqrt(mse_KCCs)
 		eval_metrics= {
+			"KCC_ID":kcc_id,
 			"Mean Absolute Error" : mae_KCCs,
 			"Mean Squared Error" : mse_KCCs,
 			"Root Mean Squared Error" : rmse_KCCs,
@@ -62,8 +64,8 @@ class MetricsEval:
 
 		#print(len(kcc_id),len(mae_KCCs),len(mae_KCCs),len(rmse_KCCs),len(r2_KCCs))
 		#print(eval_metrics)
-		accuracy_metrics_df=pd.DataFrame({'KCC_ID':kcc_id,'MAE':mae_KCCs,'MSE':mse_KCCs,'RMSE':rmse_KCCs,'R2':r2_KCCs},columns=['KCC_ID','MAE','MSE','RMSE','R2'])
-		accuracy_metrics_df=accuracy_metrics_df.set_index('KCC_ID')
+		accuracy_metrics_df=pd.DataFrame.from_dict(eval_metrics)
+		#accuracy_metrics_df=accuracy_metrics_df.set_index('KCC_ID')
 		#accuracy_metrics_df.to_csv(logs_path+'/metrics.csv') #moved to function call
 		return eval_metrics,accuracy_metrics_df
 

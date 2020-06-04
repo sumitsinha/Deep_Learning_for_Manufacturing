@@ -409,10 +409,11 @@ if __name__ == '__main__':
 			part_id=45
 
 			y_cop_pred=model_outputs[index]
-			y_cop_pred_plot=y_cop_pred[part_id,:,:,:,:]
-			y_cop_actual_plot=test_input_conv_data[part_id,:,:,:,:]
+			y_cop_actual=Y_out_test_list[index]
+			#y_cop_pred_plot=y_cop_pred[part_id,:,:,:,:]
+			#y_cop_actual_plot=test_input_conv_data[part_id,:,:,:,:]
 
-			dev_actual=get_point_cloud.getcopdev(test_input_conv_data[part_id,:,:,:,:],point_index,nominal_cop)
+			dev_actual=get_point_cloud.getcopdev(y_cop_actual[part_id,:,:,:,:],point_index,nominal_cop)
 			dev_pred=get_point_cloud.getcopdev(y_cop_pred[part_id,:,:,:,:],point_index,nominal_cop)
 			
 			filenamestr_pred=["/pred_plot_x"+str(index)+".html","/pred_plot_y"+str(index)+".html","/pred_plot_z"+str(index)+".html"]

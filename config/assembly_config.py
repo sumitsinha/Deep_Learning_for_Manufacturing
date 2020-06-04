@@ -97,7 +97,7 @@ assembly_system = {
         'data_folder':'../datasets/cross_member_assembly',
         'kcc_folder':'../active_learning/sample_input/cross_member_assembly',
         'kcc_files':['cross_member_samples_datagen_hybrid.csv'],
-        'test_kcc_files':['cross_member_samples_datagen_hybrid.csv'],
+        'test_kcc_files':['cross_member_samples_test1.csv'],
         'data_files_x':['DX_crossmember_test1_11.csv'],
         'data_files_y':['DY_crossmember_test1_11.csv'],
         'data_files_z':['DZ_crossmember_test1_11.csv'],

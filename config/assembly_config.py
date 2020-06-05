@@ -85,6 +85,7 @@ assembly_system = {
         'assembly_type':"multi-Stage",
         'assembly_stages':11,
         'assembly_kccs':12,
+        'categorical_kccs':5,
         'assembly_kpis':1,
         'voxel_dim':64,
         'point_dim':11875,

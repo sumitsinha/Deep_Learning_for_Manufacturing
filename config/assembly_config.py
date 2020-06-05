@@ -84,8 +84,8 @@ assembly_system = {
         'data_format': 'Complete',
         'assembly_type':"multi-Stage",
         'assembly_stages':11,
-        'assembly_kccs':12,
-        'categorical_kccs':5,
+        'assembly_kccs':158,
+        'categorical_kccs':25,
         'assembly_kpis':1,
         'voxel_dim':64,
         'point_dim':11875,
@@ -98,7 +98,7 @@ assembly_system = {
         'data_folder':'../datasets/cross_member_assembly',
         'kcc_folder':'../active_learning/sample_input/cross_member_assembly',
         'kcc_files':['cross_member_samples_datagen_hybrid.csv'],
-        'test_kcc_files':['cross_member_samples_test1.csv'],
+        'test_kcc_files':['cross_member_samples_datagen_hybrid.csv'],
         'data_files_x':['DX_crossmember_test1_11.csv'],
         'data_files_y':['DY_crossmember_test1_11.csv'],
         'data_files_z':['DZ_crossmember_test1_11.csv'],
@@ -108,9 +108,9 @@ assembly_system = {
         }
 
 encode_decode_construct = {     
-        'input_data_files_x':['DX_crossmember_datagen2_11.csv'],
-        'input_data_files_y':['DY_crossmember_datagen2_11.csv'],
-        'input_data_files_z':['DZ_crossmember_datagen2_11.csv'],
+        'input_data_files_x':['DX_crossmember_test1_11.csv'],
+        'input_data_files_y':['DY_crossmember_test1_11.csv'],
+        'input_data_files_z':['DZ_crossmember_test1_11.csv'],
         'input_test_data_files_x':['DX_crossmember_test1_11.csv'],
         'input_test_data_files_y':['DY_crossmember_test1_11.csv'],
         'input_test_data_files_z':['DZ_crossmember_test1_11.csv'],
@@ -127,9 +127,9 @@ encode_decode_multi_output_construct=[]
 
 encode_decode_multi_output_construct.append({
         'stage_id':2,
-        'output_data_files_x':['DX_crossmember_datagen2_3.csv'],
-        'output_data_files_y':['DY_crossmember_datagen2_3.csv'],
-        'output_data_files_z':['DZ_crossmember_datagen2_3.csv'],
+        'output_data_files_x':['DX_crossmember_test1_3.csv'],
+        'output_data_files_y':['DY_crossmember_test1_3.csv'],
+        'output_data_files_z':['DZ_crossmember_test1_3.csv'],
         'output_test_data_files_x':['DX_crossmember_test1_3.csv'],
         'output_test_data_files_y':['DY_crossmember_test1_3.csv'],
         'output_test_data_files_z':['DZ_crossmember_test1_3.csv'],      
@@ -137,9 +137,9 @@ encode_decode_multi_output_construct.append({
 
 encode_decode_multi_output_construct.append({
         'stage_id':6,
-        'output_data_files_x':['DX_crossmember_datagen2_7.csv'],
-        'output_data_files_y':['DY_crossmember_datagen2_7.csv'],
-        'output_data_files_z':['DZ_crossmember_datagen2_7.csv'],
+        'output_data_files_x':['DX_crossmember_test1_7.csv'],
+        'output_data_files_y':['DY_crossmember_test1_7.csv'],
+        'output_data_files_z':['DZ_crossmember_test1_7.csv'],
         'output_test_data_files_x':['DX_crossmember_test1_7.csv'],
         'output_test_data_files_y':['DY_crossmember_test1_7.csv'],
         'output_test_data_files_z':['DZ_crossmember_test1_7.csv'],      

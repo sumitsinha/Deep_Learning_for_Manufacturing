@@ -547,12 +547,12 @@ class Encode_Decode_Model:
 
 		#Regression Outputs
 		feature_vector=Conv(self.output_dimension-categorical_outputs, 1, padding='same', activation=final_activation, name='Process_Parameter_output_regression')(x)
-		process_parameter_regression=GlobalAveragePooling3D()(feature_vector)
+		process_parameter_regression=GlobalAveragePooling3D(name='Regression_Outputs')(feature_vector)
 		
 		#Classification Outputs
 		feature_vector_categorical=Conv(categorical_outputs, 1, padding='same', activation=final_activation, name='Process_Parameter_output_classification')(x)
 		process_parameter_cont=GlobalAveragePooling3D()(feature_vector_categorical)
-		process_parameter_classification=Activation('sigmoid')(process_parameter_cont)
+		process_parameter_classification=Activation('sigmoid',name='Classification_Outputs')(process_parameter_cont)
 		
 		#feature_vector=Flatten()(x)
 		#process_parameter=Dense(self.output_dimension)(feature_vector)
@@ -618,8 +618,8 @@ class Encode_Decode_Model:
 		model=Model(inputs, outputs=output_list, name='Res-UNet_Attention_Hybrid')
 		
 		print("U-Net Based 3D Encoder Decoder Model Compiled")
-		print(model.summary())
-		plot_model(model,to_file='unet_3D_multi_output_attention_hybrid.png',show_shapes=True, show_layer_names=True)
+		#print(model.summary())
+		#plot_model(model,to_file='unet_3D_multi_output_attention_hybrid.png',show_shapes=True, show_layer_names=True)
 	
 		model.compile(optimizer=tf.keras.optimizers.Adam(),experimental_run_tf_function=False,loss=loss_list,metrics=[tf.keras.metrics.MeanAbsoluteError(),tf.keras.metrics.Accuracy()])
 		#print(model.summary())

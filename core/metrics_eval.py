@@ -33,9 +33,9 @@ class MetricsEval:
 
 		kcc_dim=test_y.shape[1]
 		
-		#import kcc_config as kcc_config
+		import kcc_config as kcc_config
 		kcc_struct=kcc_config.get_kcc_struct()
-		kcc_struct=kcc_config.kcc_struct
+		#kcc_struct=kcc_config.kcc_struct
 		# Calculating Regression Based Evaluation Metrics
 		mae_KCCs=np.zeros((kcc_dim))
 		mse_KCCs=np.zeros((kcc_dim))
@@ -65,7 +65,7 @@ class MetricsEval:
 		#print(len(kcc_id),len(mae_KCCs),len(mae_KCCs),len(rmse_KCCs),len(r2_KCCs))
 		#print(eval_metrics)
 		accuracy_metrics_df=pd.DataFrame.from_dict(eval_metrics)
-		#accuracy_metrics_df=accuracy_metrics_df.set_index('KCC_ID')
+		accuracy_metrics_df=accuracy_metrics_df.set_index('KCC_ID')
 		#accuracy_metrics_df.to_csv(logs_path+'/metrics.csv') #moved to function call
 		return eval_metrics,accuracy_metrics_df
 

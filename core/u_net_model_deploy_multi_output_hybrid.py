@@ -92,7 +92,7 @@ class Unet_DeployModel:
 		from tensorflow.keras.models import load_model
 		import tensorflow.keras.backend as K 
 		#model_file_path=model_path+'/unet_trained_model_'+str(run_id)+'.h5'
-		model_file_path=model_path+'/unet_trained_model_attention_hybrid_'+str(run_id)
+		model_file_path=model_path+'/unet_AH_'+str(run_id)
 		
 		#tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir='C:\\Users\\sinha_s\\Desktop\\dlmfg_package\\dlmfg\\trained_models\\inner_rf_assembly\\logs',histogram_freq=1)
 		
@@ -272,7 +272,7 @@ if __name__ == '__main__':
 	train_path='../trained_models/'+part_type
 	pathlib.Path(train_path).mkdir(parents=True, exist_ok=True) 
 
-	train_path=train_path+'/unet_model_multi_output'
+	train_path=train_path+'/unet_model'
 	pathlib.Path(train_path).mkdir(parents=True, exist_ok=True) 
 
 	model_path=train_path+'/model'
@@ -392,12 +392,14 @@ if __name__ == '__main__':
 	unet_deploy_model=Unet_DeployModel()
 
 	if(deploy_output==1):
-		model_outputs,model,accuracy_metrics_df_reg,accuracy_metrics_df_claaccuracy_metrics_df_cop_list=unet_deploy_model.unet_run_model(model,test_input_conv_data,model_path,logs_path,plots_path,deploy_output,Y_out_test_list)
-		
-		accuracy_metrics_df.to_csv(logs_path+'/metrics_test_KCC.csv')
+		model_outputs,model,accuracy_metrics_df_reg,accuracy_metrics_df_cla,accuracy_metrics_df_cop_list=unet_deploy_model.unet_run_model(model,test_input_conv_data,model_path,logs_path,plots_path,deploy_output,Y_out_test_list)
 		
 		print("Model Deployment Complete")
 		
+
+		accuracy_metrics_df_reg.to_csv(logs_path+'/metrics_test_regression.csv')
+		accuracy_metrics_df_cla.to_csv(logs_path+'/metrics_test_classification.csv')
+	
 		print("The Model Validation Metrics for Regression based KCCs")	
 		print(accuracy_metrics_df_reg)
 		accuracy_metrics_df_reg.mean().to_csv(logs_path+'/metrics_train_regression_summary.csv')

@@ -115,9 +115,9 @@ encode_decode_construct = {
         'input_test_data_files_y':['DY_crossmember_test1_11.csv'],
         'input_test_data_files_z':['DZ_crossmember_test1_11.csv'],
 
-        'output_data_files_x':['DX_crossmember_datagen2_3.csv'],
-        'output_data_files_y':['DY_crossmember_datagen2_3.csv'],
-        'output_data_files_z':['DZ_crossmember_datagen2_3.csv'],
+        'output_data_files_x':['DX_crossmember_test1_3.csv'],
+        'output_data_files_y':['DY_crossmember_test1_3.csv'],
+        'output_data_files_z':['DZ_crossmember_test1_3.csv'],
         'output_test_data_files_x':['DX_crossmember_test1_3.csv'],
         'output_test_data_files_y':['DY_crossmember_test1_3.csv'],
         'output_test_data_files_z':['DZ_crossmember_test1_3.csv'],

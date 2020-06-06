@@ -169,21 +169,17 @@ if __name__ == '__main__':
 		eval_metrics_reg,accuracy_metrics_df_reg=metrics_eval.metrics_eval_base(y_pred[0],y_test[0],logs_path)
 		eval_metrics_cla,accuracy_metrics_df_cla=metrics_eval.metrics_eval_classification(y_pred[1],y_test[1],logs_path)
 		
-		accuracy_metrics_df_reg.to_csv(logs_path+'/metrics_train_regression.csv')
-		accuracy_metrics_df_cla.to_csv(logs_path+'/metrics_train_classification.csv')
-		
-		print("Model Training Complete..")
+		accuracy_metrics_df_reg.to_csv(logs_path+'/metrics_test_regression.csv')
+		accuracy_metrics_df_cla.to_csv(logs_path+'/metrics_test_classification.csv')
 		
 		print("The Model Validation Metrics for Regression based KCCs")	
 		print(accuracy_metrics_df_reg)
-		accuracy_metrics_df_reg.mean().to_csv(logs_path+'/metrics_train_regression_summary.csv')
+		accuracy_metrics_df_reg.mean().to_csv(logs_path+'/metrics_test_regression_summary.csv')
 		print("The Model Validation Metrics Regression Summary")
 		print(accuracy_metrics_df_reg.mean())
 
 		print("The Model Validation Metrics for Classification based KCCs")	
 		print(accuracy_metrics_df_cla)
-		accuracy_metrics_df_cla.mean().to_csv(logs_path+'/metrics_train_classification_summary.csv')
+		accuracy_metrics_df_cla.mean().to_csv(logs_path+'/metrics_test_classification_summary.csv')
 		print("The Model Validation Metrics Classification Summary")
 		print(accuracy_metrics_df_cla.mean())
-
-		print('Training Completed Successfully')

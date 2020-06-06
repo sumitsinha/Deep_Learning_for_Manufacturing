@@ -25,26 +25,25 @@ sys.path.append("../config")
 import pathlib
 import numpy as np
 import pandas as pd
-import tensorflow as tf
-#from keras import backend as K
-#K.clear_session()
+#import tensorflow as tf
+#import tensorflow_probability as tfp
+
 
 #Importing Config files
 import assembly_config as config
 import model_config as cftrain
 import hybrid_utils as hy_util
+
 #Importing required modules from the package
 from measurement_system import HexagonWlsScanner
 from assembly_system import VRMSimulationModel
 from wls400a_system import GetInferenceData
 from data_import import GetTrainData
-from core_model import DLModel
-from training_viz import TrainViz
-from metrics_eval import MetricsEval
-from encode_decode_model import Encode_Decode_Model
-#from keras_lr_multiplier import LRMultiplier
+from core_model_bayes import Bayes_DLModel
 
-class TrainModel:
+
+
+class BayesTrainModel:
 	"""Train Model Class, the initialization parameters are parsed from modelconfig_train.py file
 		
 		:param batch_size: mini batch size while training the model 
@@ -91,48 +90,33 @@ class TrainModel:
 			:param run_id: Run id index used in data study to conduct multiple training runs with different dataset sizes, defaults to 0
 			:type run_id: int			
 		"""			
-		import tensorflow as tf
 		from sklearn.model_selection import train_test_split
-		from tensorflow.keras.models import load_model
-		from tensorflow.keras.callbacks import ModelCheckpoint
-		from tensorflow.keras.callbacks import TensorBoard
+		import tensorflow as tf
 
-		model_file_path=model_path+'/trained_model_resnet_hybrid_'+str(run_id)+'.h5'
-		
+		model_file_path=model_path+'/Bayes_MH_'+str(run_id)
 		X_train, X_test, y_train_reg, y_test_reg,y_train_cla, y_test_cla = train_test_split(X_in, Y_out[0],Y_out[1], test_size = self.split_ratio)
+		print("Data Split Completed")
 		
 		y_train=[y_train_reg,y_train_cla]
 		y_test=[y_test_reg,y_test_cla]
 
-		print("Data Split Completed")
+		#add more callbacks for annealing and KL divergence
+		#tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir='C:\\Users\\sinha_s\\Desktop\\dlmfg_package\\dlmfg\\trained_models\\inner_rf_assembly\\logs',histogram_freq=1)
+		checkpointer = tf.keras.callbacks.ModelCheckpoint(model_file_path, verbose=1, save_best_only='val_loss',save_weights_only=True)
+		#Check pointer to save the best model
+		history=model.fit(X_train, y_train, validation_data=(X_test,y_test), epochs=self.epochs, batch_size=self.batch_size,callbacks=[checkpointer])
 		
-		#Checkpointer to save the best model
-		checkpointer = ModelCheckpoint(model_file_path, verbose=1, save_best_only='val_loss',save_weights_only=True)
+		#y_pred=model.predict(X_test)
+		# y_pred=model(X_test)
+		# samples=10
+		# for i in range(samples):
+		# 	y_pred_sample=model(X_test[0:1,:,:,:,:])
+		# 	print(y_pred_sample.sample())
 		
-		callbacks=[checkpointer]
-		
-		if(activate_tensorboard==1):
-			#Activating Tensorboard for Visualization
-			tensorboard = TensorBoard(log_dir=logs_path,histogram_freq=1, write_graph=True, write_images=True)
-			callbacks=[checkpointer,tensorboard]
-		
-		tensorboard = TensorBoard(log_dir=logs_path,histogram_freq=1, write_graph=True, write_images=True)
-		history=model.fit(x=X_train, y=y_train, validation_data=(X_test,y_test), epochs=self.epochs, batch_size=self.batch_size,callbacks=callbacks)
-		
-		#trainviz=TrainViz()
-		#trainviz.training_plot(history,plots_path,run_id)
-	
-		model.load_weights(model_file_path)
-			
-		y_pred=model.predict(X_test)
-
-		metrics_eval=MetricsEval();
-		eval_metrics_reg,accuracy_metrics_df_reg=metrics_eval.metrics_eval_base(y_pred[0],y_test[0],logs_path)
-		eval_metrics_cla,accuracy_metrics_df_cla=metrics_eval.metrics_eval_classification(y_pred[1],y_test[1],logs_path)
-		
-		return model,accuracy_metrics_df_reg,accuracy_metrics_df_cla
+		return model
 
 	def run_train_model_dynamic():
+
 		pass
 
 if __name__ == '__main__':
@@ -163,9 +147,8 @@ if __name__ == '__main__':
 
 	#added for hybrid model
 	categorical_kccs=config.assembly_system['categorical_kccs']
-	
-	print('Parsing from Training Config File')
 
+	print('Parsing from Training Config File')
 
 	model_type=cftrain.model_parameters['model_type']
 	output_type=cftrain.model_parameters['output_type']
@@ -203,7 +186,29 @@ if __name__ == '__main__':
 	get_data=GetTrainData();
 
 	#print(input_conv_data.shape,kcc_subset_dump.shape)
+	print('Building 3D CNN model')
 
+	output_dimension=assembly_kccs
+	
+	dl_model=Bayes_DLModel(model_type,output_dimension,optimizer,loss_func,regularizer_coeff,output_type)
+	
+	model=dl_model.bayes_cnn_model_3d_hybrid(categorical_kccs,voxel_dim,voxel_channels)
+	
+	#Loading Weights
+	weights_flag=0
+
+	if(weights_flag==1):
+		
+		weight_path=train_path+'/model'+'/Bayes_MH_0'
+		try:
+			model.load_weights(weight_path)
+		except:
+			print(" Neural Network Weights not found ! random initialization...")
+		else:
+			print("Model weights found and loaded !")
+
+	print('Training 3D CNN model')
+	
 	if(activate_tensorboard==1):
 		tensorboard_str='tensorboard' + '--logdir '+logs_path
 		print('Visualize at Tensorboard using ', tensorboard_str)
@@ -219,41 +224,9 @@ if __name__ == '__main__':
 	input_conv_data, kcc_subset_dump,kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,dataset,point_index,kcc_dataset)
 	
 	kcc_regression,kcc_classification=hy_util.split_kcc(kcc_subset_dump)
-
-	print('Building 3D CNN model')
-
-	output_dimension=assembly_kccs
-	
-	dl_model_unet=Encode_Decode_Model(output_dimension)
-	model=dl_model_unet.resnet_3d_cnn_hybrid(voxel_dim,voxel_channels,kcc_classification.shape[1])
-	
-	print(model.summary())
-	#sys.exit()
-	print('Training 3D CNN model')
 	model_outputs=[kcc_regression,kcc_classification]
-	
-	train_model=TrainModel(batch_size,epocs,split_ratio)
-	
-	trained_model,accuracy_metrics_df_reg,accuracy_metrics_df_cla=train_model.run_train_model(model,input_conv_data,model_outputs,model_path,logs_path,plots_path,activate_tensorboard)
-	
-	accuracy_metrics_df_reg.to_csv(logs_path+'/metrics_train_regression.csv')
-	accuracy_metrics_df_cla.to_csv(logs_path+'/metrics_train_classification.csv')
-	
-	print("Model Training Complete..")
-	
-	print("The Model Validation Metrics for Regression based KCCs")	
-	print(accuracy_metrics_df_reg)
-	accuracy_metrics_df_reg.mean().to_csv(logs_path+'/metrics_train_regression_summary.csv')
-	print("The Model Validation Metrics Regression Summary")
-	print(accuracy_metrics_df_reg.mean())
 
-	print("The Model Validation Metrics for Classification based KCCs")	
-	print(accuracy_metrics_df_cla)
-	accuracy_metrics_df_cla.mean().to_csv(logs_path+'/metrics_train_classification_summary.csv')
-	print("The Model Validation Metrics Classification Summary")
-	print(accuracy_metrics_df_cla.mean())
-
-	print('Training Completed Successfully')
-
-
+	train_model=BayesTrainModel(batch_size,epocs,split_ratio)
+	trained_model=train_model.run_train_model(model,input_conv_data,model_outputs,model_path,logs_path,plots_path,activate_tensorboard)
+	
 

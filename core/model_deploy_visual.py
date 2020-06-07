@@ -194,7 +194,7 @@ if __name__ == '__main__':
 	#copviz.plot_voxelized_data(input_conv_data[0,:,:,:,:],1)
 	# Preparing basic COP
 	base_cop=input_conv_data[0,:,:,:,0]+input_conv_data[0,:,:,:,1]+input_conv_data[0,:,:,:,2]
-	base_cop[base_cop!=0]=0.6
+	base_cop[base_cop!=0]=0.9
 
 	process_parameter_id=np.argmax(abs(y_pred[0,:]))
 
@@ -204,7 +204,7 @@ if __name__ == '__main__':
 	if(get_cam_data==1):
 		#print(inference_model.summary())
 		print("Plotting Gradient based Class Activation Map for Process Parameter: ",process_parameter_id)
-		camviz=CamViz(inference_model,'conv_block_1')
+		camviz=CamViz(inference_model,'leaky_re_lu_8')
 		#For explicit plotting change ID here
 		#process_parameter_id=0
 		cop_input=input_conv_data[0:1,:,:,:,:]
@@ -229,7 +229,9 @@ if __name__ == '__main__':
 		import plotly as py
 		import plotly.express as px
 		
-		fmap_eval_base=fmap_eval_base.mean(axis=4)
+		fmap_eval_base=fmap_eval.mean(axis=4).squeeze()
+		
+		#fmap_eval_base[abs(fmap_eval_base)<0.025]=0
 		print(fmap_eval_base.shape)
 		X, Y, Z = np.mgrid[0:len(fmap_eval_base), 0:len(fmap_eval_base), 0:len(fmap_eval_base)]
 		#input_conv_data[0,:,:,:,0]=0.2
@@ -240,11 +242,13 @@ if __name__ == '__main__':
 			y=Y.flatten(),
 			z=Z.flatten(),
 			value=fmap_eval_base.flatten(),
-			isomin=np.minimum(fmap_eval_base.flatten()),
-			isomax=np.maximum(fmap_eval_base.flatten()),
-			opacity=0.2, # needs to be small to see through all surfaces
-			surface_count=17, # needs to be a large number for good volume rendering
-			colorscale='RdBu'
+			#isomin=np.amin(fmap_eval_base.flatten()),
+			isomax=np.amax(fmap_eval_base.flatten()),
+			isomin=0,
+			#isomax=0.5,
+			opacity=0.3, # needs to be small to see through all surfaces
+			surface_count=27, # needs to be a large number for good volume rendering
+			colorscale='matter'
 			)
 
 		data = [trace1]
@@ -292,7 +296,7 @@ if __name__ == '__main__':
 			isomax=1,
 			opacity=0.3, # needs to be small to see through all surfaces
 			surface_count=17,
-			colorscale='orrd' # needs to be a large number for good volume rendering
+			colorscale='matter' # needs to be a large number for good volume rendering
 			)
 		data = [trace1,trace2]
 		

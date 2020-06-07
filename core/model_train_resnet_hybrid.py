@@ -218,6 +218,7 @@ if __name__ == '__main__':
 	kcc_dataset=get_data.data_import(kcc_files,kcc_folder)
 	input_conv_data, kcc_subset_dump,kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,dataset,point_index,kcc_dataset)
 	
+	#Added Function to split KCCs to regression and classification 
 	kcc_regression,kcc_classification=hy_util.split_kcc(kcc_subset_dump)
 
 	print('Building 3D CNN model')

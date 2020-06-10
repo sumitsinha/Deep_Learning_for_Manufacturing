@@ -59,7 +59,7 @@ class AdaptiveSampling():
 
 		samples =lhs(kcc_dim,samples=sample_dim,criterion='center')
 		initial_samples=np.zeros_like(samples)
-		inital_samples_type=np.zeros((sample_dim,kcc_dim))
+		initial_samples_type=np.zeros((sample_dim,kcc_dim))
 		index=0
 		for kcc in kcc_struct:   
 			if(kcc['kcc_type']==0):
@@ -72,7 +72,7 @@ class AdaptiveSampling():
 				inital_samples_type[:,index]=1
 
 			index=index+1
-		return initial_samples,inital_samples_type
+		return initial_samples,initial_samples_type
 
 	def inital_sampling_uniform_random(self,kcc_struct,sample_dim):
 		"""Generates multi-variate uniform random samples for each KCC and scales then based on the KCC maximum and minimum value

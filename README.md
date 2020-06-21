@@ -96,6 +96,7 @@ model=tf.keras.Model(inputs=data_in,outputs=output)
 Motivated by the recent development of Bayesian Deep Neural Networks Bayesian CNN considering parameters to be distributions have been build using TensorFlow Probability. The Aleatoric uncertainty have been modelled using Multi-variate normal distributions as outputs while the epistemic distributions have been modelled using distributions on model parameters by using Flip-out layers.
 
 The Bayesian version of the single station system has the following layers:
+![Bayesian 3D CNN Model](./model_architecture/bayes_3d_cnn.png)
 
 ```python
 
@@ -110,35 +111,108 @@ tfp.layers.DenseFlipout(128,activation=tf.nn.relu),
 tfp.layers.DenseFlipout(64,activation=tf.nn.relu),
 tfp.layers.DenseFlipout(self.output_dimension),
 tfp.layers.DistributionLambda(lambda t: tfd.MultivariateNormalDiag(loc=t[..., :self.output_dimension], scale_diag=aleatoric_tensor)),])
->model.compile(optimizer=tf.keras.optimizers.Adam(),loss=negloglik,metrics=[tf.keras.metrics.MeanAbsoluteError()])
+model.compile(optimizer=tf.keras.optimizers.Adam(),loss=negloglik,metrics=[tf.keras.metrics.MeanAbsoluteError()])
 
 ```
-The Bayesian version of the multi-head CNN model for multi-station system has the following layers:
 
+
+## Encoder Decoder 3D U-Net Models
+For scaling to multi-station systems consisting of both categorical and continuous process parameters and prediction of point-clouds (object shape error) in previous stations a 3D - Net Attention based architecture is leveraged.	
+
+![Bayesian 3D CNN Model](./model_architecture/unet_3d_cnn.png)
+
+**Down-sampling Kernel**
+![Bayesian 3D CNN Model](./model_architecture/down_sample.png)
+
+**Attention based Up-Sampling Kernel**
+![Bayesian 3D CNN Model](./model_architecture/up_sample.png)
 
 ```python
 
+		def attention_block(x, g, inter_channel):
 
-data_in=[None] * self.heads
-conv_3d_1=[None] * self.heads
-conv_3d_2=[None] * self.heads
-conv_3d_3=[None] * self.heads
-max_pool=[None] * self.heads
-flat=[None] * self.heads
-for i in range(self.heads):
-	data_in[i]=tf.keras.layers.Input(shape=(voxel_dim,voxel_dim,voxel_dim,deviation_channels))
-			conv_3d_1[i]=tfp.layers.Convolution3DFlipout(32, kernel_size=(5,5,5),strides=(2,2,2),activation=tf.nn.relu)(data_in[i])
-			conv_3d_2[i]=tfp.layers.Convolution3DFlipout(32, kernel_size=(4,4,4),strides=(2,2,2),activation=tf.nn.relu)(conv_3d_1[i])
-			conv_3d_3[i]=tfp.layers.Convolution3DFlipout(32, kernel_size=(3,3,3),strides=(1,1,1),activation=tf.nn.relu)(conv_3d_2[i])
-			max_pool[i]=tf.keras.layers.MaxPooling3D(pool_size=[2, 2, 2])(conv_3d_3[i])
-			flat[i]=tf.keras.layers.Flatten()(max_pool[i])
+		    theta_x = Conv(inter_channel, [1,1,1], strides=[1,1,1])(x)
+		    phi_g = Conv(inter_channel, [1,1,1], strides=[1,1,1])(g)
+		    
+		    f = Activation('relu')(add([theta_x, phi_g]))
+		    psi_f = Conv(1, [1,1,1], strides=[1,1,1])(f)
 
-merge = tf.keras.layers.concatenate(flat)
-hidden_1=tfp.layers.DenseFlipout(128,activation=tf.nn.relu)(merge)
-hidden_2=tfp.layers.DenseFlipout(64,activation=tf.nn.relu)(hidden_1)
-output=tfp.layers.DistributionLambda(lambda t: tfd.MultivariateNormalDiag(loc=t[..., :self.output_dimension], scale_diag=aleatoric_tensor))(hidden_2)
-model=tf.keras.Model(inputs=data_in,outputs=output)
+		    rate = Activation('sigmoid')(psi_f)
+
+		    att_x = multiply([x, rate])
+		    return att_x
+
+		# Down sampling
+		for i in range(depth):
+			out_channel = 2**i * filter_root
+
+			# Residual/Skip connection
+			res = Conv(out_channel, kernel_size=1, padding='same', use_bias=False, name="Identity{}_1".format(i))(x)
+
+			# First Conv Block with Conv, BN and activation
+			conv1 = Conv(out_channel, kernel_size=3, padding='same', name="Conv{}_1".format(i))(x)
+			#if batch_norm:
+				#conv1 = BatchNormalization(name="BN{}_1".format(i))(conv1)
+			act1 = Activation(activation, name="Act{}_1".format(i))(conv1)
+
+			# Second Conv block with Conv and BN only
+			conv2 = Conv(out_channel, kernel_size=3, padding='same', name="Conv{}_2".format(i))(act1)
+			#if batch_norm:
+				#conv2 = BatchNormalization(name="BN{}_2".format(i))(conv2)
+
+			resconnection = Add(name="Add{}_1".format(i))([res, conv2])
+
+			act2 = Activation(activation, name="Act{}_2".format(i))(resconnection)
+
+			# Max pooling
+			if i < depth - 1:
+				long_connection_store[str(i)] = act2
+				x = MaxPooling(padding='same', name="MaxPooling{}_1".format(i))(act2)
+			else:
+				x = act2
+
+		#Regression Outputs
+		feature_vector=Conv(self.output_dimension-categorical_outputs, 1, padding='same', activation=final_activation, name='Process_Parameter_output_regression')(x)
+		process_parameter_regression=GlobalAveragePooling3D(name='Regression_Outputs')(feature_vector)
 		
+		#Classification Outputs
+		feature_vector_categorical=Conv(categorical_outputs, 1, padding='same', activation=final_activation, name='Process_Parameter_output_classification')(x)
+		process_parameter_cont=GlobalAveragePooling3D()(feature_vector_categorical)
+		process_parameter_classification=Activation('sigmoid',name='Classification_Outputs')(process_parameter_cont)
+		
+		#feature_vector=Flatten()(x)
+		#process_parameter=Dense(self.output_dimension)(feature_vector)
+		
+		# Upsampling
+		for i in range(depth - 2, -1, -1):
+			out_channel = 2**(i) * filter_root
+
+			# long connection from down sampling path.
+			long_connection = long_connection_store[str(i)]
+
+			up1 = UpSampling(name="UpSampling{}_1".format(i))(x)
+			up_conv1 = Conv(out_channel, 2, activation='relu', padding='same', name="upConvSam{}_1".format(i))(up1)
+
+			attention_layer = attention_block(x=long_connection, g=up_conv1, inter_channel=out_channel // 4)
+			#  Concatenate.
+			
+			#up_conc = Concatenate(axis=-1, name="upConcatenate{}_1".format(i))([up_conv1, long_connection])
+			up_conc = Concatenate(axis=-1, name="upConcatenate{}_1".format(i))([up_conv1, attention_layer])
+
+			#  Convolutions
+			up_conv2 = Conv(out_channel, 3, padding='same', name="upConv{}_1".format(i))(up_conc)
+
+			up_act1 = Activation(activation, name="upAct{}_1".format(i))(up_conv2)
+
+			up_conv2 = Conv(out_channel, 3, padding='same', name="upConv{}_2".format(i))(up_act1)
+
+			# Residual/Skip connection
+			res = Conv(out_channel, kernel_size=1, padding='same', use_bias=False, name="upIdentity{}_1".format(i))(up_conc)
+
+			resconnection = Add(name="upAdd{}_1".format(i))([res, up_conv2])
+
+			x = Activation(activation, name="upAct{}_2".format(i))(resconnection)
+
 ```
 
 

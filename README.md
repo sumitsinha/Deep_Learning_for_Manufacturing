@@ -22,7 +22,7 @@ The open source **Bayesian Deep Learning for Manufacturing (dlmfg) Library** is 
 The published work can be found below: 
 * [**3D convolutional neural networks to estimate assembly process parameters using 3D point-clouds**](https://www.researchgate.net/publication/333942071_3D_convolutional_neural_networks_to_estimate_assembly_process_parameters_using_3D_point-clouds)
 
-* [**Deep learning enhanced digital twin for remote laser welding of aluminium structures**](hhttps://www.sciencedirect.com/science/article/abs/pii/S0007850620301323)
+* [**Deep learning enhanced digital twin for remote laser welding of aluminium structures**](https://www.sciencedirect.com/science/article/abs/pii/S0007850620301323)
 
 *Other follow up papers under review*
 

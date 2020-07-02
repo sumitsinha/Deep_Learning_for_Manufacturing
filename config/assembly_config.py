@@ -84,7 +84,7 @@ assembly_system = {
         'data_format': 'Complete',
         'assembly_type':"multi-Stage",
         'assembly_stages':11,
-        'assembly_kccs':158,
+        'assembly_kccs':12,
         'categorical_kccs':25,
         'assembly_kpis':1,
         'voxel_dim':64,
@@ -97,14 +97,14 @@ assembly_system = {
         'nominal_cop_filename':'cross_member_nominal_cop.csv',
         'data_folder':'../datasets/cross_member_assembly',
         'kcc_folder':'../active_learning/sample_input/cross_member_assembly',
-        'kcc_files':['cross_member_samples_datagen_hybrid.csv'],
-        'test_kcc_files':['cross_member_samples_datagen_hybrid.csv'],
+        'kcc_files':['cross_member_samples_test1.csv'],
+        'test_kcc_files':['cross_member_samples_test1.csv'],
         'data_files_x':['DX_crossmember_test1_11.csv'],
         'data_files_y':['DY_crossmember_test1_11.csv'],
         'data_files_z':['DZ_crossmember_test1_11.csv'],
-        'test_data_files_x':['DX_sim_11.csv'],
-        'test_data_files_y':['DY_sim_11.csv'],
-        'test_data_files_z':['DZ_sim_11.csv'],
+        'test_data_files_x':['DX_crossmember_test1_11.csv'],
+        'test_data_files_y':['DY_crossmember_test1_11.csv'],
+        'test_data_files_z':['DZ_crossmember_test1_11.csv'],
         }
 
 encode_decode_construct = {     

@@ -386,6 +386,8 @@ if __name__ == '__main__':
 		
 		accuracy_metrics_df.to_csv(logs_path+'/metrics_test_KCC.csv')
 		
+		np.savetxt((logs_path+'/predicted_process_parameter.csv'), y_pred, delimiter=",")
+
 		print("Model Deployment Complete")
 		print("The Model KCC Validation Metrics are ")
 
@@ -416,6 +418,38 @@ if __name__ == '__main__':
 			dev_actual=get_point_cloud.getcopdev(y_cop_actual[part_id,:,:,:,:],point_index,nominal_cop)
 			dev_pred=get_point_cloud.getcopdev(y_cop_pred[part_id,:,:,:,:],point_index,nominal_cop)
 			
+			dev_pred_matlab_plot_x=np.zeros((len(y_cop_pred),point_dim))
+			dev_pred_matlab_plot_y=np.zeros((len(y_cop_pred),point_dim))
+			dev_pred_matlab_plot_z=np.zeros((len(y_cop_pred),point_dim))
+
+			dev_actual_matlab_plot_x=np.zeros((len(y_cop_pred),point_dim))
+			dev_actual_matlab_plot_y=np.zeros((len(y_cop_pred),point_dim))
+			dev_actual_matlab_plot_z=np.zeros((len(y_cop_pred),point_dim))
+
+			# Saving for Matlab plotting
+			print("Saving Files for VRM Plotting...")
+			from tqdm import tqdm
+			for i in tqdm(range(len(y_cop_pred))):
+				
+				actual_dev=get_point_cloud.getcopdev(y_cop_actual[i,:,:,:,:],point_index,nominal_cop)
+				pred_dev=get_point_cloud.getcopdev(y_cop_pred[i,:,:,:,:],point_index,nominal_cop)
+
+				dev_pred_matlab_plot_x[i,:]=pred_dev[:,0]
+				dev_pred_matlab_plot_y[i,:]=pred_dev[:,1]
+				dev_pred_matlab_plot_z[i,:]=pred_dev[:,2]
+
+				dev_actual_matlab_plot_x[i,:]=actual_dev[:,0]
+				dev_actual_matlab_plot_y[i,:]=actual_dev[:,1]
+				dev_actual_matlab_plot_z[i,:]=actual_dev[:,2]
+
+			np.savetxt((logs_path+'/DX_pred_'+str(index)+'.csv'),dev_pred_matlab_plot_x, delimiter=",")
+			np.savetxt((logs_path+'/DY_pred_'+str(index)+'.csv'),dev_pred_matlab_plot_y, delimiter=",")
+			np.savetxt((logs_path+'/DZ_pred_'+str(index)+'.csv'),dev_pred_matlab_plot_z, delimiter=",")
+			
+			np.savetxt((logs_path+'/DX_actual_'+str(index)+'.csv'),dev_actual_matlab_plot_x, delimiter=",")
+			np.savetxt((logs_path+'/DY_actual_'+str(index)+'.csv'),dev_actual_matlab_plot_y, delimiter=",")
+			np.savetxt((logs_path+'/DZ_actual_'+str(index)+'.csv'),dev_actual_matlab_plot_z, delimiter=",")
+
 			filenamestr_pred=["/pred_plot_x"+str(index)+".html","/pred_plot_y"+str(index)+".html","/pred_plot_z"+str(index)+".html"]
 			filenamestr_actual=["/actual_plot_x"+str(index)+".html","/actual_plot_y"+str(index)+".html","/actual_plot_z"+str(index)+".html"]
 			

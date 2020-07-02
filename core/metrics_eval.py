@@ -34,18 +34,18 @@ class MetricsEval:
 		kcc_dim=test_y.shape[1]
 		
 		import kcc_config as kcc_config
-		kcc_struct=kcc_config.get_kcc_struct()
-		#kcc_struct=kcc_config.kcc_struct
+		#kcc_struct=kcc_config.get_kcc_struct()
+		kcc_struct=kcc_config.kcc_struct
 		# Calculating Regression Based Evaluation Metrics
 		mae_KCCs=np.zeros((kcc_dim))
 		mse_KCCs=np.zeros((kcc_dim))
 		r2_KCCs=np.zeros((kcc_dim))
-		#print(kcc_dim)
+		#print(kcc_struct)
 		kcc_id=[]
 		
 		for kcc in kcc_struct:
 			
-			if(kcc['kcc_type']==0):
+			if(kcc['kcc_type']==1):
 				kcc_name=kcc['kcc_id']
 				kcc_id.append(kcc_name)
 			
@@ -53,6 +53,7 @@ class MetricsEval:
 		mse_KCCs=metrics.mean_squared_error(predicted_y, test_y,multioutput='raw_values')
 		r2_KCCs = metrics.r2_score(predicted_y, test_y,multioutput='raw_values')
 
+		#print(kcc_id)
 		rmse_KCCs=np.sqrt(mse_KCCs)
 		eval_metrics= {
 			"KCC_ID":kcc_id,

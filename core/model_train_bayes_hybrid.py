@@ -106,13 +106,6 @@ class BayesTrainModel:
 		#Check pointer to save the best model
 		history=model.fit(X_train, y_train, validation_data=(X_test,y_test), epochs=self.epochs, batch_size=self.batch_size,callbacks=[checkpointer])
 		
-		#y_pred=model.predict(X_test)
-		# y_pred=model(X_test)
-		# samples=10
-		# for i in range(samples):
-		# 	y_pred_sample=model(X_test[0:1,:,:,:,:])
-		# 	print(y_pred_sample.sample())
-		
 		return model
 
 	def run_train_model_dynamic():

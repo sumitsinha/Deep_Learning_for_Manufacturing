@@ -99,8 +99,8 @@ model_parameters = {
         'model_type':'Bayesian 3D Convolution Neural Network', #other option: 'Bayesian 3D Convolution Neural Network'  
         'learning_type':'Basic', # use 'Transfer Learning' if transfer learning is to be leveraged
         'output_type':'regression',
-        'batch_size': 32,
-        'epocs':1,
+        'batch_size': 16,
+        'epocs':3,
         'split_ratio': 0.2,
         'optimizer':'adam',
         'loss_func':'mse',
@@ -123,8 +123,8 @@ encode_decode_params ={
         'output_heads':2
 }
 data_study_params = {
-	'batch_size':32,
-	'epocs':500,
+	'batch_size':16,
+	'epocs':3,
 	'min_train_samples':400,
         'train_increment':200,
         'max_train_samples':5000,

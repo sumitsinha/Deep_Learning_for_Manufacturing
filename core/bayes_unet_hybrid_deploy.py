@@ -33,6 +33,7 @@ K.clear_session()
 import assembly_config as config
 import model_config as cftrain
 import hybrid_utils as hy_util
+
 #Importing required modules from the package
 from measurement_system import HexagonWlsScanner
 from assembly_system import VRMSimulationModel
@@ -43,7 +44,7 @@ from training_viz import TrainViz
 from metrics_eval import MetricsEval
 from keras_lr_multiplier import LRMultiplier
 
-class Unet_TrainModel:
+class Unet_DeployModel:
 	"""Train Model Class, the initialization parameters are parsed from modelconfig_train.py file
 		
 		:param batch_size: mini batch size while training the model 
@@ -57,13 +58,23 @@ class Unet_TrainModel:
 
 		The class contains run_train_model method
 	"""	
-	def __init__(self,batch_size,epochs,split_ratio):
-			self.batch_size=batch_size
-			self.epochs=epochs
-			self.split_ratio=split_ratio
-			
+	def get_model(self,model,model_path):
+		"""get_model method is is used to retrieve the trained model from a given path
+				
+				:param model_path: Path to the trained model, ideally it should be same as the train model path output
+				:type model_path: str (required)
+		"""
+		tfd = tfp.distributions
 
-	def bayes_unet_run_train_model(self,model,X_in,Y_out_list,X_in_test,Y_out_test_list,model_path,logs_path,plots_path,activate_tensorboard=0,run_id=0,tl_type='full_fine_tune'):
+		model.load_weights(model_path)
+		print('U-Net Deep Learning Model found and loaded')
+
+		#print(error)
+		#print('Model not found at this path ',model_path, ' Update path in config file if required')
+
+		return model
+
+	def bayes_unet_run_model(self,inference_data,inference_model,y_test_list,plots_path,epistemic_samples=20,run_id=0):
 		"""run_train_model function trains the model on the dataset and saves the trained model,logs and plots within the file structure, the function prints the training evaluation metrics
 			
 			:param model: 3D CNN model compiled within the Deep Learning Class, refer https://keras.io/models/model/ for more information 
@@ -93,42 +104,132 @@ class Unet_TrainModel:
 		import tensorflow as tf
 		from tensorflow.keras.models import load_model
 		import tensorflow.keras.backend as K 
-		#model_file_path=model_path+'/unet_trained_model_'+str(run_id)+'.h5'
-		model_file_path=model_path+'/Bayes_unet_AH_'+str(run_id)
-
-		from tensorflow.keras.callbacks import Callback, EarlyStopping, LearningRateScheduler, ModelCheckpoint
 		
-		#Decrease Learning Rate
-		def schedule(epoch, initial_learning_rate, lr_decay_start_epoch):
-		    """Defines exponentially decaying learning rate."""
+		from scipy.stats import iqr
 
-		    if epoch < lr_decay_start_epoch:
-		        return initial_learning_rate
-		    else:
-		        return initial_learning_rate * math.exp((10 * initial_learning_rate) * (lr_decay_start_epoch - epoch))
-
-		scheduler = LearningRateScheduler(schedule)
-
-		#Annealing the Learning Rate
-		class AnnealingCallback(Callback):
-		   
-		    def __init__(self, kl_alpha, kl_start_epoch, kl_alpha_increase_per_epoch):
-		        self.kl_alpha = kl_alpha
-		        self.kl_start_epoch = kl_start_epoch
-		        self.kl_alpha_increase_per_epoch = kl_alpha_increase_per_epoch
-		    
-		    def on_epoch_end(self, epoch, logs={}):
-		        if epoch >= self.kl_start_epoch - 2:
-		            new_kl_alpha = min(K.get_value(self.kl_alpha) + self.kl_alpha_increase_per_epoch, 1.)
-		            K.set_value(self.kl_alpha, new_kl_alpha)
-		        print ("Current KL Weight is " + str(K.get_value(self.kl_alpha)))
-
-		#tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir='C:\\Users\\sinha_s\\Desktop\\dlmfg_package\\dlmfg\\trained_models\\inner_rf_assembly\\logs',histogram_freq=1)
-		checkpointer = tf.keras.callbacks.ModelCheckpoint(model_file_path, verbose=1, save_best_only=True,save_weights_only=True)
-		#Check pointer to save the best model
-		history=model.fit(x=X_in,y=Y_out_list, validation_data=(X_in_test,Y_out_test_list), epochs=self.epochs, batch_size=self.batch_size,callbacks=[checkpointer])
+		y_preds_reg=np.zeros_like(y_test_list[0])
+		y_preds_cla=np.zeros_like(y_test_list[1])
+		y_preds_shape_error=np.zeros_like(y_test_list[2])
 		
-		return model
+		y_reg_std=np.zeros_like(y_preds_reg)
+		y_cla_std=np.zeros_like(y_preds_cla)
+		y_shape_error_std=np.zeros_like(y_preds_shape_error)
+
+		y_reg_iqr=np.zeros_like(y_preds_reg)
+		y_cla_iqr=np.zeros_like(y_preds_cla)
+		y_shape_error_iqr=np.zeros_like(y_preds_shape_error)
+		
+		#Aleatoric Uncertainty
+		y_reg_aleatoric_std=np.zeros_like(y_preds_reg)
+		
+		y_actual_reg=y_test_list[0]
+		y_actual_cla=y_test_list[1]
+		y_actual_shape_error=y_test_list[2]
+
+		plots_path_run_id=plots_path+'/plots_run_id_'+str(run_id)
+		pathlib.Path(plots_path_run_id).mkdir(parents=True, exist_ok=True)
+
+		for i in range(len(inference_data)):
+			
+			from scipy.stats import norm
+			inference_sample=inference_data[i,:,:,:,:]
+			input_sample=np.array([inference_sample]*epistemic_samples)
+			print(input_sample.shape)
+			model_outputs=inference_model(input_sample)
+			
+			output_reg=model_outputs[0]
+			output_cla=model_outputs[1]
+			output_shape_error=model_outputs[2]
+
+			output_mean=output_reg.mean()
+			aleatoric_std=output_reg.stddev()
+
+			pred_mean=np.array(output_mean).mean(axis=0)
+			aleatoric_mean=np.array(aleatoric_std).mean(axis=0)
+			#Sample standard deviation
+			pred_std=np.array(output_mean).std(axis=0,ddof=1)
+			reg_iqr=iqr(output_mean,axis=0)
+
+			output_mean=np.array(output_mean)
+			
+			pred_mean_cla=np.array(output_cla).mean(axis=0)
+			pred_std_cla=np.array(output_cla).std(axis=0,ddof=1)
+			cla_iqr=iqr(output_cla,axis=0)
+			
+			#Shape Error Metrics
+			pred_mean_shape_error=np.array(output_shape_error).mean(axis=0)
+			pred_std_shape_error=np.array(output_shape_error).std(axis=0,ddof=1)
+			shape_error_iqr=iqr(output_shape_error,axis=0)
+			
+			print("Estimated Mean: ",pred_mean,pred_mean_cla)
+			print("Estimated STD: ",pred_std,pred_std_cla)
+			print("Estimated IQR: ",reg_iqr,cla_iqr)
+			print("Estimated Aleatoric Mean: ",aleatoric_mean)
+			
+			print(output_mean.shape,aleatoric_std.shape,output_cla.shape)
+			
+			pred_plots=1
+			
+			if(pred_plots==1):
+				for j in range(output_mean.shape[1]):
+					plot_data=output_mean[:,j]
+					actual_obv=y_actual_reg[i,j]
+					plt.hist(plot_data, range=(actual_obv-0.5,actual_obv+0.5),bins=40)
+					plt.axvline(x=actual_obv,label="Actual Value = "+str(actual_obv),c='r')
+					plt.axvline(x=pred_mean[j],label="Prediction Mean = "+str(pred_mean[j]),c='c')
+					plt.axvline(x=pred_mean[j]+norm.ppf(0.95)*pred_std[j], label="95 CI = "+str(pred_mean[j]+norm.ppf(0.95)*pred_std[j]),c='b')
+					plt.axvline(x=pred_mean[j]-norm.ppf(0.95)*pred_std[j], label="95 CI = "+str(pred_mean[j]-norm.ppf(0.95)*pred_std[j]),c='b')
+					plt.title("Prediction Distribution for KCC " + str(j) + " sample "+ str(i))
+					plt.savefig(plots_path_run_id+"/"+ "reg_sample_"+ str(i)+"_KCC_" + str(j) +'.png')
+					plt.clf()
+				
+				for j in range(output_cla.shape[1]):
+					plot_data=output_cla[:,j]
+					actual_obv=y_actual_cla[i,j]
+					plt.hist(plot_data, range=(0,1),bins=40)
+					plt.axvline(x=actual_obv,label="Actual Value = "+str(actual_obv),c='r')
+					plt.axvline(x=pred_mean_cla[j],label="Prediction Mean = "+str(pred_mean_cla[j]),c='c')
+					plt.axvline(x=pred_mean_cla[j]+norm.ppf(0.95)*pred_std_cla[j], label="95 CI = "+str(pred_mean_cla[j]+norm.ppf(0.95)*pred_std_cla[j]),c='b')
+					plt.axvline(x=pred_mean_cla[j]-norm.ppf(0.95)*pred_std_cla[j], label="95 CI = "+str(pred_mean_cla[j]-norm.ppf(0.95)*pred_std_cla[j]),c='b')
+					plt.title("Prediction Distribution for KCC " + str(j) + " sample "+ str(i))
+					plt.savefig(plots_path_run_id+"/"+ "cla_sample_"+ str(i)+"_KCC_" + str(j) +'.png')
+					plt.clf()
+			
+			y_preds_reg[i,:]=pred_mean
+			y_reg_std[i,:]=pred_std
+			y_reg_aleatoric_std[i,:]=aleatoric_mean
+			
+			y_preds_cla[i,]=pred_mean_cla
+			y_cla_std[i,]=pred_std_cla
+
+			y_reg_iqr[i,:]=reg_iqr
+			y_cla_iqr[i,:]=cla_iqr
+
+			#Shape Error Tensors
+			y_preds_shape_error[i,:,:,:,:]=pred_mean_shape_error
+			y_shape_error_std[i,:,:,:,:]=pred_std_shape_error
+			y_shape_error_iqr[i,:,:,:,:]=shape_error_iqr
+			
+
+		pred_vector=[]
+		pred_vector.append(y_preds_reg)
+		pred_vector.append(y_preds_cla)
+		pred_vector.append(y_preds_shape_error)
+
+		epistemic_vector=[]
+		epistemic_vector.append(y_reg_std)
+		epistemic_vector.append(y_cla_std)
+		epistemic_vector.append(y_shape_error_std)
+
+		epistemic_vector_iqr=[]
+		epistemic_vector_iqr.append(y_reg_iqr)
+		epistemic_vector_iqr.append(y_cla_iqr)
+		epistemic_vector_iqr.append(y_shape_error_iqr)
+		
+		aleatoric_vector=[]
+		aleatoric_vector.append(y_reg_aleatoric_std)
+
+		return pred_vector,epistemic_vector,epistemic_vector_iqr,aleatoric_vector
 
 		
 if __name__ == '__main__':
@@ -231,102 +332,131 @@ if __name__ == '__main__':
 	#changed to attention model
 	model=dl_model.bayes_unet_model_3d_hybrid(inital_filter_dim,model_depth,categorical_kccs,voxel_dim,voxel_channels,output_heads)
 
-	print(model.summary())
+	model_path=train_path+'/model'+'/unet_oser_0'
+	#print(model.summary())
 	#sys.exit()
-	
-	#importing file names for model input
-	input_file_names_x=config.encode_decode_construct['input_data_files_x']
-	input_file_names_y=config.encode_decode_construct['input_data_files_y']
-	input_file_names_z=config.encode_decode_construct['input_data_files_z']
 
 	test_input_file_names_x=config.encode_decode_construct['input_test_data_files_x']
 	test_input_file_names_y=config.encode_decode_construct['input_test_data_files_y']
 	test_input_file_names_z=config.encode_decode_construct['input_test_data_files_z']
 
-
-	if(activate_tensorboard==1):
-		tensorboard_str='tensorboard' + '--logdir '+logs_path
-		print('Visualize at Tensorboard using ', tensorboard_str)
-	
 	print('Importing and Preprocessing Cloud-of-Point Data')
 	
 	point_index=get_data.load_mapping_index(mapping_index)
-	
-	input_dataset=[]
-	input_dataset.append(get_data.data_import(input_file_names_x,data_folder))
-	input_dataset.append(get_data.data_import(input_file_names_y,data_folder))
-	input_dataset.append(get_data.data_import(input_file_names_z,data_folder))
 	
 	test_input_dataset=[]
 	test_input_dataset.append(get_data.data_import(test_input_file_names_x,data_folder))
 	test_input_dataset.append(get_data.data_import(test_input_file_names_y,data_folder))
 	test_input_dataset.append(get_data.data_import(test_input_file_names_z,data_folder))
 
-
-	kcc_dataset=get_data.data_import(kcc_files,kcc_folder)
 	test_kcc_dataset=get_data.data_import(test_kcc_files,kcc_folder)
 	
 	if(kcc_sublist!=0):
 		print("Sub-setting Process Parameters: ",kcc_sublist)
-		kcc_dataset=kcc_dataset.iloc[:,kcc_sublist]
 		test_kcc_dataset=test_kcc_dataset[:,kcc_sublist]
 	else:
 		print("Using all Process Parameters")
 	
 	#Pre-processing to point cloud data
-	input_conv_data, kcc_subset_dump,kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,input_dataset,point_index,kcc_dataset)
 	test_input_conv_data, test_kcc_subset_dump,test_kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,test_input_dataset,point_index,test_kcc_dataset)
 
-	kcc_regression,kcc_classification=hy_util.split_kcc(kcc_subset_dump)
 	kcc_regression_test,kcc_classification_test=hy_util.split_kcc(test_kcc_subset_dump)
 
-	Y_out_list=[]
-	Y_out_list.append(kcc_regression)
-	Y_out_list.append(kcc_classification)
 	Y_out_test_list=[]
 	Y_out_test_list.append(kcc_regression_test)
 	Y_out_test_list.append(kcc_classification_test)
 	
-	y_shape_error_list=[]
 	y_shape_error_test_list=[]
 
 	for encode_decode_construct in encode_decode_multi_output_construct:
 		#importing file names for model output
 		print("Importing output data for stage: ",encode_decode_construct)
 		
-		output_file_names_x=encode_decode_construct['output_data_files_x']
-		output_file_names_y=encode_decode_construct['output_data_files_y']
-		output_file_names_z=encode_decode_construct['output_data_files_z']
 
 		test_output_file_names_x=encode_decode_construct['output_test_data_files_x']
 		test_output_file_names_y=encode_decode_construct['output_test_data_files_y']
 		test_output_file_names_z=encode_decode_construct['output_test_data_files_z']
-
-		output_dataset=[]
-		output_dataset.append(get_data.data_import(output_file_names_x,data_folder))
-		output_dataset.append(get_data.data_import(output_file_names_y,data_folder))
-		output_dataset.append(get_data.data_import(output_file_names_z,data_folder))
 	
 		test_output_dataset=[]
 		test_output_dataset.append(get_data.data_import(test_output_file_names_x,data_folder))
 		test_output_dataset.append(get_data.data_import(test_output_file_names_y,data_folder))
 		test_output_dataset.append(get_data.data_import(test_output_file_names_z,data_folder))
 		
-		output_conv_data, kcc_subset_dump,kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,output_dataset,point_index,kcc_dataset)
 		test_output_conv_data, test_kcc_subset_dump,test_kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,test_output_dataset,point_index,test_kcc_dataset)
 		
-		y_shape_error_list.append(output_conv_data)
 		y_shape_error_test_list.append(test_output_conv_data)
 
-	shape_error=np.concatenate(y_shape_error_list, axis=4)
 	shape_error_test=np.concatenate(y_shape_error_test_list, axis=4)
 
-	Y_out_list.append(shape_error)
 	Y_out_test_list.append(shape_error_test)
 
-	unet_train_model=Unet_TrainModel(batch_size,epocs,split_ratio)
+	unet_deploy_model=Unet_DeployModel()
 	
-	trained_model=unet_train_model.bayes_unet_run_train_model(model,input_conv_data,Y_out_list,test_input_conv_data,Y_out_test_list,model_path,logs_path,plots_path,activate_tensorboard)
+	pred_vector,epistemic_vector,epistemic_vector_iqr,aleatoric_vector=unet_deploy_model.bayes_unet_run_model(test_input_conv_data,model,Y_out_test_list,plots_path)
 	
-	print("Model Training Complete..")
+	print("Computing Metrics..")
+	
+	metrics_eval=MetricsEval();
+	
+	eval_metrics_reg,accuracy_metrics_df_reg=metrics_eval.metrics_eval_base(pred_vector[0],Y_out_test_list[0],logs_path)
+	eval_metrics_cla,accuracy_metrics_df_cla=metrics_eval.metrics_eval_classification(pred_vector[1],Y_out_test_list[1],logs_path)
+		
+			
+	#y_cop_pred_flat=y_cop_pred.flatten()
+	#y_cop_test_flat=y_cop_test.flatten()
+
+	#combined_array=np.stack([y_cop_test_flat,y_cop_pred_flat],axis=1)
+	#filtered_array=combined_array[np.where(combined_array[:,0] >= 0.05)]
+	#y_cop_test_vector=filtered_array[:,0:1]
+	#y_cop_pred_vector=filtered_array[:,1:2]
+
+	eval_metrics_cop_list=[]
+	accuracy_metrics_df_cop_list=[]
+	
+	t=0		
+	
+	index=0
+
+	for i in range(output_heads):
+		y_cop_pred=model_outputs[2][:,:,:,:,t:t+3]
+		y_cop_test=Y_out_test_list[2]
+		y_cop_pred_vector=np.reshape(y_cop_pred,(y_cop_pred.shape[0],-1))
+		y_cop_test_vector=np.reshape(y_cop_test,(y_cop_test.shape[0],-1))
+		y_cop_pred_vector=y_cop_pred_vector.T
+		y_cop_test_vector=y_cop_test_vector.T
+		
+		print(y_cop_pred_vector.shape)
+		#y_cop_test_flat=y_cop_test.flatten()
+				
+		eval_metrics_cop,accuracy_metrics_df_cop=metrics_eval.metrics_eval_cop(y_cop_pred_vector,y_cop_test_vector,logs_path)
+		eval_metrics_cop_list.append(eval_metrics_cop)
+		accuracy_metrics_df_cop_list.append(accuracy_metrics_df_cop)
+
+		accuracy_metrics_df_cop.to_csv(logs_path+'/metrics_test_cop_'+str(index)+'.csv')
+		
+		print("The Model Segmentation Validation Metrics are ")
+		print(accuracy_metrics_df_cop.mean())
+		
+		accuracy_metrics_df_cop.mean().to_csv(logs_path+'/metrics_test_cop_summary_'+str(index)+'.csv')
+		
+		t=t+3
+		index=index+1
+
+	#Saving Log files	
+	accuracy_metrics_df_reg.to_csv(logs_path+'/metrics_test_regression.csv')
+	accuracy_metrics_df_cla.to_csv(logs_path+'/metrics_test_classification.csv')
+	
+	print("The Model Validation Metrics for Regression based KCCs")	
+	print(accuracy_metrics_df_reg)
+	
+	accuracy_metrics_df_reg.mean().to_csv(logs_path+'/metrics_train_regression_summary.csv')
+	print("The Model Validation Metrics Regression Summary")
+	print(accuracy_metrics_df_reg.mean())
+
+	print("The Model Validation Metrics for Classification based KCCs")	
+	print(accuracy_metrics_df_cla)
+	
+	accuracy_metrics_df_cla.mean().to_csv(logs_path+'/metrics_train_classification_summary.csv')
+	print("The Model Validation Metrics Classification Summary")
+	print(accuracy_metrics_df_cla.mean())
 	

@@ -81,39 +81,40 @@ class Unet_TrainModel:
 		from tensorflow.keras.models import load_model
 		import tensorflow.keras.backend as K 
 		#model_file_path=model_path+'/unet_trained_model_'+str(run_id)+'.h5'
-		model_file_path=model_path+'/Bayes_unet_AH_'+str(run_id)
+		model_file_path=model_path+'/unet_oser_'+str(run_id)
 
 		from tensorflow.keras.callbacks import Callback, EarlyStopping, LearningRateScheduler, ModelCheckpoint
 		
-		#Decrease Learning Rate
-		def schedule(epoch, initial_learning_rate, lr_decay_start_epoch):
-		    """Defines exponentially decaying learning rate."""
+		# #Decrease Learning Rate
+		# def schedule(epoch, initial_learning_rate, lr_decay_start_epoch):
+		#     """Defines exponentially decaying learning rate."""
 
-		    if epoch < lr_decay_start_epoch:
-		        return initial_learning_rate
-		    else:
-		        return initial_learning_rate * math.exp((10 * initial_learning_rate) * (lr_decay_start_epoch - epoch))
+		#     if epoch < lr_decay_start_epoch:
+		#         return initial_learning_rate
+		#     else:
+		#         return initial_learning_rate * math.exp((10 * initial_learning_rate) * (lr_decay_start_epoch - epoch))
 
-		scheduler = LearningRateScheduler(schedule)
+		# scheduler = LearningRateScheduler(schedule)
 
-		#Annealing the Learning Rate
-		class AnnealingCallback(Callback):
+		# #Annealing the Learning Rate
+		# class AnnealingCallback(Callback):
 		   
-		    def __init__(self, kl_alpha, kl_start_epoch, kl_alpha_increase_per_epoch):
-		        self.kl_alpha = kl_alpha
-		        self.kl_start_epoch = kl_start_epoch
-		        self.kl_alpha_increase_per_epoch = kl_alpha_increase_per_epoch
+		#     def __init__(self, kl_alpha, kl_start_epoch, kl_alpha_increase_per_epoch):
+		#         self.kl_alpha = kl_alpha
+		#         self.kl_start_epoch = kl_start_epoch
+		#         self.kl_alpha_increase_per_epoch = kl_alpha_increase_per_epoch
 		    
-		    def on_epoch_end(self, epoch, logs={}):
-		        if epoch >= self.kl_start_epoch - 2:
-		            new_kl_alpha = min(K.get_value(self.kl_alpha) + self.kl_alpha_increase_per_epoch, 1.)
-		            K.set_value(self.kl_alpha, new_kl_alpha)
-		        print ("Current KL Weight is " + str(K.get_value(self.kl_alpha)))
+		#     def on_epoch_end(self, epoch, logs={}):
+		#         if epoch >= self.kl_start_epoch - 2:
+		#             new_kl_alpha = min(K.get_value(self.kl_alpha) + self.kl_alpha_increase_per_epoch, 1.)
+		#             K.set_value(self.kl_alpha, new_kl_alpha)
+		#         print ("Current KL Weight is " + str(K.get_value(self.kl_alpha)))
 
 		#tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir='C:\\Users\\sinha_s\\Desktop\\dlmfg_package\\dlmfg\\trained_models\\inner_rf_assembly\\logs',histogram_freq=1)
-		checkpointer = tf.keras.callbacks.ModelCheckpoint(model_file_path, verbose=1, save_best_only='val_loss',save_weights_only=True)
+		#checkpointer = tf.keras.callbacks.ModelCheckpoint(model_file_path, verbose=1, save_best_only='val_loss',save_weights_only=True)
 		#Check pointer to save the best model
-		history=model.fit(x=X_in,y=Y_out_list, validation_data=(X_in_test,Y_out_test_list), epochs=self.epochs, batch_size=self.batch_size,callbacks=[checkpointer])
+		
+		history=model.fit(x=X_in,y=Y_out_list, validation_data=(X_in_test,Y_out_test_list), epochs=self.epochs, batch_size=self.batch_size)
 		
 		return model
 

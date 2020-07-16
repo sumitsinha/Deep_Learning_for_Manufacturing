@@ -117,8 +117,8 @@ cae_sim_params = {
 }
 
 encode_decode_params ={
-        'model_depth':4,
-        'inital_filter_dim':16,
+        'model_depth':3,
+        'inital_filter_dim':8,
         'kcc_sublist':0,#[0,1,2,3,4,5,6,7,8,9,10,11] use a list in case only a selected sublist of KCCs have to be used: 0 means all KCCs
         'output_heads':2
 }

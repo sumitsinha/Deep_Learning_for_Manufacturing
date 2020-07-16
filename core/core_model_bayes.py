@@ -289,7 +289,8 @@ class Bayes_DLModel:
 		
 		#Process Parameter Outputs
 		reg_distrbution=tfp.layers.DistributionLambda(lambda t:tfd.MultivariateNormalDiag(loc=t[..., :reg_kccs], scale_diag=aleatoric_tensor),name="regression_outputs")(process_parameter_reg)
-		cla_distrbution=tfp.layers.DenseFlipout(categorical_kccs, kernel_divergence_fn=kl_divergence_function,activation=tf.nn.sigmoid,name="classification_outputs")(process_parameter_cla)
+		cla_distrbution=Activation('sigmoid', name="classification_outputs")(process_parameter_cla)
+		#cla_distrbution=tfp.layers.DenseFlipout(categorical_kccs, kernel_divergence_fn=kl_divergence_function,activation=tf.nn.sigmoid,name="classification_outputs")(process_parameter_cla)
 
 		# Upsampling
 		for i in range(depth - 2, -1, -1):
@@ -329,7 +330,7 @@ class Bayes_DLModel:
 		output = Conv(deviation_channels*output_heads, 1, padding='same', activation=final_activation, name='shape_error_outputs')(x)
 		output_list.append(output)
 		
-		model=Model(inputs, outputs=output_list, name='Hybrid_Bayesian_Model')
+		model=Model(inputs, outputs=output_list, name='Hybrid_Unet_Model')
 		
 		#Loss Dictonary Created
 		#model_losses=[]

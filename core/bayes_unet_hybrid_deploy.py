@@ -417,7 +417,7 @@ if __name__ == '__main__':
 	print('Importing Nominal COP')
 	nominal_cop=vrm_system.get_nominal_cop(cop_file_path)
 	deploy_path=logs_path
-	
+
 	t=0			
 	index=0
 
@@ -487,6 +487,10 @@ if __name__ == '__main__':
 	#Saving Performance Log files	
 	accuracy_metrics_df_reg.to_csv(logs_path+'/metrics_test_regression.csv')
 	accuracy_metrics_df_cla.to_csv(logs_path+'/metrics_test_classification.csv')
+
+	epistemic_std_avg_reg=np.array(epistemic_vector[0]).mean(axis=0)
+	epistemic_std_avg_cla=np.array(epistemic_vector[1]).mean(axis=0)
+	avg_aleatoric_std=np.array(aleatoric_vector[0]).mean(axis=0)
 	
 	print("The Model Validation Metrics for Regression based KCCs")	
 	print(accuracy_metrics_df_reg)

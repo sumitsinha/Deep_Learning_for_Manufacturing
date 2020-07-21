@@ -22,6 +22,7 @@ sys.path.append("../config")
 #sys.path.insert(0,parentdir) 
 
 #Importing Required Modules
+import matplotlib.pyplot as plt
 import pathlib
 import numpy as np
 import pandas as pd
@@ -43,6 +44,9 @@ from core_model_bayes import Bayes_DLModel
 from training_viz import TrainViz
 from metrics_eval import MetricsEval
 from keras_lr_multiplier import LRMultiplier
+from point_cloud_construction import GetPointCloud
+import voxel_config as vc
+
 
 class Unet_DeployModel:
 	"""Train Model Class, the initialization parameters are parsed from modelconfig_train.py file
@@ -74,7 +78,7 @@ class Unet_DeployModel:
 
 		return model
 
-	def bayes_unet_run_model(self,inference_data,inference_model,y_test_list,plots_path,epistemic_samples=20,run_id=0):
+	def bayes_unet_run_model(self,inference_data,inference_model,y_test_list,plots_path,epistemic_samples=5,run_id=0):
 		"""run_train_model function trains the model on the dataset and saves the trained model,logs and plots within the file structure, the function prints the training evaluation metrics
 			
 			:param model: 3D CNN model compiled within the Deep Learning Class, refer https://keras.io/models/model/ for more information 
@@ -290,8 +294,8 @@ if __name__ == '__main__':
 	plots_path=train_path+'/plots'
 	pathlib.Path(plots_path).mkdir(parents=True, exist_ok=True)
 
-	deployment_path=train_path+'/deploy'
-	pathlib.Path(deployment_path).mkdir(parents=True, exist_ok=True)
+	deploy_path=train_path+'/deploy'
+	pathlib.Path(deploy_path).mkdir(parents=True, exist_ok=True)
 
 	#Objects of Measurement System, Assembly System, Get Inference Data
 	print('Initializing the Assembly System and Measurement System....')
@@ -394,6 +398,8 @@ if __name__ == '__main__':
 	
 	pred_vector,epistemic_vector,epistemic_vector_iqr,aleatoric_vector=unet_deploy_model.bayes_unet_run_model(test_input_conv_data,model,Y_out_test_list,plots_path)
 	
+	model_outputs=pred_vector
+
 	print("Computing Metrics..")
 	
 	metrics_eval=MetricsEval();
@@ -401,25 +407,25 @@ if __name__ == '__main__':
 	eval_metrics_reg,accuracy_metrics_df_reg=metrics_eval.metrics_eval_base(pred_vector[0],Y_out_test_list[0],logs_path)
 	eval_metrics_cla,accuracy_metrics_df_cla=metrics_eval.metrics_eval_classification(pred_vector[1],Y_out_test_list[1],logs_path)
 		
-			
-	#y_cop_pred_flat=y_cop_pred.flatten()
-	#y_cop_test_flat=y_cop_test.flatten()
-
-	#combined_array=np.stack([y_cop_test_flat,y_cop_pred_flat],axis=1)
-	#filtered_array=combined_array[np.where(combined_array[:,0] >= 0.05)]
-	#y_cop_test_vector=filtered_array[:,0:1]
-	#y_cop_pred_vector=filtered_array[:,1:2]
-
 	eval_metrics_cop_list=[]
 	accuracy_metrics_df_cop_list=[]
+	get_point_cloud=GetPointCloud()
+
+	cop_file_name=vc.voxel_parameters['nominal_cop_filename']
+	cop_file_path='../resources/nominal_cop_files/'+cop_file_name
+	#Read cop from csv file
+	print('Importing Nominal COP')
+	nominal_cop=vrm_system.get_nominal_cop(cop_file_path)
+	deploy_path=logs_path
 	
-	t=0		
-	
+	t=0			
 	index=0
 
 	for i in range(output_heads):
 		y_cop_pred=model_outputs[2][:,:,:,:,t:t+3]
-		y_cop_test=Y_out_test_list[2]
+		y_cop_test=Y_out_test_list[2][:,:,:,:,t:t+3]
+		y_cop_actual=y_cop_test
+		
 		y_cop_pred_vector=np.reshape(y_cop_pred,(y_cop_pred.shape[0],-1))
 		y_cop_test_vector=np.reshape(y_cop_test,(y_cop_test.shape[0],-1))
 		y_cop_pred_vector=y_cop_pred_vector.T
@@ -429,6 +435,7 @@ if __name__ == '__main__':
 		#y_cop_test_flat=y_cop_test.flatten()
 				
 		eval_metrics_cop,accuracy_metrics_df_cop=metrics_eval.metrics_eval_cop(y_cop_pred_vector,y_cop_test_vector,logs_path)
+		
 		eval_metrics_cop_list.append(eval_metrics_cop)
 		accuracy_metrics_df_cop_list.append(accuracy_metrics_df_cop)
 
@@ -439,10 +446,45 @@ if __name__ == '__main__':
 		
 		accuracy_metrics_df_cop.mean().to_csv(logs_path+'/metrics_test_cop_summary_'+str(index)+'.csv')
 		
+		#Saving For Matlab Plotting
+		dev_pred_matlab_plot_x=np.zeros((len(y_cop_pred),point_dim))
+		dev_pred_matlab_plot_y=np.zeros((len(y_cop_pred),point_dim))
+		dev_pred_matlab_plot_z=np.zeros((len(y_cop_pred),point_dim))
+
+		dev_actual_matlab_plot_x=np.zeros((len(y_cop_pred),point_dim))
+		dev_actual_matlab_plot_y=np.zeros((len(y_cop_pred),point_dim))
+		dev_actual_matlab_plot_z=np.zeros((len(y_cop_pred),point_dim))
+
+		# Saving for Matlab plotting
+		print("Saving Files for VRM Plotting...")
+		
+		from tqdm import tqdm
+		
+		for i in tqdm(range(len(y_cop_pred))):
+				
+			actual_dev=get_point_cloud.getcopdev(y_cop_actual[i,:,:,:,:],point_index,nominal_cop)
+			pred_dev=get_point_cloud.getcopdev(y_cop_pred[i,:,:,:,:],point_index,nominal_cop)
+
+			dev_pred_matlab_plot_x[i,:]=pred_dev[:,0]
+			dev_pred_matlab_plot_y[i,:]=pred_dev[:,1]
+			dev_pred_matlab_plot_z[i,:]=pred_dev[:,2]
+
+			dev_actual_matlab_plot_x[i,:]=actual_dev[:,0]
+			dev_actual_matlab_plot_y[i,:]=actual_dev[:,1]
+			dev_actual_matlab_plot_z[i,:]=actual_dev[:,2]
+
+		np.savetxt((logs_path+'/DX_pred_'+str(index)+'.csv'),dev_pred_matlab_plot_x, delimiter=",")
+		np.savetxt((logs_path+'/DY_pred_'+str(index)+'.csv'),dev_pred_matlab_plot_y, delimiter=",")
+		np.savetxt((logs_path+'/DZ_pred_'+str(index)+'.csv'),dev_pred_matlab_plot_z, delimiter=",")
+			
+		np.savetxt((logs_path+'/DX_actual_'+str(index)+'.csv'),dev_actual_matlab_plot_x, delimiter=",")
+		np.savetxt((logs_path+'/DY_actual_'+str(index)+'.csv'),dev_actual_matlab_plot_y, delimiter=",")
+		np.savetxt((logs_path+'/DZ_actual_'+str(index)+'.csv'),dev_actual_matlab_plot_z, delimiter=",")	
+		
 		t=t+3
 		index=index+1
 
-	#Saving Log files	
+	#Saving Performance Log files	
 	accuracy_metrics_df_reg.to_csv(logs_path+'/metrics_test_regression.csv')
 	accuracy_metrics_df_cla.to_csv(logs_path+'/metrics_test_classification.csv')
 	
@@ -460,3 +502,25 @@ if __name__ == '__main__':
 	print("The Model Validation Metrics Classification Summary")
 	print(accuracy_metrics_df_cla.mean())
 	
+	
+	#Saving Predicted Files
+	np.savetxt((deploy_path+"predicted_reg.csv"), pred_vector[0], delimiter=",")
+	np.savetxt((deploy_path+"predicted_cla.csv"), pred_vector[1], delimiter=",")
+	#print('Predicted Values saved to disk...')
+
+	np.savetxt((deploy_path+"pred_std_reg.csv"), epistemic_vector[0], delimiter=",")
+	np.savetxt((deploy_path+"pred_std_cla.csv"), epistemic_vector[1], delimiter=",")
+	#print('Predicted Standard Deviation Values saved to disk...')
+
+	np.savetxt((deploy_path+"pred_iqr_reg.csv"), epistemic_vector_iqr[0], delimiter=",")
+	np.savetxt((deploy_path+"pred_iqr_cla.csv"), epistemic_vector_iqr[1], delimiter=",")
+		
+	np.savetxt((deploy_path+"pred_aleatoric_std_reg.csv"), aleatoric_vector[0], delimiter=",")
+	#print('Predicted Values saved to disk...')
+
+	np.savetxt((deploy_path+"epistemic_std_avg_reg.csv"), epistemic_std_avg_reg, delimiter=",")
+	np.savetxt((deploy_path+"epistemic_std_avg_cla.csv"), epistemic_std_avg_cla, delimiter=",")
+		
+	np.savetxt((deploy_path+"aleatoric_std_avg_reg.csv"), avg_aleatoric_std, delimiter=",")
+
+	print('Model Logs saved to disk...')

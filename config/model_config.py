@@ -142,7 +142,7 @@ kmc_params={
 
 bm_params={
         'max_models':10,
-        'runs':15,
+        'runs':3,
         'split_ratio': 0.2
 }
 

@@ -150,18 +150,25 @@ def benchmarking_models_eval_cla(bn_models,point_data,kcc_dataset,assembly_kccs,
 	bnoutput_f1=np.zeros((len(bn_models),assembly_kccs))
 	bnoutput_pre=np.zeros((len(bn_models),assembly_kccs))
 	bnoutput_recall=np.zeros((len(bn_models),assembly_kccs))
-	bnoutput_roc_kappa=np.zeros((len(bn_models),assembly_kccs))
+	bnoutput_roc_auc=np.zeros((len(bn_models),assembly_kccs))
+	bnoutput_kappa=np.zeros((len(bn_models),assembly_kccs))
 
 	y_pred=np.zeros_like(y_test,dtype=float)
+	
 	for i in range(len(bn_models)):
 		print(i)
 		model=bn_models[i]
 		model.fit(X_train,y_train)
-		y_pred_list=model.predict_proba(X_test)
 		
-		#Handling Predict Proba as it returns list of arrays
-		for j,item in enumerate(y_pred_list):
-			y_pred[:,j]=item[:,1]
+		try: 
+			y_pred_list=model.predict_proba(X_test)
+
+			#Handling Predict Proba as it returns list of arrays
+			for j,item in enumerate(y_pred_list):
+				y_pred[:,j]=item[:,1]
+		except:
+			print("Estimator Doesn't Allow Predict Probability")
+			y_pred=model.predict(X_test)
 
 		eval_metrics,accuracy_metrics_df=metrics_eval.metrics_eval_classification(y_pred,y_test,bm_path)
 		bnoutput_acc[i,:]=eval_metrics["Accuracy"]
@@ -406,7 +413,7 @@ if __name__ == '__main__':
 	avg_std_kcc_rmse=np.mean(std_mr_bn_rmse,axis=1)
 	avg_std_kcc_r2=np.mean(std_mr_bn_r2,axis=1)
 
-	print("Average performance considering all Regression KCCs...")
+	print("Average performance considering all KCCs Saved to disk...")
 
 	# for i in range(len(bn_models_name_reg)):
 	# 	print('Name model: ', bn_models_name_reg[i])

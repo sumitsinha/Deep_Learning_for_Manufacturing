@@ -508,23 +508,23 @@ if __name__ == '__main__':
 	
 	
 	#Saving Predicted Files
-	np.savetxt((deploy_path+"predicted_reg.csv"), pred_vector[0], delimiter=",")
-	np.savetxt((deploy_path+"predicted_cla.csv"), pred_vector[1], delimiter=",")
+	np.savetxt((deploy_path+"/predicted_reg.csv"), pred_vector[0], delimiter=",")
+	np.savetxt((deploy_path+"/predicted_cla.csv"), pred_vector[1], delimiter=",")
 	#print('Predicted Values saved to disk...')
 
-	np.savetxt((deploy_path+"pred_std_reg.csv"), epistemic_vector[0], delimiter=",")
-	np.savetxt((deploy_path+"pred_std_cla.csv"), epistemic_vector[1], delimiter=",")
+	np.savetxt((deploy_path+"/pred_std_reg.csv"), epistemic_vector[0], delimiter=",")
+	np.savetxt((deploy_path+"/pred_std_cla.csv"), epistemic_vector[1], delimiter=",")
 	#print('Predicted Standard Deviation Values saved to disk...')
 
-	np.savetxt((deploy_path+"pred_iqr_reg.csv"), epistemic_vector_iqr[0], delimiter=",")
-	np.savetxt((deploy_path+"pred_iqr_cla.csv"), epistemic_vector_iqr[1], delimiter=",")
+	np.savetxt((deploy_path+"/pred_iqr_reg.csv"), epistemic_vector_iqr[0], delimiter=",")
+	np.savetxt((deploy_path+"/pred_iqr_cla.csv"), epistemic_vector_iqr[1], delimiter=",")
 		
-	np.savetxt((deploy_path+"pred_aleatoric_std_reg.csv"), aleatoric_vector[0], delimiter=",")
+	np.savetxt((deploy_path+"/pred_aleatoric_std_reg.csv"), aleatoric_vector[0], delimiter=",")
 	#print('Predicted Values saved to disk...')
 
-	np.savetxt((deploy_path+"epistemic_std_avg_reg.csv"), epistemic_std_avg_reg, delimiter=",")
-	np.savetxt((deploy_path+"epistemic_std_avg_cla.csv"), epistemic_std_avg_cla, delimiter=",")
+	np.savetxt((deploy_path+"/epistemic_std_avg_reg.csv"), epistemic_std_avg_reg, delimiter=",")
+	np.savetxt((deploy_path+"/epistemic_std_avg_cla.csv"), epistemic_std_avg_cla, delimiter=",")
 		
-	np.savetxt((deploy_path+"aleatoric_std_avg_reg.csv"), avg_aleatoric_std, delimiter=",")
+	np.savetxt((deploy_path+"/aleatoric_std_avg_reg.csv"), avg_aleatoric_std, delimiter=",")
 
 	print('Model Logs saved to disk...')

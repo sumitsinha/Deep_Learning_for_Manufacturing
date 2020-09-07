@@ -220,6 +220,51 @@ if __name__ == '__main__':
 		arr_min, arr_max = np.min(_grad_CAM), np.max(_grad_CAM)
 		grad_CAM = (_grad_CAM - arr_min) / (arr_max - arr_min + K.epsilon())
 
+	
+	#Code for grad CAM saving to be plotted in VRM
+	from point_cloud_construction import GetPointCloud
+	import voxel_config as vc
+	get_point_cloud=GetPointCloud()
+
+
+	cop_file_name=vc.voxel_parameters['nominal_cop_filename']
+	cop_file_path='../resources/nominal_cop_files/'+cop_file_name
+	
+	print("Saving Gradient based Class Activation Map for Process Parameter: ",process_parameter_id)
+
+	camviz=CamViz(inference_model,'leaky_re_lu_8')
+
+	grad_cam_plot_matlab=np.zeros((len(input_conv_data),point_dim))
+	
+	for i in range(len(input_conv_data)):
+
+		#Under deafault setting max process param deviations are plotted
+		# Change here for explicit specification of process parameter
+
+		layer_name='leaky_re_lu_8'
+		
+		camviz=CamViz(inference_model,layer_name)
+
+		process_parameter_id=np.argmax(abs(y_pred[i,:]))
+		cop_input=input_conv_data[i:i+1,:,:,:,:]
+		fmap_eval, grad_wrt_fmap_eval=camviz.grad_cam_3d(cop_input,process_parameter_id)
+		
+		alpha_k_c= grad_wrt_fmap_eval.mean(axis=(0,1,2,3)).reshape((1,1,1,-1))
+		Lc_Grad_CAM = np.maximum(np.sum(fmap_eval*alpha_k_c,axis=-1),0).squeeze()
+		scale_factor = np.array(cop_input.shape[1:4])/np.array(Lc_Grad_CAM.shape)
+
+		from scipy.ndimage.interpolation import zoom
+		import tensorflow.keras.backend as K
+		
+		_grad_CAM = zoom(Lc_Grad_CAM,scale_factor)
+		arr_min, arr_max = np.min(_grad_CAM), np.max(_grad_CAM)
+		grad_CAM = (_grad_CAM - arr_min) / (arr_max - arr_min + K.epsilon())
+
+		grad_cam_plot_matlab[i,:]=get_point_cloud.getcopdev_gradcam(grad_CAM[i,:,:,:,:],point_index,nominal_cop)
+
+	#Saving File
+	np.savetxt((logs_path+'/grad_cam_pred_'+layer_name+'.csv'),grad_cam_plot_matlab, delimiter=",")
+
 	#Code for Grad CAM Plotting
 	plotly_viz=1	
 	fmap_viz=1

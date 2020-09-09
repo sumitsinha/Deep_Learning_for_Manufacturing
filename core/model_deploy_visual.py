@@ -3,6 +3,7 @@
 
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+os.environ["CUDA_VISIBLE_DEVICES"]="0" # Nvidia Quadro GV100
 
 import sys
 current_path=os.path.dirname(__file__)
@@ -22,8 +23,6 @@ import tensorflow as tf
 import csv
 import logging
 tf.get_logger().setLevel(logging.ERROR)
-
-from tensorflow.keras.models import load_model
 
 
 #Importing Config files
@@ -56,6 +55,7 @@ class DeployModel:
 		"""
 
 		try:
+			from tensorflow.keras.models import load_model
 			inference_model=load_model(model_path)
 			print('Deep Learning Model found and loaded')
 		except AssertionError as error:
@@ -149,7 +149,7 @@ if __name__ == '__main__':
 	
 	#Generate Paths
 	train_path='../trained_models/'+part_type
-	model_path=train_path+'/model'+'/trained_model_0.h5'
+	model_path=train_path+'/model'+'/trained_model_1.h5'
 	logs_path=train_path+'/logs'
 	deploy_path=train_path+'/deploy/'
 
@@ -236,7 +236,10 @@ if __name__ == '__main__':
 
 	grad_cam_plot_matlab=np.zeros((len(input_conv_data),point_dim))
 	
-	for i in range(len(input_conv_data)):
+	from tqdm import tqdm
+	print("Saving Grad CAM File...")
+
+	for i in tqdm(range(len(input_conv_data))):
 
 		#Under deafault setting max process param deviations are plotted
 		# Change here for explicit specification of process parameter
@@ -260,7 +263,9 @@ if __name__ == '__main__':
 		arr_min, arr_max = np.min(_grad_CAM), np.max(_grad_CAM)
 		grad_CAM = (_grad_CAM - arr_min) / (arr_max - arr_min + K.epsilon())
 
-		grad_cam_plot_matlab[i,:]=get_point_cloud.getcopdev_gradcam(grad_CAM[i,:,:,:,:],point_index,nominal_cop)
+		#print(grad_CAM.shape)
+
+		grad_cam_plot_matlab[i,:]=get_point_cloud.getcopdev_gradcam(grad_CAM,point_index,nominal_cop)
 
 	#Saving File
 	np.savetxt((logs_path+'/grad_cam_pred_'+layer_name+'.csv'),grad_cam_plot_matlab, delimiter=",")

@@ -69,8 +69,8 @@ class CamViz:
 
 			
 			#pooled_grads = K.mean(grads, axis=(0, 1, 2))
-			print(grads.shape)
-			print(conv_output.shape)
+			#print(grads.shape)
+			#print(conv_output.shape)
 			
 			#iterate = K.function([layer_input], [pooled_grads, cnn_layer.output[0]])
 			#grad_wrt_fmap_fn = K.function([layer_input,K.learning_phase()],[cnn_output,grad_wrt_fmap])

@@ -40,11 +40,11 @@ class GetPointCloud:
 		from tqdm import tqdm
 		
 		#Only one compent from 
-		point_cloud_dev=np.zeros_like((len(nominal_cop,1)))
+		point_cloud_dev=np.zeros((len(nominal_cop),1))
 
 		for i in range(len(point_cloud_dev)):		
-			point_cloud_dev[i,:]=voxel_data[int(mapping_index[i,0]),int(mapping_index[i,1]),int(mapping_index[i,2]),:]
+			point_cloud_dev[i,:]=voxel_data[int(mapping_index[i,0]),int(mapping_index[i,1]),int(mapping_index[i,2])]
 
-		return point_cloud_dev
+		return point_cloud_dev[:,0]
 
 

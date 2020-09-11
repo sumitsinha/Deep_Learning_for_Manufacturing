@@ -15,6 +15,7 @@ datasets/
 sample_input/
 **/trained_models/Halo_Stamping_Patterns/
 **/trained_models/Halo_debug_run/
+**/model_selection/OSER_A/
 
 trained_models/
 Halo_Stamping_Patterns/

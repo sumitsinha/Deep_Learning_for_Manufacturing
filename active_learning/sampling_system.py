@@ -157,6 +157,7 @@ if __name__ == '__main__':
 
 		initial_samples=mask_array
 			
+	# If Tooling flag is off the process parameters for that tool are to be set to zero
 	post_process=1
 	
 	if(post_process==1):

@@ -17,7 +17,7 @@
 
 """
 
-sampling_config={'sample_dim':5000,
+sampling_config={'sample_dim':1500,
                 'test_sample_dim':10,
                 'sample_validation_dim':100,
 		'adaptive_sample_dim':50,

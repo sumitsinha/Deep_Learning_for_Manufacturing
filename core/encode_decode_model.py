@@ -455,7 +455,7 @@ class Encode_Decode_Model:
 		#print(model.summary())
 		return model
 
-	def encode_decode_3d_multi_output_attention_hybrid(self,filter_root, depth,input_size=(64,64,64,3),categorical_outputs=5,output_heads=2, n_class=3):
+	def encode_decode_3d_multi_output_attention_hybrid(self,filter_root, depth,input_size=(64,64,64,3),categorical_outputs=25,output_heads=2, n_class=3):
 		"""Build the 3D Model using the specified loss function, the inputs are parsed from the assemblyconfig_<case_study_name>.py file
 
 			:param voxel_dim: The voxel dimension of the input, required to build input to the 3D CNN model
@@ -490,6 +490,33 @@ class Encode_Decode_Model:
 		Returns:
 			obj: keras model object
 		"""
+		bin_crossentropy=tf.keras.losses.BinaryCrossentropy()
+		mse_basic = tf.keras.losses.MeanSquaredError()
+
+		#Can also Try
+		#scale_factor=4000/64 #number of samples/batchsize
+		#kl = sum(model.losses) / scale_factor
+		#Annealing of KL divergence
+		#bin_crossentropy=tf.keras.losses.BinaryCrossentropy()+kl* K.get_value(kl_alpha)
+
+		overall_loss_dict={
+		"regression_outputs":mse_basic,
+		"classification_outputs":bin_crossentropy,
+		"shape_error_outputs":mse_basic
+		}
+
+		overall_loss_weights={
+		"regression_outputs":2.0,
+		"classification_outputs":2.0,
+		"shape_error_outputs":1.0
+		}
+
+		overall_metrics_dict={
+		"regression_outputs":[tf.keras.metrics.MeanAbsoluteError()],
+		"classification_outputs":[tf.keras.metrics.CategoricalAccuracy()],
+		"shape_error_outputs":[tf.keras.metrics.MeanAbsoluteError()]
+		}
+
 		inputs = Input(input_size)
 		x = inputs
 		
@@ -547,12 +574,12 @@ class Encode_Decode_Model:
 
 		#Regression Outputs
 		feature_vector=Conv(self.output_dimension-categorical_outputs, 1, padding='same', activation=final_activation, name='Process_Parameter_output_regression')(x)
-		process_parameter_regression=GlobalAveragePooling3D(name='Regression_Outputs')(feature_vector)
+		process_parameter_regression=GlobalAveragePooling3D(name='regression_outputs')(feature_vector)
 		
 		#Classification Outputs
 		feature_vector_categorical=Conv(categorical_outputs, 1, padding='same', activation=final_activation, name='Process_Parameter_output_classification')(x)
 		process_parameter_cont=GlobalAveragePooling3D()(feature_vector_categorical)
-		process_parameter_classification=Activation('sigmoid',name='Classification_Outputs')(process_parameter_cont)
+		process_parameter_classification=Activation('sigmoid',name='classification_outputs')(process_parameter_cont)
 		
 		#feature_vector=Flatten()(x)
 		#process_parameter=Dense(self.output_dimension)(feature_vector)
@@ -587,33 +614,23 @@ class Encode_Decode_Model:
 
 			x = Activation(activation, name="upAct{}_2".format(i))(resconnection)
 
-		# Final convolution
-		mse_basic = tf.keras.losses.MeanSquaredError()
-		msle = tf.keras.losses.MeanSquaredLogarithmicError()
-		bin_crossentropy=tf.keras.losses.BinaryCrossentropy()
-		
-		def mse_scaled(y_true,y_pred):
-			return K.mean(K.square((y_pred - y_true)*100))
 
 		output_list=[]
 		output_list.append(process_parameter_regression)
 		output_list.append(process_parameter_classification)
-		loss_list=[]
-		loss_list.append(mse_basic)
-		loss_list.append(bin_crossentropy)
 
-		#output = Conv(n_class*output_heads, 1, padding='same', activation=final_activation, name='output')(x)
-		#output_list.append(output)
+		output = Conv(n_class*output_heads, 1, padding='same', activation=final_activation, name='shape_error_outputs')(x)
+		output_list.append(output)
 
-		for i in range(output_heads):
-			out_layer_name="output_"+str(i)
-			pen_out_layer_name="pen_output_"+str(i)
-			pen_out_layer_name2="pen_output2_"+str(i)
-			pen_output=Conv(16, 1, padding='same', activation='relu', name=pen_out_layer_name)(x)
-			#pen_output_2=Conv(16, 1, padding='same', activation='relu', name=pen_out_layer_name2)(pen_output)
-			output = Conv(n_class, 1, padding='same', activation=final_activation, name=out_layer_name)(pen_output)
-			output_list.append(output)
-			loss_list.append(mse_scaled)
+		# for i in range(output_heads):
+		# 	out_layer_name="output_"+str(i)
+		# 	pen_out_layer_name="pen_output_"+str(i)
+		# 	pen_out_layer_name2="pen_output2_"+str(i)
+		# 	pen_output=Conv(16, 1, padding='same', activation='relu', name=pen_out_layer_name)(x)
+		# 	#pen_output_2=Conv(16, 1, padding='same', activation='relu', name=pen_out_layer_name2)(pen_output)
+		# 	output = Conv(n_class, 1, padding='same', activation=final_activation, name=out_layer_name)(pen_output)
+		# 	output_list.append(output)
+		# 	loss_list.append(mse_scaled)
 
 		model=Model(inputs, outputs=output_list, name='Res-UNet_Attention_Hybrid')
 		
@@ -621,7 +638,7 @@ class Encode_Decode_Model:
 		#print(model.summary())
 		#plot_model(model,to_file='unet_3D_multi_output_attention_hybrid.png',show_shapes=True, show_layer_names=True)
 	
-		model.compile(optimizer=tf.keras.optimizers.Adam(),experimental_run_tf_function=False,loss=loss_list,metrics=[tf.keras.metrics.MeanAbsoluteError(),tf.keras.metrics.Accuracy()])
+		model.compile(optimizer=tf.keras.optimizers.Adam(),experimental_run_tf_function=False,loss=overall_loss_dict,metrics=overall_metrics_dict,loss_weights=overall_loss_weights)
 		#print(model.summary())
 		return model
 
@@ -719,7 +736,7 @@ class Encode_Decode_Model:
 if (__name__=="__main__"):
 	
 	print('Model Summary')
-	enc_dec=Encode_Decode_Model(12)
+	enc_dec=Encode_Decode_Model(148)
 
 	#model=enc_dec.encode_decode_3d(16,4)
 	model=enc_dec.encode_decode_3d_multi_output_attention_hybrid(16,4)

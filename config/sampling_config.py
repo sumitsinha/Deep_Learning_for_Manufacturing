@@ -17,7 +17,7 @@
 
 """
 
-sampling_config={'sample_dim':1500,
+sampling_config={'sample_dim':500,
                 'test_sample_dim':10,
                 'sample_validation_dim':100,
 		'adaptive_sample_dim':50,
@@ -28,7 +28,7 @@ sampling_config={'sample_dim':1500,
                 'pp_masking':0,	
         'output_folder_name':'cross_member_assembly',
         'sample_type':'uniform',
-        'output_file_name':'cross_member_samples_datagen_hybrid_1',
+        'output_file_name':'cross_member_samples_datagen_hybrid_test_1',
         'output_file_name_test':'cross_member_samples_dynamic_test_0',
         'output_file_name_validate':'cross_member_samples_dynamic_validate_0',
         'output_file_name_train': 'cross_member_samples_dynamic_train',

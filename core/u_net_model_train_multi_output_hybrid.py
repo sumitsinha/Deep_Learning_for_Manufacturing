@@ -248,7 +248,6 @@ if __name__ == '__main__':
 	test_input_dataset.append(get_data.data_import(test_input_file_names_y,data_folder))
 	test_input_dataset.append(get_data.data_import(test_input_file_names_z,data_folder))
 
-
 	kcc_dataset=get_data.data_import(kcc_files,kcc_folder)
 	test_kcc_dataset=get_data.data_import(test_kcc_files,kcc_folder)
 	
@@ -269,9 +268,13 @@ if __name__ == '__main__':
 	Y_out_list=[]
 	Y_out_list.append(kcc_regression)
 	Y_out_list.append(kcc_classification)
+	
 	Y_out_test_list=[]
 	Y_out_test_list.append(kcc_regression_test)
 	Y_out_test_list.append(kcc_classification_test)
+
+	y_shape_error_list=[]
+	y_shape_error_test_list=[]
 	
 	for encode_decode_construct in encode_decode_multi_output_construct:
 		#importing file names for model output
@@ -298,8 +301,14 @@ if __name__ == '__main__':
 		output_conv_data, kcc_subset_dump,kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,output_dataset,point_index,kcc_dataset)
 		test_output_conv_data, test_kcc_subset_dump,test_kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,test_output_dataset,point_index,test_kcc_dataset)
 		
-		Y_out_list.append(output_conv_data)
-		Y_out_test_list.append(test_output_conv_data)
+		y_shape_error_list.append(output_conv_data)
+		y_shape_error_test_list.append(test_output_conv_data)
+
+	shape_error=np.concatenate(y_shape_error_list, axis=4)
+	shape_error_test=np.concatenate(y_shape_error_test_list, axis=4)
+
+	Y_out_list.append(shape_error)
+	Y_out_test_list.append(shape_error_test)
 
 	unet_train_model=Unet_TrainModel(batch_size,epocs,split_ratio)
 	
@@ -307,7 +316,6 @@ if __name__ == '__main__':
 	
 	print("Model Training Complete..")
 	
-		
 	accuracy_metrics_df_reg.to_csv(logs_path+'/metrics_train_regression.csv')
 	accuracy_metrics_df_cla.to_csv(logs_path+'/metrics_train_classification.csv')
 	

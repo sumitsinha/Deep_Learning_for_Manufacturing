@@ -119,24 +119,24 @@ class Unet_DeployModel:
 			#y_cop_test_vector=filtered_array[:,0:1]
 			#y_cop_pred_vector=filtered_array[:,1:2]
 
-			eval_metrics_cop_list=[]
-			accuracy_metrics_df_cop_list=[]
+			# eval_metrics_cop_list=[]
+			# accuracy_metrics_df_cop_list=[]
 			
-			for i in range(2,len(model_outputs)):
-				y_cop_pred=model_outputs[i]
-				y_cop_test=Y_out_test_list[i]
-				y_cop_pred_vector=np.reshape(y_cop_pred,(y_cop_pred.shape[0],-1))
-				y_cop_test_vector=np.reshape(y_cop_test,(y_cop_test.shape[0],-1))
-				y_cop_pred_vector=y_cop_pred_vector.T
-				y_cop_test_vector=y_cop_test_vector.T
-				print(y_cop_pred_vector.shape)
-				#y_cop_test_flat=y_cop_test.flatten()
+			# for i in range(2,len(model_outputs)):
+			# 	y_cop_pred=model_outputs[i]
+			# 	y_cop_test=Y_out_test_list[i]
+			# 	y_cop_pred_vector=np.reshape(y_cop_pred,(y_cop_pred.shape[0],-1))
+			# 	y_cop_test_vector=np.reshape(y_cop_test,(y_cop_test.shape[0],-1))
+			# 	y_cop_pred_vector=y_cop_pred_vector.T
+			# 	y_cop_test_vector=y_cop_test_vector.T
+			# 	print(y_cop_pred_vector.shape)
+			# 	#y_cop_test_flat=y_cop_test.flatten()
 				
-				eval_metrics_cop,accuracy_metrics_df_cop=metrics_eval.metrics_eval_cop(y_cop_pred_vector,y_cop_test_vector,logs_path)
-				eval_metrics_cop_list.append(eval_metrics_cop)
-				accuracy_metrics_df_cop_list.append(accuracy_metrics_df_cop)
+			# 	eval_metrics_cop,accuracy_metrics_df_cop=metrics_eval.metrics_eval_cop(y_cop_pred_vector,y_cop_test_vector,logs_path)
+			# 	eval_metrics_cop_list.append(eval_metrics_cop)
+			# 	accuracy_metrics_df_cop_list.append(accuracy_metrics_df_cop)
 			
-			return model_outputs,model,accuracy_metrics_df_reg,accuracy_metrics_df_cla,accuracy_metrics_df_cop_list
+			return model_outputs,model,accuracy_metrics_df_reg,accuracy_metrics_df_cla
 		
 		return model_outputs,model
 
@@ -365,9 +365,14 @@ if __name__ == '__main__':
 		else:
 			print("Using all Process Parameters")
 		
-		Y_out_test_list=[None,None]
-		#Y_out_test_list.append(test_kcc_subset_dump)
+		kcc_regression_test,kcc_classification_test=hy_util.split_kcc(test_kcc_subset_dump)
+
+		Y_out_test_list=[]
+		Y_out_test_list.append(kcc_regression_test)
+		Y_out_test_list.append(kcc_classification_test)
 		
+		y_shape_error_test_list=[]
+
 		for encode_decode_construct in encode_decode_multi_output_construct:
 		#importing file names for model output
 			print("Importing output data for stage: ",encode_decode_construct)
@@ -381,18 +386,17 @@ if __name__ == '__main__':
 			test_output_dataset.append(get_data.data_import(test_output_file_names_z,data_folder))
 
 			test_output_conv_data, test_kcc_subset_dump,test_kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,test_output_dataset,point_index,test_kcc_dataset)
-			kcc_regression_test,kcc_classification_test=hy_util.split_kcc(test_kcc_subset_dump)
-			Y_out_test_list[0]=kcc_regression_test
-			Y_out_test_list[1]=kcc_classification_test
+			y_shape_error_test_list.append(test_output_conv_data)
+			#Pre-processing to point cloud data
 
-			Y_out_test_list.append(test_output_conv_data)
+	shape_error_test=np.concatenate(y_shape_error_test_list, axis=4)
 
-	#Pre-processing to point cloud data
+	Y_out_test_list.append(shape_error_test)
 	
 	unet_deploy_model=Unet_DeployModel()
 
 	if(deploy_output==1):
-		model_outputs,model,accuracy_metrics_df_reg,accuracy_metrics_df_cla,accuracy_metrics_df_cop_list=unet_deploy_model.unet_run_model(model,test_input_conv_data,model_path,logs_path,plots_path,deploy_output,Y_out_test_list)
+		model_outputs,model,accuracy_metrics_df_reg,accuracy_metrics_df_cla=unet_deploy_model.unet_run_model(model,test_input_conv_data,model_path,logs_path,plots_path,deploy_output,Y_out_test_list)
 		
 		print("Model Deployment Complete")
 		
@@ -412,38 +416,83 @@ if __name__ == '__main__':
 		print("The Model Validation Metrics Classification Summary")
 		print(accuracy_metrics_df_cla.mean())
 
-		index=2
-		
-		for accuracy_metrics_df_cop in accuracy_metrics_df_cop_list:
+		from point_cloud_construction import GetPointCloud
+		import voxel_config as vc
+		eval_metrics_cop_list=[]
+		accuracy_metrics_df_cop_list=[]
+		get_point_cloud=GetPointCloud()
+
+		cop_file_name=vc.voxel_parameters['nominal_cop_filename']
+		cop_file_path='../resources/nominal_cop_files/'+cop_file_name
+		#Read cop from csv file
+		print('Importing Nominal COP')
+		nominal_cop=vrm_system.get_nominal_cop(cop_file_path)
+		deploy_path=logs_path
+
+		t=0			
+		index=0
+
+		for i in range(output_heads):
+			y_cop_pred=model_outputs[2][:,:,:,:,t:t+3]
+			y_cop_test=Y_out_test_list[2][:,:,:,:,t:t+3]
+			y_cop_actual=y_cop_test
 			
+			y_cop_pred_vector=np.reshape(y_cop_pred,(y_cop_pred.shape[0],-1))
+			y_cop_test_vector=np.reshape(y_cop_test,(y_cop_test.shape[0],-1))
+			y_cop_pred_vector=y_cop_pred_vector.T
+			y_cop_test_vector=y_cop_test_vector.T
+			
+			print(y_cop_pred_vector.shape)
+			#y_cop_test_flat=y_cop_test.flatten()
+					
+			eval_metrics_cop,accuracy_metrics_df_cop=metrics_eval.metrics_eval_cop(y_cop_pred_vector,y_cop_test_vector,logs_path)
+			
+			eval_metrics_cop_list.append(eval_metrics_cop)
+			accuracy_metrics_df_cop_list.append(accuracy_metrics_df_cop)
+
 			accuracy_metrics_df_cop.to_csv(logs_path+'/metrics_test_cop_'+str(index)+'.csv')
+			
 			print("The Model Segmentation Validation Metrics are ")
 			print(accuracy_metrics_df_cop.mean())
+			
 			accuracy_metrics_df_cop.mean().to_csv(logs_path+'/metrics_test_cop_summary_'+str(index)+'.csv')
 			
-			print("Plotting Cloud-of-Point for comparison")
+			#Saving For Matlab Plotting
+			dev_pred_matlab_plot_x=np.zeros((len(y_cop_pred),point_dim))
+			dev_pred_matlab_plot_y=np.zeros((len(y_cop_pred),point_dim))
+			dev_pred_matlab_plot_z=np.zeros((len(y_cop_pred),point_dim))
 
-			part_id=45
+			dev_actual_matlab_plot_x=np.zeros((len(y_cop_pred),point_dim))
+			dev_actual_matlab_plot_y=np.zeros((len(y_cop_pred),point_dim))
+			dev_actual_matlab_plot_z=np.zeros((len(y_cop_pred),point_dim))
 
-			y_cop_pred=model_outputs[index]
-			y_cop_actual=Y_out_test_list[index]
-			#y_cop_pred_plot=y_cop_pred[part_id,:,:,:,:]
-			#y_cop_actual_plot=test_input_conv_data[part_id,:,:,:,:]
-
-			dev_actual=get_point_cloud.getcopdev(y_cop_actual[part_id,:,:,:,:],point_index,nominal_cop)
-			dev_pred=get_point_cloud.getcopdev(y_cop_pred[part_id,:,:,:,:],point_index,nominal_cop)
+			# Saving for Matlab plotting
+			print("Saving Files for VRM Plotting...")
 			
-			filenamestr_pred=["/pred_plot_x"+str(index)+".html","/pred_plot_y"+str(index)+".html","/pred_plot_z"+str(index)+".html"]
-			filenamestr_actual=["/actual_plot_x"+str(index)+".html","/actual_plot_y"+str(index)+".html","/actual_plot_z"+str(index)+".html"]
+			from tqdm import tqdm
 			
-			print("Plotting All components for sample id: ",part_id)	
-			
-			for i in range(3):
-				#pass
-				#pred Plot
-				plot_decode_cop_dev(nominal_cop,dev_pred[:,i],plot_file_name=deployment_path+filenamestr_pred[i])
-				plot_decode_cop_dev(nominal_cop,dev_actual[:,i],plot_file_name=deployment_path+filenamestr_actual[i])
+			for i in tqdm(range(len(y_cop_pred))):
+					
+				actual_dev=get_point_cloud.getcopdev(y_cop_actual[i,:,:,:,:],point_index,nominal_cop)
+				pred_dev=get_point_cloud.getcopdev(y_cop_pred[i,:,:,:,:],point_index,nominal_cop)
 
+				dev_pred_matlab_plot_x[i,:]=pred_dev[:,0]
+				dev_pred_matlab_plot_y[i,:]=pred_dev[:,1]
+				dev_pred_matlab_plot_z[i,:]=pred_dev[:,2]
+
+				dev_actual_matlab_plot_x[i,:]=actual_dev[:,0]
+				dev_actual_matlab_plot_y[i,:]=actual_dev[:,1]
+				dev_actual_matlab_plot_z[i,:]=actual_dev[:,2]
+
+			np.savetxt((logs_path+'/DX_pred_'+str(index)+'.csv'),dev_pred_matlab_plot_x, delimiter=",")
+			np.savetxt((logs_path+'/DY_pred_'+str(index)+'.csv'),dev_pred_matlab_plot_y, delimiter=",")
+			np.savetxt((logs_path+'/DZ_pred_'+str(index)+'.csv'),dev_pred_matlab_plot_z, delimiter=",")
+				
+			np.savetxt((logs_path+'/DX_actual_'+str(index)+'.csv'),dev_actual_matlab_plot_x, delimiter=",")
+			np.savetxt((logs_path+'/DY_actual_'+str(index)+'.csv'),dev_actual_matlab_plot_y, delimiter=",")
+			np.savetxt((logs_path+'/DZ_actual_'+str(index)+'.csv'),dev_actual_matlab_plot_z, delimiter=",")	
+			
+			t=t+3
 			index=index+1
 
 	if(deploy_output==0):

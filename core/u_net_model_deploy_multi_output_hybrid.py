@@ -352,6 +352,7 @@ if __name__ == '__main__':
 	#kcc_dataset=get_data.data_import(kcc_files,kcc_folder)
 	test_input_conv_data, test_kcc_subset_dump_dummy,test_kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,test_input_dataset,point_index)
 	
+	test_input_conv_data=test_input_conv_data[test_kpi_subset_dump,:,:,:,:]
 	#Test output files
 	deploy_output=1
 	
@@ -364,7 +365,8 @@ if __name__ == '__main__':
 			test_kcc_dataset=test_kcc_dataset[:,kcc_sublist]
 		else:
 			print("Using all Process Parameters")
-		
+		test_kcc_subset_dump=test_kcc_subset_dump[test_kpi_subset_dump,:]
+
 		kcc_regression_test,kcc_classification_test=hy_util.split_kcc(test_kcc_subset_dump)
 
 		Y_out_test_list=[]
@@ -390,6 +392,8 @@ if __name__ == '__main__':
 			#Pre-processing to point cloud data
 
 	shape_error_test=np.concatenate(y_shape_error_test_list, axis=4)
+	
+	shape_error_test=shape_error_test[test_kpi_subset_dump,:,:,:,:]
 
 	Y_out_test_list.append(shape_error_test)
 	

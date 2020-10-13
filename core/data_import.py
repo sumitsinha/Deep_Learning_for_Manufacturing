@@ -116,6 +116,7 @@ class GetTrainData():
 		kpi_dump=dataset[0].iloc[start_index:end_index, point_dim:point_dim+kpi_dim]
 		kpi_dump=kpi_dump.values
 		not_convergent=0
+		convergent_id=[]
 		
 
 		for index in tqdm(range(run_length)):
@@ -125,6 +126,9 @@ class GetTrainData():
 			
 			if(dataset[0].iloc[index, point_dim]==0):
 				not_convergent=not_convergent+1
+
+			if(dataset[0].iloc[index, point_dim]==1):
+				convergent_id.append(index)
 
 			dev_data_x=x_point_data.values
 			dev_data_y=y_point_data.values
@@ -154,6 +158,12 @@ class GetTrainData():
 			input_conv_data[index,:,:,:]=cop_dev_data
 
 		print("Number of not convergent solutions: ",not_convergent)
+		
+		#input_conv_data	=input_conv_data[convergent_id,:,:,:,:]
+		#kcc_dump=kcc_dump[convergent_id,:]
+		
+		kpi_dump=convergent_id
+		
 		return input_conv_data, kcc_dump,kpi_dump
 
 	def data_convert_voxel_sc(self,vrm_system,dataset,point_index):

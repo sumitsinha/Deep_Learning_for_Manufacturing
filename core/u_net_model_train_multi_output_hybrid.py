@@ -259,23 +259,15 @@ if __name__ == '__main__':
 		print("Using all Process Parameters")
 	
 	#Pre-processing to point cloud data
+	convergent_train=[]
+	convergent_test=[]
+
 	input_conv_data, kcc_subset_dump,kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,input_dataset,point_index,kcc_dataset)
 	test_input_conv_data, test_kcc_subset_dump,test_kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,test_input_dataset,point_index,test_kcc_dataset)
 
-	kcc_regression,kcc_classification=hy_util.split_kcc(kcc_subset_dump)
-	kcc_regression_test,kcc_classification_test=hy_util.split_kcc(test_kcc_subset_dump)
+	convergent_train.append(kpi_subset_dump)
+	convergent_test.append(test_kpi_subset_dump)
 
-	Y_out_list=[]
-	Y_out_list.append(kcc_regression)
-	Y_out_list.append(kcc_classification)
-	
-	Y_out_test_list=[]
-	Y_out_test_list.append(kcc_regression_test)
-	Y_out_test_list.append(kcc_classification_test)
-
-	y_shape_error_list=[]
-	y_shape_error_test_list=[]
-	
 	for encode_decode_construct in encode_decode_multi_output_construct:
 		#importing file names for model output
 		print("Importing output data for stage: ",encode_decode_construct)
@@ -301,11 +293,42 @@ if __name__ == '__main__':
 		output_conv_data, kcc_subset_dump,kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,output_dataset,point_index,kcc_dataset)
 		test_output_conv_data, test_kcc_subset_dump,test_kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,test_output_dataset,point_index,test_kcc_dataset)
 		
+		convergent_train.append(kpi_subset_dump)
+		convergent_test.append(test_kpi_subset_dump)
+
 		y_shape_error_list.append(output_conv_data)
 		y_shape_error_test_list.append(test_output_conv_data)
+	
+	convergent_ids_train=list(set().union(*convergent_train))
+	convergent_ids_test=list(set().union(*convergent_test))
 
+	#Collect Only Convergent Samples
+	output_conv_data=output_conv_data[convergent_ids_train,:,:,:,:]
+	test_output_conv_data=test_output_conv_data[convergent_ids_test,:,:,:,:]
+
+	kcc_subset_dump=kcc_subset_dump[convergent_ids_train,:]
+	test_kcc_subset_dump=test_kcc_subset_dump[convergent_ids_test,:]
+
+	kcc_regression,kcc_classification=hy_util.split_kcc(kcc_subset_dump)
+	kcc_regression_test,kcc_classification_test=hy_util.split_kcc(test_kcc_subset_dump)
+
+	Y_out_list=[]
+	Y_out_list.append(kcc_regression)
+	Y_out_list.append(kcc_classification)
+	
+	Y_out_test_list=[]
+	Y_out_test_list.append(kcc_regression_test)
+	Y_out_test_list.append(kcc_classification_test)
+
+	y_shape_error_list=[]
+	y_shape_error_test_list=[]
+	
 	shape_error=np.concatenate(y_shape_error_list, axis=4)
 	shape_error_test=np.concatenate(y_shape_error_test_list, axis=4)
+
+	#Filter for convergent IDs
+	shape_error=shape_error[convergent_ids_train,:,:,:,:]
+	shape_error_test=shape_error_test[convergent_ids_test,:,:,:,:]
 
 	Y_out_list.append(shape_error)
 	Y_out_test_list.append(shape_error_test)

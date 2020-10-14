@@ -268,6 +268,9 @@ if __name__ == '__main__':
 	convergent_train.append(kpi_subset_dump)
 	convergent_test.append(test_kpi_subset_dump)
 
+	y_shape_error_list=[]
+	y_shape_error_test_list=[]
+
 	for encode_decode_construct in encode_decode_multi_output_construct:
 		#importing file names for model output
 		print("Importing output data for stage: ",encode_decode_construct)
@@ -299,12 +302,18 @@ if __name__ == '__main__':
 		y_shape_error_list.append(output_conv_data)
 		y_shape_error_test_list.append(test_output_conv_data)
 	
-	convergent_ids_train=list(set().union(*convergent_train))
-	convergent_ids_test=list(set().union(*convergent_test))
+	convergent_ids_train=list(set(convergent_train[0]).intersection(*convergent_train))
+	convergent_ids_test=list(set(convergent_train[0]).intersection(*convergent_test))
+
+	del output_dataset
+	del input_dataset
+
+	print("Convergent Train Samples: ", len(convergent_ids_train))
+	print("Convergent Test Samples: ", len(convergent_ids_test))
 
 	#Collect Only Convergent Samples
-	output_conv_data=output_conv_data[convergent_ids_train,:,:,:,:]
-	test_output_conv_data=test_output_conv_data[convergent_ids_test,:,:,:,:]
+	input_conv_data=input_conv_data[convergent_ids_train,:,:,:,:]
+	test_input_conv_data=test_input_conv_data[convergent_ids_test,:,:,:,:]
 
 	kcc_subset_dump=kcc_subset_dump[convergent_ids_train,:]
 	test_kcc_subset_dump=test_kcc_subset_dump[convergent_ids_test,:]
@@ -319,9 +328,6 @@ if __name__ == '__main__':
 	Y_out_test_list=[]
 	Y_out_test_list.append(kcc_regression_test)
 	Y_out_test_list.append(kcc_classification_test)
-
-	y_shape_error_list=[]
-	y_shape_error_test_list=[]
 	
 	shape_error=np.concatenate(y_shape_error_list, axis=4)
 	shape_error_test=np.concatenate(y_shape_error_test_list, axis=4)

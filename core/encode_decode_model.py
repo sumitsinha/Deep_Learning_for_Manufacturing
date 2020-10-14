@@ -506,8 +506,8 @@ class Encode_Decode_Model:
 		}
 
 		overall_loss_weights={
-		"regression_outputs":2.0,
-		"classification_outputs":2.0,
+		"regression_outputs":1.0,
+		"classification_outputs":1.0,
 		"shape_error_outputs":1.0
 		}
 

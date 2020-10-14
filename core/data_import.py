@@ -164,6 +164,9 @@ class GetTrainData():
 		
 		kpi_dump=convergent_id
 		
+		print("Convergent IDs ")
+		print(len(kpi_dump))
+		
 		return input_conv_data, kcc_dump,kpi_dump
 
 	def data_convert_voxel_sc(self,vrm_system,dataset,point_index):

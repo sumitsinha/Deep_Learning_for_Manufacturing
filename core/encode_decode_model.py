@@ -573,14 +573,15 @@ class Encode_Decode_Model:
 				x = act2
 
 		#Regression Outputs
-		feature_vector=Conv(self.output_dimension-categorical_outputs, 1, padding='same', activation=final_activation, name='Process_Parameter_output_regression')(x)
-		process_parameter_regression=GlobalAveragePooling3D(name='regression_outputs')(feature_vector)
+		#feature_vector=Conv(self.output_dimension-categorical_outputs, 1, padding='same', activation=final_activation, name='Process_Parameter_output_regression')(x)
+		reg_pool=GlobalAveragePooling3D()(x)
+		process_parameter_regression=Dense(self.output_dimension-categorical_outputs,name='regression_outputs')(reg_pool)
 		
 		#Classification Outputs
-		feature_vector_categorical=Conv(categorical_outputs, 1, padding='same', activation=final_activation, name='Process_Parameter_output_classification')(x)
-		process_parameter_cont=GlobalAveragePooling3D()(feature_vector_categorical)
-		process_parameter_classification=Activation('sigmoid',name='classification_outputs')(process_parameter_cont)
-		
+		#feature_vector_categorical=Conv(categorical_outputs, 1, padding='same', activation=final_activation, name='Process_Parameter_output_classification')(x)
+		process_parameter_cont=GlobalAveragePooling3D()(x)
+		#process_parameter_classification=Activation('sigmoid',name='classification_outputs')(process_parameter_cont)
+		process_parameter_classification=Dense(categorical_outputs,name='classification_outputs',activation='sigmoid')(process_parameter_cont)
 		#feature_vector=Flatten()(x)
 		#process_parameter=Dense(self.output_dimension)(feature_vector)
 		

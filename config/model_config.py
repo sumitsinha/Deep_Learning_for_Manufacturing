@@ -100,7 +100,7 @@ model_parameters = {
         'learning_type':'Basic', # use 'Transfer Learning' if transfer learning is to be leveraged
         'output_type':'regression',
         'batch_size': 32,
-        'epocs':200,
+        'epocs':300,
         'split_ratio': 0.2,
         'optimizer':'adam',
         'loss_func':'mse',

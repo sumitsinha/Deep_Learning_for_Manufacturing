@@ -97,23 +97,23 @@ assembly_system = {
         'nominal_cop_filename':'cross_member_nominal_cop.csv',
         'data_folder':'../datasets/cross_member_assembly',
         'kcc_folder':'../active_learning/sample_input/cross_member_assembly',
-        'kcc_files':['AI_Input_Parameters_1.csv','AI_Input_Parameters_2.csv','AI_Input_Parameters_3.csv','AI_Input_Parameters_4.csv'],
+        'kcc_files':['AI_Input_Parameters_1.csv','AI_Input_Parameters_2.csv','AI_Input_Parameters_3.csv'],
         'test_kcc_files':['AI_Input_Parameters_test_1.csv'],
-        'data_files_x':['DX_stage_13_hybrid_1.csv','DX_stage_13_hybrid_2.csv','DX_stage_13_hybrid_3.csv','DX_stage_13_hybrid_4.csv'],
-        'data_files_y':['DY_stage_13_hybrid_1.csv','DY_stage_13_hybrid_2.csv','DY_stage_13_hybrid_3.csv','DY_stage_13_hybrid_4.csv'],
-        'data_files_z':['DZ_stage_13_hybrid_1.csv','DZ_stage_13_hybrid_2.csv','DZ_stage_13_hybrid_3.csv','DZ_stage_13_hybrid_4.csv'],
+        'data_files_x':['DX_stage_13_hybrid_1.csv','DX_stage_13_hybrid_2.csv','DX_stage_13_hybrid_3.csv'],
+        'data_files_y':['DY_stage_13_hybrid_1.csv','DY_stage_13_hybrid_2.csv','DY_stage_13_hybrid_3.csv'],
+        'data_files_z':['DZ_stage_13_hybrid_1.csv','DZ_stage_13_hybrid_2.csv','DZ_stage_13_hybrid_3.csv'],
         'test_data_files_x':['DX_stage_13_hybrid_test_1.csv'],
         'test_data_files_y':['DY_stage_13_hybrid_test_1.csv'],
         'test_data_files_z':['DZ_stage_13_hybrid_test_1.csv'],
         }
 
 encode_decode_construct = {     
-        'input_data_files_x':['DX_stage_13_hybrid_1.csv','DX_stage_13_hybrid_2.csv','DX_stage_13_hybrid_3.csv','DX_stage_13_hybrid_4.csv'],
-        'input_data_files_y':['DY_stage_13_hybrid_1.csv','DY_stage_13_hybrid_2.csv','DY_stage_13_hybrid_3.csv','DY_stage_13_hybrid_4.csv'],
-        'input_data_files_z':['DZ_stage_13_hybrid_1.csv','DZ_stage_13_hybrid_2.csv','DZ_stage_13_hybrid_3.csv','DZ_stage_13_hybrid_4.csv'],
-        'input_test_data_files_x':['DX_stage_13_hybrid_test_1.csv'],
-        'input_test_data_files_y':['DY_stage_13_hybrid_test_1.csv'],
-        'input_test_data_files_z':['DZ_stage_13_hybrid_test_1.csv'],
+        'input_data_files_x':['DX_stage_13_hybrid_1.csv','DX_stage_13_hybrid_2.csv','DX_stage_13_hybrid_3.csv'],
+        'input_data_files_y':['DY_stage_13_hybrid_1.csv','DY_stage_13_hybrid_2.csv','DY_stage_13_hybrid_3.csv'],
+        'input_data_files_z':['DZ_stage_13_hybrid_1.csv','DZ_stage_13_hybrid_2.csv','DZ_stage_13_hybrid_3.csv'],
+        'input_test_data_files_x':['DX_stage_13_test_1.csv'],
+        'input_test_data_files_y':['DY_stage_13_test_1.csv'],
+        'input_test_data_files_z':['DZ_stage_13_test_1.csv'],
 
         'output_data_files_x':['DX_crossmember_test1_3.csv'],
         'output_data_files_y':['DY_crossmember_test1_3.csv'],
@@ -127,22 +127,22 @@ encode_decode_multi_output_construct=[]
 
 encode_decode_multi_output_construct.append({
         'stage_id':5,
-        'output_data_files_x':['DX_stage_5_hybrid_1.csv','DX_stage_5_hybrid_2.csv','DX_stage_5_hybrid_3.csv','DX_stage_5_hybrid_4.csv'],
-        'output_data_files_y':['DY_stage_5_hybrid_1.csv','DY_stage_5_hybrid_2.csv','DY_stage_5_hybrid_3.csv','DY_stage_5_hybrid_4.csv'],
-        'output_data_files_z':['DZ_stage_5_hybrid_1.csv','DZ_stage_5_hybrid_2.csv','DZ_stage_5_hybrid_3.csv','DZ_stage_5_hybrid_4.csv'],
-        'output_test_data_files_x':['DX_stage_5_hybrid_test_1.csv'],
-        'output_test_data_files_y':['DY_stage_5_hybrid_test_1.csv'],
-        'output_test_data_files_z':['DZ_stage_5_hybrid_test_1.csv'],      
+        'output_data_files_x':['DX_stage_5_hybrid_1.csv','DX_stage_5_hybrid_2.csv','DX_stage_5_hybrid_3.csv'],
+        'output_data_files_y':['DY_stage_5_hybrid_1.csv','DY_stage_5_hybrid_2.csv','DY_stage_5_hybrid_3.csv'],
+        'output_data_files_z':['DZ_stage_5_hybrid_1.csv','DZ_stage_5_hybrid_2.csv','DZ_stage_5_hybrid_3.csv'],
+        'output_test_data_files_x':['DX_stage_5_test_1.csv'],
+        'output_test_data_files_y':['DY_stage_5_test_1.csv'],
+        'output_test_data_files_z':['DZ_stage_5_test_1.csv'],      
         })
 
 encode_decode_multi_output_construct.append({
         'stage_id':9,
-        'output_data_files_x':['DX_stage_9_hybrid_1.csv','DX_stage_9_hybrid_2.csv','DX_stage_9_hybrid_3.csv','DX_stage_9_hybrid_4.csv'],
-        'output_data_files_y':['DY_stage_9_hybrid_1.csv','DY_stage_9_hybrid_2.csv','DY_stage_9_hybrid_3.csv','DY_stage_9_hybrid_4.csv'],
-        'output_data_files_z':['DZ_stage_9_hybrid_1.csv','DZ_stage_9_hybrid_2.csv','DZ_stage_9_hybrid_3.csv','DZ_stage_9_hybrid_4.csv'],
-        'output_test_data_files_x':['DX_stage_9_hybrid_test_1.csv'],
-        'output_test_data_files_y':['DY_stage_9_hybrid_test_1.csv'],
-        'output_test_data_files_z':['DX_stage_9_hybrid_test_1.csv'],         
+        'output_data_files_x':['DX_stage_9_hybrid_1.csv','DX_stage_9_hybrid_2.csv','DX_stage_9_hybrid_3.csv'],
+        'output_data_files_y':['DY_stage_9_hybrid_1.csv','DY_stage_9_hybrid_2.csv','DY_stage_9_hybrid_3.csv'],
+        'output_data_files_z':['DZ_stage_9_hybrid_1.csv','DZ_stage_9_hybrid_2.csv','DZ_stage_9_hybrid_3.csv'],
+        'output_test_data_files_x':['DX_stage_9_test_1.csv'],
+        'output_test_data_files_y':['DY_stage_9_test_1.csv'],
+        'output_test_data_files_z':['DX_stage_9_test_1.csv'],         
         })
 
 multi_stage_data_construct=[]

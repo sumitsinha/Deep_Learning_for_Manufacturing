@@ -331,7 +331,7 @@ if __name__ == '__main__':
 	
 	shape_error=np.concatenate(y_shape_error_list, axis=4)
 	shape_error_test=np.concatenate(y_shape_error_test_list, axis=4)
-
+	del y_shape_error_list
 	#Filter for convergent IDs
 	shape_error=shape_error[convergent_ids_train,:,:,:,:]
 	shape_error_test=shape_error_test[convergent_ids_test,:,:,:,:]

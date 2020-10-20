@@ -53,7 +53,7 @@ class DLModel:
 		model.add(Conv3D(32, kernel_size=(5,5,5),strides=(2,2,2),activation='relu',input_shape=(voxel_dim,voxel_dim,voxel_dim,deviation_channels)))
 		model.add(Conv3D(32, kernel_size=(4,4,4),strides=(2,2,2),activation='relu'))
 		model.add(Conv3D(32, kernel_size=(3,3,3),strides=(1,1,1),activation='relu'))
-		#model.add(MaxPool3D(pool_size=(2,2,2)))
+		model.add(MaxPool3D(pool_size=(2,2,2)))
 		model.add(Flatten())
 		model.add(Dense(64,kernel_regularizer=regularizers.l2(self.regularizer_coeff),activation='relu'))
 		#model.add(Dropout(0.2))

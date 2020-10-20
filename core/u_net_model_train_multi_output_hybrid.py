@@ -1,13 +1,34 @@
 """ The model train file trains the model on the download dataset and other parameters specified in the assemblyconfig file
 The main function runs the training and populates the created file structure with the trained model, logs and plots
 """
+import tensorflow as tf
+tf.debugging.set_log_device_placement(True)
+from tensorflow.python.client import device_lib
+
+device_lib.list_local_devices()
+
+gpus = tf.config.experimental.list_physical_devices('GPU')
+for gpu in gpus:
+    print("Name:", gpu.name, "  Type:", gpu.device_type)
+
+gpus = tf.config.experimental.list_physical_devices('GPU')
+if gpus:
+  # Restrict TensorFlow to only use the first GPU
+  try:
+    tf.config.experimental.set_visible_devices(gpus[0], 'GPU')
+    logical_gpus = tf.config.experimental.list_logical_devices('GPU')
+    print(len(gpus), "Physical GPUs,", len(logical_gpus), "Logical GPU")
+  except RuntimeError as e:
+    # Visible devices must be set before GPUs have been initialized
+    print(e)
 
 import os
 import sys
+
 current_path=os.path.dirname(__file__)
 parentdir = os.path.dirname(current_path)
 
-os.environ["CUDA_VISIBLE_DEVICES"]="0" # Nvidia Quadro GV100
+#os.environ["CUDA_VISIBLE_DEVICES"]="0" # Nvidia Quadro GV100
 #os.environ["CUDA_VISIBLE_DEVICES"]="1" # Nvidia Quadro M2000
 
 #Adding Path to various Modules
@@ -41,7 +62,7 @@ from data_import import GetTrainData
 from encode_decode_model import Encode_Decode_Model
 from training_viz import TrainViz
 from metrics_eval import MetricsEval
-from keras_lr_multiplier import LRMultiplier
+#from keras_lr_multiplier import LRMultiplier
 
 class Unet_TrainModel:
 	"""Train Model Class, the initialization parameters are parsed from modelconfig_train.py file
@@ -98,8 +119,11 @@ class Unet_TrainModel:
 		
 		#tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir='C:\\Users\\sinha_s\\Desktop\\dlmfg_package\\dlmfg\\trained_models\\inner_rf_assembly\\logs',histogram_freq=1)
 		checkpointer = tf.keras.callbacks.ModelCheckpoint(model_file_path, verbose=1, save_best_only=True,monitor='val_loss',save_weights_only=True)
+		
+		val_steps=X_in_test[0].shape[0]//self.batch_size
+		print("Validation Steps: ", val_steps)
 		#Check pointer to save the best model
-		history=model.fit(x=X_in,y=Y_out_list, validation_data=(X_in_test,Y_out_test_list), epochs=self.epochs, batch_size=self.batch_size,callbacks=[checkpointer])
+		history=model.fit(x=X_in,y=Y_out_list, validation_data=(X_in_test,Y_out_test_list),validation_steps=val_steps, epochs=self.epochs, batch_size=self.batch_size,callbacks=[checkpointer])
 		
 		def mse_scaled(y_true,y_pred):
 			return K.mean(K.square((y_pred - y_true)/10))

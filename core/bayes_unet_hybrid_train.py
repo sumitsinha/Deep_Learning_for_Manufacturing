@@ -114,7 +114,9 @@ class Unet_TrainModel:
 		checkpointer = tf.keras.callbacks.ModelCheckpoint(model_file_path, verbose=1, save_best_only='val_loss',save_weights_only=True)
 		#Check pointer to save the best model
 		
-		history=model.fit(x=X_in,y=Y_out_list, validation_data=(X_in_test,Y_out_test_list), epochs=self.epochs, batch_size=self.batch_size,callbacks=[checkpointer])
+		val_steps=X_in_test[0].shape[0]//self.batch_size
+		
+		history=model.fit(x=X_in,y=Y_out_list, validation_data=(X_in_test,Y_out_test_list),validation_steps=val_steps, epochs=self.epochs, batch_size=self.batch_size,callbacks=[checkpointer])
 		
 		return model
 
@@ -165,7 +167,7 @@ if __name__ == '__main__':
 	train_path='../trained_models/'+part_type
 	pathlib.Path(train_path).mkdir(parents=True, exist_ok=True) 
 
-	train_path=train_path+'/unet_model'
+	train_path=train_path+'/unet_model_bayes_hybrid'
 	pathlib.Path(train_path).mkdir(parents=True, exist_ok=True) 
 
 	model_path=train_path+'/model'
@@ -262,18 +264,16 @@ if __name__ == '__main__':
 		print("Using all Process Parameters")
 	
 	#Pre-processing to point cloud data
+	convergent_train=[]
+	convergent_test=[]
+
+	#Pre-processing to point cloud data
 	input_conv_data, kcc_subset_dump,kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,input_dataset,point_index,kcc_dataset)
 	test_input_conv_data, test_kcc_subset_dump,test_kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,test_input_dataset,point_index,test_kcc_dataset)
 
-	kcc_regression,kcc_classification=hy_util.split_kcc(kcc_subset_dump)
-	kcc_regression_test,kcc_classification_test=hy_util.split_kcc(test_kcc_subset_dump)
+	convergent_train.append(kpi_subset_dump)
+	convergent_test.append(test_kpi_subset_dump)
 
-	Y_out_list=[]
-	Y_out_list.append(kcc_regression)
-	Y_out_list.append(kcc_classification)
-	Y_out_test_list=[]
-	Y_out_test_list.append(kcc_regression_test)
-	Y_out_test_list.append(kcc_classification_test)
 	
 	y_shape_error_list=[]
 	y_shape_error_test_list=[]
@@ -303,12 +303,47 @@ if __name__ == '__main__':
 		output_conv_data, kcc_subset_dump,kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,output_dataset,point_index,kcc_dataset)
 		test_output_conv_data, test_kcc_subset_dump,test_kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,test_output_dataset,point_index,test_kcc_dataset)
 		
+		convergent_train.append(kpi_subset_dump)
+		convergent_test.append(test_kpi_subset_dump)
+
 		y_shape_error_list.append(output_conv_data)
 		y_shape_error_test_list.append(test_output_conv_data)
+
+	convergent_ids_train=list(set(convergent_train[0]).intersection(*convergent_train))
+	convergent_ids_test=list(set(convergent_train[0]).intersection(*convergent_test))
+
+	del output_dataset
+	del input_dataset
+
+	print("Convergent Train Samples: ", len(convergent_ids_train))
+	print("Convergent Test Samples: ", len(convergent_ids_test))
 
 	shape_error=np.concatenate(y_shape_error_list, axis=4)
 	shape_error_test=np.concatenate(y_shape_error_test_list, axis=4)
 
+	del y_shape_error_list
+
+	#Collect Only Convergent Samples
+	shape_error=shape_error[convergent_ids_train,:,:,:,:]
+	shape_error_test=shape_error_test[convergent_ids_test,:,:,:,:]
+	
+	input_conv_data=input_conv_data[convergent_ids_train,:,:,:,:]
+	test_input_conv_data=test_input_conv_data[convergent_ids_test,:,:,:,:]
+
+	kcc_subset_dump=kcc_subset_dump[convergent_ids_train,:]
+	test_kcc_subset_dump=test_kcc_subset_dump[convergent_ids_test,:]
+	
+	#Create IO list
+	kcc_regression,kcc_classification=hy_util.split_kcc(kcc_subset_dump)
+	kcc_regression_test,kcc_classification_test=hy_util.split_kcc(test_kcc_subset_dump)
+
+	Y_out_list=[]
+	Y_out_list.append(kcc_regression)
+	Y_out_list.append(kcc_classification)
+	Y_out_test_list=[]
+	Y_out_test_list.append(kcc_regression_test)
+	Y_out_test_list.append(kcc_classification_test)
+	
 	Y_out_list.append(shape_error)
 	Y_out_test_list.append(shape_error_test)
 

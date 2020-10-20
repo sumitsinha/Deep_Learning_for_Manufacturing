@@ -1,149 +1,149 @@
 kcc_id,kcc_name,stage_id,station_id,kcc_type,kcc_nominal,kcc_max,kcc_min,Description
-0,pv1_1,0,0,0,0,2,-2,Global part variation pattern
-1,pv2_1,0,0,0,0,2,-2,Global part variation pattern
-2,pv3_1,0,0,0,0,2,-2,Global part variation pattern
-3,pv3_2,0,0,0,0,2,-2,Global part variation pattern
-4,pv4_1,0,0,0,0,2,-2,Global part variation pattern
-5,pv4_2,0,0,0,0,2,-2,Global part variation pattern
+0,pv1_1,0,0,0,0,1,-1,Global part variation pattern
+1,pv2_1,0,0,0,0,1,-1,Global part variation pattern
+2,pv3_1,0,0,0,0,1,-1,Global part variation pattern
+3,pv3_2,0,0,0,0,1,-1,Global part variation pattern
+4,pv4_1,0,0,0,0,1,-1,Global part variation pattern
+5,pv4_2,0,0,0,0,1,-1,Global part variation pattern
 6,pinhole1_rot,1,1,0,0,1,-1,Rotation around Pin-hole
-7,pinhole1_x,1,1,0,0,2,-2,Pin hole displacement in x
-8,pinhole1_y,1,1,0,0,2,-2,Pin hole displacement in y
+7,pinhole1_x,1,1,0,0,1,-1,Pin hole displacement in x
+8,pinhole1_y,1,1,0,0,1,-1,Pin hole displacement in y
 9,pinhole2_rot,1,1,0,0,1,-1,Rotation around Pin-hole
-10,pinhole2_x,1,1,0,0,2,-2,Pin hole displacement in x
-11,pinhole2_y,1,1,0,0,2,-2,Pin hole displacement in y
+10,pinhole2_x,1,1,0,0,1,-1,Pin hole displacement in x
+11,pinhole2_y,1,1,0,0,1,-1,Pin hole displacement in y
 12,pinhole3_rot,5,2,0,0,1,-1,Rotation around Pin-hole
-13,pinhole3_x,5,2,0,0,2,-2,Pin hole displacement in x
-14,pinhole3_y,5,2,0,0,2,-2,Pin hole displacement in y
-15,clamp_x_1,2,1,0,0,2,-2,clamp x deviation
-16,clamp_y_1,2,1,0,0,2,-2,clamp y deviation
-17,clamp_z_1,2,1,0,0,2,-2,clamp z deviation
-18,clamp_x_2,2,1,0,0,2,-2,clamp x deviation
-19,clamp_y_2,2,1,0,0,2,-2,clamp y deviation
-20,clamp_z_2,2,1,0,0,2,-2,clamp z deviation
-21,clamp_x_3,2,1,0,0,2,-2,clamp x deviation
-22,clamp_y_3,2,1,0,0,2,-2,clamp y deviation
-23,clamp_z_3,2,1,0,0,2,-2,clamp z deviation
-24,clamp_x_4,2,1,0,0,2,-2,clamp x deviation
-25,clamp_y_4,2,1,0,0,2,-2,clamp y deviation
-26,clamp_z_4,2,1,0,0,2,-2,clamp z deviation
-27,clamp_x_5,2,1,0,0,2,-2,clamp x deviation
-28,clamp_y_5,2,1,0,0,2,-2,clamp y deviation
-29,clamp_z_5,2,1,0,0,2,-2,clamp z deviation
-30,clamp_x_6,6,2,0,0,2,-2,clamp x deviation
-31,clamp_y_6,6,2,0,0,2,-2,clamp y deviation
-32,clamp_z_6,6,2,0,0,2,-2,clamp z deviation
-33,clamp_x_7,6,2,0,0,2,-2,clamp x deviation
-34,clamp_y_7,6,2,0,0,2,-2,clamp y deviation
-35,clamp_z_7,6,2,0,0,2,-2,clamp z deviation
-36,clamp_x_8,6,2,0,0,2,-2,clamp x deviation
-37,clamp_y_8,6,2,0,0,2,-2,clamp y deviation
-38,clamp_z_8,6,2,0,0,2,-2,clamp z deviation
-39,clamp_x_9,6,2,0,0,2,-2,clamp x deviation
-40,clamp_y_9,6,2,0,0,2,-2,clamp y deviation
-41,clamp_z_9,6,2,0,0,2,-2,clamp z deviation
-42,clamp_x_10,10,3,0,0,2,-2,clamp x deviation
-43,clamp_y_10,10,3,0,0,2,-2,clamp y deviation
-44,clamp_z_10,10,3,0,0,2,-2,clamp z deviation
-45,clamp_x_11,10,3,0,0,2,-2,clamp x deviation
-46,clamp_y_11,10,3,0,0,2,-2,clamp y deviation
-47,clamp_z_11,10,3,0,0,2,-2,clamp z deviation
-48,tooling_x_1,3,1,0,0,2,-2,tooling x deviation
-49,tooling_y_1,3,1,0,0,2,-2,tooling y deviation
-50,tooling_z_1,3,1,0,0,2,-2,tooling z deviation
+13,pinhole3_x,5,2,0,0,1,-1,Pin hole displacement in x
+14,pinhole3_y,5,2,0,0,1,-1,Pin hole displacement in y
+15,clamp_x_1,2,1,0,0,1,-1,clamp x deviation
+16,clamp_y_1,2,1,0,0,1,-1,clamp y deviation
+17,clamp_z_1,2,1,0,0,1,-1,clamp z deviation
+18,clamp_x_2,2,1,0,0,1,-1,clamp x deviation
+19,clamp_y_2,2,1,0,0,1,-1,clamp y deviation
+20,clamp_z_2,2,1,0,0,1,-1,clamp z deviation
+21,clamp_x_3,2,1,0,0,1,-1,clamp x deviation
+22,clamp_y_3,2,1,0,0,1,-1,clamp y deviation
+23,clamp_z_3,2,1,0,0,1,-1,clamp z deviation
+24,clamp_x_4,2,1,0,0,1,-1,clamp x deviation
+25,clamp_y_4,2,1,0,0,1,-1,clamp y deviation
+26,clamp_z_4,2,1,0,0,1,-1,clamp z deviation
+27,clamp_x_5,2,1,0,0,1,-1,clamp x deviation
+28,clamp_y_5,2,1,0,0,1,-1,clamp y deviation
+29,clamp_z_5,2,1,0,0,1,-1,clamp z deviation
+30,clamp_x_6,6,2,0,0,1,-1,clamp x deviation
+31,clamp_y_6,6,2,0,0,1,-1,clamp y deviation
+32,clamp_z_6,6,2,0,0,1,-1,clamp z deviation
+33,clamp_x_7,6,2,0,0,1,-1,clamp x deviation
+34,clamp_y_7,6,2,0,0,1,-1,clamp y deviation
+35,clamp_z_7,6,2,0,0,1,-1,clamp z deviation
+36,clamp_x_8,6,2,0,0,1,-1,clamp x deviation
+37,clamp_y_8,6,2,0,0,1,-1,clamp y deviation
+38,clamp_z_8,6,2,0,0,1,-1,clamp z deviation
+39,clamp_x_9,6,2,0,0,1,-1,clamp x deviation
+40,clamp_y_9,6,2,0,0,1,-1,clamp y deviation
+41,clamp_z_9,6,2,0,0,1,-1,clamp z deviation
+42,clamp_x_10,10,3,0,0,1,-1,clamp x deviation
+43,clamp_y_10,10,3,0,0,1,-1,clamp y deviation
+44,clamp_z_10,10,3,0,0,1,-1,clamp z deviation
+45,clamp_x_11,10,3,0,0,1,-1,clamp x deviation
+46,clamp_y_11,10,3,0,0,1,-1,clamp y deviation
+47,clamp_z_11,10,3,0,0,1,-1,clamp z deviation
+48,tooling_x_1,3,1,0,0,1,-1,tooling x deviation
+49,tooling_y_1,3,1,0,0,1,-1,tooling y deviation
+50,tooling_z_1,3,1,0,0,1,-1,tooling z deviation
 51,tooling_flag_1,3,1,1,1,1,0,Joining Flag
-52,tooling_x_2,3,1,0,0,2,-2,tooling x deviation
-53,tooling_y_2,3,1,0,0,2,-2,tooling y deviation
-54,tooling_z_2,3,1,0,0,2,-2,tooling z deviation
+52,tooling_x_2,3,1,0,0,1,-1,tooling x deviation
+53,tooling_y_2,3,1,0,0,1,-1,tooling y deviation
+54,tooling_z_2,3,1,0,0,1,-1,tooling z deviation
 55,tooling_flag_2,3,1,1,1,1,0,Joining Flag
-56,tooling_x_3,3,1,0,0,2,-2,tooling x deviation
-57,tooling_y_3,3,1,0,0,2,-2,tooling y deviation
-58,tooling_z_3,3,1,0,0,2,-2,tooling z deviation
+56,tooling_x_3,3,1,0,0,1,-1,tooling x deviation
+57,tooling_y_3,3,1,0,0,1,-1,tooling y deviation
+58,tooling_z_3,3,1,0,0,1,-1,tooling z deviation
 59,tooling_flag_3,3,1,1,1,1,0,Joining Flag
-60,tooling_x_4,3,1,0,0,2,-2,tooling x deviation
-61,tooling_y_4,3,1,0,0,2,-2,tooling y deviation
-62,tooling_z_4,3,1,0,0,2,-2,tooling z deviation
+60,tooling_x_4,3,1,0,0,1,-1,tooling x deviation
+61,tooling_y_4,3,1,0,0,1,-1,tooling y deviation
+62,tooling_z_4,3,1,0,0,1,-1,tooling z deviation
 63,tooling_flag_4,3,1,1,1,1,0,Joining Flag
-64,tooling_x_5,3,1,0,0,2,-2,tooling x deviation
-65,tooling_y_5,3,1,0,0,2,-2,tooling y deviation
-66,tooling_z_5,3,1,0,0,2,-2,tooling z deviation
+64,tooling_x_5,3,1,0,0,1,-1,tooling x deviation
+65,tooling_y_5,3,1,0,0,1,-1,tooling y deviation
+66,tooling_z_5,3,1,0,0,1,-1,tooling z deviation
 67,tooling_flag_5,3,1,1,1,1,0,Joining Flag
-68,tooling_x_6,3,1,0,0,2,-2,tooling x deviation
-69,tooling_y_6,3,1,0,0,2,-2,tooling y deviation
-70,tooling_z_6,3,1,0,0,2,-2,tooling z deviation
+68,tooling_x_6,3,1,0,0,1,-1,tooling x deviation
+69,tooling_y_6,3,1,0,0,1,-1,tooling y deviation
+70,tooling_z_6,3,1,0,0,1,-1,tooling z deviation
 71,tooling_flag_6,3,1,1,1,1,0,Joining Flag
-72,tooling_x_7,3,1,0,0,2,-2,tooling x deviation
-73,tooling_y_7,3,1,0,0,2,-2,tooling y deviation
-74,tooling_z_7,3,1,0,0,2,-2,tooling z deviation
+72,tooling_x_7,3,1,0,0,1,-1,tooling x deviation
+73,tooling_y_7,3,1,0,0,1,-1,tooling y deviation
+74,tooling_z_7,3,1,0,0,1,-1,tooling z deviation
 75,tooling_flag_7,3,1,1,1,1,0,Joining Flag
-76,tooling_x_8,3,1,0,0,2,-2,tooling x deviation
-77,tooling_y_8,3,1,0,0,2,-2,tooling y deviation
-78,tooling_z_8,3,1,0,0,2,-2,tooling z deviation
+76,tooling_x_8,3,1,0,0,1,-1,tooling x deviation
+77,tooling_y_8,3,1,0,0,1,-1,tooling y deviation
+78,tooling_z_8,3,1,0,0,1,-1,tooling z deviation
 79,tooling_flag_8,3,1,1,1,1,0,Joining Flag
-80,tooling_x_9,7,2,0,0,2,-2,tooling x deviation
-81,tooling_y_9,7,2,0,0,2,-2,tooling y deviation
-82,tooling_z_9,7,2,0,0,2,-2,tooling z deviation
+80,tooling_x_9,7,2,0,0,1,-1,tooling x deviation
+81,tooling_y_9,7,2,0,0,1,-1,tooling y deviation
+82,tooling_z_9,7,2,0,0,1,-1,tooling z deviation
 83,tooling_flag_9,7,2,1,1,1,0,Joining Flag
-84,tooling_x_10,7,2,0,0,2,-2,tooling x deviation
-85,tooling_y_10,7,2,0,0,2,-2,tooling y deviation
-86,tooling_z_10,7,2,0,0,2,-2,tooling z deviation
+84,tooling_x_10,7,2,0,0,1,-1,tooling x deviation
+85,tooling_y_10,7,2,0,0,1,-1,tooling y deviation
+86,tooling_z_10,7,2,0,0,1,-1,tooling z deviation
 87,tooling_flag_10,7,2,1,1,1,0,Joining Flag
-88,tooling_x_11,7,2,0,0,2,-2,tooling x deviation
-89,tooling_y_11,7,2,0,0,2,-2,tooling y deviation
-90,tooling_z_11,7,2,0,0,2,-2,tooling z deviation
+88,tooling_x_11,7,2,0,0,1,-1,tooling x deviation
+89,tooling_y_11,7,2,0,0,1,-1,tooling y deviation
+90,tooling_z_11,7,2,0,0,1,-1,tooling z deviation
 91,tooling_flag_11,7,2,1,1,1,0,Joining Flag
-92,tooling_x_12,7,2,0,0,2,-2,tooling x deviation
-93,tooling_y_12,7,2,0,0,2,-2,tooling y deviation
-94,tooling_z_12,7,2,0,0,2,-2,tooling z deviation
+92,tooling_x_12,7,2,0,0,1,-1,tooling x deviation
+93,tooling_y_12,7,2,0,0,1,-1,tooling y deviation
+94,tooling_z_12,7,2,0,0,1,-1,tooling z deviation
 95,tooling_flag_12,7,2,1,1,1,0,Joining Flag
-96,tooling_x_13,7,2,0,0,2,-2,tooling x deviation
-97,tooling_y_13,7,2,0,0,2,-2,tooling y deviation
-98,tooling_z_13,7,2,0,0,2,-2,tooling z deviation
+96,tooling_x_13,7,2,0,0,1,-1,tooling x deviation
+97,tooling_y_13,7,2,0,0,1,-1,tooling y deviation
+98,tooling_z_13,7,2,0,0,1,-1,tooling z deviation
 99,tooling_flag_13,7,2,1,1,1,0,Joining Flag
-100,tooling_x_14,7,2,0,0,2,-2,tooling x deviation
-101,tooling_y_14,7,2,0,0,2,-2,tooling y deviation
-102,tooling_z_14,7,2,0,0,2,-2,tooling z deviation
+100,tooling_x_14,7,2,0,0,1,-1,tooling x deviation
+101,tooling_y_14,7,2,0,0,1,-1,tooling y deviation
+102,tooling_z_14,7,2,0,0,1,-1,tooling z deviation
 103,tooling_flag_14,7,2,1,1,1,0,Joining Flag
-104,tooling_x_15,7,2,0,0,2,-2,tooling x deviation
-105,tooling_y_15,7,2,0,0,2,-2,tooling y deviation
-106,tooling_z_15,7,2,0,0,2,-2,tooling z deviation
+104,tooling_x_15,7,2,0,0,1,-1,tooling x deviation
+105,tooling_y_15,7,2,0,0,1,-1,tooling y deviation
+106,tooling_z_15,7,2,0,0,1,-1,tooling z deviation
 107,tooling_flag_15,7,2,1,1,1,0,Joining Flag
-108,tooling_x_16,3,1,0,0,2,-2,tooling x deviation
-109,tooling_y_16,7,2,0,0,2,-2,tooling y deviation
-110,tooling_z_16,7,2,0,0,2,-2,tooling z deviation
+108,tooling_x_16,3,1,0,0,1,-1,tooling x deviation
+109,tooling_y_16,7,2,0,0,1,-1,tooling y deviation
+110,tooling_z_16,7,2,0,0,1,-1,tooling z deviation
 111,tooling_flag_16,7,2,1,1,1,0,Joining Flag
-112,tooling_x_17,7,2,0,0,2,-2,tooling x deviation
-113,tooling_y_17,7,2,0,0,2,-2,tooling y deviation
-114,tooling_z_17,7,2,0,0,2,-2,tooling z deviation
+112,tooling_x_17,7,2,0,0,1,-1,tooling x deviation
+113,tooling_y_17,7,2,0,0,1,-1,tooling y deviation
+114,tooling_z_17,7,2,0,0,1,-1,tooling z deviation
 115,tooling_flag_17,7,2,1,1,1,0,Joining Flag
-116,tooling_x_18,7,2,0,0,2,-2,tooling x deviation
-117,tooling_y_18,7,2,0,0,2,-2,tooling y deviation
-118,tooling_z_18,7,2,0,0,2,-2,tooling z deviation
+116,tooling_x_18,7,2,0,0,1,-1,tooling x deviation
+117,tooling_y_18,7,2,0,0,1,-1,tooling y deviation
+118,tooling_z_18,7,2,0,0,1,-1,tooling z deviation
 119,tooling_flag_18,7,2,1,1,1,0,Joining Flag
-120,tooling_x_19,11,3,0,0,2,-2,tooling x deviation
-121,tooling_y_19,11,3,0,0,2,-2,tooling y deviation
-122,tooling_z_19,11,3,0,0,2,-2,tooling z deviation
+120,tooling_x_19,11,3,0,0,1,-1,tooling x deviation
+121,tooling_y_19,11,3,0,0,1,-1,tooling y deviation
+122,tooling_z_19,11,3,0,0,1,-1,tooling z deviation
 123,tooling_flag_19,11,3,1,1,1,0,Joining Flag
-124,tooling_x_20,11,3,0,0,2,-2,tooling x deviation
-125,tooling_y_20,11,3,0,0,2,-2,tooling y deviation
-126,tooling_z_20,11,3,0,0,2,-2,tooling z deviation
+124,tooling_x_20,11,3,0,0,1,-1,tooling x deviation
+125,tooling_y_20,11,3,0,0,1,-1,tooling y deviation
+126,tooling_z_20,11,3,0,0,1,-1,tooling z deviation
 127,tooling_flag_20,11,3,1,1,1,0,Joining Flag
-128,tooling_x_21,11,3,0,0,2,-2,tooling x deviation
-129,tooling_y_21,11,3,0,0,2,-2,tooling y deviation
-130,tooling_z_21,11,3,0,0,2,-2,tooling z deviation
+128,tooling_x_21,11,3,0,0,1,-1,tooling x deviation
+129,tooling_y_21,11,3,0,0,1,-1,tooling y deviation
+130,tooling_z_21,11,3,0,0,1,-1,tooling z deviation
 131,tooling_flag_21,11,3,1,1,1,0,Joining Flag
-132,tooling_x_22,11,3,0,0,2,-2,tooling x deviation
-133,tooling_y_22,11,3,0,0,2,-2,tooling y deviation
-134,tooling_z_22,11,3,0,0,2,-2,tooling z deviation
+132,tooling_x_22,11,3,0,0,1,-1,tooling x deviation
+133,tooling_y_22,11,3,0,0,1,-1,tooling y deviation
+134,tooling_z_22,11,3,0,0,1,-1,tooling z deviation
 135,tooling_flag_22,11,3,1,1,1,0,Joining Flag
-136,tooling_x_23,11,3,0,0,2,-2,tooling x deviation
-137,tooling_y_23,11,3,0,0,2,-2,tooling y deviation
-138,tooling_z_23,11,3,0,0,2,-2,tooling z deviation
+136,tooling_x_23,11,3,0,0,1,-1,tooling x deviation
+137,tooling_y_23,11,3,0,0,1,-1,tooling y deviation
+138,tooling_z_23,11,3,0,0,1,-1,tooling z deviation
 139,tooling_flag_23,11,3,1,1,1,0,Joining Flag
-140,tooling_x_24,11,3,0,0,2,-2,tooling x deviation
-141,tooling_y_24,11,3,0,0,2,-2,tooling y deviation
-142,tooling_z_24,11,3,0,0,2,-2,tooling z deviation
+140,tooling_x_24,11,3,0,0,1,-1,tooling x deviation
+141,tooling_y_24,11,3,0,0,1,-1,tooling y deviation
+142,tooling_z_24,11,3,0,0,1,-1,tooling z deviation
 143,tooling_flag_24,11,3,1,1,1,0,Joining Flag
-144,tooling_x_25,11,3,0,0,2,-2,tooling x deviation
-145,tooling_y_25,11,3,0,0,2,-2,tooling y deviation
-146,tooling_z_25,11,3,0,0,2,-2,tooling z deviation
+144,tooling_x_25,11,3,0,0,1,-1,tooling x deviation
+145,tooling_y_25,11,3,0,0,1,-1,tooling y deviation
+146,tooling_z_25,11,3,0,0,1,-1,tooling z deviation
 147,tooling_flag_25,11,3,1,1,1,0,Joining Flag

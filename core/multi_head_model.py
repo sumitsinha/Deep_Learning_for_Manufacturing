@@ -22,8 +22,9 @@ class Multi_Head_DLModel:
 		:type output_type: str      
 
 	"""
-	def __init__(self,model_type,heads,output_dimension,output_type='regression',regularizer_coeff=0.01):
+	def __init__(self,model_type,heads,output_dimension,categorical_kccs,output_type='regression',regularizer_coeff=0.01):
 		self.output_dimension=output_dimension
+		self.categorical_kccs=categorical_kccs
 		self.model_type=model_type
 		self.output_type=output_type
 		self.heads=heads
@@ -144,17 +145,39 @@ class Multi_Head_DLModel:
 		dropout_merge=tf.keras.layers.Dropout(0.2)(merge)
 		hidden_1=tf.keras.layers.Dense(128,kernel_regularizer=tf.keras.regularizers.l2(l=self.regularizer_coeff),activation=tf.nn.relu)(dropout_merge)
 		hidden_2=tf.keras.layers.Dense(64,kernel_regularizer=tf.keras.regularizers.l2(l=self.regularizer_coeff),activation=tf.nn.relu)(hidden_1)
-		output=tf.keras.layers.Dense(self.output_dimension)(hidden_2)
+		
+		output_reg=tf.keras.layers.Dense(self.output_dimension-self.categorical_kccs,name='regression_outputs')(hidden_2)
+		output_cla=tf.keras.layers.Dense(self.categorical_kccs,activation='sigmoid',name='classification_outputs')(hidden_2)
+		
+		output=[output_reg,output_cla]
 
 		model=tf.keras.Model(inputs=data_in,outputs=output)
 		
-		model.compile(optimizer=tf.keras.optimizers.Adam(),experimental_run_tf_function=False,loss=tf.keras.losses.MeanSquaredError(),metrics=[tf.keras.metrics.MeanAbsoluteError()])
+		bin_crossentropy=tf.keras.losses.BinaryCrossentropy()
+		mse_basic = tf.keras.losses.MeanSquaredError()
+
+		overall_loss_dict={
+			"regression_outputs":mse_basic,
+			"classification_outputs":bin_crossentropy,
+		}
+
+		overall_loss_weights={
+			"regression_outputs":1.0,
+			"classification_outputs":1.0,
+		}
+
+		overall_metrics_dict={
+		"regression_outputs":[tf.keras.metrics.MeanAbsoluteError()],
+		"classification_outputs":[tf.keras.metrics.CategoricalAccuracy()],
+		}
+
+		model.compile(optimizer=tf.keras.optimizers.Adam(),experimental_run_tf_function=False,loss=overall_loss_dict,metrics=overall_metrics_dict,loss_weights=overall_loss_weights)
 		print("3D CNN model successfully compiled")
 
 		print(model.summary())
 		
 		from tensorflow.keras.utils import plot_model
-		plot_model(model, to_file='../pre_trained_models/deterministic_models/pointdevnet_model.png')
+		#plot_model(model, to_file='../pre_trained_models/deterministic_models/pointdevnet_model.png')
 		
 		return model
 

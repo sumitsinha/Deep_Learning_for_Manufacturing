@@ -38,7 +38,8 @@ from multi_head_model import Multi_Head_DLModel
 from training_viz import TrainViz
 from metrics_eval import MetricsEval
 #from model_train import TrainModel
-from keras_lr_multiplier import LRMultiplier
+#from keras_lr_multiplier import LRMultiplier
+import hybrid_utils as hy_util
 
 class Multi_Head_TrainModel:
 	"""Train Model Class, the initialization parameters are parsed from modelconfig_train.py file
@@ -99,7 +100,7 @@ class Multi_Head_TrainModel:
 		print("Data Split Completed")
 		
 		#Checkpointer to save the best model
-		checkpointer = ModelCheckpoint(model_file_path, verbose=1, save_best_only='mae')
+		checkpointer = tf.keras.callbacks.ModelCheckpoint(model_file_path, verbose=1, save_best_only=True,monitor='val_loss',save_weights_only=True)
 		callbacks=[checkpointer]
 		
 		if(activate_tensorboard==1):
@@ -116,14 +117,16 @@ class Multi_Head_TrainModel:
 		if(tl_type=='variable_lr'):
 			inference_model=load_model(model_file_path, custom_objects={'LRMultiplier': LRMultiplier})
 		else:
-			inference_model=load_model(model_file_path)
+			model.load_weights(model_file_path)
 		
 		print('Compiling test metrics...')
-		y_pred=inference_model.predict(X_test)
+		y_pred=model.predict(X_test)
 
-		metrics_eval=MetricsEval();
-		eval_metrics,accuracy_metrics_df=metrics_eval.metrics_eval_base(y_pred,y_test,logs_path)
-		return model,eval_metrics,accuracy_metrics_df
+		metrics_eval=MetricsEval()
+		eval_metrics_reg,accuracy_metrics_df_reg=metrics_eval.metrics_eval_base(y_pred[0],Y_test[0],logs_path)
+		eval_metrics_cla,accuracy_metrics_df_cla=metrics_eval.metrics_eval_classification(y_pred[1],Y_test[1],logs_path)
+
+		return model,eval_metrics_reg,accuracy_metrics_df_reg,eval_metrics_cla,accuracy_metrics_df_cla
 
 if __name__ == '__main__':
 
@@ -151,6 +154,9 @@ if __name__ == '__main__':
 	kcc_folder=config.assembly_system['kcc_folder']
 	kcc_files=config.assembly_system['kcc_files']
 	test_kcc_files=config.assembly_system['test_kcc_files']
+
+	#added for hybrid model
+	categorical_kccs=config.assembly_system['categorical_kccs']
 
 	print('Parsing from Training Config File')
 
@@ -199,7 +205,7 @@ if __name__ == '__main__':
 
 	output_dimension=assembly_kccs
 	
-	dl_model=Multi_Head_DLModel(model_type,assembly_stages,output_dimension)
+	dl_model=Multi_Head_DLModel(model_type,assembly_stages,output_dimension,categorical_kccs)
 	model=dl_model.multi_head_standard_cnn_model_3d(voxel_dim,voxel_channels)
 
 	print('Importing data')
@@ -211,6 +217,9 @@ if __name__ == '__main__':
 	x_in=[]
 	x_test=[]
 
+	convergent_train=[]
+	convergent_test=[]
+	
 	for stage in multi_stage_params:
 		
 		print('Importing and Pre-Processing Train data for: ','station: ',stage['station_id'],'stage: ',stage['stage_id'])
@@ -224,6 +233,7 @@ if __name__ == '__main__':
 		x_in.append(input_conv_data)
 
 	y_out=kcc_subset_dump
+
 
 	for stage in multi_stage_params:
 		
@@ -239,17 +249,30 @@ if __name__ == '__main__':
 
 	y_test=kcc_subset_dump_test
 	
+	kcc_regression,kcc_classification=hy_util.split_kcc(kcc_subset_dump)
+	kcc_regression_test,kcc_classification_test=hy_util.split_kcc(kcc_subset_dump_test)
+
+	Y_out=[]
+	Y_out.append(kcc_regression)
+	Y_out.append(kcc_classification)
+	
+	Y_test=[]
+	Y_test.append(kcc_regression_test)
+	Y_test.append(kcc_classification_test)
+
 	print('Data Import completed')
 	train_model=Multi_Head_TrainModel(batch_size,epocs,split_ratio)
 	
-	trained_model,eval_metrics,accuracy_metrics_df=train_model.run_train_model(model,x_in,y_out,x_test,y_test,model_path,logs_path,plots_path,activate_tensorboard)
+	model,eval_metrics_reg,accuracy_metrics_df_reg,eval_metrics_cla,accuracy_metrics_df_cla=train_model.run_train_model(model,x_in,y_out,x_test,y_test,model_path,logs_path,plots_path,activate_tensorboard)
 	
-	accuracy_metrics_df.to_csv(logs_path+'/metrics_train.csv')
+	accuracy_metrics_df_reg.to_csv(logs_path+'/metrics_train_regression.csv')
+	accuracy_metrics_df_cla.to_csv(logs_path+'/metrics_train_classification.csv')
 
 	print("Model Training Complete..")
 	print("The Model Validation Metrics are ")
 	
-	print(eval_metrics)
+	print(eval_metrics_reg)
+	print(eval_metrics_cla)
 
 	print('Training Completed Successfully')
 

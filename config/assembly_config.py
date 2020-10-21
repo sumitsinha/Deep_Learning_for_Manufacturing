@@ -83,7 +83,7 @@ assembly_system = {
         'part_name':'cross_member',
         'data_format': 'Complete',
         'assembly_type':"multi-Stage",
-        'assembly_stages':13,
+        'assembly_stages':2,
         'assembly_kccs':148,
         'categorical_kccs':25,
         'assembly_kpis':1,
@@ -142,7 +142,7 @@ encode_decode_multi_output_construct.append({
         'output_data_files_z':['DZ_stage_9_hybrid_1.csv','DZ_stage_9_hybrid_2.csv','DZ_stage_9_hybrid_3.csv'],
         'output_test_data_files_x':['DX_stage_9_test_1.csv'],
         'output_test_data_files_y':['DY_stage_9_test_1.csv'],
-        'output_test_data_files_z':['DX_stage_9_test_1.csv'],         
+        'output_test_data_files_z':['DZ_stage_9_test_1.csv'],         
         })
 
 multi_stage_data_construct=[]
@@ -151,24 +151,24 @@ multi_stage_data_construct.append({'station_id':0,
                 'stage_id':2,
                 'stage_type':'positioning',#'clamping','fastening','release','non_ideal'
                 'station_name':'pocket_rf_joining',
-                'data_files_x':['DX_crossmember_3.csv'],
-                'data_files_y':['DY_crossmember_3.csv'],
-                'data_files_z':['DZ_crossmember_3.csv'],
-                'test_data_files_x':['DX_crossmember_test_3.csv'],
-                'test_data_files_y':['DY_crossmember_test_3.csv'],
-                'test_data_files_z':['DZ_crossmember_test_3.csv'],  
+                'data_files_x':['DX_stage_13_hybrid_1.csv','DX_stage_13_hybrid_2.csv','DX_stage_13_hybrid_3.csv'],
+                'data_files_y':['DY_stage_13_hybrid_1.csv','DY_stage_13_hybrid_2.csv','DY_stage_13_hybrid_3.csv'],
+                'data_files_z':['DZ_stage_13_hybrid_1.csv','DZ_stage_13_hybrid_2.csv','DZ_stage_13_hybrid_3.csv'],
+                'test_data_files_x':['DX_stage_13_test_1.csv'],
+                'test_data_files_y':['DY_stage_13_test_1.csv'],
+                'test_data_files_z':['DZ_stage_13_test_1.csv'],  
         })
 
 multi_stage_data_construct.append({'station_id':2,
                 'stage_id':10,
                 'stage_type':'release',#'clamping','fastening','release','non_ideal'
                 'station_name':'cross_member_pocket_joining',
-                'data_files_x':['DX_crossmember_11.csv'],
-                'data_files_y':['DY_crossmember_11.csv'],
-                'data_files_z':['DZ_crossmember_11.csv'],
-                'test_data_files_x':['DX_crossmember_test_11.csv'],
-                'test_data_files_y':['DY_crossmember_test_11.csv'],
-                'test_data_files_z':['DZ_crossmember_test_11.csv'],  
+                'data_files_x':['DX_stage_9_hybrid_1.csv','DX_stage_9_hybrid_2.csv','DX_stage_9_hybrid_3.csv'],
+                'data_files_y':['DY_stage_9_hybrid_1.csv','DY_stage_9_hybrid_2.csv','DY_stage_9_hybrid_3.csv'],
+                'data_files_z':['DZ_stage_9_hybrid_1.csv','DZ_stage_9_hybrid_2.csv','DZ_stage_9_hybrid_3.csv'],
+                'test_data_files_x':['DX_stage_9_test_1.csv'],
+                'test_data_files_y':['DY_stage_9_test_1.csv'],
+                'test_data_files_z':['DZ_stage_9_test_1.csv'],  
         })
 
 multi_stage_sensor_config = {   

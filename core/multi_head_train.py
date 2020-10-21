@@ -123,8 +123,8 @@ class Multi_Head_TrainModel:
 		y_pred=model.predict(X_test)
 
 		metrics_eval=MetricsEval()
-		eval_metrics_reg,accuracy_metrics_df_reg=metrics_eval.metrics_eval_base(y_pred[0],Y_test[0],logs_path)
-		eval_metrics_cla,accuracy_metrics_df_cla=metrics_eval.metrics_eval_classification(y_pred[1],Y_test[1],logs_path)
+		eval_metrics_reg,accuracy_metrics_df_reg=metrics_eval.metrics_eval_base(y_pred[0],y_test[0],logs_path)
+		eval_metrics_cla,accuracy_metrics_df_cla=metrics_eval.metrics_eval_classification(y_pred[1],y_test[1],logs_path)
 
 		return model,eval_metrics_reg,accuracy_metrics_df_reg,eval_metrics_cla,accuracy_metrics_df_cla
 

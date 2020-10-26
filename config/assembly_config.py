@@ -83,7 +83,7 @@ assembly_system = {
         'part_name':'cross_member',
         'data_format': 'Complete',
         'assembly_type':"multi-Stage",
-        'assembly_stages':2,
+        'assembly_stages':3,
         'assembly_kccs':148,
         'categorical_kccs':25,
         'assembly_kpis':1,
@@ -97,7 +97,7 @@ assembly_system = {
         'nominal_cop_filename':'cross_member_nominal_cop.csv',
         'data_folder':'../datasets/cross_member_assembly',
         'kcc_folder':'../active_learning/sample_input/cross_member_assembly',
-        'kcc_files':['AI_Input_Parameters_1.csv','AI_Input_Parameters_2.csv','AI_Input_Parameters_3.csv'],
+        'kcc_files':['AI_Input_Parameters_1.csv','AI_Input_Parameters_3.csv','AI_Input_Parameters_4.csv'],
         'test_kcc_files':['AI_Input_Parameters_test_1.csv'],
         'data_files_x':['DX_stage_13_hybrid_1.csv','DX_stage_13_hybrid_2.csv','DX_stage_13_hybrid_3.csv'],
         'data_files_y':['DY_stage_13_hybrid_1.csv','DY_stage_13_hybrid_2.csv','DY_stage_13_hybrid_3.csv'],
@@ -147,28 +147,40 @@ encode_decode_multi_output_construct.append({
 
 multi_stage_data_construct=[]
 
-multi_stage_data_construct.append({'station_id':0,
-                'stage_id':2,
+multi_stage_data_construct.append({'station_id':2,
+                'stage_id':11,
                 'stage_type':'positioning',#'clamping','fastening','release','non_ideal'
                 'station_name':'pocket_rf_joining',
-                'data_files_x':['DX_stage_13_hybrid_1.csv','DX_stage_13_hybrid_2.csv','DX_stage_13_hybrid_3.csv'],
-                'data_files_y':['DY_stage_13_hybrid_1.csv','DY_stage_13_hybrid_2.csv','DY_stage_13_hybrid_3.csv'],
-                'data_files_z':['DZ_stage_13_hybrid_1.csv','DZ_stage_13_hybrid_2.csv','DZ_stage_13_hybrid_3.csv'],
-                'test_data_files_x':['DX_stage_13_test_1.csv'],
-                'test_data_files_y':['DY_stage_13_test_1.csv'],
-                'test_data_files_z':['DZ_stage_13_test_1.csv'],  
+                'data_files_x':['DX_stage_12_hybrid_1.csv','DX_stage_12_hybrid_3.csv','DX_stage_12_hybrid_4.csv'],
+                'data_files_y':['DY_stage_12_hybrid_1.csv','DY_stage_12_hybrid_3.csv','DY_stage_12_hybrid_4.csv'],
+                'data_files_z':['DZ_stage_12_hybrid_1.csv','DZ_stage_12_hybrid_3.csv','DZ_stage_12_hybrid_4.csv'],
+                'test_data_files_x':['DX_stage_12_hybrid_test_1.csv'],
+                'test_data_files_y':['DY_stage_12_hybrid_test_1.csv'],
+                'test_data_files_z':['DZ_stage_12_hybrid_test_1.csv'],  
         })
 
-multi_stage_data_construct.append({'station_id':2,
-                'stage_id':10,
+multi_stage_data_construct.append({'station_id':1,
+                'stage_id':7,
                 'stage_type':'release',#'clamping','fastening','release','non_ideal'
                 'station_name':'cross_member_pocket_joining',
-                'data_files_x':['DX_stage_9_hybrid_1.csv','DX_stage_9_hybrid_2.csv','DX_stage_9_hybrid_3.csv'],
-                'data_files_y':['DY_stage_9_hybrid_1.csv','DY_stage_9_hybrid_2.csv','DY_stage_9_hybrid_3.csv'],
-                'data_files_z':['DZ_stage_9_hybrid_1.csv','DZ_stage_9_hybrid_2.csv','DZ_stage_9_hybrid_3.csv'],
-                'test_data_files_x':['DX_stage_9_test_1.csv'],
-                'test_data_files_y':['DY_stage_9_test_1.csv'],
-                'test_data_files_z':['DZ_stage_9_test_1.csv'],  
+                'data_files_x':['DX_stage_8_hybrid_1.csv','DX_stage_8_hybrid_3.csv','DX_stage_8_hybrid_4.csv'],
+                'data_files_y':['DY_stage_8_hybrid_1.csv','DY_stage_8_hybrid_3.csv','DY_stage_8_hybrid_4.csv'],
+                'data_files_z':['DZ_stage_8_hybrid_1.csv','DZ_stage_8_hybrid_3.csv','DZ_stage_8_hybrid_4.csv'],
+                'test_data_files_x':['DX_stage_8_hybrid_test_1.csv'],
+                'test_data_files_y':['DY_stage_8_hybrid_test_1.csv'],
+                'test_data_files_z':['DZ_stage_8_hybrid_test_1.csv'],  
+        })
+
+multi_stage_data_construct.append({'station_id':0,
+                'stage_id':3,
+                'stage_type':'release',#'clamping','fastening','release','non_ideal'
+                'station_name':'cross_member_pocket_joining',
+                'data_files_x':['DX_stage_4_hybrid_1.csv','DX_stage_4_hybrid_3.csv','DX_stage_4_hybrid_4.csv'],
+                'data_files_y':['DY_stage_4_hybrid_1.csv','DY_stage_4_hybrid_3.csv','DY_stage_4_hybrid_4.csv'],
+                'data_files_z':['DZ_stage_4_hybrid_1.csv','DZ_stage_4_hybrid_3.csv','DZ_stage_4_hybrid_4.csv'],
+                'test_data_files_x':['DX_stage_4_hybrid_test_1.csv'],
+                'test_data_files_y':['DY_stage_4_hybrid_test_1.csv'],
+                'test_data_files_z':['DZ_stage_4_hybrid_test_1.csv'],  
         })
 
 multi_stage_sensor_config = {   

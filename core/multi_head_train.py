@@ -101,6 +101,7 @@ class Multi_Head_TrainModel:
 		
 		#Checkpointer to save the best model
 		checkpointer = tf.keras.callbacks.ModelCheckpoint(model_file_path, verbose=1, save_best_only=True,monitor='val_loss',save_weights_only=True)
+		
 		callbacks=[checkpointer]
 		
 		if(activate_tensorboard==1):
@@ -108,7 +109,8 @@ class Multi_Head_TrainModel:
 			tensorboard = TensorBoard(log_dir=logs_path,histogram_freq=1, write_graph=True, write_images=True)
 			callbacks=[checkpointer,tensorboard]
 		
-		tensorboard = TensorBoard(log_dir='C:\\Users\\SINHA_S\\Desktop\\dlmfg_package\\dlmfg\\trained_models\\inner_rf_assembly\\multi_head\\logs',histogram_freq=1, write_graph=True, write_images=True)
+		#tensorboard = TensorBoard(log_dir=logs_path,histogram_freq=1, write_graph=True, write_images=True)
+
 		history=model.fit(x=X_train, y=y_train, validation_data=(X_test,y_test), epochs=self.epochs, batch_size=self.batch_size,callbacks=callbacks)
 		
 		trainviz=TrainViz()
@@ -263,7 +265,7 @@ if __name__ == '__main__':
 	print('Data Import completed')
 	train_model=Multi_Head_TrainModel(batch_size,epocs,split_ratio)
 	
-	model,eval_metrics_reg,accuracy_metrics_df_reg,eval_metrics_cla,accuracy_metrics_df_cla=train_model.run_train_model(model,x_in,y_out,x_test,y_test,model_path,logs_path,plots_path,activate_tensorboard)
+	model,eval_metrics_reg,accuracy_metrics_df_reg,eval_metrics_cla,accuracy_metrics_df_cla=train_model.run_train_model(model,x_in,Y_out,x_test,Y_test,model_path,logs_path,plots_path,activate_tensorboard)
 	
 	accuracy_metrics_df_reg.to_csv(logs_path+'/metrics_train_regression.csv')
 	accuracy_metrics_df_cla.to_csv(logs_path+'/metrics_train_classification.csv')

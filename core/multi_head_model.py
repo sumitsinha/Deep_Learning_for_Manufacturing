@@ -143,7 +143,7 @@ class Multi_Head_DLModel:
 
 		merge = tf.keras.layers.concatenate(flat)
 		dropout_merge=tf.keras.layers.Dropout(0.2)(merge)
-		hidden_1=tf.keras.layers.Dense(128,kernel_regularizer=tf.keras.regularizers.l2(l=self.regularizer_coeff),activation=tf.nn.relu)(dropout_merge)
+		hidden_1=tf.keras.layers.Dense(64,kernel_regularizer=tf.keras.regularizers.l2(l=self.regularizer_coeff),activation=tf.nn.relu)(dropout_merge)
 		hidden_2=tf.keras.layers.Dense(64,kernel_regularizer=tf.keras.regularizers.l2(l=self.regularizer_coeff),activation=tf.nn.relu)(hidden_1)
 		
 		output_reg=tf.keras.layers.Dense(self.output_dimension-self.categorical_kccs,name='regression_outputs')(hidden_2)
@@ -234,12 +234,27 @@ class Multi_Head_DLModel:
 		
 		#hidden_1=tfp.layers.DenseFlipout(128,activation=tf.nn.relu)(merge)
 		dropout_merge=tf.keras.layers.Dropout(0.2)(merge)
-		hidden_1=tf.keras.layers.Dense(128,kernel_regularizer=tf.keras.regularizers.l2(l=self.regularizer_coeff),activation=tf.nn.relu)(dropout_merge)
+		hidden_1=tf.keras.layers.Dense(64,kernel_regularizer=tf.keras.regularizers.l2(l=self.regularizer_coeff),activation=tf.nn.relu)(dropout_merge)
 		hidden_2=tf.keras.layers.Dense(64,kernel_regularizer=tf.keras.regularizers.l2(l=self.regularizer_coeff),activation=tf.nn.relu)(hidden_1)
 		output=tf.keras.layers.Dense(self.output_dimension)(hidden_2)
 
 		model=tf.keras.Model(inputs=data_in,outputs=output)
 		
+		overall_loss_dict={
+			"regression_outputs":mse_basic,
+			"classification_outputs":bin_crossentropy,
+		}
+
+		overall_loss_weights={
+			"regression_outputs":1.0,
+			"classification_outputs":1.0,
+		}
+
+		overall_metrics_dict={
+		"regression_outputs":[tf.keras.metrics.MeanAbsoluteError()],
+		"classification_outputs":[tf.keras.metrics.CategoricalAccuracy()],
+		}
+
 		model.compile(optimizer=tf.keras.optimizers.Adam(),experimental_run_tf_function=False,loss=tf.keras.losses.MeanSquaredError(),metrics=[tf.keras.metrics.MeanAbsoluteError()])
 		print("3D CNN model successfully compiled")
 

@@ -345,6 +345,12 @@ if __name__ == '__main__':
 	#kcc_dataset=get_data.data_import(kcc_files,kcc_folder)
 	test_input_conv_data, test_kcc_subset_dump_dummy,test_kpi_subset_dump=get_data.data_convert_voxel_mc(vrm_system,test_input_dataset,point_index)
 	
+	#Saving for Voxel plotting
+	#voxel_plot=get_point_cloud.getcopdev(test_input_conv_data[0,:,:,:,:],point_index,nominal_cop)
+	#np.savetxt((logs_path+'/voxel_plot_x_64.csv'),voxel_plot[:,0], delimiter=",")
+	#np.savetxt((logs_path+'/voxel_plot_y_64.csv'),voxel_plot[:,1], delimiter=",")
+	#np.savetxt((logs_path+'/voxel_plot_z_64.csv'),voxel_plot[:,2], delimiter=",")
+
 	#Test output files
 	deploy_output=1
 	
@@ -384,6 +390,8 @@ if __name__ == '__main__':
 	if(deploy_output==1):
 		y_pred,model_outputs,model,eval_metrics,accuracy_metrics_df,eval_metrics_cop_list,accuracy_metrics_df_cop_list=unet_deploy_model.unet_run_model(model,test_input_conv_data,model_path,logs_path,plots_path,deploy_output,Y_out_test_list)
 		
+		print("Predicted Process Parameters...")
+		print(y_pred)
 		accuracy_metrics_df.to_csv(logs_path+'/metrics_test_KCC.csv')
 		
 		np.savetxt((logs_path+'/predicted_process_parameter.csv'), y_pred, delimiter=",")
@@ -408,7 +416,7 @@ if __name__ == '__main__':
 			
 			print("Plotting Cloud-of-Point for comparison")
 
-			part_id=45
+			part_id=0
 
 			y_cop_pred=model_outputs[index]
 			y_cop_actual=Y_out_test_list[index]
@@ -456,12 +464,58 @@ if __name__ == '__main__':
 			print("Plotting All components for sample id: ",part_id)	
 			
 			for i in range(3):
-				#pass
+				pass
 				#pred Plot
-				plot_decode_cop_dev(nominal_cop,dev_pred[:,i],plot_file_name=deployment_path+filenamestr_pred[i])
-				plot_decode_cop_dev(nominal_cop,dev_actual[:,i],plot_file_name=deployment_path+filenamestr_actual[i])
+				#plot_decode_cop_dev(nominal_cop,dev_pred[:,i],plot_file_name=deployment_path+filenamestr_pred[i])
+				#plot_decode_cop_dev(nominal_cop,dev_actual[:,i],plot_file_name=deployment_path+filenamestr_actual[i])
 
 			index=index+1
+
+	from tqdm import tqdm
+	from cam_viz import CamViz
+	
+	print("Saving Grad CAM File...")
+	
+	#Parameters for Gradient Based Class Activation Maps
+	layers_gradient=["Identity0_1","Identity1_1","Identity2_1","Identity3_1"]
+	process_parameter_id=0
+	grad_cam_plot_matlab=np.zeros((len(layers_gradient),point_dim))
+
+	for i in tqdm(range(len(layers_gradient))):
+
+		#Under deafault setting max process param deviations are plotted
+		# Change here for explicit specification of process parameter
+		
+		#layer_name="Act1_1"
+		layer_name=layers_gradient[i]
+
+		#print(layer_name)
+		camviz=CamViz(model,layer_name)
+
+		#process_parameter_id=np.argmax(abs(y_pred[i,:]))
+		cop_input=test_input_conv_data[0:1,:,:,:,:]
+		fmap_eval, grad_wrt_fmap_eval=camviz.grad_cam_3d(cop_input,process_parameter_id)
+		
+		alpha_k_c= grad_wrt_fmap_eval.mean(axis=(0,1,2,3)).reshape((1,1,1,-1))
+		Lc_Grad_CAM = np.maximum(np.sum(fmap_eval*alpha_k_c,axis=-1),0).squeeze()
+		scale_factor = np.array(cop_input.shape[1:4])/np.array(Lc_Grad_CAM.shape)
+
+		from scipy.ndimage.interpolation import zoom
+		import tensorflow.keras.backend as K
+		
+		_grad_CAM = zoom(Lc_Grad_CAM,scale_factor)
+		arr_min, arr_max = np.min(_grad_CAM), np.max(_grad_CAM)
+		grad_CAM = (_grad_CAM - arr_min) / (arr_max - arr_min + K.epsilon())
+
+		#print(grad_CAM.shape)
+
+		grad_cam_plot_matlab[i,:]=get_point_cloud.getcopdev_gradcam(grad_CAM,point_index,nominal_cop)
+
+		#Saving File
+	
+	np.savetxt((logs_path+'/grad_cam_pred_'+layer_name+'.csv'),grad_cam_plot_matlab, delimiter=",")
+
+
 
 	if(deploy_output==0):
 		y_pred,y_cop_pred_list,model=unet_deploy_model.unet_run_model(model,test_input_conv_data,model_path,logs_path,plots_path,deploy_output)

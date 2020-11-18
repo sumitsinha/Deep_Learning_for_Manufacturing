@@ -61,7 +61,8 @@ class CamViz:
 				#print("Check")
 				conv_output, predictions = heatmap_model(model_input)
 				#loss = predictions[:, np.argmax(abs(predictions[0]))]
-				loss = predictions[:,kcc_id]
+				loss = predictions[0][:,kcc_id]
+				#loss = predictions[1][:,:,:,:,:]
 				#preds = self.model.predict(layer_input)
 				#model_prediction = self.model.output[:, np.argmax(abs(preds[0]))]
 				grads = gtape.gradient(loss, conv_output)

@@ -34,8 +34,8 @@ class MetricsEval:
 		kcc_dim=test_y.shape[1]
 		
 		import kcc_config as kcc_config
-		kcc_struct=kcc_config.get_kcc_struct()
-		#kcc_struct=kcc_config.kcc_struct
+		#kcc_struct=kcc_config.get_kcc_struct()
+		kcc_struct=kcc_config.kcc_struct
 		# Calculating Regression Based Evaluation Metrics
 		mae_KCCs=np.zeros((kcc_dim))
 		mse_KCCs=np.zeros((kcc_dim))
@@ -45,7 +45,7 @@ class MetricsEval:
 		
 		for kcc in kcc_struct:
 			
-			if(kcc['kcc_type']==0):
+			if(kcc['kcc_type']==1):
 				kcc_name=kcc['kcc_id']
 				kcc_id.append(kcc_name)
 			
@@ -178,7 +178,7 @@ class MetricsEval:
 			y_cop_test_flat=test_y[:,i]
 			y_cop_pred_flat=predicted_y[:,i]
 			combined_array=np.stack([y_cop_test_flat,y_cop_pred_flat],axis=1)
-			filtered_array=combined_array[np.where(abs(combined_array[:,0]) >= 0.01)]
+			filtered_array=combined_array[np.where(abs(combined_array[:,0]) >= 0)]
 			y_cop_test_vector=filtered_array[:,0:1]
 			y_cop_pred_vector=filtered_array[:,1:2]
 			#print(y_cop_pred_vector.shape)

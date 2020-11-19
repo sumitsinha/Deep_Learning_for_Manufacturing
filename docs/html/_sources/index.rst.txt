@@ -15,9 +15,14 @@ The research aims to develop artificial intelligence based solutions by integrat
 
    *Fig 1: Overall Research Framework*
 
-* The details for the application area, the challenges faced and the solutions provided by the library are summarized in the document linked below
+* The details for the application area, the challenges faced and the solutions provided by the library are summarized in the documents linked below
 
-:download:`Deep Learning for Manufacturing Framework and Overview <dlmfg_overview.pdf>` 
+:download:`Bayesian Deep Learning for Manufacturing: A Research Perspective <Bayesian_DLMFG.pdf>` 
+
+
+:download:`Bayesian Deep Learning for Manufacturing: A Software Perspective <dlmfg_overview.pdf>` 
+
+
 
 
 Contents
@@ -32,6 +37,7 @@ Contents
    model_arch
    drl
    model_selection
+   bayes
    classes
    kmc
    utilities

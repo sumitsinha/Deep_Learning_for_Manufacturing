@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Case Study: Door Inner and Hinge Reinforcement Multi-Stage Assembly &mdash; Bayesian Deep Learning For Manufacturing (dlmfg) 2.0.0 documentation</title>
+  <title>Bayesian Deep Learning &mdash; Bayesian Deep Learning For Manufacturing (dlmfg) 2.0.0 documentation</title>
   
 
   
@@ -35,8 +35,8 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Case Study: Cross Member Multi-Station Assembly" href="cross_member.html" />
-    <link rel="prev" title="Case Study: Positioning and Clamping Variations for Halo" href="case_study_halo.html" /> 
+    <link rel="next" title="Class Structure: Objects and Methods" href="classes.html" />
+    <link rel="prev" title="Model Architecture Selection" href="model_selection.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -92,6 +92,7 @@
 <li class="toctree-l1"><a class="reference internal" href="model_arch.html">Model Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="drl.html">Deep Reinforcement Learning for Control and Correction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="model_selection.html">Model Architecture Selection</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Bayesian Deep Learning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="classes.html">Class Structure: Objects and Methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="kmc.html">Key Measurement Characteristics (KMCs)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utilities.html">Utilities</a></li>
@@ -99,7 +100,7 @@
 <li class="toctree-l1"><a class="reference internal" href="active_learning.html">Active Learning/Adaptive Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="viz.html">Visualization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="case_study_halo.html">Case Study: Positioning and Clamping Variations for Halo</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Case Study: Door Inner and Hinge Reinforcement Multi-Stage Assembly</a></li>
+<li class="toctree-l1"><a class="reference internal" href="case_study_inner_rf.html">Case Study: Door Inner and Hinge Reinforcement Multi-Stage Assembly</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cross_member.html">Case Study: Cross Member Multi-Station Assembly</a></li>
 <li class="toctree-l1"><a class="reference internal" href="refrences.html">Research and References</a></li>
 </ul>
@@ -147,13 +148,13 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Case Study: Door Inner and Hinge Reinforcement Multi-Stage Assembly</li>
+      <li>Bayesian Deep Learning</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="_sources/case_study_inner_rf.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/bayes.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -166,20 +167,13 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="case-study-door-inner-and-hinge-reinforcement-multi-stage-assembly">
-<h1>Case Study: Door Inner and Hinge Reinforcement Multi-Stage Assembly<a class="headerlink" href="#case-study-door-inner-and-hinge-reinforcement-multi-stage-assembly" title="Permalink to this headline">¶</a></h1>
-<ul class="simple">
-<li><p>Overview</p></li>
-</ul>
-<hr class="docutils" />
+  <div class="section" id="bayesian-deep-learning">
+<h1>Bayesian Deep Learning<a class="headerlink" href="#bayesian-deep-learning" title="Permalink to this headline">¶</a></h1>
+<p>Bayesian Deep learning enables uncertainty quantification, convergence with lesser samples and prevents overfitting. This is essential for application in manufacturing environments where all estimates are required to to enhanced with uncertainty to integrate a measure of confidence in the estimates.</p>
 <div class="figure align-center" id="id1">
-<img alt="_images/hinge_rf.png" src="_images/hinge_rf.png" />
-<p class="caption"><span class="caption-text"><em>Fig 1: Door Inner and Hinge Reinforcement Assembly</em></span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+<img alt="_images/bayes.png" src="_images/bayes.png" />
+<p class="caption"><span class="caption-text"><em>Fig 1: Framework for Bayesian Deep Learning</em></span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
 </div>
-<ul class="simple">
-<li><p>The details for the case study parameters, deviation patterns, results and implementation can be found in the document linked below</p></li>
-</ul>
-<p><a class="reference download internal" download="" href="_downloads/8d67f39e405652487361b128294a0170/inner_rf.pdf"><code class="xref download docutils literal notranslate"><span class="pre">Case</span> <span class="pre">Study:</span> <span class="pre">Door</span> <span class="pre">Inner</span> <span class="pre">and</span> <span class="pre">Hinge</span> <span class="pre">Reinforcement</span> <span class="pre">Assembly</span></code></a></p>
 </div>
 
 
@@ -190,10 +184,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="cross_member.html" class="btn btn-neutral float-right" title="Case Study: Cross Member Multi-Station Assembly" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="classes.html" class="btn btn-neutral float-right" title="Class Structure: Objects and Methods" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="case_study_halo.html" class="btn btn-neutral float-left" title="Case Study: Positioning and Clamping Variations for Halo" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="model_selection.html" class="btn btn-neutral float-left" title="Model Architecture Selection" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

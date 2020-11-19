@@ -1,0 +1,11 @@
+Bayesian Deep Learning
+========================================
+
+Bayesian Deep learning enables uncertainty quantification, convergence with lesser samples and prevents overfitting. This is essential for application in manufacturing environments where all estimates are required to to enhanced with uncertainty to integrate a measure of confidence in the estimates.
+
+.. figure:: bayes.png
+   :align:   center
+
+   *Fig 1: Framework for Bayesian Deep Learning*
+
+

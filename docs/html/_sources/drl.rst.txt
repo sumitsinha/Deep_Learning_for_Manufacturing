@@ -4,11 +4,12 @@ Deep Reinforcement Learning for Control and Correction
 
 * Overview
 
-For control and correction of manufacturing systems the library implements the **Object Shape Error Correction (OSEC)** methodology using Deep Deterministic Policy Gradients (DDPG). The methodology aims to correct root causes in manufacturing system considering a variety of system costs and constraints. Notebooks for implementation of DDPG using a custom made assembly Matlab environment and TensorFlow based DDPG agent and learning is located within `deep_reinforcement_learning <https://github.com/sumitsinha/Deep_Learning_for_Manufacturing/tree/master/deep_reinforcement_learning>`_ module of the library 
+For control and correction of manufacturing systems the library implements the **Object Shape Error Correction (OSEC)** methodology using Deep Deterministic Policy Gradients (DDPG). The methodology aims to correct root causes in manufacturing system considering a variety of system costs and constraints. Notebooks for implementation of DDPG using a custom made assembly Matlab environment and TensorFlow based DDPG agent and learning is located within `Deep Reinforcement Learning Module <https://github.com/sumitsinha/Deep_Learning_for_Manufacturing/tree/master/deep_reinforcement_learning>`_ of the library 
+
 
 * `Matlab Python Linking code <https://github.com/sumitsinha/Deep_Learning_for_Manufacturing/blob/master/cae_simulations/cae_simulations.py>`_ - Enables low latency integration between Multi-physics environments (Computer Aided Engineering (CAE)) in Matlab and TensorFlow based deep learning agents
 
- 
+
 ----------------
 
 .. figure:: osec.png

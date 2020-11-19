@@ -37,16 +37,8 @@ The published work can be found below:
 
 * [**Deep learning enhanced digital twin for closed loop in-process quality improvement**](https://www.sciencedirect.com/science/article/abs/pii/S0007850620301323)
 
-*  **Object Shape Error Response using Bayesian 3D Convolutional Neural Network for Assembly Systems with Compliant Parts (to appear online)**
 
-
-*  **Object Shape Error Response using Bayesian 3D U-Net for Multi-Station Assembly Systems with Non-Ideal Compliant Parts (In Review)**
-
-
-*  **Scalable and Interpretable Learning for Object Shape Errors in Multi-Station Assembly Systems using Bayesian Deep Learning (To be submitted)**
-
-
-*Other follow up papers are planned*
+*Two follow up papers are currently under review are expected by Jan 2021*
 
 
 ## Documentation

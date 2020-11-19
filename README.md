@@ -63,7 +63,7 @@ The complete documentation and other ongoing research can be found here: [**Docu
 6.  [**Uncertainty guided continual learning**](https://github.com/sumitsinha/Deep_Learning_for_Manufacturing/tree/master/continual_learning) to enable life long/incremental training for multiple case studies
 7.  [**Exploratory notebooks**](https://github.com/sumitsinha/Deep_Learning_for_Manufacturing/tree/master/assembly_eda_studies) for various case studies
 8. [**3D Gradient-weighted Class Activation Maps**](https://github.com/sumitsinha/Deep_Learning_for_Manufacturing/blob/master/core/u_net_model_deploy_multi_output.py) for interpretability of deep learning models 
-8.  [**Datasets for Industrial multi-station case studies**](https://github.com/sumitsinha/Deep_Learning_for_Manufacturing/tree/master/pre_trained_models) for training and benchmarking deep learning models 
+9.  [**Datasets for Industrial multi-station case studies**](https://github.com/sumitsinha/Deep_Learning_for_Manufacturing/tree/master/pre_trained_models) for training and benchmarking deep learning models 
 
 
 ## Installation

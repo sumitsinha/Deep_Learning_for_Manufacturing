@@ -7,8 +7,8 @@ function fem=setContactConstraint(fem)
     % fem.Boundary.ContactPair(id).Master % (integer) - master component
     % fem.Boundary.ContactPair(id).MasterFlip % (boolean) - flip master normal vector
     % fem.Boundary.ContactPair(id).Slave (integer) slave component
-    % fem.Boundary.ContactPair(id).SearchDist % (double) - searching distance between slave node and master element. Contact pair equation is added fs the computed angle is smaller than "SearchDist"
-    % fem.Boundary.ContactPair(id).SharpAngle % (double)- angle between normal vector of slave node and normal vector of master element. Contact pair equation is added is the computed angle is smaller than "SharpAngle"
+    % fem.Boundary.ContactPair(id).SearchDist % (double) - searching distance between slave node and master element. Contact pair equation is added if the computed angle is smaller than "SearchDist"
+    % fem.Boundary.ContactPair(id).SharpAngle % (double)- angle between normal vector of slave node and normal vector of master element. Contact pair equation is added if the computed angle is smaller than "SharpAngle"
     % fem.Boundary.ContactPair(id).Offset % (double) - offset between master and slave
     % fem.Boundary.ContactPair(id).Enable % (boolean) - If false, no. constraint is added; however the contact pair will be processed in the post-processing for gap calculation
     % fem.Boundary.ContactPair(id).Sampling % (double) [0, 1] - downsampling value of number of contact points 

@@ -1,5 +1,5 @@
 % Import model input data from external "filepath"
-function data=modelImportInput(data, filepath, flag)
+function data=modelImportInput(data, filepath, flag, formatFile)
 
 % data: data input
 % filepath: file location
@@ -22,7 +22,7 @@ function data=modelImportInput(data, filepath, flag)
         % [master, slave domain(m), domain(s) P]
             % P: position of the locator
     % "NcBlock" => NcBlock layout
-        % [master, slave domain(m), domain(s) P]
+        % [master, domain(m), P]
             % P: position of the locator
     % "CustomConstraint" => user defined constraints layout
         % [master, slave domain(m), domain(s) P]
@@ -32,11 +32,19 @@ function data=modelImportInput(data, filepath, flag)
     % "Morphing" => input for morphing mesh
         % [master, Pc]
             % Pc: position of control point
+% formatFile: format file for additional input data  => cell array with the following fields
+    % Nm: [1x3] => Normal vector
+    % Nt: [1x3] => Tangent vector
+    %..
+    
 % Note
     % Master/Slave => used for projection on the geometry to calculate reference positions
     % DomainM/DomainS => used for calculation by FEM kernel
 %------------------------
 
+if nargin
+    formatFile={''};
+end
 
 % check format
 if strcmp(flag,'Stitch')
@@ -54,7 +62,7 @@ elseif strcmp(flag,'ClampM')
     maxcol=7; % [master, slave domain(m), domain(s) P]
     % P: position of the locator
 elseif strcmp(flag,'NcBlock') 
-    maxcol=6; % [master, domain(m), P, Size]
+    maxcol=5; % [master, domain(m), P]
     % P: position of the locator
 elseif strcmp(flag,'Contact') 
     maxcol=2; % [master, slave]
@@ -65,13 +73,14 @@ else
     maxcol=5; % [master, domain(m), P]
     % P: position of the input
 end
-
+%--
+[maxcol, colPos]=format2Columns(maxcol, formatFile);
+%--
 % import data
 d=modelLoadInputFile(filepath, maxcol, true);
-
+%--
+% update database
 if ~isempty(d)
-        
-    % update database
     nd=size(d,1);
     for i=1:nd
         
@@ -147,9 +156,6 @@ if ~isempty(d)
             data.Input.Locator.NcBlock(end).DomainM=d(i,2);
             data.Input.Locator.NcBlock(end).Pm=d(i,[3 4 5]);
             data.Input.Locator.NcBlock(end).PmReset=data.Input.Locator.NcBlock(end).Pm;
-            data.Input.Locator.NcBlock(end).Geometry.Shape.Parameter.D=d(i,6);
-            data.Input.Locator.NcBlock(end).Geometry.Shape.Parameter.A=d(i,6);
-            data.Input.Locator.NcBlock(end).Geometry.Shape.Parameter.B=d(i,6);
 
          elseif strcmp(flag,'ClampM') 
 
@@ -159,6 +165,21 @@ if ~isempty(d)
             data.Input.Locator.ClampM(end).DomainS=d(i,4);
             data.Input.Locator.ClampM(end).Pm=d(i,[5 6 7]);
             data.Input.Locator.ClampM(end).PmReset=data.Input.Locator.ClampM(end).Pm;
+            %--
+            nFormat=length(formatFile);
+            for k=1:nFormat
+               if strcmp(formatFile{k},'Nm')
+                  data.Input.Locator.ClampM(end).NormalType{1}=1; % user
+                  data.Input.Locator.ClampM(end).Nm=d(i,colPos(k,:));
+                  data.Input.Locator.ClampM(end).NmReset=data.Input.Locator.ClampM(end).Nm;
+               elseif strcmp(formatFile{k},'Nt')
+                  data.Input.Locator.ClampM(end).TangentType{1}=1; % user
+                  data.Input.Locator.ClampM(end).Nt=d(i,colPos(k,:));
+                  data.Input.Locator.ClampM(end).NtReset=data.Input.Locator.ClampM(end).Nt;
+               else 
+                   %--
+               end
+            end
 
         elseif strcmp(flag,'ClampS') 
 
@@ -166,6 +187,21 @@ if ~isempty(d)
             data.Input.Locator.ClampS(end).DomainM=d(i,2);
             data.Input.Locator.ClampS(end).Pm=d(i,[3 4 5]);
             data.Input.Locator.ClampS(end).PmReset=data.Input.Locator.ClampS(end).Pm;
+            %--
+            nFormat=length(formatFile);
+            for k=1:nFormat
+               if strcmp(formatFile{k},'Nm')
+                  data.Input.Locator.ClampS(end).NormalType{1}=1; % user
+                  data.Input.Locator.ClampS(end).Nm=d(i,colPos(k,:));
+                  data.Input.Locator.ClampS(end).NmReset=data.Input.Locator.ClampS(end).Nm;
+               elseif strcmp(formatFile{k},'Nt')
+                  data.Input.Locator.ClampS(end).TangentType{1}=1; % user
+                  data.Input.Locator.ClampS(end).Nt=d(i,colPos(k,:));
+                  data.Input.Locator.ClampS(end).NtReset=data.Input.Locator.ClampS(end).Nt;
+               else 
+                   %--
+               end
+            end
             
         elseif strcmp(flag,'CustomConstraint') 
 
@@ -181,4 +217,25 @@ if ~isempty(d)
 
         end
     end
+end
+
+%--
+function [maxcol, colPos]=format2Columns(maxcol, formatFile)
+
+nFormat=length(formatFile);
+colPos=zeros(nFormat,3);
+for i=1:nFormat
+   if strcmp(formatFile{i},'Nm')
+       colPos(i,:)=[maxcol+1 maxcol+2 maxcol+3];
+       maxcol=maxcol+3; 
+   elseif strcmp(formatFile{i},'Nt')
+       colPos(i,:)=[maxcol+1 maxcol+2 maxcol+3];
+       maxcol=maxcol+3;
+   else
+
+       %---
+       % Add here any other option
+       %---
+
+   end
 end

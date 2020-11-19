@@ -32,7 +32,7 @@ for i=1:nq+1
     A(i,:)=b;
 end
 
-% calcola i punti di controllo di controllo incogniti
+% calcola i punti di controllo incogniti
 Pc=A\Q; % LU decomposition
 
 

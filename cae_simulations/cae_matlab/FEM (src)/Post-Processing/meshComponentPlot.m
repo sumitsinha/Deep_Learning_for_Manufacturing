@@ -6,11 +6,13 @@ function meshComponentPlot(fem,...
 
 if nargin==2
     tag='';
-    logPanel=[];
+    logPanel.Panel=[];
+    logPanel.motionData=[];
 end
 
 if nargin==3
-    logPanel=[];
+    logPanel.Panel=[];
+    logPanel.motionData=[];
 end
 
 % PLOT TRIA:

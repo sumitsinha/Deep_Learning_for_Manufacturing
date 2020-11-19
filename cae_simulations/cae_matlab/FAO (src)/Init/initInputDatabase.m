@@ -69,7 +69,9 @@ elseif strcmp(flag,'Part')
    d.Status=-1;
          
    d.Placement.T=eye(4,4); % actual 4x4 placement matrix
+   d.Placement.TStore{1}=eye(4,4); % actual 4x4 placement matrix (archive)
    d.Placement.UCS=eye(4,4); % User coordinate system
+   d.Placement.UCSStore{1}=eye(4,4); % User coordinate system (archive)
    d.Placement.UCSreset=eye(4,4); % User coordinate system
    d.Placement.ShowFrame=false; % true/false => show/hide part UCS
    
@@ -142,8 +144,10 @@ elseif strcmp(flag,'Stitch')
     d.TangentType={2, 'User', 'Model'}; % "model"; "user"
     d.SearchDist=[5.0 5.0]; % normal and tangential
     
-    d.Parametrisation.Geometry.Type{1}={1, 'Reference', 'T', 'V', 'N', 'TV', 'TN', 'VN', 'TVN'}; 
-    d.Parametrisation.Geometry.Type{2}={1, 'Reference', 'T', 'V', 'N', 'TV', 'TN', 'VN', 'TVN'}; 
+    d.Parametrisation.Geometry.Type{1}={1, 'Reference', 'T', 'V', 'N', 'TV', 'TN', 'VN', 'TVN',[],[],[],...
+                                                         'ON/OFF','T ON/OFF', 'V ON/OFF', 'N ON/OFF', 'TV ON/OFF', 'TN ON/OFF', 'VN ON/OFF', 'TVN ON/OFF',[],[],[]}; 
+    d.Parametrisation.Geometry.Type{2}={1, 'Reference', 'T', 'V', 'N', 'TV', 'TN', 'VN', 'TVN',[],[],[],...
+                                                         'ON/OFF','T ON/OFF', 'V ON/OFF', 'N ON/OFF', 'TV ON/OFF', 'TN ON/OFF', 'VN ON/OFF', 'TVN ON/OFF',[],[],[]};
     
     d.Parametrisation.Geometry.T{1}=0;
     d.Parametrisation.Geometry.V{1}=0;
@@ -241,11 +245,13 @@ elseif strcmp(flag,'Hole') || strcmp(flag,'Slot')
     % if "Hole" => DoC=[u, v] into local reference system (R)
     % if "Slot" => DoC=[u] into local reference system (R)
     if strcmp(flag,'Hole')
-        d.Parametrisation.Geometry.Type{1}={1, 'Reference', 'T', 'V', 'N', 'TV', 'TN', 'VN', 'TVN', 'u', 'v', 'uv'}; 
+        d.Parametrisation.Geometry.Type{1}={1, 'Reference', 'T', 'V', 'N', 'TV', 'TN', 'VN', 'TVN','u','v','uv',...
+                                                         'ON/OFF','T ON/OFF', 'V ON/OFF', 'N ON/OFF', 'TV ON/OFF', 'TN ON/OFF', 'VN ON/OFF', 'TVN ON/OFF','u ON/OFF','v ON/OFF','uv ON/OFF'};
         d.Parametrisation.DoC.u{1}=0; % degree of constraint
         d.Parametrisation.DoC.v{1}=0; % degree of constraint
     elseif strcmp(flag,'Slot')
-         d.Parametrisation.Geometry.Type{1}={1, 'Reference', 'T', 'V', 'N', 'TV', 'TN', 'VN', 'TVN', 'u', 'v', 'uv'}; 
+         d.Parametrisation.Geometry.Type{1}={1, 'Reference', 'T', 'V', 'N', 'TV', 'TN', 'VN', 'TVN','u','v','uv',...
+                                                         'ON/OFF','T ON/OFF', 'V ON/OFF', 'N ON/OFF', 'TV ON/OFF', 'TN ON/OFF', 'VN ON/OFF', 'TVN ON/OFF','u ON/OFF','v ON/OFF','uv ON/OFF'};
         d.Parametrisation.DoC.u{1}=0; % degree of constraint
     end
     
@@ -303,7 +309,8 @@ elseif strcmp(flag,'CustomConstraint')
     d.Value=zeros(1,6); % Value of constraint
     d.Type={1,'bilateralCartesian','bilateralVectorTra','unilateralLock','unilateralFree'};
     %
-    d.Parametrisation.Geometry.Type{1}={1, 'Reference', 'T', 'V', 'N', 'TV', 'TN', 'VN', 'TVN'}; 
+    d.Parametrisation.Geometry.Type{1}={1, 'Reference', 'T', 'V', 'N', 'TV', 'TN', 'VN', 'TVN',[],[],[],...
+                                                         'ON/OFF','T ON/OFF', 'V ON/OFF', 'N ON/OFF', 'TV ON/OFF', 'TN ON/OFF', 'VN ON/OFF', 'TVN ON/OFF',[],[],[]};
     d.Parametrisation.Geometry.T{1}=0;
     d.Parametrisation.Geometry.V{1}=0;
     d.Parametrisation.Geometry.N{1}=0;
@@ -351,7 +358,8 @@ elseif strcmp(flag,'Locator')
     d.NormalType={2, 'User', 'Model'}; % "model"; "user"
     d.TangentType={2, 'User', 'Model'}; % "model"; "user"
 
-    d.Parametrisation.Geometry.Type{1}={1, 'Reference', 'T', 'V', 'N', 'TV', 'TN', 'VN', 'TVN'}; 
+    d.Parametrisation.Geometry.Type{1}={1, 'Reference', 'T', 'V', 'N', 'TV', 'TN', 'VN', 'TVN',[],[],[],...
+                                                         'ON/OFF','T ON/OFF', 'V ON/OFF', 'N ON/OFF', 'TV ON/OFF', 'TN ON/OFF', 'VN ON/OFF', 'TVN ON/OFF',[],[],[]};
     d.Parametrisation.Geometry.T{1}=0;
     d.Parametrisation.Geometry.V{1}=0;
     d.Parametrisation.Geometry.N{1}=0;

@@ -1,8 +1,15 @@
 % Set geometry to deformed
-function data=modelSetGeometryToDeformed(data)
+function data=modelSetGeometryToDeformed(data, stationData, stationID, opt, U)
 %
 % Inputs
 % data: data model
+% stationData(stationID): station data
+% stationID: station ID (integer)
+% opt:
+    % 1: use U field
+    % 2: use D field
+% Deviation field (either U or D field)
+
 %
 % Outputs
 % data: updated data model with:
@@ -10,6 +17,10 @@ function data=modelSetGeometryToDeformed(data)
         % part features
 %
 %--
+if nargin==3
+    opt=1;
+    U=[];
+end
 
 %-----
 IDsol=1; % Only take the first solution set
@@ -19,16 +30,22 @@ if ~isfield(data.Input,'Part')
     return
 end
 %
-nParts=length(data.Input.Part);
-for i=1:nParts
+for i=stationData(stationID).Part
     if data.Input.Part(i).Enable && data.Input.Part(i).Status==0 % active and computed
          % displacement field
-         uvw=data.Input.Part(i).U{IDsol}(:,1:3);
-         % Node ids
-         nodeIDi=data.Model.Nominal.Domain(i).Node;
-         nodei=data.Model.Nominal.xMesh.Node.Coordinate(nodeIDi,:);
-         % udpate
-         data.Model.Nominal.xMesh.Node.Coordinate(nodeIDi,:)=nodei+uvw;
+         if opt==1
+            uvw=data.Input.Part(i).U{IDsol}(:,1:3);
+         elseif opt==2
+            ppart=data.Input.Part(i).Geometry.Parameter;
+            uvw=data.Input.Part(i).D{ppart};
+         end
+         if ~isempty(uvw)
+             % Node ids
+             nodeIDi=data.Model.Nominal.Domain(i).Node;
+             nodei=data.Model.Nominal.xMesh.Node.Coordinate(nodeIDi,:);
+             % udpate
+             data.Model.Nominal.xMesh.Node.Coordinate(nodeIDi,:)=nodei+uvw;
+         end
      end
 end
 %
@@ -36,17 +53,19 @@ end
 data=modelBuildPart(data,[0 0 0 0 0]); 
 %
 % Update part features
-field={'Stitch'};
-for i=1:length(field)
-    data=updateLocal(data, field{i}, IDsol);
+if~isempty(U)
+    field={'Stitch'};
+    for i=1:length(field)
+        data=updateLocal(data, field{i}, U);
+    end
 end
 %
 % Refresh all
 data=modelBuildInput(data,[0 1 0]);
-
+%
 %------------------------------------
 %--
-function data=updateLocal(data, field, IDsol)
+function data=updateLocal(data, field, U)
 
 %---------------------
 fem=data.Model.Nominal;
@@ -61,7 +80,7 @@ for i=1:n
     if fi.Enable
         Pmi=fi.Pm;
         %
-        fem.Sol.U=data.Assembly.U{IDsol};
+        fem.Sol.U=U;
         fem.Post.Interp.Pm=Pmi; 
         fem.Post.Interp.Domain=fi.DomainM;
         fem.Post.Interp.SearchDist=fi.SearchDist(1);

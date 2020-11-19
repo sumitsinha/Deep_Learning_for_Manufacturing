@@ -47,25 +47,21 @@ for i=1:n
         % check status
         [flag, geomparaidi]=checkInputStatusGivenPoint(fi, geomparaid, 1);
 
-        if flag
+        if flag && fi.EnableReset
             Nm=fi.Nam{1}(geomparaidi,:);
             L=norm(Nm);
 
             if L>=eps
                 Nm=Nm/L;
-                
-%                 part_to_part_gap=norm(fi.Pam{1}(geomparaidi,:)-fi.Pas{1}(geomparaidi,:));
-%                 if part_to_part_gap <= fi.Gap
-                    fem.Boundary.Constraint.RigidLink(count).Pm=fi.Pam{1}(geomparaidi,:); 
-                    fem.Boundary.Constraint.RigidLink(count).Nm=Nm;
-                    fem.Boundary.Constraint.RigidLink(count).SearchDist=fi.SearchDist(1);
-                    fem.Boundary.Constraint.RigidLink(count).Master=fi.DomainM;
-                    fem.Boundary.Constraint.RigidLink(count).Slave=fi.DomainS;
+                fem.Boundary.Constraint.RigidLink(count).Pm=fi.Pam{1}(geomparaidi,:); 
+                fem.Boundary.Constraint.RigidLink(count).Nm=Nm;
+                fem.Boundary.Constraint.RigidLink(count).SearchDist=fi.SearchDist(1);
+                fem.Boundary.Constraint.RigidLink(count).Master=fi.DomainM;
+                fem.Boundary.Constraint.RigidLink(count).Slave=fi.DomainS;
 
-                    fem.Boundary.Constraint.RigidLink(count).Frame='ref';
+                fem.Boundary.Constraint.RigidLink(count).Frame='ref';
 
-                    count=count+1;
-%                 end
+                count=count+1;
             end
 
         end
@@ -116,9 +112,8 @@ if isfield(data, 'Assembly')
     %
     % Pre-loads
     if data.Assembly.Solver.UsePreLoad % use pre-load
-        if ~isempty(data.Assembly.PreLoad.F)
-            fem.Boundary.Load.User.DofId=data.Assembly.PreLoad.DoF;
-            fem.Boundary.Load.User.Value=data.Assembly.PreLoad.F;
+        if ~isempty(data.Assembly.PreLoad)
+            fem.Boundary.Load.User=data.Assembly.PreLoad;
         end
     end
     
@@ -139,7 +134,7 @@ for i=1:n
     % check status
     [flag, geomparaidi]=checkInputStatusGivenPoint(fi, geomparaid, 1);
 
-    if flag
+    if flag && fi.EnableReset
         % calculate rotation matrix      
         Rc=f(i).Parametrisation.Geometry.R{1};  
 %         
@@ -175,7 +170,7 @@ for i=1:n
     % check status
     [flag, geomparaidi]=checkInputStatusGivenPoint(fi, geomparaid, 1);
 
-    if flag
+    if flag && fi.EnableReset
         
         % calculate rotation matrix       
         Rc=f(i).Parametrisation.Geometry.R{1};  
@@ -208,7 +203,7 @@ for i=1:n
     % check status
     [flag, geomparaidi]=checkInputStatusGivenPoint(fi, geomparaid, 1);
 
-    if flag
+    if flag && fi.EnableReset
 
         typei=fi.Type{1}; % type
         if typei==1 % cartesian
@@ -286,7 +281,7 @@ for i=1:n
         % check status
         [flag, geomparaidi]=checkInputStatusGivenPoint(fi, geomparaid, j);
 
-        if flag
+        if flag && fi.EnableReset
 
             fem.Boundary.Constraint.Unilateral(countUL).Pm=fi.Pam{j}(geomparaidi,:); 
             fem.Boundary.Constraint.Unilateral(countUL).SearchDist=fi.SearchDist(1); 
@@ -322,7 +317,7 @@ for i=1:n
         % check status
         [flag, geomparaidi]=checkInputStatusGivenPoint(fi, geomparaid, j);
         
-        if flag
+        if flag && fi.EnableReset
 
             fem.Boundary.Constraint.Unilateral(countUL).Pm=fi.Pam{j}(geomparaidi,:); 
             fem.Boundary.Constraint.Unilateral(countUL).SearchDist=fi.SearchDist(1); 
@@ -356,7 +351,7 @@ for i=1:n
         % check status
         [flag, geomparaidi]=checkInputStatusGivenPoint(fi, geomparaid, j);
 
-        if flag
+        if flag && fi.EnableReset
 
                 % master
                 fem.Boundary.Constraint.Unilateral(countUL).Pm=fi.Pam{j}(geomparaidi,:); 
@@ -398,7 +393,7 @@ for i=1:n
 
     [flag, geomparaidi]=checkInputStatusGivenPoint(fi, geomparaid, 1);
 
-    if flag
+    if flag && fi.EnableReset
 
         fem.Boundary.DimplePair(count).Pm=fi.Pam{1}(geomparaidi,:); 
         fem.Boundary.DimplePair(count).Master=fi.DomainM;

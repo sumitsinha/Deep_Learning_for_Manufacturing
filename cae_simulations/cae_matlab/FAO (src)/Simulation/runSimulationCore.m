@@ -10,12 +10,11 @@ function varargout=runSimulationCore(data, sdata, pdata, refreshOpt)
     % part ID: part ID
     % geometry: 1="nominal"; 2="morphed"; 3="measured"
     % simulation mode: 1="deterministic"; 2="stochastic"
-    % parameter ID: parameter ID used to generated "measured" part
+    % parameter ID: parameter ID used to generate "measured" part
 % refreshOpt: 
     % "refreshAll" => refresh existing geometry + update stiffness matrix (default option)
     % "refresh" => refresh existing geometry without updating stiffness matrix
 
-    
 % OUTPUT
 % (1) data: updated data structure
 % (2) flagsim: true/false => computed/failed to compute 

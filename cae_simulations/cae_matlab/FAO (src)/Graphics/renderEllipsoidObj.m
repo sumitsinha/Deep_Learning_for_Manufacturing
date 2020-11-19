@@ -18,3 +18,4 @@ P=apply4x4(P, Rc, Pc);
 X=reshape(P(:,1),res+1,res+1);
 Y=reshape(P(:,2),res+1,res+1);
 Z=reshape(P(:,3),res+1,res+1);
+

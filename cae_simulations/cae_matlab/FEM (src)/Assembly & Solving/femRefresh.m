@@ -53,7 +53,10 @@ fem=setLoadUser(fem);
 %--------------------------------------------------------------------------
 %--------------------------------------------------------------------------
 % get no. of MPCs
-fem.Sol.nLMPC=length(fem.Boundary.Constraint.MPC); % # of Lagrange multiplier for MPC
+fem.Sol.nLMPC=length(fem.Boundary.Constraint.MPC); % # of Lagrange multiplier for MP
+% get no. of SPCs
+fem.Sol.nLSPC=length(fem.Boundary.Constraint.SPC.Id);
+%
 fem.Sol.nLCt=0; % # of Lagrange multiplier for contact ("0" at beginning)
 
 %-----------------------------------

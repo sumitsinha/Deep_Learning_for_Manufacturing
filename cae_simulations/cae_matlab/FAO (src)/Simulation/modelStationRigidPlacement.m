@@ -16,6 +16,12 @@ function [data, U, GAP]=modelStationRigidPlacement(data, stationData, stationID)
 % GAP: gap field [1 x nStation]
 
 %
+% Step(0) assign placement matrix
+nParts=length(data.Input.Part);
+for partID=1:nParts
+    data.Input.Part(partID).Placement.T=data.Input.Part(partID).Placement.TStore{stationID};
+end
+%
 % Step(1): Link UCS systems between parts
 sourceP=stationData(stationID).UCS.Source;
 DestinationP=stationData(stationID).UCS.Destination;
@@ -47,34 +53,12 @@ U=zeros(data.Model.Nominal.Sol.nDoF,1);
 iddofs=data.Model.Nominal.xMesh.Node.NodeIndex;
 U(iddofs(:,1))=uvw(:,1); % X
 U(iddofs(:,2))=uvw(:,2); % Y
-U(iddofs(:,3))=uvw(:,3); % Z
-%
-% Add contribution of non ideal part
-for i=stationData(stationID).Part
-    if data.Input.Part(i).Enable && data.Input.Part(i).Status==0
-        geom=data.Input.Part(i).Geometry.Type{1};
-
-        if geom>1 % NOT IDEAL GEOMETRY
-            ppart=data.Input.Part(i).Geometry.Parameter;
-            uvwD=data.Input.Part(i).D{ppart};
-            if ~isempty(uvwD)
-                idnode=data.Model.Nominal.Domain(i).Node;
-                iddofs=data.Model.Nominal.xMesh.Node.NodeIndex(idnode,:);
-
-                % save back
-                U(iddofs(:,1))=U(iddofs(:,1)) + uvwD(:,1); % X
-                U(iddofs(:,2))=U(iddofs(:,2)) + uvwD(:,2); % Y
-                U(iddofs(:,3))=U(iddofs(:,3)) + uvwD(:,3); % Z
-            end
-        end
-    end
-end
+U(iddofs(:,3))=uvw(:,3); % Z              
 %
 % Compute GAP
 GAP=modelGetGapParts(data);
 %
 % Step(3): reset UCS
-np=length(data.Input.Part);
-for i=1:np
-    data.Input.Part(i).Placement.UCS=data.Input.Part(i).Placement.UCSreset;
+for partID=1:nParts
+    data.Input.Part(partID).Placement.UCS=data.Input.Part(partID).Placement.UCSreset;
 end

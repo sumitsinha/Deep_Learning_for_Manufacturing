@@ -25,15 +25,25 @@ idlog=fopen(filelog,'a');
 fprintf(idlog,'Training sample [%g]\r\n',paraID);
 fclose(idlog); 
 
-                % STEP 0 - set UCS (if necessary)
-                nStation=length(stationData);
-                for stationID=1:nStation
-                    data=modelAssignUCSLocatorPlacement(data, stationData, stationID);
-                end
+% STEP 0 - set UCS (if necessary)
+nStation=length(stationData);
+npart=length(data.Input.Part);
+for partID=1:npart
+    data.Input.Part(partID).Placement.UCSStore=cell(1,nStation);
+    for stationID=1:nStation
+        data.Input.Part(partID).Placement.UCSStore{stationID}=eye(4,4);
+    end
+end
+%--
+for stationID=1:nStation
+    data=modelAssignUCSLocatorPlacement(data, stationData, stationID);
+end
+
+
 % STEP 1 - set parameter ID
 data.Assembly.X.ID=paraID; data.Assembly.X.nD=1;
 % STEP 2 - assign parameters to model
-data=modelAssignParameters(data);
+data=modelAssignParameters(data, nStation);
 % STEP 3 - build all inputs
 data=modelBuildInput(data,[1 0 0]);
 % STEP 4 - solve model

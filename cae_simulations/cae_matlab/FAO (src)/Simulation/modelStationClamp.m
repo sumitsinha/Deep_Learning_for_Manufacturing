@@ -1,5 +1,5 @@
 % Solve "Clamp" at station level
-function [data, U, GAP, Ka, flagSimulation]=modelStationClamp(data, stationID)
+function [data, U, GAP, Fa, flagSimulation]=modelStationClamp(data, stationID)
 
 % Inputs:
 % data: model
@@ -10,13 +10,13 @@ function [data, U, GAP, Ka, flagSimulation]=modelStationClamp(data, stationID)
 % data: udpated model
 % U: deviation field [x, y, z] (nnode, 3)  
 % GAP: gap field [1 x no. contact pairs]
-% Ka: assembly stiffness matrix (ndof x ndof) - sparse matrix
+% Fa: reaction forces
 % flagSimulation: simulation flag
 
 % Init output
 U=[]; %#ok<NASGU>
 GAP=[]; %#ok<NASGU>
-Ka=[]; %#ok<NASGU>
+Fa=[]; %#ok<NASGU>
 %
 % Get part definitions
 [pdata, flag]=getPartDescription(data);
@@ -29,7 +29,7 @@ data=modelReset(data, false, true); % reset "assembly" solution
 %
 % Solve model
 sdata=[];
-[data, flagsim, Ka]=runSimulationCore(data, sdata, pdata, 'refresh');
+[data, ~, flagsim, Fa]=simulationCore(data, sdata, pdata(:,1)', 'refresh');
 flagm=data.Assembly.Log{1}.Done; % solution reached
 %
 % Save back deviation field

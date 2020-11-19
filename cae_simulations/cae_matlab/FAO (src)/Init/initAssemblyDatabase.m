@@ -54,5 +54,5 @@ d.SubModel.DoF=[]; % DoF
 d.SubModel.U=[]; % [u, v, w, alfa, beta, gamma] displacement field
 
 % Pre-load condition
-d.PreLoad.DoF=[]; 
-d.PreLoad.F=[]; % [u, v, w, alfa, beta, gamma] force field 
+d.PreLoad(1).Domain=[]; 
+d.PreLoad(1).Value=[]; % [u, v, w, alfa, beta, gamma] force field 

@@ -105,7 +105,7 @@ for i=1:nd
     if opt(3)
         idnodes=data.Model.Nominal.Domain(i).Node;
         data.Model.Nominal.xMesh.Node.Coordinate(idnodes,:)=...
-                apply4x4(data.Model.Nominal.xMesh.Node.CoordinateReset(idnodes,:),...
+                apply4x4(data.Model.Nominal.xMesh.Node.Coordinate(idnodes,:),...
                          T0w(1:3,1:3), T0w(1:3,4)');
     end
     
@@ -117,6 +117,14 @@ for i=1:nd
     end
 end
 
+% check normal flipping
+for i=1:nd
+    if data.Input.Part(i).FlipNormal % then flip normal
+        data.Model.Nominal=flipNormalComponent(data.Model.Nominal, i);
+        data.Input.Part(i).FlipNormal=false;
+    end
+end
+
 %- pre-process model
 if nd>0
     if opt(4)
@@ -125,13 +133,6 @@ if nd>0
         data.Model.Nominal.Options.StiffnessUpdate=false; 
     end
     data.Model.Nominal=femPreProcessing(data.Model.Nominal, activeNode);
-end
-
-% check normal flipping
-for i=1:nd
-    if data.Input.Part(i).FlipNormal % then flip normal
-        data.Model.Nominal=flipNormalComponent(data.Model.Nominal, i);
-    end
 end
 
 % Reset solution

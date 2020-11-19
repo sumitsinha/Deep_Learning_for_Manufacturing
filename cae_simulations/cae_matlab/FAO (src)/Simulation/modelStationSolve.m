@@ -24,15 +24,19 @@ nStation=length(stationData);
 %--
 %
 % Initialise
-U=[];
+U=zeros(data.Model.Nominal.Sol.nDoF,nStation);
 GAP=cell(1,nStation);
 flagSimulation=false(1,nStation);
 inputData=cell(1,nStation);
 %
 % Loop over all stations
-Kai=[];
+Fai=[];
 Ui=[];
 for stationID=1:nStation
+    %
+    Gapi=[];
+    flagSimulationi=false;
+    %
     stationType=stationData(stationID).Type{1};
     
     % STEP 1 - set station
@@ -50,22 +54,23 @@ for stationID=1:nStation
         flagSimulationi=true;
     elseif stationType==3 || stationType==4 % "Clamp" or "Release"
         % (1) Set pre-load
-        data=modelSetPreLoad(data, Kai, Ui);
+        data=modelSetPreLoad(data, Fai);
         if stationType==3
             data.Assembly.Solver.UsePreLoad=false;
         elseif stationType==4
             data.Assembly.Solver.UsePreLoad=true;
         end
         % (2) Solve
-        [data, Ui, Gapi, Kai, flagSimulationi]=modelStationClamp(data, stationID);    
+        [data, Ui, Gapi, Fai, flagSimulationi]=modelStationClamp(data, stationID);    
         % (3) Set "new" nominal (deformed geometry) & apply deformation field to part features
-        data=modelSetGeometryToDeformed(data);   
+        data=modelSetGeometryToDeformed(data, stationData, stationID, 1, Ui);   
         % (4) Release pre-load
         if stationType==4 
-            data.Assembly.PreLoad.F=[];
-            data.Assembly.PreLoad.DoF=[];
+            data.Assembly.PreLoad=[];
+            data.Assembly.PreLoad(1).Value=[];
+            data.Assembly.PreLoad(1).Domain=[];
+            Fai=[];
         end
-        
     else
         
         
@@ -79,14 +84,17 @@ for stationID=1:nStation
     end
     
     % STEP 3: Update results
-    U=[U, Ui]; %#ok<AGROW>
+    if ~isempty(Ui)
+        U(:,stationID)=Ui;
+        Ui=[];
+    end
     GAP{stationID}=Gapi;
     flagSimulation(stationID)=flagSimulationi;
     inputData{stationID}=data.Input;
             
     % STEP 4: Reset station & update part features
     data=modelStationReset(data);
-    
+
     % STEP 5: Set to nominal all parts of the current station
     for i=stationData(stationID).Part
         data.Input.Part(i).Geometry.Type{1}=1; % nominal

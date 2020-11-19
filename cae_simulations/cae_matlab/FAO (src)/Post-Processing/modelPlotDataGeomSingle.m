@@ -1,13 +1,22 @@
 % plot single product
-function modelPlotDataGeomSingle(data, field, id, iddom, tag)
+function modelPlotDataGeomSingle(data, field, id, iddom, tag, logPanel)
 
 if nargin<4
     iddom=[];
     tag=sprintf('part[%g]', id);
+    logPanel.Panel=[];
+    logPanel.motionData=[];
 end
 
 if nargin<5
     tag=sprintf('part[%g]', id);
+    logPanel.Panel=[];
+    logPanel.motionData=[];
+end
+
+if nargin<6
+    logPanel.Panel=[];
+    logPanel.motionData=[];
 end
 
 % plot
@@ -21,7 +30,7 @@ if strcmp(field,'Part')
     f.Post.Options.ShowPath=data.Input.Part(id).Graphic.Show;
     
     if data.Input.Part(id).Graphic.Show
-        meshComponentPlot(f, id, tag)
+        meshComponentPlot(f, id, tag, logPanel)
     end
 
     % show normal

@@ -60,7 +60,7 @@ for idpart=1:npart
                 [D, flag]=morphGeometrySolve(data, idpart);
 
                 if flag~=1 % failed to build
-                    error('Variational geometry (error): Failed to built variation model @ part[%g]', idpart);
+                    error('Variational geometry (error): Failed to build variation model @ part[%g]', idpart);
                 else
                     % save-out
                     data.Input.Part(idpart).D{k}=[D(:,1) D(:,2) D(:,3)]; % [X Y Z]

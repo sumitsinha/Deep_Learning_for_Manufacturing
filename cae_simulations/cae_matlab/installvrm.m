@@ -4,8 +4,9 @@ function installvrm()
 % Add to matlab the following paths:
     % (1) FEM (src)
     % (2) FAO (src)
-    % (3) Demos
-    % (4) GUI
+    % (3) KINEMATICS (src)
+    % (4) Demos
+    % (5) GUI
     % ....
     % ....
 %-----------------------------------------------------
@@ -34,34 +35,42 @@ else
 end
 %
 % install source codes
-fprintf('     Installing src code...\n');
+fprintf('     Installing FEM code...\n');
 fem_src=fullfile(cd,'FEM (src)');
 if ~exist(fem_src,'dir')
-    error('Installation of VRM (error): failed to locate "FEM(src)" folder!')
+    warning('Installation of VRM (error): failed to locate "FEM(src)" folder!')
 end
 addpath(genpath(fem_src));
 %
+fprintf('     Installing FAO code...\n');
 fao_src=fullfile(cd,'FAO (src)');
 if ~exist(fao_src,'dir')
-    error('Installation of VRM (error): failed to locate "FAO(src)" folder!')
+    warning('Installation of VRM (error): failed to locate "FAO(src)" folder!')
 end
 addpath(genpath(fao_src));
+%
+fprintf('     Installing Kinematics code...\n');
+kine_src=fullfile(cd,'KINEMATICS (src)');
+if ~exist(kine_src,'dir')
+    warning('Installation of VRM (error): failed to locate "KINEMATICS (src)" folder!')
+end
+addpath(genpath(kine_src));
+%
+% install GUI
+fprintf('     Installing GUI code...\n');
+gui_src=fullfile(cd,'GUI');
+if ~exist(gui_src,'dir')
+    warning('Installation of VRM (error): failed to locate "GUI" folder!')
+end
+addpath(genpath(gui_src));
 %
 % install demo folder
 fprintf('     Installing Demo pack...\n');
 demos_src=fullfile(cd,'Demos');
 if ~exist(demos_src,'dir')
-    error('Installation of VRM (error): failed to locate "Demos" folder!')
+    warning('Installation of VRM (error): failed to locate "Demos" folder!')
 end
 addpath(genpath(demos_src));
 %
-% install GUI
-fprintf('     Installing GUI...\n');
-gui_src=fullfile(cd,'GUI');
-if ~exist(gui_src,'dir')
-    error('Installation of VRM (error): failed to locate "GUI" folder!')
-end
-addpath(genpath(gui_src));
-
 fprintf('Installation completed!\n');
 %

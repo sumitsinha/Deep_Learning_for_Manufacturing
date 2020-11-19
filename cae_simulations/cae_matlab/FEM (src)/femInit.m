@@ -369,7 +369,7 @@ fem.Boundary.Load.Element=[];
 
 %--
 % user
-fem.Boundary.Load.User.DofId=[];
+fem.Boundary.Load.User.Domain=[]; % it could have multiple domains
 fem.Boundary.Load.User.Value=[];
 
 %--

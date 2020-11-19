@@ -26,5 +26,5 @@ function fem=getGapsVariable(fem)
            % .Sol.Gap(id).max=fem.Options.Min
            % .Sol.Gap(id).min=fem.Options.Max
 %
-% compile: getGapsVariable.cpp preProcessingLib.cpp shapeFcn.cpp -largeArrayDims COMPFLAGS="/openmp $COMPFLAGS"
+% compile: mex getGapsVariable.cpp preProcessingLib.cpp shapeFcn.cpp -largeArrayDims COMPFLAGS="/openmp $COMPFLAGS"
 % Note: use "mex -g" to run in debug mode

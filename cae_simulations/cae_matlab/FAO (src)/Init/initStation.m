@@ -3,6 +3,7 @@ function stationData=initStation()
 
 % stationData(stationID): station data
     % .Part: [integer]
+    % .PartFlipNormal: [boolean]
     
     % .UCS
         % .Source=[integer] => list of source parts to be linked with same UCS
@@ -25,6 +26,7 @@ function stationData=initStation()
         % "Release" => release
 %
 stationData.Part=[];
+        % stationData.PartFlipNormal=[];
 
 stationData.UCS.Source=[];
 stationData.UCS.Destination=[];

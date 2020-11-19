@@ -6,7 +6,7 @@ function varargout=simulationCore(data, sdata, idpart, opt)
 % sdata: list of selection (true/false)
     % They refer to data.Input.Selection
     % If "sdata" is empty => use all nodes in the model
-% idpart: part list
+% idpart: list of parts
 % opt: 
     % "refreshAll" => refresh existing geometry + update stiffness matrix (default option)
     % "refresh" => refresh existing geometry without updating stiffness matrix
@@ -15,7 +15,7 @@ function varargout=simulationCore(data, sdata, idpart, opt)
 % (1) data: updated data structure
 % (2) computationalTime- seconds (optional)
 % (3) simulationFlag - true/false => computed/failed to compute (optional)
-% (4) Ka: assembled stiffnes matrix - before applying any constraints (optional)
+% (4) Fa: reaction forces
 %
 %------------------------------
 % log file
@@ -83,19 +83,19 @@ for i=1:np
     geom=data.Input.Part(idpart(i)).Geometry.Type{1};
     
     if geom>1 % NOT IDEAL GEOMETRY
-        
-        ppart=data.Input.Part(idpart(i)).Geometry.Parameter;
-        
-        idnode=femc.Domain(idpart(i)).Node;
-        uvw=data.Input.Part(idpart(i)).D{ppart};
-        
-        if isempty(uvw)
-            error('Simulation core - attempting to create non-ideal geometry from empty data set!')
+        if data.Input.Part(idpart(i)).Enable
+            ppart=data.Input.Part(idpart(i)).Geometry.Parameter;
+
+            idnode=femc.Domain(idpart(i)).Node;
+            uvw=data.Input.Part(idpart(i)).D{ppart};
+
+            if isempty(uvw)
+                error('Simulation core - attempting to create non-ideal geometry from empty data set!')
+            end
+            % update coordinates
+            node(idnode,:)=node(idnode,:)+uvw;
+            femc.xMesh.Node.Coordinate=node;
         end
-        % update coordinates
-        node(idnode,:)=node(idnode,:)+uvw;
-        femc.xMesh.Node.Coordinate=node;
-        
     end
     
     activeNode(i).Node=seleNodesbyParts{i};
@@ -139,17 +139,18 @@ npara=data.Assembly.X.nD;
 % run CALCULATION
 ndofs=data.Model.Nominal.Sol.nDoF;
 Utot=zeros(ndofs, npara);
+Ulnc=[];
 gaptot=cell(1, npara);
 logtot=cell(1, npara);
 
 t_start=tic;
 if useparallel % USE PARALLEL MODE
     parfor geomparaid=1:npara
-        [Utot(:, geomparaid), gaptot{geomparaid}, logtot{geomparaid}]=run_local_sim(data, femc, geomparaid);
+        [Utot(:, geomparaid), Ulnc(:, geomparaid), gaptot{geomparaid}, logtot{geomparaid}]=run_local_sim(data, femc, geomparaid);
     end
 else % USE SEQUENTIAL MODE
     for geomparaid=1:npara
-        [Utot(:, geomparaid), gaptot{geomparaid}, logtot{geomparaid}]=run_local_sim(data, femc, geomparaid);    
+        [Utot(:, geomparaid), Ulnc(:, geomparaid), gaptot{geomparaid}, logtot{geomparaid}]=run_local_sim(data, femc, geomparaid);    
     end
 end
 t_solve=toc(t_start);
@@ -184,10 +185,11 @@ for geomparaid=1:npara
             uvw=data.Input.Part(idpart(i)).D{ppart};
             
             % update solution set by deformation field
-            U(iddofs(:,1)) = U(iddofs(:,1)) + uvw(:,1); % U
-            U(iddofs(:,2)) = U(iddofs(:,2)) + uvw(:,2); % V
-            U(iddofs(:,3)) = U(iddofs(:,3)) + uvw(:,3); % W
-        
+            if ~isempty(uvw)
+                U(iddofs(:,1)) = U(iddofs(:,1)) + uvw(:,1); % U
+                U(iddofs(:,2)) = U(iddofs(:,2)) + uvw(:,2); % V
+                U(iddofs(:,3)) = U(iddofs(:,3)) + uvw(:,3); % W
+            end        
         end
         
         data.Input.Part(idpart(i)).U{nsol}=[U(iddofs(:,1)),...
@@ -240,13 +242,13 @@ if nargout==4
     varargout{1}=data;
     varargout{2}=t_solve;
     varargout{3}=true;
-    varargout{4}=femAssemblyStiffness(femc); % Save the assembly stiffness matrix (if required)
+    varargout{4}=femAssemblyStiffness(femc)*Ulnc; 
 end
 
 %--------------------------------------------
 
 %--------
-function [U, gap, log]=run_local_sim(data, femc, geomparaid)
+function [U, Uc, gap, log]=run_local_sim(data, femc, geomparaid)
 
 U=zeros(data.Model.Nominal.Sol.nDoF,1);
 

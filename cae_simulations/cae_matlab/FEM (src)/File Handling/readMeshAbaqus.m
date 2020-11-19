@@ -6,7 +6,7 @@ function [quad, tria, node]=readMeshAbaqus(filename)
 % * filename: mesh file to be imported
 %
 % Outputs:
-% * quad - quad element(nx3). If no element => -1. IDS are re-numbered starting from ID=1
+% * quad - quad element(nx4). If no element => -1. IDS are re-numbered starting from ID=1
 % * tria - tria element(nx3). If no element => -1. IDS are re-numbered starting from ID=1
 % * node - xyz coordinates of nodes If no node => -1
 %

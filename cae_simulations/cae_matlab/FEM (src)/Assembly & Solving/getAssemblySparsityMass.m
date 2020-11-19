@@ -1,5 +1,5 @@
 % Compute assembly sparsity of mass matrix
-function [irow, icol, Xnz, nTot, nTot]=getAssemblySparsityMass(fem)
+function [irow, icol, Xnz, Fmod]=getAssemblySparsityMass(fem)
 %
 % It compute the assembly sparsity with conditioning of the matrix. The
 % assembly sparsity has the following properties:
@@ -22,7 +22,7 @@ function [irow, icol, Xnz, nTot, nTot]=getAssemblySparsityMass(fem)
 % * irow: row index of non zero entries (nx1) - integer
 % * icol: row index of non zero entries (nx1) - integer
 % * Xnz: vector of non zero entries (nx1) - double
-% * nTot: no. of non zero entries - integer
+% * Fmod: modified load vector - double
 %
 % compile: getAssemblySparsityMass.cpp -largeArrayDims
 % Note: use "mex -g" to run in debug mode

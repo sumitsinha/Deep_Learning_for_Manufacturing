@@ -1,4 +1,4 @@
-function [Pmp, flag]=pointNormal2PointProjection(fem, Pm, Nm, idpart)
+function [Pmp, flag, gsign, edata]=pointNormal2PointProjection(fem, Pm, Nm, idpart)
 %
 % ARGUMENTs:
 %
@@ -14,6 +14,12 @@ function [Pmp, flag]=pointNormal2PointProjection(fem, Pm, Nm, idpart)
 % * flag:
     % true: point projected
     % false: failed to project point
+% * gsign: signed distance between the Pm and the surface
+% * edata=[n,2]
+    % (1) element ID
+    % (2) element type
+        % 1=> QUAD
+        % 2=> TRIA
 %
 % compile: mex pointNormal2PointProjection.cpp preProcessingLib.cpp shapeFcn.cpp -largeArrayDims COMPFLAGS="/openmp $COMPFLAGS"
 % Note: use "mex -g" to run in debug mode

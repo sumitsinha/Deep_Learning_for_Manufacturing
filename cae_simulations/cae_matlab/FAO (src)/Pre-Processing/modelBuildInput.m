@@ -6,7 +6,7 @@ function data=modelBuildInput(data, opt)
     % opt(3): true/false => true: apply placement
     
 if nargin==1
-    opt=true(1,3);
+    opt=true(1,4);
 end
 
 % Check part status

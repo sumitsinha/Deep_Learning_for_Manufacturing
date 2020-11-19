@@ -3,6 +3,13 @@ function modelPlotDataGeom(data, field, tag)
 
 if nargin==2
     tag='';
+    logPanel.Panel=[];
+    logPanel.motionData=[];
+end
+
+if nargin==3
+    logPanel.Panel=[];
+    logPanel.motionData=[];
 end
             
 % plot parts
@@ -44,11 +51,11 @@ for i=1:npart
         st=data.database.Input.PartGraphic(i).Status;
     end
     
-    if st==0
+    if st==0 && data.database.Input.Part(i).Enable
         if strcmp(field, 'Part') 
-            modelPlotDataGeomSingle(data.database, field, i, [], tag)
+            modelPlotDataGeomSingle(data.database, field, i, [], tag, logPanel)
         elseif strcmp(field, 'PartG')
-            modelPlotDataGeomSingle(data.database, field, i, data.database.Input.PartGraphic(i).Domain, tag)
+            modelPlotDataGeomSingle(data.database, field, i, data.database.Input.PartGraphic(i).Domain, tag, logPanel)
         end
     end 
 end

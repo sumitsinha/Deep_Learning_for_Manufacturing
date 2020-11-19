@@ -109,6 +109,3 @@ fem=femmesh2triamesh(fem, idparts);
 
 %--
 disp('Pre-processing Completed!') 
-
-
-

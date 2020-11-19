@@ -7,11 +7,7 @@ function [data, U, GAP]=modelStationNonidealParts(data, stationData, stationID)
 % stationID: station ID (integer)
         
 % Outputs:
-% data: udpated model model with geometry and inputs
-        % refresh existing geometry
-        % do not update stiffness matrix
-        % do not recompute part UCS
-        % only refresh part features, such as hole and slots
+% data: udpated model
 % U: deviation field [x, y, z] (nnode, 3)        
 % GAP: gap field [1 x nStation]
 
@@ -24,8 +20,14 @@ for i=stationData(stationID).Part
         geom=data.Input.Part(i).Geometry.Type{1};
 
         if geom>1 % NOT IDEAL GEOMETRY
-            ppart=data.Input.Part(i).Geometry.Parameter;
-            uvwD=data.Input.Part(i).D{ppart};
+                 if geom==2 % morphing
+                    [uvwD, ~]=morphGeometrySolve(data, i);
+                    data.Input.Part(i).Geometry.Parameter=1;
+                    data.Input.Part(i).D{1}=uvwD;
+                 elseif geom==3 % measured
+                    ppart=data.Input.Part(i).Geometry.Parameter;
+                    uvwD=data.Input.Part(i).D{ppart};
+                 end
             if ~isempty(uvwD)
                 idnode=data.Model.Nominal.Domain(i).Node;
                 iddofs=data.Model.Nominal.xMesh.Node.NodeIndex(idnode,:);
@@ -38,6 +40,8 @@ for i=stationData(stationID).Part
         end
     end
 end
+%
+data=modelSetGeometryToDeformed(data, stationData, stationID, 2, U);
 %
 % Compute GAP
 GAP=modelGetGapParts(data);

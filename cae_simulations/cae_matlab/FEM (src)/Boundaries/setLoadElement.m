@@ -42,22 +42,36 @@ for i=1:nc
 
         %----------------------
         % STEP 1: GLOBAL SEARCH
-        temp=fem.xMesh.Node.Coordinate(nodedom,:);
-        temp(:,1)=temp(:,1)-P0(1);
-        temp(:,2)=temp(:,2)-P0(2);
-        temp(:,3)=temp(:,3)-P0(3);
+        temp=fem.xMesh.Node.Coordinate(nodedom,:); tempd=temp;
+        tempd(:,1)=temp(:,1)-P0(1);
+        tempd(:,2)=temp(:,2)-P0(2);
+        tempd(:,3)=temp(:,3)-P0(3);
 
-        dik=sqrt(sum(temp.^2,2));
-        [dm, mid]=min(dik);
-        mid=nodedom(mid);
+        dik=sqrt(sum(tempd.^2,2));
+        [~, midt]=min(dik); % dm
+        mid=nodedom(midt);
         
         %----------------------
         % STEP 2: LOCAL SEARCH
-
         [flag,...
             dofsele,...
             coeff,...
             Pp]=getProjection(fem,mid,P0,dsearch);
+        
+        if ~flag % check node to node
+             Pp=temp(midt,:);
+             mdist=norm(P0-Pp);
+             if mdist<=dsearch
+
+                  % get coefficients
+                  coeff=1;
+
+                  % get dofs
+                  dofsele=fem.xMesh.Node.NodeIndex(mid,:);
+
+                  flag=true;
+             end 
+         end
 
     end
         
@@ -113,69 +127,68 @@ for i=1:nc
             
         end
         
-        
-    else
-        
-        % save for closest node
-        if fem.Options.UseActiveSelection % use selection
-           flagactive=fem.Selection.Node.Status(mid);
-        else
-           flagactive=true; % use any nodes
-        end
-                        
-        if dm<=dsearch && flagactive
-                          
-            %----
-            Pp=fem.xMesh.Node.Coordinate(mid,:);
-            fem.Boundary.Load.Element(i).Pms=Pp;
-
-            fem.Boundary.Load.Element(i).Type='node';
-            
-            %---
-            DoFs=fem.xMesh.Node.NodeIndex(mid,:);
-              
-            if strcmp(ref,'cartesian')
-                     
-                dofs=fem.Boundary.Load.Element(i).DoF;
-                dofs=DoFs(dofs);  
-
-                % save all
-                fem.Boundary.Load.DofId=[fem.Boundary.Load.DofId,dofs];
-                fem.Boundary.Load.Value=[fem.Boundary.Load.Value, values];
-                                        
-            %--------------------
-            elseif strcmp(ref,'vectorTra')
-                
-                  Nm=fem.Boundary.Load.Element(i).Nm; % unit vector
-
-                  % get only traslations
-                  dofs=DoFs(1:3);
-                  
-                  for jd=1:3
-                      fem.Boundary.Load.DofId=[fem.Boundary.Load.DofId,dofs(jd)];
-                      fem.Boundary.Load.Value=[fem.Boundary.Load.Value, values*Nm(jd)];
-                  end
-
-          
-            %--------------------
-            elseif strcmp(ref,'vectorRot')
-                
-                  Nm=fem.Boundary.Load.Element(i).Nm; % unit vector
-
-                  % get only rotations
-                  dofs=DoFs(4:6);
-                  
-                  for jd=1:3
-                      fem.Boundary.Load.DofId=[fem.Boundary.Load.DofId,dofs(jd)];
-                      fem.Boundary.Load.Value=[fem.Boundary.Load.Value, values*Nm(jd)];
-                  end
-                  
-            end
-            
-            
-        end
-        
-        
+                %     else
+                %         
+                %         % save for closest node
+                %         if fem.Options.UseActiveSelection % use selection
+                %            flagactive=fem.Selection.Node.Status(mid);
+                %         else
+                %            flagactive=true; % use any nodes
+                %         end
+                %                         
+                %         if dm<=dsearch && flagactive
+                %                           
+                %             %----
+                %             Pp=fem.xMesh.Node.Coordinate(mid,:);
+                %             fem.Boundary.Load.Element(i).Pms=Pp;
+                % 
+                %             fem.Boundary.Load.Element(i).Type='node';
+                %             
+                %             %---
+                %             DoFs=fem.xMesh.Node.NodeIndex(mid,:);
+                %               
+                %             if strcmp(ref,'cartesian')
+                %                      
+                %                 dofs=fem.Boundary.Load.Element(i).DoF;
+                %                 dofs=DoFs(dofs);  
+                % 
+                %                 % save all
+                %                 fem.Boundary.Load.DofId=[fem.Boundary.Load.DofId,dofs];
+                %                 fem.Boundary.Load.Value=[fem.Boundary.Load.Value, values];
+                %                                         
+                %             %--------------------
+                %             elseif strcmp(ref,'vectorTra')
+                %                 
+                %                   Nm=fem.Boundary.Load.Element(i).Nm; % unit vector
+                % 
+                %                   % get only traslations
+                %                   dofs=DoFs(1:3);
+                %                   
+                %                   for jd=1:3
+                %                       fem.Boundary.Load.DofId=[fem.Boundary.Load.DofId,dofs(jd)];
+                %                       fem.Boundary.Load.Value=[fem.Boundary.Load.Value, values*Nm(jd)];
+                %                   end
+                % 
+                %           
+                %             %--------------------
+                %             elseif strcmp(ref,'vectorRot')
+                %                 
+                %                   Nm=fem.Boundary.Load.Element(i).Nm; % unit vector
+                % 
+                %                   % get only rotations
+                %                   dofs=DoFs(4:6);
+                %                   
+                %                   for jd=1:3
+                %                       fem.Boundary.Load.DofId=[fem.Boundary.Load.DofId,dofs(jd)];
+                %                       fem.Boundary.Load.Value=[fem.Boundary.Load.Value, values*Nm(jd)];
+                %                   end
+                %                   
+                %             end
+                %             
+                %             
+                %         end
+                %         
+                %         
     end
        
 end

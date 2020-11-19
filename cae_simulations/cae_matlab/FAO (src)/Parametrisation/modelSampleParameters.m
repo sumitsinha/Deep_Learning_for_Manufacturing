@@ -11,6 +11,14 @@ function data=modelSampleParameters(data)
         % .SampleSize=sample size (only for SamplingStrategy="random")
         % .IdTable=id of the parameter table (only for SamplingStrategy="user")
 % .Assembly.Parameter: design parameter (CELL matrix) as follows
+    % "Non-ideal part" parameter => non-ideal part definition
+            % {1} mode: 0="Non-ideal part" parameter
+            % {2} groupID: group ID
+            % {3} partID: part ID
+            % {4} PointID: ID of control point. Only those controls points with ".Part(partID).Morphing(PointID).Distribution{1}==1/Deterministic" are counted
+            % {5} NOT IN USE
+            % {6} NOT IN USE
+            % {7} NOT IN USE
     % "Placement" parameter => rigid part placement parameters
         % [mode, partID, parameter type, reference]
             % {1} mode: 1="Placement" parameter
@@ -42,12 +50,14 @@ function data=modelSampleParameters(data)
 %-------
 dv=data.Assembly.Parameter;
 if isempty(dv)
-    error('Sampling design parameter (warning): no parameter defined!\n');
+    warning('Sampling design parameter (warning): no parameter defined!\n');
+    return
 end
 %
 dg=data.Assembly.Group;
 if isempty(dg)
-    error('Sampling design parameter (warning): no group defined!\n');
+    warning('Sampling design parameter (warning): no group defined!\n');
+    return
 end
 
 %------------
@@ -66,7 +76,8 @@ Xtemp=modelGenerateSamples(data, mlevels, Mlevels, nlevels);
 
 % STEP 2: assign to the whole dependent variables
 npara=size(dv,1); % no. dependent parameters
-Xout=zeros(size(Xtemp,1),npara);
+    % Xout=zeros(size(Xtemp,1),npara);
+Xout=data.Assembly.X.Value;
 for i=1:npara
    temp=0;
    for j=1:nvars
@@ -77,9 +88,9 @@ for i=1:npara
    end
    %--
    if temp==0
-       Xout(:,i)=Xtemp(:,i);
+       Xout(:,i)=Xtemp(:,i)*Xout(:,i);
    else
-       Xout(:,i)=Xtemp(:, temp);
+       Xout(:,i)=Xtemp(:, temp).*Xout(:,i);
    end
 end
 %

@@ -46,22 +46,37 @@ for i=1:nc
 
         %----------------------
         % STEP 1: GLOBAL SEARCH
-        temp=fem.xMesh.Node.Coordinate(nodedom,:);
-        temp(:,1)=temp(:,1)-P0(1);
-        temp(:,2)=temp(:,2)-P0(2);
-        temp(:,3)=temp(:,3)-P0(3);
+        temp=fem.xMesh.Node.Coordinate(nodedom,:); tempd=temp;
+        
+        tempd(:,1)=temp(:,1)-P0(1);
+        tempd(:,2)=temp(:,2)-P0(2);
+        tempd(:,3)=temp(:,3)-P0(3);
 
-        dik=sqrt(sum(temp.^2,2));
-        [dm, mid]=min(dik);
-        mid=nodedom(mid);
+        dik=sqrt(sum(tempd.^2,2));
+        [~, midt]=min(dik);
+        mid=nodedom(midt);
         
         %----------------------
         % STEP 2: LOCAL SEARCH
-
         [flag,...
             dofsele,...
             coeff,...
             Pp]=getProjection(fem,mid,P0,dsearch);
+        
+        if ~flag % check node to node
+             Pp=temp(midt,:);
+             mdist=norm(P0-Pp);
+             if mdist<=dsearch
+
+                  % get coefficients
+                  coeff=1;
+
+                  % get dofs
+                  dofsele=fem.xMesh.Node.NodeIndex(mid,:);
+
+                  flag=true;
+             end 
+         end
 
     end
         
@@ -169,7 +184,7 @@ for i=1:nc
                   fem.Boundary.Constraint.MPC(nMpc).Id=dofselek(:);
 
                   % save Coefficient
-                  coeffk=[coeff,coeff,coeff];
+                  coeffk=[coeff*vector(1),coeff*vector(2),coeff*vector(3)];
                   fem.Boundary.Constraint.MPC(nMpc).Coefficient=coeffk;
 
                   fem.Boundary.Constraint.MPC(nMpc).Value=values;
@@ -190,121 +205,118 @@ for i=1:nc
                   end
             
         end
-        
-        
-    else
-        
-        % save for closest node
-        if fem.Options.UseActiveSelection % use selection
-           flagactive=fem.Selection.Node.Status(mid);
-        else
-           flagactive=true; % use any nodes
-        end
-                        
-        if dm<=dsearch && flagactive
-                          
-            %----
-            Pp=fem.xMesh.Node.Coordinate(mid,:);
-            fem.Boundary.Constraint.Bilateral.Element(i).Pms=Pp;
 
-            fem.Boundary.Constraint.Bilateral.Element(i).Type='node';
-            
-            %---
-            DoFs=fem.xMesh.Node.NodeIndex(mid,:);
-              
-            if strcmp(ref,'cartesian')
-                
-                % dofs
-                dofs=fem.Boundary.Constraint.Bilateral.Element(i).DoF;
-            
-                % save reference for reaction recovery
-                fem.Boundary.Constraint.Bilateral.Element(i).Reaction.Type='spc';
-                fem.Boundary.Constraint.Bilateral.Element(i).Reaction.Id=length(fem.Boundary.Constraint.SPC.Id)+1;
-     
-                dofs=DoFs(dofs);  
-
-                % save all
-                fem.Boundary.Constraint.SPC.Id=[fem.Boundary.Constraint.SPC.Id,dofs];
-                fem.Boundary.Constraint.SPC.Value=[fem.Boundary.Constraint.SPC.Value,values]; 
-                
-                % save reference for reaction recovery
-                fem.Boundary.Constraint.Bilateral.Element(i).Reaction.Id=...
-                                  fem.Boundary.Constraint.Bilateral.Element(i).Reaction.Id : length(fem.Boundary.Constraint.SPC.Id);
-            
-            %--------------------
-            elseif strcmp(ref,'vectorTra')
-                
-                  Nm=fem.Boundary.Constraint.Bilateral.Element(i).Nm; % unit vector
-
-                  % get only traslations
-                  DoFs=DoFs(1:3);
-
-                  % add MPC
-                  nMpc=nMpc+1;
-                  
-                  % save reference for reaction recovery
-                  fem.Boundary.Constraint.Bilateral.Element(i).Reaction.Type='mpc';
-                  fem.Boundary.Constraint.Bilateral.Element(i).Reaction.Id=nMpc;
-
-                  % save ID
-                  fem.Boundary.Constraint.MPC(nMpc).Id=DoFs;
-
-                  % save Coefficient
-                  fem.Boundary.Constraint.MPC(nMpc).Coefficient=Nm;
-
-                  fem.Boundary.Constraint.MPC(nMpc).Value=values;
-
-                  % update # of non zero-entries
-                  if strcmp(tsolver,'lagrange')
-                       fem.Sol.Kast.n=fem.Sol.Kast.n+6;  % => 3*2
-                  elseif strcmp(tsolver,'penalty')
-                       fem.Sol.Kast.n=fem.Sol.Kast.n+9;  % => 3*3
-                  else
-    
-                       error('FEMP (Refreshing): Constraint handling method not recognised!') 
-                  end
-          
-            %--------------------
-            elseif strcmp(ref,'vectorRot')
-                
-                  Nm=fem.Boundary.Constraint.Bilateral.Element(i).Nm; % unit vector
-
-                  % get only traslations
-                  DoFs=DoFs(4:6);
-
-                  % add MPC
-                  nMpc=nMpc+1;
-                  
-                  % save reference for reaction recovery
-                  fem.Boundary.Constraint.Bilateral.Element(i).Reaction.Type='mpc';
-                  fem.Boundary.Constraint.Bilateral.Element(i).Reaction.Id=nMpc;
-
-                  % save ID
-                  fem.Boundary.Constraint.MPC(nMpc).Id=DoFs;
-
-                  % save Coefficient
-                  fem.Boundary.Constraint.MPC(nMpc).Coefficient=Nm;
-
-                  fem.Boundary.Constraint.MPC(nMpc).Value=values;
-
-                  % update # of non zero-entries
-                  if strcmp(tsolver,'lagrange')
-                       fem.Sol.Kast.n=fem.Sol.Kast.n+6;  % => 3*2
-                  elseif strcmp(tsolver,'penalty')
-                       fem.Sol.Kast.n=fem.Sol.Kast.n+9;  % => 3*3
-                  else
-    
-                       error('FEMP (Refreshing): Constraint handling method not recognised!') 
-                  end
-                  
-            end
-            
-            
-        end
-        
-        
     end
-       
+       %                             else
+% 
+%                                 % save for closest node
+%                                 if fem.Options.UseActiveSelection % use selection
+%                                    flagactive=fem.Selection.Node.Status(mid);
+%                                 else
+%                                    flagactive=true; % use any nodes
+%                                 end
+% 
+%                                 if dm<=dsearch && flagactive
+% 
+%                                     %----
+%                                     Pp=fem.xMesh.Node.Coordinate(mid,:);
+%                                     fem.Boundary.Constraint.Bilateral.Element(i).Pms=Pp;
+% 
+%                                     fem.Boundary.Constraint.Bilateral.Element(i).Type='node';
+% 
+%                                     %---
+%                                     DoFs=fem.xMesh.Node.NodeIndex(mid,:);
+% 
+%                                     if strcmp(ref,'cartesian')
+% 
+%                                         % dofs
+%                                         dofs=fem.Boundary.Constraint.Bilateral.Element(i).DoF;
+% 
+%                                         % save reference for reaction recovery
+%                                         fem.Boundary.Constraint.Bilateral.Element(i).Reaction.Type='spc';
+%                                         fem.Boundary.Constraint.Bilateral.Element(i).Reaction.Id=length(fem.Boundary.Constraint.SPC.Id)+1;
+% 
+%                                         dofs=DoFs(dofs);  
+% 
+%                                         % save all
+%                                         fem.Boundary.Constraint.SPC.Id=[fem.Boundary.Constraint.SPC.Id,dofs];
+%                                         fem.Boundary.Constraint.SPC.Value=[fem.Boundary.Constraint.SPC.Value,values]; 
+% 
+%                                         % save reference for reaction recovery
+%                                         fem.Boundary.Constraint.Bilateral.Element(i).Reaction.Id=...
+%                                                           fem.Boundary.Constraint.Bilateral.Element(i).Reaction.Id : length(fem.Boundary.Constraint.SPC.Id);
+% 
+%                                     %--------------------
+%                                     elseif strcmp(ref,'vectorTra')
+% 
+%                                           Nm=fem.Boundary.Constraint.Bilateral.Element(i).Nm; % unit vector
+% 
+%                                           % get only traslations
+%                                           DoFs=DoFs(1:3);
+% 
+%                                           % add MPC
+%                                           nMpc=nMpc+1;
+% 
+%                                           % save reference for reaction recovery
+%                                           fem.Boundary.Constraint.Bilateral.Element(i).Reaction.Type='mpc';
+%                                           fem.Boundary.Constraint.Bilateral.Element(i).Reaction.Id=nMpc;
+% 
+%                                           % save ID
+%                                           fem.Boundary.Constraint.MPC(nMpc).Id=DoFs;
+% 
+%                                           % save Coefficient
+%                                           fem.Boundary.Constraint.MPC(nMpc).Coefficient=Nm;
+% 
+%                                           fem.Boundary.Constraint.MPC(nMpc).Value=values;
+% 
+%                                           % update # of non zero-entries
+%                                           if strcmp(tsolver,'lagrange')
+%                                                fem.Sol.Kast.n=fem.Sol.Kast.n+6;  % => 3*2
+%                                           elseif strcmp(tsolver,'penalty')
+%                                                fem.Sol.Kast.n=fem.Sol.Kast.n+9;  % => 3*3
+%                                           else
+% 
+%                                                error('FEMP (Refreshing): Constraint handling method not recognised!') 
+%                                           end
+% 
+%                                     %--------------------
+%                                     elseif strcmp(ref,'vectorRot')
+% 
+%                                           Nm=fem.Boundary.Constraint.Bilateral.Element(i).Nm; % unit vector
+% 
+%                                           % get only traslations
+%                                           DoFs=DoFs(4:6);
+% 
+%                                           % add MPC
+%                                           nMpc=nMpc+1;
+% 
+%                                           % save reference for reaction recovery
+%                                           fem.Boundary.Constraint.Bilateral.Element(i).Reaction.Type='mpc';
+%                                           fem.Boundary.Constraint.Bilateral.Element(i).Reaction.Id=nMpc;
+% 
+%                                           % save ID
+%                                           fem.Boundary.Constraint.MPC(nMpc).Id=DoFs;
+% 
+%                                           % save Coefficient
+%                                           fem.Boundary.Constraint.MPC(nMpc).Coefficient=Nm;
+% 
+%                                           fem.Boundary.Constraint.MPC(nMpc).Value=values;
+% 
+%                                           % update # of non zero-entries
+%                                           if strcmp(tsolver,'lagrange')
+%                                                fem.Sol.Kast.n=fem.Sol.Kast.n+6;  % => 3*2
+%                                           elseif strcmp(tsolver,'penalty')
+%                                                fem.Sol.Kast.n=fem.Sol.Kast.n+9;  % => 3*3
+%                                           else
+% 
+%                                                error('FEMP (Refreshing): Constraint handling method not recognised!') 
+%                                           end
+% 
+%                                     end
+% 
+% 
+%                                 end
+
 end
 
 
@@ -433,8 +445,3 @@ if flag
       
 end
           
-
-
-
-
-

@@ -9,7 +9,9 @@ function plotDataInputSingle(data, field, id, paraid, logPanel, tagi)
 % tagi: graphical ID for plotting purposes
 
 if nargin<5
-    logPanel=[];
+    logPanel.Panel=[];
+    logPanel.motionData=[];
+    tagi='';
 end
 
 % get field
@@ -30,6 +32,15 @@ if nargin<6
 end
 
 %--
+if isstruct(logPanel)
+    if ~isempty(logPanel.motionData)
+        Rf=f.Parametrisation.Geometry.R{idpoint(1)};
+        Pf=f.Pm(idpoint(1),:);
+        logPanel.motionData.Rf=Rf;
+        logPanel.motionData.Pf=Pf;
+    end
+end
+%
 for i=1:length(flag)
     if strcmp(field,'ClampS') || strcmp(field,'ClampM') || strcmp(field,'NcBlock')
          plotClampSupport(data, f, field, flag(i), paraid(i), idpoint(i), tagi, logPanel)
@@ -61,7 +72,7 @@ function plotStitch(data, f, flag, id, tag, logPanel)
 
 eps=1e-1;
 
-if flag && f.Enable % well calculated
+if flag && f.EnableReset % well calculated
         
     % start
     if f.Parametrisation.Geometry.Type{1}{1}==1 % ref
@@ -108,13 +119,13 @@ if flag && f.Enable % well calculated
     end
     
     % check for part to part gaps
-    X=[]; Y=[]; Z=[];
+                    %     X=[]; Y=[]; Z=[];
     if f.Type{1}==2 || f.Type{1}==3 % circular; rigid link
-%         part_to_part_gap=norm(Pm(1,:)-Pm(2,:));
-%         if part_to_part_gap <= f.Gap       
+                    %         part_to_part_gap=norm(Pm(1,:)-Pm(2,:));
+                    %         if part_to_part_gap <= f.Gap       
             Pm=mean(Pm);
             [X,Y,Z]=renderSphereObj(rc, Pm);
-%         end
+                    %         end
     else % linear/edge
         [X, Y, Z]=renderTubeObj(Pm, rc);
     end
@@ -153,7 +164,7 @@ end
 
 function plotDimple(data, f, flag, idpoint, id, tag, logPanel)
 
-if flag && f.Enable % green
+if flag && f.EnableReset % green
 
     if length(f.Status{idpoint})==1
         id=1;
@@ -186,7 +197,7 @@ end
 
 function plotCustomConstraint(data, f, flag, idpoint, id, tag, logPanel)
 
-if flag && f.Enable % green
+if flag && f.EnableReset % green
 
    if f.Parametrisation.Geometry.ShowFrame
         R=f.Parametrisation.Geometry.R{idpoint};
@@ -242,7 +253,7 @@ end
 function plotSingleClampSupport(data, f, flag, id, partid, sign, idpoint, tag, logPanel)
       
 res=30;
-if flag && f.Enable % green
+if flag && f.EnableReset % green
 
     if f.Parametrisation.Geometry.ShowFrame
         R=f.Parametrisation.Geometry.R{idpoint};
@@ -386,7 +397,7 @@ end
 %--
 function plotHoleSlot(data, f, field, flag, id, tag, logPanel)
 
-if flag && f.Enable % green
+if flag && f.EnableReset % green
 
     if f.Parametrisation.Geometry.ShowFrame
         R=f.Parametrisation.Geometry.R{1};

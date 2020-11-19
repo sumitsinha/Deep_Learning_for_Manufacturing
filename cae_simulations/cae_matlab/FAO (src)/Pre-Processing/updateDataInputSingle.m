@@ -9,6 +9,7 @@ function data=updateDataInputSingle(data, field, id, opt)
     % opt(1): true/false => true: refresh all inputs (recompute projections, recompute parametrisations)
     % opt(2): true/false => true: refresh only part features (recompute projections, recompute parametrisations)
     % opt(3): true/false => true: apply placement
+    % opt(4): true/false => true: project Pm on geometry (the projected point will be used as "reference")
 
 % Note: f.Master/Slave => used for projection
 % Note: f.DomainM/DomainS => used for calculation by FEM kernel
@@ -20,10 +21,11 @@ function data=updateDataInputSingle(data, field, id, opt)
 % ex: -1/0/1/2/3 = not updated/success/failed to project on master/failed to project on slave/wrong input
 
 if nargin==3
-    opt=true(1,3);
+    opt=true(1,4);
 elseif nargin==4
-    if length(opt)~=3
-        error('Model build (input): wrong input format');
+    if length(opt)<4
+        opt(4)=0;
+                        % error('Model build (input): wrong input format');
     end
 end
 
@@ -102,6 +104,24 @@ if strcmp(field,'Stitch') || strcmp(field,'ClampM')
     end
 end
 
+%--------------------------
+% get model (NOMINAL)
+fem=data.Model.Nominal;
+%--------------------------
+
+if opt(4) % project Pm on geometry
+    if isfield(f, 'Pm')
+        for i=1:size(f.Pm,1)
+            Pmi=f.Pm(i,:);
+            [Pmp, ~, flag]=point2PointNormalProjection(fem, Pmi, f.Master, f.SearchDist(1));
+            if flag
+                f.Pm(i,:)=Pmp;
+                f.PmReset(i,:)=Pmp;
+            end
+        end
+    end
+end
+
 %---------------
 % update placement of part features
 if strcmp(field,'Stitch') || strcmp(field,'Hole') || strcmp(field,'Slot')
@@ -109,20 +129,15 @@ if strcmp(field,'Stitch') || strcmp(field,'Hole') || strcmp(field,'Slot')
         T0w=data.Input.Part(f.Master).Placement.T;
 
         % Pm...
-        f.Pm=apply4x4(f.PmReset,T0w(1:3,1:3), T0w(1:3,4)');
+        f.Pm=apply4x4(f.Pm,T0w(1:3,1:3), T0w(1:3,4)');
 
         % Nm...
-        f.Nm=apply4x4(f.NmReset,T0w(1:3,1:3), [0 0 0]);
+        f.Nm=apply4x4(f.Nm,T0w(1:3,1:3), [0 0 0]);
 
         % Nt...
-        f.Nt=apply4x4(f.NtReset,T0w(1:3,1:3), [0 0 0]);
+        f.Nt=apply4x4(f.Nt,T0w(1:3,1:3), [0 0 0]);
     end
 end
-
-%--------------------------
-% get model (NOMINAL)
-fem=data.Model.Nominal;
-%--------------------------
 
 % STEP 1: count points
     % nworkpoint: no. of points used for "work" calculation
@@ -268,12 +283,24 @@ for imodelppoint=1:nmodelpoint
             
             f.Pas{j}=Pas;
             f.Nas{j}=Nas; 
-            
+                        
     end
         
 end
-
-
+%
+%---------------------
+% check gap condition for "stitch"
+if strcmp(field,'Stitch')
+    if f.Type{1}==3 % rigid link
+        for geomparaidi=1:npara(imodelppoint)
+            part_to_part_gap=norm(f.Pam{1}(geomparaidi,:)-f.Pas{1}(geomparaidi,:));
+            if part_to_part_gap > f.Gap
+                f.EnableReset=false;
+            end
+        end
+    end
+end
+%
 % save back
 data=retrieveBackStructure(data, f, field, id);
                 
@@ -551,31 +578,31 @@ t=0;
 v=0;
 n=0;
 
-if paratype==2 % T
+if paratype==2 || paratype==13 % T
     t=f.Parametrisation.Geometry.T{imodelpoint};
     v=zeros(1,length(t));
     n=zeros(1,length(t));
-elseif paratype==3 % V
+elseif paratype==3 || paratype==14 % V
     v=f.Parametrisation.Geometry.V{imodelpoint};
     t=zeros(1,length(v));
     n=zeros(1,length(v));
-elseif paratype==4 % N
+elseif paratype==4 || paratype==15 % N
     n=f.Parametrisation.Geometry.N{imodelpoint};
     t=zeros(1,length(n));
     v=zeros(1,length(n));
-elseif paratype==5 % TV
+elseif paratype==5 || paratype==16 % TV
     t=f.Parametrisation.Geometry.T{imodelpoint};
     v=f.Parametrisation.Geometry.V{imodelpoint};
     n=zeros(1,length(t));
-elseif paratype==6 % TN
+elseif paratype==6 || paratype==17 % TN
     t=f.Parametrisation.Geometry.T{imodelpoint};
     n=f.Parametrisation.Geometry.N{imodelpoint};
     v=zeros(1,length(t));
-elseif paratype==7 % VN
+elseif paratype==7 || paratype==18 % VN
     v=f.Parametrisation.Geometry.V{imodelpoint};
     n=f.Parametrisation.Geometry.N{imodelpoint};
     t=zeros(1,length(v));
-elseif paratype==8 % TVN
+elseif paratype==8 || paratype==19 % TVN
     t=f.Parametrisation.Geometry.T{imodelpoint};
     v=f.Parametrisation.Geometry.V{imodelpoint};
     n=f.Parametrisation.Geometry.N{imodelpoint};

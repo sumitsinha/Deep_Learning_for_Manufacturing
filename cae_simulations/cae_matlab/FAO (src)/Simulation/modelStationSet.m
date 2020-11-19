@@ -41,8 +41,11 @@ if isfield(data.Input,'PinLayout')
                      [f, ~]=retrieveStructure(data, 'Hole', i);
                      [flagf, ~]=checkInputStatus(f, parID, 'Hole');
                      if flagf
-                        flag=true;
-                        break
+                         [~, flagpass]=checkMasterStatus(data, f);
+                         if flagpass
+                             flag=true;
+                             break
+                         end
                      end
                  end
             end
@@ -62,8 +65,11 @@ if isfield(data.Input,'PinLayout')
                      [f, ~]=retrieveStructure(data, 'Slot', i);
                      [flagf, ~]=checkInputStatus(f, parID, 'Slot');
                      if flagf
-                        flag=true;
-                        break
+                         [~, flagpass]=checkMasterStatus(data, f);
+                         if flagpass
+                             flag=true;
+                             break
+                         end
                      end
                  end
             end
@@ -83,8 +89,11 @@ if isfield(data.Input, 'Locator')
                      [f, ~]=retrieveStructure(data, 'NcBlock', i);
                      [flagf, ~]=checkInputStatus(f, parID, 'NcBlock');
                      if flagf
-                        flag=true;
-                        break
+                         [~, flagpass]=checkMasterStatus(data, f);
+                         if flagpass
+                             flag=true;
+                             break
+                         end
                      end
                  end
             end
@@ -104,8 +113,11 @@ if isfield(data.Input, 'Locator')
                      [f, ~]=retrieveStructure(data, 'ClampS', i);
                      [flagf, ~]=checkInputStatus(f, parID, 'ClampS');
                      if flagf
-                        flag=true;
-                        break
+                         [~, flagpass]=checkMasterStatus(data, f);
+                         if flagpass
+                             flag=true;
+                             break
+                         end
                      end
                  end
             end
@@ -125,8 +137,12 @@ if isfield(data.Input, 'Locator')
                      [f, ~]=retrieveStructure(data, 'ClampM', i);
                      [flagf, ~]=checkInputStatus(f, parID, 'ClampM');
                      if flagf
-                        flag=true;
-                        break
+                         [~, flagpassM]=checkMasterStatus(data, f);
+                         [~, flagpassS]=checkSlaveStatus(data, f);
+                         if flagpassM && flagpassS
+                             flag=true;
+                             break
+                         end
                      end
                  end
             end
@@ -146,8 +162,11 @@ if isfield(data.Input, 'CustomConstraint')
                      [f, ~]=retrieveStructure(data, 'CustomConstraint', i);
                      [flagf, ~]=checkInputStatus(f, parID, 'CustomConstraint');
                      if flagf
-                        flag=true;
-                        break
+                         [~, flagpass]=checkMasterStatus(data, f);
+                         if flagpass
+                             flag=true;
+                             break
+                         end
                      end
                  end
              end
@@ -166,8 +185,12 @@ if isfield(data.Input, 'Stitch')
                  [f, ~]=retrieveStructure(data, 'Stitch', i);
                  [flagf, ~]=checkInputStatus(f, parID, 'Stitch');
                  if flagf
-                    flag=true;
-                    break
+                     [~, flagpassM]=checkMasterStatus(data, f);
+                     [~, flagpassS]=checkSlaveStatus(data, f);
+                     if flagpassM && flagpassS
+                         flag=true;
+                         break
+                     end
                  end
              end
         end
@@ -185,8 +208,12 @@ if isfield(data.Input, 'Contact')
                  [f, ~]=retrieveStructure(data, 'Contact', i);
                  [flagf, ~]=checkInputStatus(f, parID, 'Contact');
                  if flagf
-                    flag=true;
-                    break
+                     [~, flagpassM]=checkMasterStatus(data, f);
+                     [~, flagpassS]=checkSlaveStatus(data, f);
+                     if flagpassM && flagpassS
+                         flag=true;
+                         break
+                     end
                  end
              end
         end

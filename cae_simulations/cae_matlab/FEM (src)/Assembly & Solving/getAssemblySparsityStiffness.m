@@ -1,5 +1,5 @@
 % Compute assembly sparsity of stiffness matrix
-function [irow, icol, Xnz, nTot, nTot]=getAssemblySparsityStiffness(fem)
+function [irow, icol, Xnz, Fmod]=getAssemblySparsityStiffness(fem)
 %
 % It computes the assembly sparsity with conditioning (if any constraint available). The
 % assembly sparsity has the following properties:
@@ -22,7 +22,7 @@ function [irow, icol, Xnz, nTot, nTot]=getAssemblySparsityStiffness(fem)
 % * irow: row index of non zero entries (nx1) - integer
 % * icol: row index of non zero entries (nx1) - integer
 % * Xnz: vector of non zero entries (nx1) - double
-% * nTot: no. of non zero entries - integer
+% * Fmod: modified load vector - double
 %
 % compile: getAssemblySparsityStiffness.cpp -largeArrayDims
 % Note: use "mex -g" to run in debug mode

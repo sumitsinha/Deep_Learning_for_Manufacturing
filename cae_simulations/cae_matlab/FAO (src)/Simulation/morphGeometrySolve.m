@@ -1,6 +1,9 @@
 % solve morphing mesh
 function [D, flag]=morphGeometrySolve(data, idpart)
 
+% NOTICE: this function is only compatible with
+        % ellipsoid (other domain will be made available soon)
+        
 % INPUT
 % data: data structure
 % idpart: part ID

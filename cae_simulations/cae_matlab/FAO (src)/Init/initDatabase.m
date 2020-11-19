@@ -27,4 +27,3 @@ database.Model.Setting.Repair.SearchDist=0.5;
 
 % SOLUTION
 database.Assembly=initAssemblyDatabase();
-

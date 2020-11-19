@@ -35,7 +35,7 @@ The published work can be found below:
 
 * [**3D convolutional neural networks to estimate assembly process parameters using 3D point-clouds**](https://www.researchgate.net/publication/333942071_3D_convolutional_neural_networks_to_estimate_assembly_process_parameters_using_3D_point-clouds)
 
-* [**Deep learning enhanced digital twin for closed loop quality control**](https://www.sciencedirect.com/science/article/abs/pii/S0007850620301323)
+* [**Deep learning enhanced digital twin for closed loop in-process quality improvement**](https://www.sciencedirect.com/science/article/abs/pii/S0007850620301323)
 
 *  **Object Shape Error Response using Bayesian 3D Convolutional Neural Network for Assembly Systems with Compliant Parts (to appear online)**
 
@@ -62,6 +62,7 @@ The complete documentation and other ongoing research can be found here: [**Docu
 5.  [**Multi-Physics Manufacturing System Simulations**](https://github.com/sumitsinha/Deep_Learning_for_Manufacturing/tree/master/cae_simulations/cae_matlab) to generate custom datasets for various fault scenarios using Variation Response Method (VRM) kernel
 6.  [**Uncertainty guided continual learning**](https://github.com/sumitsinha/Deep_Learning_for_Manufacturing/tree/master/continual_learning) to enable life long/incremental training for multiple case studies
 7.  [**Exploratory notebooks**](https://github.com/sumitsinha/Deep_Learning_for_Manufacturing/tree/master/assembly_eda_studies) for various case studies
+8. [**3D Gradient-weighted Class Activation Maps**](https://github.com/sumitsinha/Deep_Learning_for_Manufacturing/blob/master/core/u_net_model_deploy_multi_output.py) for interpretability of deep learning models 
 8.  [**Datasets for Industrial multi-station case studies**](https://github.com/sumitsinha/Deep_Learning_for_Manufacturing/tree/master/pre_trained_models) for training and benchmarking deep learning models 
 
 
@@ -209,6 +210,11 @@ For scaling to multi-station systems consisting of both categorical and continuo
 
 ## Verification and Validation
 Details of verification and validation of the model on an actual system can be found here: [**Real System Implementation**](https://sumitsinha.github.io/Deep_Learning_for_Manufacturing/html/real_system_implementation.html)
+
+## Benchmarking
+Benchmarking of the model is done against various deep learning and machine learning approaches to highlight superiority.
+
+![OSER Benchmarking](https://github.com/sumitsinha/Deep_Learning_for_Manufacturing/blob/master/resources/benchmarking/benchmarking.png)
 
 ##### Please cite work as:
 

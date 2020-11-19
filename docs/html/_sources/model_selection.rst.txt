@@ -1,0 +1,19 @@
+Model Architecture Selection
+========================================
+
+Hyperparameter optimization for the proposed architecture is done using `kerastuner <https://www.tensorflow.org/tutorials/keras/keras_tuner>`_. It provides capability to optimize and select different architectures depending on the application considered. The results for hyperparameter optimizations are shown below.
+
+----------------
+
+.. figure:: hp_cnn.png
+   :align:   center
+
+   *Fig 1: Bayesian 3D CNN Hyperparameter Optimization*
+
+
+----------------
+
+.. figure:: hp_unet.png
+   :align:   center
+
+   *Fig 1: Bayesian 3D U-Net Optimization** 

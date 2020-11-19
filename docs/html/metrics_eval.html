@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Model Evaluation &mdash; Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</title>
+  <title>Model Evaluation &mdash; Bayesian Deep Learning For Manufacturing (dlmfg) 2.0.0 documentation</title>
   
 
   
@@ -50,7 +50,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> Deep Learning For Manufacturing (dlmfg)
+            <a href="index.html" class="icon icon-home"> Bayesian Deep Learning For Manufacturing (dlmfg)
           
 
           
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                0.0.1
+                2.0.0
               </div>
             
           
@@ -103,6 +103,7 @@
 <li class="toctree-l1"><a class="reference internal" href="active_learning.html">Active Learning/Adaptive Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="viz.html">Visualization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="case_study_halo.html">Case Study: Positioning and Clamping Variations for Halo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="case_study_inner_rf.html">Case Study: Door Inner and Hinge Reinforcement Multi-Stage Assembly</a></li>
 <li class="toctree-l1"><a class="reference internal" href="refrences.html">Research and References</a></li>
 </ul>
 
@@ -118,7 +119,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">Deep Learning For Manufacturing (dlmfg)</a>
+          <a href="index.html">Bayesian Deep Learning For Manufacturing (dlmfg)</a>
         
       </nav>
 
@@ -188,14 +189,68 @@
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>predicted_y</strong> – predicted values for the process parameters</p></li>
 <li><p><strong>predicted_y</strong> – actual values for the process parameters</p></li>
-<li><p><strong>logs_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – Logs path to save the evaluation metrics</p></li>
+<li><p><strong>logs_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – Logs path to save the evaluation metrics</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>dictionary of all metrics for each KCC</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)">dict</a></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dataframe of all metrics for each KCC</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.dataframe</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="dlmfg.core.metrics_eval.MetricsEval.metrics_eval_classification">
+<code class="sig-name descname">metrics_eval_classification</code><span class="sig-paren">(</span><em class="sig-param">y_pred</em>, <em class="sig-param">y_true</em>, <em class="sig-param">logs_path</em>, <em class="sig-param">run_id=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dlmfg/core/metrics_eval.html#MetricsEval.metrics_eval_classification"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dlmfg.core.metrics_eval.MetricsEval.metrics_eval_classification" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get predicted and actual value for all KCCs and return regression metrics namely: Mean Absolute Error, Mean Squared Error, Root Mean Squared Error, R-Squared Value</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>predicted_y</strong> – predicted values for the process parameters</p></li>
+<li><p><strong>predicted_y</strong> – actual values for the process parameters</p></li>
+<li><p><strong>logs_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – Logs path to save the evaluation metrics</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dictionary of all metrics for each KCC</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)">dict</a></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dataframe of all metrics for each KCC</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.dataframe</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="dlmfg.core.metrics_eval.MetricsEval.metrics_eval_cop">
+<code class="sig-name descname">metrics_eval_cop</code><span class="sig-paren">(</span><em class="sig-param">predicted_y</em>, <em class="sig-param">test_y</em>, <em class="sig-param">logs_path</em>, <em class="sig-param">run_id=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dlmfg/core/metrics_eval.html#MetricsEval.metrics_eval_cop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dlmfg.core.metrics_eval.MetricsEval.metrics_eval_cop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get predicted and actual value for all KCCs and return regression metrics namely: Mean Absolute Error, Mean Squared Error, Root Mean Squared Error, R-Squared Value</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>predicted_y</strong> – predicted values for the process parameters</p></li>
+<li><p><strong>predicted_y</strong> – actual values for the process parameters</p></li>
+<li><p><strong>logs_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – Logs path to save the evaluation metrics</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dictionary of all metrics for each KCC</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)">dict</a></p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>dataframe of all metrics for each KCC</p>

@@ -1,0 +1,24 @@
+Model Architecture
+===========================================================
+
+* Bayesian 3D CNN architecture
+
+------------------------------------
+
+Enables estimation of real-valued process parameters for Root Cause (RC) isolation
+
+.. figure:: 3d_cnn.png
+   :align:   center
+
+   *Fig 1: Bayesian 3D CNN for Object Shape Error Response (OSER) for single-station assembly systems*
+
+* Bayesian 3D U-Net architecture
+
+------------------------------------
+
+Enables estimation of heterogeneous set of real-valued and categorical process parameters and estimates upstream shape error for Root Cause (RC) isolation. 
+
+.. figure:: U_net.png
+   :align:   center
+
+   *Fig 1: Bayesian 3D U-Net for Object Shape Error Response for multi-station assembly systems (OSER-MAS)*

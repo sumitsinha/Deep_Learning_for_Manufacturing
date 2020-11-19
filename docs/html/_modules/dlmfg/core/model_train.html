@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>dlmfg.core.model_train &mdash; Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</title>
+  <title>dlmfg.core.model_train &mdash; Bayesian Deep Learning For Manufacturing (dlmfg) 2.0.0 documentation</title>
   
 
   
@@ -48,7 +48,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home"> Deep Learning For Manufacturing (dlmfg)
+            <a href="../../../index.html" class="icon icon-home"> Bayesian Deep Learning For Manufacturing (dlmfg)
           
 
           
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                0.0.1
+                2.0.0
               </div>
             
           
@@ -87,14 +87,18 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../real_system_implementation.html">Real System Implementation (3D Optical Scanner: WLS400A)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../lib_config.html">Library Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../data_description.html">Data Description &amp; Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../model_arch.html">Model Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../drl.html">Deep Reinforcement Learning for Control and Correction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../model_selection.html">Model Architecture Selection</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../classes.html">Class Structure: Objects and Methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../kmc.html">Key Measurement Characteristics (KMCs)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../utilities.html">Utilities</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../transfer_learning.html">Transfer Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../transfer_learning.html">Continual and Transfer Learning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../active_learning.html">Active Learning/Adaptive Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../viz.html">Visualization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../case_study_halo.html">Case Study: Positioning and Clamping Variations for Halo</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../case_study_inner_rf.html">Case Study: Door Inner and Hinge Reinforcement Multi-Stage Assembly</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cross_member.html">Case Study: Cross Member Multi-Station Assembly</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../refrences.html">Research and References</a></li>
 </ul>
 
@@ -110,7 +114,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../../index.html">Deep Learning For Manufacturing (dlmfg)</a>
+          <a href="../../../index.html">Bayesian Deep Learning For Manufacturing (dlmfg)</a>
         
       </nav>
 
@@ -168,6 +172,9 @@
 <span class="n">current_path</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
 <span class="n">parentdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">current_path</span><span class="p">)</span>
 
+<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;CUDA_VISIBLE_DEVICES&quot;</span><span class="p">]</span><span class="o">=</span><span class="s2">&quot;0&quot;</span> <span class="c1"># Nvidia Quadro GV100</span>
+<span class="c1">#os.environ[&quot;CUDA_VISIBLE_DEVICES&quot;]=&quot;1&quot; # Nvidia Quadro M2000</span>
+
 <span class="c1">#Adding Path to various Modules</span>
 <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;../core&quot;</span><span class="p">)</span>
 <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;../visualization&quot;</span><span class="p">)</span>
@@ -184,8 +191,8 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
-<span class="kn">from</span> <span class="nn">keras</span> <span class="kn">import</span> <span class="n">backend</span> <span class="k">as</span> <span class="n">K</span>
-<span class="n">K</span><span class="o">.</span><span class="n">clear_session</span><span class="p">()</span>
+<span class="c1">#from keras import backend as K</span>
+<span class="c1">#K.clear_session()</span>
 
 <span class="c1">#Importing Config files</span>
 <span class="kn">import</span> <span class="nn">assembly_config</span> <span class="k">as</span> <span class="nn">config</span>
@@ -199,7 +206,7 @@
 <span class="kn">from</span> <span class="nn">core_model</span> <span class="kn">import</span> <span class="n">DLModel</span>
 <span class="kn">from</span> <span class="nn">training_viz</span> <span class="kn">import</span> <span class="n">TrainViz</span>
 <span class="kn">from</span> <span class="nn">metrics_eval</span> <span class="kn">import</span> <span class="n">MetricsEval</span>
-<span class="kn">from</span> <span class="nn">keras_lr_multiplier</span> <span class="kn">import</span> <span class="n">LRMultiplier</span>
+<span class="c1">#from keras_lr_multiplier import LRMultiplier</span>
 
 <div class="viewcode-block" id="TrainModel"><a class="viewcode-back" href="../../../model_train.html#dlmfg.core.model_train.TrainModel">[docs]</a><span class="k">class</span> <span class="nc">TrainModel</span><span class="p">:</span>
 	<span class="sd">&quot;&quot;&quot;Train Model Class, the initialization parameters are parsed from modelconfig_train.py file</span>
@@ -248,12 +255,14 @@
 <span class="sd">			:param run_id: Run id index used in data study to conduct multiple training runs with different dataset sizes, defaults to 0</span>
 <span class="sd">			:type run_id: int			</span>
 <span class="sd">		&quot;&quot;&quot;</span>			
+		<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
 		<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
-		<span class="kn">from</span> <span class="nn">keras.models</span> <span class="kn">import</span> <span class="n">load_model</span>
-		<span class="kn">from</span> <span class="nn">keras.callbacks</span> <span class="kn">import</span> <span class="n">ModelCheckpoint</span>
-		<span class="kn">from</span> <span class="nn">keras.callbacks</span> <span class="kn">import</span> <span class="n">TensorBoard</span>
+		<span class="kn">from</span> <span class="nn">tensorflow.keras.models</span> <span class="kn">import</span> <span class="n">load_model</span>
+		<span class="kn">from</span> <span class="nn">tensorflow.keras.callbacks</span> <span class="kn">import</span> <span class="n">ModelCheckpoint</span>
+		<span class="kn">from</span> <span class="nn">tensorflow.keras.callbacks</span> <span class="kn">import</span> <span class="n">TensorBoard</span>
 
 		<span class="n">model_file_path</span><span class="o">=</span><span class="n">model_path</span><span class="o">+</span><span class="s1">&#39;/trained_model_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">run_id</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;.h5&#39;</span>
+		
 		<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X_in</span><span class="p">,</span> <span class="n">Y_out</span><span class="p">,</span> <span class="n">test_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">split_ratio</span><span class="p">)</span>
 		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Data Split Completed&quot;</span><span class="p">)</span>
 		
@@ -267,7 +276,7 @@
 			<span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="n">checkpointer</span><span class="p">,</span><span class="n">tensorboard</span><span class="p">]</span>
 		
 		<span class="n">tensorboard</span> <span class="o">=</span> <span class="n">TensorBoard</span><span class="p">(</span><span class="n">log_dir</span><span class="o">=</span><span class="n">logs_path</span><span class="p">,</span><span class="n">histogram_freq</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">write_graph</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">write_images</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-		<span class="n">history</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">validation_data</span><span class="o">=</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span><span class="n">y_test</span><span class="p">),</span> <span class="n">epochs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">epochs</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span><span class="n">callbacks</span><span class="o">=</span><span class="n">callbacks</span><span class="p">)</span>
+		<span class="n">history</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y_train</span><span class="p">,</span> <span class="n">validation_data</span><span class="o">=</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span><span class="n">y_test</span><span class="p">),</span> <span class="n">epochs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">epochs</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span><span class="n">callbacks</span><span class="o">=</span><span class="n">callbacks</span><span class="p">)</span>
 		
 		<span class="n">trainviz</span><span class="o">=</span><span class="n">TrainViz</span><span class="p">()</span>
 		<span class="n">trainviz</span><span class="o">.</span><span class="n">training_plot</span><span class="p">(</span><span class="n">history</span><span class="p">,</span><span class="n">plots_path</span><span class="p">,</span><span class="n">run_id</span><span class="p">)</span>
@@ -356,12 +365,13 @@
 	
 	<span class="n">dl_model</span><span class="o">=</span><span class="n">DLModel</span><span class="p">(</span><span class="n">model_type</span><span class="p">,</span><span class="n">output_dimension</span><span class="p">,</span><span class="n">optimizer</span><span class="p">,</span><span class="n">loss_func</span><span class="p">,</span><span class="n">regularizer_coeff</span><span class="p">,</span><span class="n">output_type</span><span class="p">)</span>
 	<span class="n">model</span><span class="o">=</span><span class="n">dl_model</span><span class="o">.</span><span class="n">cnn_model_3d</span><span class="p">(</span><span class="n">voxel_dim</span><span class="p">,</span><span class="n">voxel_channels</span><span class="p">)</span>
-
+	<span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+	<span class="c1">#sys.exit()</span>
 	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Training 3D CNN model&#39;</span><span class="p">)</span>
 	
 	<span class="k">if</span><span class="p">(</span><span class="n">activate_tensorboard</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span>
 		<span class="n">tensorboard_str</span><span class="o">=</span><span class="s1">&#39;tensorboard&#39;</span> <span class="o">+</span> <span class="s1">&#39;--logdir &#39;</span><span class="o">+</span><span class="n">logs_path</span>
-		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Vizavlize at Tensorboard using &#39;</span><span class="p">,</span> <span class="n">tensorboard_str</span><span class="p">)</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Visualize at Tensorboard using &#39;</span><span class="p">,</span> <span class="n">tensorboard_str</span><span class="p">)</span>
 	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Importing and Preprocessing Cloud-of-Point Data&#39;</span><span class="p">)</span>
 	
 	<span class="n">dataset</span><span class="o">=</span><span class="p">[]</span>

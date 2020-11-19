@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Data Processing (Measurement System) &mdash; Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</title>
+  <title>Data Processing (Measurement System) &mdash; Bayesian Deep Learning For Manufacturing (dlmfg) 2.0.0 documentation</title>
   
 
   
@@ -50,7 +50,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> Deep Learning For Manufacturing (dlmfg)
+            <a href="index.html" class="icon icon-home"> Bayesian Deep Learning For Manufacturing (dlmfg)
           
 
           
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                0.0.1
+                2.0.0
               </div>
             
           
@@ -101,6 +101,7 @@
 <li class="toctree-l1"><a class="reference internal" href="active_learning.html">Active Learning/Adaptive Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="viz.html">Visualization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="case_study_halo.html">Case Study: Positioning and Clamping Variations for Halo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="case_study_inner_rf.html">Case Study: Door Inner and Hinge Reinforcement Multi-Stage Assembly</a></li>
 <li class="toctree-l1"><a class="reference internal" href="refrences.html">Research and References</a></li>
 </ul>
 
@@ -116,7 +117,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">Deep Learning For Manufacturing (dlmfg)</a>
+          <a href="index.html">Bayesian Deep Learning For Manufacturing (dlmfg)</a>
         
       </nav>
 
@@ -183,8 +184,8 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>measurement_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – file name of the tab delimited file given as output from CoreviewAM</p></li>
-<li><p><strong>voxel_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – The number of voxel channels that can be extracted from the the measurement file</p></li>
+<li><p><strong>measurement_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – file name of the tab delimited file given as output from CoreviewAM</p></li>
+<li><p><strong>voxel_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – The number of voxel channels that can be extracted from the the measurement file</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -219,7 +220,7 @@
 <dd><p>Import measurement file on which the model is to be deployed</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>measurement_file_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – file name of the tab delimited file given as output from CoreviewAM</p>
+<dd class="field-odd"><p><strong>measurement_file_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – file name of the tab delimited file given as output from CoreviewAM</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>numpy array of the file after eliminating meta data information</p>
@@ -239,9 +240,9 @@
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>y_dev_data_filtered</strong> (<em>numpy.array</em><em> (</em><em>required</em><em>)</em>) – numpy array of the node deviations</p></li>
 <li><p><strong>voxel_point_index</strong> (<em>numpy.array</em><em> [</em><em>nodes*3</em><em>] </em><em>(</em><em>required</em><em>)</em>) – mapping index</p></li>
-<li><p><strong>point_dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – the number of nodes</p></li>
+<li><p><strong>point_dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – the number of nodes</p></li>
 <li><p><strong>point_dim</strong> – the number of nodes</p></li>
-<li><p><strong>voxel_dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – The resolution of the voxel</p></li>
+<li><p><strong>voxel_dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – The resolution of the voxel</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>

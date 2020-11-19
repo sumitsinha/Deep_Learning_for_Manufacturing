@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>dlmfg.kmc_gen.kmc_model &mdash; Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</title>
+  <title>dlmfg.kmc_gen.kmc_model &mdash; Bayesian Deep Learning For Manufacturing (dlmfg) 2.0.0 documentation</title>
   
 
   
@@ -48,7 +48,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home"> Deep Learning For Manufacturing (dlmfg)
+            <a href="../../../index.html" class="icon icon-home"> Bayesian Deep Learning For Manufacturing (dlmfg)
           
 
           
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                0.0.1
+                2.0.0
               </div>
             
           
@@ -87,14 +87,18 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../real_system_implementation.html">Real System Implementation (3D Optical Scanner: WLS400A)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../lib_config.html">Library Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../data_description.html">Data Description &amp; Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../model_arch.html">Model Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../drl.html">Deep Reinforcement Learning for Control and Correction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../model_selection.html">Model Architecture Selection</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../classes.html">Class Structure: Objects and Methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../kmc.html">Key Measurement Characteristics (KMCs)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../utilities.html">Utilities</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../transfer_learning.html">Transfer Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../transfer_learning.html">Continual and Transfer Learning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../active_learning.html">Active Learning/Adaptive Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../viz.html">Visualization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../case_study_halo.html">Case Study: Positioning and Clamping Variations for Halo</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../case_study_inner_rf.html">Case Study: Door Inner and Hinge Reinforcement Multi-Stage Assembly</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cross_member.html">Case Study: Cross Member Multi-Station Assembly</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../refrences.html">Research and References</a></li>
 </ul>
 
@@ -110,7 +114,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../../index.html">Deep Learning For Manufacturing (dlmfg)</a>
+          <a href="../../../index.html">Bayesian Deep Learning For Manufacturing (dlmfg)</a>
         
       </nav>
 
@@ -237,10 +241,10 @@
 	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;KMC Generation for selected :&#39;</span><span class="p">,</span> <span class="n">kcc_name</span><span class="p">)</span>
 
 	<span class="k">if</span><span class="p">(</span><span class="n">tree_based_model</span><span class="o">==</span><span class="s1">&#39;rf&#39;</span><span class="p">):</span>
-		<span class="n">model</span><span class="o">=</span><span class="n">RandomForestRegressor</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span><span class="n">max_depth</span><span class="o">=</span><span class="mi">700</span><span class="p">,</span><span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span><span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+		<span class="n">model</span><span class="o">=</span><span class="n">RandomForestRegressor</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span><span class="n">max_depth</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span><span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span><span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 	
 	<span class="k">if</span><span class="p">(</span><span class="n">tree_based_model</span><span class="o">==</span><span class="s1">&#39;xgb&#39;</span><span class="p">):</span>
-		<span class="n">model</span><span class="o">=</span><span class="n">xgb</span><span class="o">.</span><span class="n">XGBRegressor</span><span class="p">(</span><span class="n">colsample_bytree</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span><span class="n">gamma</span><span class="o">=</span><span class="mf">0.045</span><span class="p">,</span><span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.07</span><span class="p">,</span><span class="n">max_depth</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span><span class="n">min_child_weight</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span><span class="n">reg_alpha</span><span class="o">=</span><span class="mf">0.65</span><span class="p">,</span><span class="n">reg_lambda</span><span class="o">=</span><span class="mf">0.45</span><span class="p">,</span><span class="n">subsample</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span><span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span><span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+		<span class="n">model</span><span class="o">=</span><span class="n">xgb</span><span class="o">.</span><span class="n">XGBRegressor</span><span class="p">(</span><span class="n">colsample_bytree</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span><span class="n">gamma</span><span class="o">=</span><span class="mf">0.045</span><span class="p">,</span><span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.07</span><span class="p">,</span><span class="n">max_depth</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span><span class="n">min_child_weight</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span><span class="n">reg_alpha</span><span class="o">=</span><span class="mf">0.65</span><span class="p">,</span><span class="n">reg_lambda</span><span class="o">=</span><span class="mf">0.45</span><span class="p">,</span><span class="n">subsample</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span><span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span><span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 	
 	<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train</span><span class="p">,</span><span class="n">target</span><span class="p">)</span>
 	<span class="c1">#%%</span>
@@ -265,7 +269,7 @@
 	
 	<span class="n">node_IDs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">threshold_data</span><span class="p">,</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;node_id&#39;</span><span class="p">,</span><span class="s1">&#39;Feature_Importance&#39;</span><span class="p">])</span>
 	<span class="n">node_IDs</span> <span class="o">=</span> <span class="n">node_IDs</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;Feature_Importance&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-	<span class="n">filtered_nodeIDs</span><span class="o">=</span><span class="n">node_IDs</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">node_IDs</span><span class="p">[</span><span class="s1">&#39;Feature_Importance&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span>
+	<span class="n">filtered_nodeIDs</span><span class="o">=</span><span class="n">node_IDs</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">node_IDs</span><span class="p">[</span><span class="s1">&#39;Feature_Importance&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mf">0.01</span><span class="p">]</span>
 	
 	<span class="n">filtered_nodeIDs_x</span><span class="o">=</span><span class="n">filtered_nodeIDs</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">filtered_nodeIDs</span><span class="p">[</span><span class="s1">&#39;node_id&#39;</span><span class="p">]</span><span class="o">&lt;=</span><span class="n">point_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="mi">3</span><span class="p">]</span>
 	<span class="n">filtered_nodeIDs_y</span><span class="o">=</span><span class="n">filtered_nodeIDs</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">filtered_nodeIDs</span><span class="p">[</span><span class="s1">&#39;node_id&#39;</span><span class="p">]</span><span class="o">&gt;</span><span class="n">point_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">filtered_nodeIDs</span><span class="p">[</span><span class="s1">&#39;node_id&#39;</span><span class="p">]</span><span class="o">&lt;=</span><span class="n">point_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">2</span><span class="o">/</span><span class="mi">3</span><span class="p">)]</span>

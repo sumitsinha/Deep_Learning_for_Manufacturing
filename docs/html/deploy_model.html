@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Model Deployment &mdash; Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</title>
+  <title>Model Deployment &mdash; Bayesian Deep Learning For Manufacturing (dlmfg) 2.0.0 documentation</title>
   
 
   
@@ -50,7 +50,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> Deep Learning For Manufacturing (dlmfg)
+            <a href="index.html" class="icon icon-home"> Bayesian Deep Learning For Manufacturing (dlmfg)
           
 
           
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                0.0.1
+                2.0.0
               </div>
             
           
@@ -119,7 +119,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">Deep Learning For Manufacturing (dlmfg)</a>
+          <a href="index.html">Bayesian Deep Learning For Manufacturing (dlmfg)</a>
         
       </nav>
 
@@ -184,21 +184,21 @@
 <dd><p>get_model method is is used to retrieve the trained model from a given path</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>model_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – Path to the trained model, ideally it should be same as the train model path output</p>
+<dd class="field-odd"><p><strong>model_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – Path to the trained model, ideally it should be same as the train model path output</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="dlmfg.core.model_deployment.DeployModel.model_inference">
-<code class="sig-name descname">model_inference</code><span class="sig-paren">(</span><em class="sig-param">inference_data</em>, <em class="sig-param">inference_model</em>, <em class="sig-param">print_result=1</em>, <em class="sig-param">plot_result=1</em>, <em class="sig-param">append_result=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dlmfg/core/model_deployment.html#DeployModel.model_inference"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dlmfg.core.model_deployment.DeployModel.model_inference" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">model_inference</code><span class="sig-paren">(</span><em class="sig-param">inference_data</em>, <em class="sig-param">inference_model</em>, <em class="sig-param">deploy_path</em>, <em class="sig-param">print_result=0</em>, <em class="sig-param">plot_result=0</em>, <em class="sig-param">get_cam_data=0</em>, <em class="sig-param">append_result=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dlmfg/core/model_deployment.html#DeployModel.model_inference"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dlmfg.core.model_deployment.DeployModel.model_inference" title="Permalink to this definition">¶</a></dt>
 <dd><p>model_inference method is used to infer from unknown sample(s) using the trained model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>inference_data</strong> (<em>numpy.array</em><em> [</em><em>samples*voxel_dim*voxel_dim*voxel_dim*deviation_channels</em><em>] </em><em>(</em><em>required</em><em>) </em><em>(</em><em>required</em><em>)</em>) – Unknown dataset having same structure as the train dataset</p></li>
 <li><p><strong>inference_model</strong> (<em>keras.model</em><em> (</em><em>required</em><em>)</em>) – Trained model</p></li>
-<li><p><strong>print_result</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – Flag to indicate if the result needs to be printed, 0 by default, change to 1 in case the results need to be printed on the console</p></li>
+<li><p><strong>print_result</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – Flag to indicate if the result needs to be printed, 0 by default, change to 1 in case the results need to be printed on the console</p></li>
 </ul>
 </dd>
 </dl>

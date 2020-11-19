@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>dlmfg.core.data_import &mdash; Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</title>
+  <title>dlmfg.core.data_import &mdash; Bayesian Deep Learning For Manufacturing (dlmfg) 2.0.0 documentation</title>
   
 
   
@@ -48,7 +48,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home"> Deep Learning For Manufacturing (dlmfg)
+            <a href="../../../index.html" class="icon icon-home"> Bayesian Deep Learning For Manufacturing (dlmfg)
           
 
           
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                0.0.1
+                2.0.0
               </div>
             
           
@@ -87,14 +87,18 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../real_system_implementation.html">Real System Implementation (3D Optical Scanner: WLS400A)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../lib_config.html">Library Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../data_description.html">Data Description &amp; Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../model_arch.html">Model Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../drl.html">Deep Reinforcement Learning for Control and Correction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../model_selection.html">Model Architecture Selection</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../classes.html">Class Structure: Objects and Methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../kmc.html">Key Measurement Characteristics (KMCs)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../utilities.html">Utilities</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../transfer_learning.html">Transfer Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../transfer_learning.html">Continual and Transfer Learning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../active_learning.html">Active Learning/Adaptive Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../viz.html">Visualization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../case_study_halo.html">Case Study: Positioning and Clamping Variations for Halo</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../case_study_inner_rf.html">Case Study: Door Inner and Hinge Reinforcement Multi-Stage Assembly</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cross_member.html">Case Study: Cross Member Multi-Station Assembly</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../refrences.html">Research and References</a></li>
 </ul>
 
@@ -110,7 +114,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../../index.html">Deep Learning For Manufacturing (dlmfg)</a>
+          <a href="../../../index.html">Bayesian Deep Learning For Manufacturing (dlmfg)</a>
         
       </nav>
 
@@ -164,6 +168,7 @@
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="c1">#from numba import cuda</span>
 
 <div class="viewcode-block" id="GetTrainData"><a class="viewcode-back" href="../../../sim_data_process.html#dlmfg.core.data_import.GetTrainData">[docs]</a><span class="k">class</span> <span class="nc">GetTrainData</span><span class="p">():</span>
 	<span class="sd">&quot;&quot;&quot;GetTrainData Class (No initialization parameter)</span>
@@ -207,6 +212,7 @@
 
 		<span class="k">return</span> <span class="n">voxel_point_index</span></div>
 
+	<span class="c1">#@cuda.jit	</span>
 <div class="viewcode-block" id="GetTrainData.data_convert_voxel_mc"><a class="viewcode-back" href="../../../sim_data_process.html#dlmfg.core.data_import.GetTrainData.data_convert_voxel_mc">[docs]</a>	<span class="k">def</span> <span class="nf">data_convert_voxel_mc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">vrm_system</span><span class="p">,</span><span class="n">dataset</span><span class="p">,</span><span class="n">point_index</span><span class="p">,</span><span class="n">kcc_data</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;A&#39;</span> <span class="p">:</span> <span class="p">[]})):</span>
 		<span class="sd">&quot;&quot;&quot;data converts the node deviations to voxelized output </span>
 
@@ -267,11 +273,17 @@
 		<span class="c1">#end_index=50000</span>
 		<span class="n">run_length</span><span class="o">=</span><span class="n">end_index</span><span class="o">-</span><span class="n">start_index</span>
 		<span class="n">input_conv_data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">run_length</span><span class="p">,</span><span class="n">voxel_dim</span><span class="p">,</span><span class="n">voxel_dim</span><span class="p">,</span><span class="n">voxel_dim</span><span class="p">,</span><span class="n">dev_channel</span><span class="p">))</span>
-		<span class="n">kcc_dump</span><span class="o">=</span><span class="n">kcc_data</span><span class="o">.</span><span class="n">values</span>
+		<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kcc_data</span><span class="p">,</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+			<span class="n">kcc_dump</span><span class="o">=</span><span class="n">kcc_data</span><span class="o">.</span><span class="n">values</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">kcc_dump</span><span class="o">=</span><span class="n">kcc_data</span>
 		<span class="c1">#kcc_dump=dataset.iloc[start_index:end_index, point_dim:point_dim+kcc_dim]</span>
 		<span class="n">kpi_dump</span><span class="o">=</span><span class="n">dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">start_index</span><span class="p">:</span><span class="n">end_index</span><span class="p">,</span> <span class="n">point_dim</span><span class="p">:</span><span class="n">point_dim</span><span class="o">+</span><span class="n">kpi_dim</span><span class="p">]</span>
 		<span class="n">kpi_dump</span><span class="o">=</span><span class="n">kpi_dump</span><span class="o">.</span><span class="n">values</span>
 		<span class="n">not_convergent</span><span class="o">=</span><span class="mi">0</span>
+		<span class="n">convergent_id</span><span class="o">=</span><span class="p">[]</span>
+		
+
 		<span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">run_length</span><span class="p">)):</span>
 			<span class="n">x_point_data</span><span class="o">=</span><span class="n">dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">index</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="n">point_dim</span><span class="p">]</span>
 			<span class="n">y_point_data</span><span class="o">=</span><span class="n">dataset</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">index</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="n">point_dim</span><span class="p">]</span>
@@ -279,6 +291,9 @@
 			
 			<span class="k">if</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">index</span><span class="p">,</span> <span class="n">point_dim</span><span class="p">]</span><span class="o">==</span><span class="mi">0</span><span class="p">):</span>
 				<span class="n">not_convergent</span><span class="o">=</span><span class="n">not_convergent</span><span class="o">+</span><span class="mi">1</span>
+
+			<span class="k">if</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">index</span><span class="p">,</span> <span class="n">point_dim</span><span class="p">]</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span>
+				<span class="n">convergent_id</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
 
 			<span class="n">dev_data_x</span><span class="o">=</span><span class="n">x_point_data</span><span class="o">.</span><span class="n">values</span>
 			<span class="n">dev_data_y</span><span class="o">=</span><span class="n">y_point_data</span><span class="o">.</span><span class="n">values</span>
@@ -308,6 +323,15 @@
 			<span class="n">input_conv_data</span><span class="p">[</span><span class="n">index</span><span class="p">,:,:,:]</span><span class="o">=</span><span class="n">cop_dev_data</span>
 
 		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Number of not convergent solutions: &quot;</span><span class="p">,</span><span class="n">not_convergent</span><span class="p">)</span>
+		
+		<span class="c1">#input_conv_data	=input_conv_data[convergent_id,:,:,:,:]</span>
+		<span class="c1">#kcc_dump=kcc_dump[convergent_id,:]</span>
+		
+		<span class="n">kpi_dump</span><span class="o">=</span><span class="n">convergent_id</span>
+		
+		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Convergent IDs &quot;</span><span class="p">)</span>
+		<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">kpi_dump</span><span class="p">))</span>
+		
 		<span class="k">return</span> <span class="n">input_conv_data</span><span class="p">,</span> <span class="n">kcc_dump</span><span class="p">,</span><span class="n">kpi_dump</span></div>
 
 	<span class="k">def</span> <span class="nf">data_convert_voxel_sc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">vrm_system</span><span class="p">,</span><span class="n">dataset</span><span class="p">,</span><span class="n">point_index</span><span class="p">):</span>

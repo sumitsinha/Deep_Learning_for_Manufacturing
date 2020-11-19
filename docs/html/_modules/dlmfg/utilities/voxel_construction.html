@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>dlmfg.utilities.voxel_construction &mdash; Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</title>
+  <title>dlmfg.utilities.voxel_construction &mdash; Bayesian Deep Learning For Manufacturing (dlmfg) 2.0.0 documentation</title>
   
 
   
@@ -48,7 +48,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home"> Deep Learning For Manufacturing (dlmfg)
+            <a href="../../../index.html" class="icon icon-home"> Bayesian Deep Learning For Manufacturing (dlmfg)
           
 
           
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                0.0.1
+                2.0.0
               </div>
             
           
@@ -87,14 +87,18 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../real_system_implementation.html">Real System Implementation (3D Optical Scanner: WLS400A)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../lib_config.html">Library Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../data_description.html">Data Description &amp; Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../model_arch.html">Model Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../drl.html">Deep Reinforcement Learning for Control and Correction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../model_selection.html">Model Architecture Selection</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../classes.html">Class Structure: Objects and Methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../kmc.html">Key Measurement Characteristics (KMCs)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../utilities.html">Utilities</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../transfer_learning.html">Transfer Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../transfer_learning.html">Continual and Transfer Learning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../active_learning.html">Active Learning/Adaptive Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../viz.html">Visualization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../case_study_halo.html">Case Study: Positioning and Clamping Variations for Halo</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../case_study_inner_rf.html">Case Study: Door Inner and Hinge Reinforcement Multi-Stage Assembly</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cross_member.html">Case Study: Cross Member Multi-Station Assembly</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../refrences.html">Research and References</a></li>
 </ul>
 
@@ -110,7 +114,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../../index.html">Deep Learning For Manufacturing (dlmfg)</a>
+          <a href="../../../index.html">Bayesian Deep Learning For Manufacturing (dlmfg)</a>
         
       </nav>
 
@@ -337,7 +341,7 @@
 
 	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Visualizing COP&#39;</span><span class="p">)</span>
 	
-	<span class="n">plot_file_name</span><span class="o">=</span><span class="s1">&#39;../resources/nominal_cop_files/part_name&#39;</span><span class="o">+</span><span class="s1">&#39;_nominal_cop.html&#39;</span>
+	<span class="n">plot_file_name</span><span class="o">=</span><span class="s1">&#39;../resources/nominal_cop_files/&#39;</span><span class="o">+</span><span class="n">part_name</span><span class="o">+</span><span class="s1">&#39;_nominal_cop.html&#39;</span>
 	<span class="n">copviz</span><span class="o">=</span><span class="n">CopViz</span><span class="p">(</span><span class="n">nominal_cop</span><span class="p">)</span>
 	<span class="n">copviz</span><span class="o">.</span><span class="n">plot_cop</span><span class="p">(</span><span class="n">plot_file_name</span><span class="p">)</span>
 

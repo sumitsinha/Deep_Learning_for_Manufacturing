@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Index &mdash; Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</title>
+  <title>Index &mdash; Bayesian Deep Learning For Manufacturing (dlmfg) 2.0.0 documentation</title>
   
 
   
@@ -49,7 +49,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> Deep Learning For Manufacturing (dlmfg)
+            <a href="index.html" class="icon icon-home"> Bayesian Deep Learning For Manufacturing (dlmfg)
           
 
           
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                0.0.1
+                2.0.0
               </div>
             
           
@@ -88,14 +88,18 @@
 <li class="toctree-l1"><a class="reference internal" href="real_system_implementation.html">Real System Implementation (3D Optical Scanner: WLS400A)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="lib_config.html">Library Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_description.html">Data Description &amp; Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_arch.html">Model Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="drl.html">Deep Reinforcement Learning for Control and Correction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_selection.html">Model Architecture Selection</a></li>
 <li class="toctree-l1"><a class="reference internal" href="classes.html">Class Structure: Objects and Methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="kmc.html">Key Measurement Characteristics (KMCs)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utilities.html">Utilities</a></li>
-<li class="toctree-l1"><a class="reference internal" href="transfer_learning.html">Transfer Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="transfer_learning.html">Continual and Transfer Learning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="active_learning.html">Active Learning/Adaptive Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="viz.html">Visualization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="case_study_halo.html">Case Study: Positioning and Clamping Variations for Halo</a></li>
 <li class="toctree-l1"><a class="reference internal" href="case_study_inner_rf.html">Case Study: Door Inner and Hinge Reinforcement Multi-Stage Assembly</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cross_member.html">Case Study: Cross Member Multi-Station Assembly</a></li>
 <li class="toctree-l1"><a class="reference internal" href="refrences.html">Research and References</a></li>
 </ul>
 
@@ -111,7 +115,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">Deep Learning For Manufacturing (dlmfg)</a>
+          <a href="index.html">Bayesian Deep Learning For Manufacturing (dlmfg)</a>
         
       </nav>
 
@@ -183,11 +187,11 @@
 <h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="active_learning.html#dlmfg.active_learning.sampling_system.adaptive_sampling">adaptive_sampling (class in dlmfg.active_learning.sampling_system)</a>
+      <li><a href="active_learning.html#dlmfg.active_learning.sampling_system.AdaptiveSampling">AdaptiveSampling (class in dlmfg.active_learning.sampling_system)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="active_learning.html#dlmfg.active_learning.sampling_system.adaptive_sampling.adpative_samples_gen">adpative_samples_gen() (dlmfg.active_learning.sampling_system.adaptive_sampling method)</a>
+      <li><a href="active_learning.html#dlmfg.active_learning.sampling_system.AdaptiveSampling.adpative_samples_gen">adpative_samples_gen() (dlmfg.active_learning.sampling_system.AdaptiveSampling method)</a>
 </li>
       <li><a href="assembly_system.html#dlmfg.core.assembly_system.AssemblySystem">AssemblySystem (class in dlmfg.core.assembly_system)</a>
 </li>
@@ -331,11 +335,11 @@
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="active_learning.html#dlmfg.active_learning.sampling_system.adaptive_sampling.inital_sampling_lhs">inital_sampling_lhs() (dlmfg.active_learning.sampling_system.adaptive_sampling method)</a>
+      <li><a href="active_learning.html#dlmfg.active_learning.sampling_system.AdaptiveSampling.inital_sampling_lhs">inital_sampling_lhs() (dlmfg.active_learning.sampling_system.AdaptiveSampling method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="active_learning.html#dlmfg.active_learning.sampling_system.adaptive_sampling.inital_sampling_uniform_random">inital_sampling_uniform_random() (dlmfg.active_learning.sampling_system.adaptive_sampling method)</a>
+      <li><a href="active_learning.html#dlmfg.active_learning.sampling_system.AdaptiveSampling.inital_sampling_uniform_random">inital_sampling_uniform_random() (dlmfg.active_learning.sampling_system.AdaptiveSampling method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -375,8 +379,12 @@
 </li>
       <li><a href="metrics_eval.html#dlmfg.core.metrics_eval.MetricsEval.metrics_eval_base">metrics_eval_base() (dlmfg.core.metrics_eval.MetricsEval method)</a>
 </li>
+      <li><a href="metrics_eval.html#dlmfg.core.metrics_eval.MetricsEval.metrics_eval_classification">metrics_eval_classification() (dlmfg.core.metrics_eval.MetricsEval method)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="metrics_eval.html#dlmfg.core.metrics_eval.MetricsEval.metrics_eval_cop">metrics_eval_cop() (dlmfg.core.metrics_eval.MetricsEval method)</a>
+</li>
       <li><a href="metrics_eval.html#dlmfg.core.metrics_eval.MetricsEval">MetricsEval (class in dlmfg.core.metrics_eval)</a>
 </li>
       <li><a href="deploy_model.html#dlmfg.core.model_deployment.DeployModel.model_inference">model_inference() (dlmfg.core.model_deployment.DeployModel method)</a>

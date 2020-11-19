@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>dlmfg.active_learning.sampling_system &mdash; Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</title>
+  <title>dlmfg.active_learning.sampling_system &mdash; Bayesian Deep Learning For Manufacturing (dlmfg) 2.0.0 documentation</title>
   
 
   
@@ -48,7 +48,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home"> Deep Learning For Manufacturing (dlmfg)
+            <a href="../../../index.html" class="icon icon-home"> Bayesian Deep Learning For Manufacturing (dlmfg)
           
 
           
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                0.0.1
+                2.0.0
               </div>
             
           
@@ -87,14 +87,18 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../real_system_implementation.html">Real System Implementation (3D Optical Scanner: WLS400A)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../lib_config.html">Library Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../data_description.html">Data Description &amp; Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../model_arch.html">Model Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../drl.html">Deep Reinforcement Learning for Control and Correction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../model_selection.html">Model Architecture Selection</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../classes.html">Class Structure: Objects and Methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../kmc.html">Key Measurement Characteristics (KMCs)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../utilities.html">Utilities</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../transfer_learning.html">Transfer Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../transfer_learning.html">Continual and Transfer Learning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../active_learning.html">Active Learning/Adaptive Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../viz.html">Visualization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../case_study_halo.html">Case Study: Positioning and Clamping Variations for Halo</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../case_study_inner_rf.html">Case Study: Door Inner and Hinge Reinforcement Multi-Stage Assembly</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cross_member.html">Case Study: Cross Member Multi-Station Assembly</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../refrences.html">Research and References</a></li>
 </ul>
 
@@ -110,7 +114,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../../index.html">Deep Learning For Manufacturing (dlmfg)</a>
+          <a href="../../../index.html">Bayesian Deep Learning For Manufacturing (dlmfg)</a>
         
       </nav>
 
@@ -182,7 +186,7 @@
 <span class="kn">import</span> <span class="nn">kcc_config</span> <span class="k">as</span> <span class="nn">kcc_config</span>
 <span class="kn">import</span> <span class="nn">sampling_config</span> <span class="k">as</span> <span class="nn">sampling_config</span>
 
-<div class="viewcode-block" id="adaptive_sampling"><a class="viewcode-back" href="../../../active_learning.html#dlmfg.active_learning.sampling_system.adaptive_sampling">[docs]</a><span class="k">class</span> <span class="nc">adaptive_sampling</span><span class="p">():</span>
+<div class="viewcode-block" id="AdaptiveSampling"><a class="viewcode-back" href="../../../active_learning.html#dlmfg.active_learning.sampling_system.AdaptiveSampling">[docs]</a><span class="k">class</span> <span class="nc">AdaptiveSampling</span><span class="p">():</span>
 	<span class="sd">&quot;&quot;&quot;Assembly System Class</span>
 
 <span class="sd">		:param sample_dim: The number of initial samples to be generated</span>
@@ -203,7 +207,7 @@
 		<span class="bp">self</span><span class="o">.</span><span class="n">adaptive_samples_dim</span><span class="o">=</span><span class="n">adaptive_samples_dim</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">adaptive_runs</span><span class="o">=</span><span class="n">adaptive_runs</span>
 	
-<div class="viewcode-block" id="adaptive_sampling.inital_sampling_lhs"><a class="viewcode-back" href="../../../active_learning.html#dlmfg.active_learning.sampling_system.adaptive_sampling.inital_sampling_lhs">[docs]</a>	<span class="k">def</span> <span class="nf">inital_sampling_lhs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">kcc_struct</span><span class="p">,</span><span class="n">sample_dim</span><span class="p">):</span>
+<div class="viewcode-block" id="AdaptiveSampling.inital_sampling_lhs"><a class="viewcode-back" href="../../../active_learning.html#dlmfg.active_learning.sampling_system.AdaptiveSampling.inital_sampling_lhs">[docs]</a>	<span class="k">def</span> <span class="nf">inital_sampling_lhs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">kcc_struct</span><span class="p">,</span><span class="n">sample_dim</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;Generates multi-variate LHS samples for each KCC and scales then based on the KCC maximum and minimum value</span>
 
 <span class="sd">			:param kcc_struct: list of dictionaries for each KCC from kcc_config file</span>
@@ -220,14 +224,22 @@
 
 		<span class="n">samples</span> <span class="o">=</span><span class="n">lhs</span><span class="p">(</span><span class="n">kcc_dim</span><span class="p">,</span><span class="n">samples</span><span class="o">=</span><span class="n">sample_dim</span><span class="p">,</span><span class="n">criterion</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">)</span>
 		<span class="n">initial_samples</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span>
+		<span class="n">initial_samples_type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">sample_dim</span><span class="p">,</span><span class="n">kcc_dim</span><span class="p">))</span>
 		<span class="n">index</span><span class="o">=</span><span class="mi">0</span>
 		<span class="k">for</span> <span class="n">kcc</span> <span class="ow">in</span> <span class="n">kcc_struct</span><span class="p">:</span>   
-			<span class="n">initial_samples</span><span class="p">[:,</span><span class="n">index</span><span class="p">]</span><span class="o">=</span><span class="n">samples</span><span class="p">[:,</span><span class="n">index</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">kcc</span><span class="p">[</span><span class="s1">&#39;kcc_max&#39;</span><span class="p">]</span><span class="o">-</span><span class="n">kcc</span><span class="p">[</span><span class="s1">&#39;kcc_min&#39;</span><span class="p">])</span><span class="o">+</span><span class="n">kcc</span><span class="p">[</span><span class="s1">&#39;kcc_min&#39;</span><span class="p">]</span>
+			<span class="k">if</span><span class="p">(</span><span class="n">kcc</span><span class="p">[</span><span class="s1">&#39;kcc_type&#39;</span><span class="p">]</span><span class="o">==</span><span class="mi">0</span><span class="p">):</span>
+				<span class="n">initial_samples</span><span class="p">[:,</span><span class="n">index</span><span class="p">]</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">kcc</span><span class="p">[</span><span class="s1">&#39;kcc_min&#39;</span><span class="p">],</span><span class="n">kcc</span><span class="p">[</span><span class="s1">&#39;kcc_max&#39;</span><span class="p">],</span><span class="n">sample_dim</span><span class="p">)</span>
+				
+			
+			<span class="k">if</span><span class="p">(</span><span class="n">kcc</span><span class="p">[</span><span class="s1">&#39;kcc_type&#39;</span><span class="p">]</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span>
+				<span class="n">initial_samples</span><span class="p">[:,</span><span class="n">index</span><span class="p">]</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">sample_dim</span><span class="p">)</span>
+				<span class="c1">#flagging for categoric</span>
+				<span class="n">inital_samples_type</span><span class="p">[:,</span><span class="n">index</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span>
+
 			<span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span>
+		<span class="k">return</span> <span class="n">initial_samples</span><span class="p">,</span><span class="n">initial_samples_type</span></div>
 
-		<span class="k">return</span> <span class="n">initial_samples</span></div>
-
-<div class="viewcode-block" id="adaptive_sampling.inital_sampling_uniform_random"><a class="viewcode-back" href="../../../active_learning.html#dlmfg.active_learning.sampling_system.adaptive_sampling.inital_sampling_uniform_random">[docs]</a>	<span class="k">def</span> <span class="nf">inital_sampling_uniform_random</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">kcc_struct</span><span class="p">,</span><span class="n">sample_dim</span><span class="p">):</span>
+<div class="viewcode-block" id="AdaptiveSampling.inital_sampling_uniform_random"><a class="viewcode-back" href="../../../active_learning.html#dlmfg.active_learning.sampling_system.AdaptiveSampling.inital_sampling_uniform_random">[docs]</a>	<span class="k">def</span> <span class="nf">inital_sampling_uniform_random</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">kcc_struct</span><span class="p">,</span><span class="n">sample_dim</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;Generates multi-variate uniform random samples for each KCC and scales then based on the KCC maximum and minimum value</span>
 
 <span class="sd">			:param kcc_struct: list of dictionaries for each KCC from kcc_config file</span>
@@ -242,14 +254,25 @@
 		<span class="n">kcc_dim</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">kcc_struct</span><span class="p">)</span>
 		<span class="n">sample_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_type</span>
 		<span class="n">initial_samples</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">sample_dim</span><span class="p">,</span><span class="n">kcc_dim</span><span class="p">))</span>
+		<span class="n">inital_samples_type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">sample_dim</span><span class="p">,</span><span class="n">kcc_dim</span><span class="p">))</span>
 		<span class="n">index</span><span class="o">=</span><span class="mi">0</span>
 		<span class="k">for</span> <span class="n">kcc</span> <span class="ow">in</span> <span class="n">kcc_struct</span><span class="p">:</span>
-			<span class="n">initial_samples</span><span class="p">[:,</span><span class="n">index</span><span class="p">]</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">kcc</span><span class="p">[</span><span class="s1">&#39;kcc_min&#39;</span><span class="p">],</span><span class="n">kcc</span><span class="p">[</span><span class="s1">&#39;kcc_max&#39;</span><span class="p">],</span><span class="n">sample_dim</span><span class="p">)</span>
-			<span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span>
+			
+			<span class="k">if</span><span class="p">(</span><span class="n">kcc</span><span class="p">[</span><span class="s1">&#39;kcc_type&#39;</span><span class="p">]</span><span class="o">==</span><span class="mi">0</span><span class="p">):</span>
+				<span class="n">initial_samples</span><span class="p">[:,</span><span class="n">index</span><span class="p">]</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">kcc</span><span class="p">[</span><span class="s1">&#39;kcc_min&#39;</span><span class="p">],</span><span class="n">kcc</span><span class="p">[</span><span class="s1">&#39;kcc_max&#39;</span><span class="p">],</span><span class="n">sample_dim</span><span class="p">)</span>
+				
+			
+			<span class="k">if</span><span class="p">(</span><span class="n">kcc</span><span class="p">[</span><span class="s1">&#39;kcc_type&#39;</span><span class="p">]</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span>
+				<span class="n">initial_samples</span><span class="p">[:,</span><span class="n">index</span><span class="p">]</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">sample_dim</span><span class="p">)</span>
+				<span class="c1">#flagging for categoric</span>
+				<span class="n">inital_samples_type</span><span class="p">[:,</span><span class="n">index</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span>
 
-		<span class="k">return</span> <span class="n">initial_samples</span></div>
+			<span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span>
+		<span class="c1">#pp_making=1</span>
+
+		<span class="k">return</span> <span class="n">initial_samples</span><span class="p">,</span> <span class="n">inital_samples_type</span></div>
 	
-<div class="viewcode-block" id="adaptive_sampling.adpative_samples_gen"><a class="viewcode-back" href="../../../active_learning.html#dlmfg.active_learning.sampling_system.adaptive_sampling.adpative_samples_gen">[docs]</a>	<span class="k">def</span> <span class="nf">adpative_samples_gen</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">kcc_struct</span><span class="p">,</span><span class="n">run_id</span><span class="p">):</span>
+<div class="viewcode-block" id="AdaptiveSampling.adpative_samples_gen"><a class="viewcode-back" href="../../../active_learning.html#dlmfg.active_learning.sampling_system.AdaptiveSampling.adpative_samples_gen">[docs]</a>	<span class="k">def</span> <span class="nf">adpative_samples_gen</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">kcc_struct</span><span class="p">,</span><span class="n">run_id</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;Adaptive samples based on model uncertainty, currently this is Work in Progress</span>
 
 <span class="sd">		&quot;&quot;&quot;</span>
@@ -271,23 +294,72 @@
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
 	
-	<span class="n">kcc_struct</span><span class="o">=</span><span class="n">kcc_config</span><span class="o">.</span><span class="n">kcc_struct</span>
+	<span class="c1">#kcc_struct=kcc_config.kcc_struct</span>
+	<span class="n">kcc_struct</span><span class="o">=</span><span class="n">kcc_config</span><span class="o">.</span><span class="n">get_kcc_struct</span><span class="p">()</span>
 	<span class="n">sampling_config</span><span class="o">=</span><span class="n">sampling_config</span><span class="o">.</span><span class="n">sampling_config</span>
 
-	<span class="n">adaptive_sampling</span><span class="o">=</span><span class="n">adaptive_sampling</span><span class="p">(</span><span class="n">sampling_config</span><span class="p">[</span><span class="s1">&#39;sample_dim&#39;</span><span class="p">],</span><span class="n">sampling_config</span><span class="p">[</span><span class="s1">&#39;sample_type&#39;</span><span class="p">],</span><span class="n">sampling_config</span><span class="p">[</span><span class="s1">&#39;adaptive_sample_dim&#39;</span><span class="p">],</span><span class="n">sampling_config</span><span class="p">[</span><span class="s1">&#39;adaptive_runs&#39;</span><span class="p">])</span>
+	<span class="n">adaptive_sampling</span><span class="o">=</span><span class="n">AdaptiveSampling</span><span class="p">(</span><span class="n">sampling_config</span><span class="p">[</span><span class="s1">&#39;sample_dim&#39;</span><span class="p">],</span><span class="n">sampling_config</span><span class="p">[</span><span class="s1">&#39;sample_type&#39;</span><span class="p">],</span><span class="n">sampling_config</span><span class="p">[</span><span class="s1">&#39;adaptive_sample_dim&#39;</span><span class="p">],</span><span class="n">sampling_config</span><span class="p">[</span><span class="s1">&#39;adaptive_runs&#39;</span><span class="p">])</span>
 
 	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Generating initial samples&#39;</span><span class="p">)</span>
 
 	<span class="k">if</span><span class="p">(</span><span class="n">adaptive_sampling</span><span class="o">.</span><span class="n">sample_type</span><span class="o">==</span><span class="s1">&#39;lhs&#39;</span><span class="p">):</span>
 		<span class="n">initial_samples</span><span class="o">=</span><span class="n">adaptive_sampling</span><span class="o">.</span><span class="n">inital_sampling_lhs</span><span class="p">(</span><span class="n">kcc_struct</span><span class="p">,</span><span class="n">sampling_config</span><span class="p">[</span><span class="s1">&#39;sample_dim&#39;</span><span class="p">])</span>
 	<span class="k">else</span><span class="p">:</span>
-		<span class="n">initial_samples</span><span class="o">=</span><span class="n">adaptive_sampling</span><span class="o">.</span><span class="n">inital_sampling_uniform_random</span><span class="p">(</span><span class="n">kcc_struct</span><span class="p">,</span><span class="n">sampling_config</span><span class="p">[</span><span class="s1">&#39;sample_dim&#39;</span><span class="p">])</span>
+		<span class="n">initial_samples</span><span class="p">,</span><span class="n">initial_samples_type</span><span class="o">=</span><span class="n">adaptive_sampling</span><span class="o">.</span><span class="n">inital_sampling_uniform_random</span><span class="p">(</span><span class="n">kcc_struct</span><span class="p">,</span><span class="n">sampling_config</span><span class="p">[</span><span class="s1">&#39;sample_dim&#39;</span><span class="p">])</span>
 
+	<span class="n">pp_masking</span><span class="o">=</span><span class="n">sampling_config</span><span class="p">[</span><span class="s1">&#39;pp_masking&#39;</span><span class="p">]</span>
 
+	<span class="n">folder_name</span><span class="o">=</span><span class="n">sampling_config</span><span class="p">[</span><span class="s1">&#39;output_folder_name&#39;</span><span class="p">]</span>
 	<span class="n">file_name</span><span class="o">=</span><span class="n">sampling_config</span><span class="p">[</span><span class="s1">&#39;output_file_name&#39;</span><span class="p">]</span>
-	<span class="n">file_path</span><span class="o">=</span><span class="s1">&#39;./sample_input/&#39;</span><span class="o">+</span><span class="n">file_name</span>
+	
+	<span class="k">if</span><span class="p">(</span><span class="n">pp_masking</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span>
+		<span class="kn">import</span> <span class="nn">random</span>
+		<span class="n">mask_array</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">initial_samples</span><span class="p">)</span>
+			
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">initial_samples</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+			<span class="n">random_index</span><span class="o">=</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">initial_samples</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+			<span class="n">mask_array</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">random_index</span><span class="p">]</span><span class="o">=</span><span class="n">initial_samples</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">random_index</span><span class="p">]</span>
+
+		<span class="n">initial_samples</span><span class="o">=</span><span class="n">mask_array</span>
+			
+	<span class="c1"># If Tooling flag is off the process parameters for that tool are to be set to zero</span>
+	<span class="n">post_process</span><span class="o">=</span><span class="mi">1</span>
+	
+	<span class="k">if</span><span class="p">(</span><span class="n">post_process</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span>
+		
+		<span class="n">base_str</span><span class="o">=</span><span class="s2">&quot;tooling_flag_&quot;</span>
+		<span class="n">check_str</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;tooling_x_&quot;</span><span class="p">,</span><span class="s2">&quot;tooling_y_&quot;</span><span class="p">,</span><span class="s2">&quot;tooling_z_&quot;</span><span class="p">]</span>
+		<span class="n">tooling_flag_index</span><span class="o">=</span><span class="p">[]</span>
+		<span class="n">tooling_param_index</span><span class="o">=</span><span class="p">[]</span>
+		
+		<span class="k">for</span> <span class="n">kcc</span> <span class="ow">in</span> <span class="n">kcc_struct</span><span class="p">:</span>
+			
+			<span class="k">if</span><span class="p">(</span><span class="n">base_str</span> <span class="ow">in</span> <span class="n">kcc</span><span class="p">[</span><span class="s1">&#39;kcc_name&#39;</span><span class="p">]):</span>
+				<span class="c1">#id_val=kcc[&#39;kcc_name&#39;][-1]</span>
+				<span class="c1">#id_val=kcc[&#39;kcc_name&#39;].substring(kcc[&#39;kcc_name&#39;].lastIndexOf(&#39;_&#39;)+1,len(kcc[&#39;kcc_name&#39;]))</span>
+				<span class="n">id_val</span><span class="o">=</span><span class="n">kcc</span><span class="p">[</span><span class="s1">&#39;kcc_name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+				<span class="n">temp_list</span><span class="o">=</span><span class="p">[]</span>
+				<span class="n">tooling_flag_index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">kcc</span><span class="p">[</span><span class="s1">&#39;kcc_id&#39;</span><span class="p">])</span>        
+				<span class="k">for</span> <span class="n">kcc_sub</span> <span class="ow">in</span> <span class="n">kcc_struct</span><span class="p">:</span>
+					<span class="c1">#print(check_str[0]+id_val)</span>
+					<span class="k">if</span><span class="p">(</span><span class="n">kcc_sub</span><span class="p">[</span><span class="s1">&#39;kcc_name&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">check_str</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">id_val</span> <span class="ow">or</span> <span class="n">kcc_sub</span><span class="p">[</span><span class="s1">&#39;kcc_name&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">check_str</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">id_val</span> <span class="ow">or</span> <span class="n">kcc_sub</span><span class="p">[</span><span class="s1">&#39;kcc_name&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">check_str</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">+</span><span class="n">id_val</span><span class="p">):</span>
+						<span class="n">temp_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">kcc_sub</span><span class="p">[</span><span class="s1">&#39;kcc_id&#39;</span><span class="p">])</span>
+				<span class="n">tooling_param_index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">temp_list</span><span class="p">)</span>
+
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">initial_samples</span><span class="p">)):</span>
+
+			<span class="k">for</span> <span class="n">j</span><span class="p">,</span><span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tooling_flag_index</span><span class="p">):</span>
+				<span class="k">if</span><span class="p">(</span><span class="n">initial_samples</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">item</span><span class="p">]</span><span class="o">==</span><span class="mi">0</span><span class="p">):</span>
+					<span class="n">initial_samples</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">tooling_param_index</span><span class="p">[</span><span class="n">j</span><span class="p">]]</span><span class="o">=</span><span class="mi">0</span>
+
+		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Post Processing Compeleted !&quot;</span><span class="p">)</span>
+
+	<span class="n">file_path</span><span class="o">=</span><span class="s1">&#39;./sample_input/&#39;</span><span class="o">+</span><span class="n">folder_name</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">file_name</span><span class="o">+</span><span class="s1">&#39;.csv&#39;</span>
 	<span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">initial_samples</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
 
+	<span class="n">file_path</span><span class="o">=</span><span class="s1">&#39;./sample_input/&#39;</span><span class="o">+</span><span class="n">folder_name</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">file_name</span><span class="o">+</span><span class="s1">&#39;_type&#39;</span><span class="o">+</span><span class="s1">&#39;.csv&#39;</span>
+	<span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">initial_samples_type</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+	
 	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Initial Samples Saved to path: &#39;</span><span class="p">,</span><span class="n">file_path</span><span class="p">)</span>
 
 	<span class="c1">#WIP to integrate adaptive sampling from VRM Oracle</span>

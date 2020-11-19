@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>dlmfg.utilities.benchmarking &mdash; Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</title>
+  <title>dlmfg.utilities.benchmarking &mdash; Bayesian Deep Learning For Manufacturing (dlmfg) 2.0.0 documentation</title>
   
 
   
@@ -48,7 +48,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home"> Deep Learning For Manufacturing (dlmfg)
+            <a href="../../../index.html" class="icon icon-home"> Bayesian Deep Learning For Manufacturing (dlmfg)
           
 
           
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                0.0.1
+                2.0.0
               </div>
             
           
@@ -87,14 +87,18 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../real_system_implementation.html">Real System Implementation (3D Optical Scanner: WLS400A)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../lib_config.html">Library Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../data_description.html">Data Description &amp; Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../model_arch.html">Model Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../drl.html">Deep Reinforcement Learning for Control and Correction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../model_selection.html">Model Architecture Selection</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../classes.html">Class Structure: Objects and Methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../kmc.html">Key Measurement Characteristics (KMCs)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../utilities.html">Utilities</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../transfer_learning.html">Transfer Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../transfer_learning.html">Continual and Transfer Learning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../active_learning.html">Active Learning/Adaptive Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../viz.html">Visualization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../case_study_halo.html">Case Study: Positioning and Clamping Variations for Halo</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../case_study_inner_rf.html">Case Study: Door Inner and Hinge Reinforcement Multi-Stage Assembly</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cross_member.html">Case Study: Cross Member Multi-Station Assembly</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../refrences.html">Research and References</a></li>
 </ul>
 
@@ -110,7 +114,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../../index.html">Deep Learning For Manufacturing (dlmfg)</a>
+          <a href="../../../index.html">Bayesian Deep Learning For Manufacturing (dlmfg)</a>
         
       </nav>
 
@@ -215,9 +219,9 @@
 	<span class="n">bn_models</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">]</span><span class="o">*</span><span class="n">max_models</span>
 	<span class="n">bn_models_name</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">]</span><span class="o">*</span><span class="n">max_models</span>
 
-	<span class="n">bn_models</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="n">MultiOutputRegressor</span><span class="p">(</span><span class="n">estimator</span><span class="o">=</span><span class="n">xgb</span><span class="o">.</span><span class="n">XGBRegressor</span><span class="p">(</span><span class="n">colsample_bytree</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span><span class="n">gamma</span><span class="o">=</span><span class="mf">0.045</span><span class="p">,</span><span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.07</span><span class="p">,</span><span class="n">max_depth</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span><span class="n">min_child_weight</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span><span class="n">reg_alpha</span><span class="o">=</span><span class="mf">0.65</span><span class="p">,</span><span class="n">reg_lambda</span><span class="o">=</span><span class="mf">0.45</span><span class="p">,</span><span class="n">subsample</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span><span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span><span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+	<span class="n">bn_models</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="n">MultiOutputRegressor</span><span class="p">(</span><span class="n">estimator</span><span class="o">=</span><span class="n">xgb</span><span class="o">.</span><span class="n">XGBRegressor</span><span class="p">(</span><span class="n">colsample_bytree</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span><span class="n">gamma</span><span class="o">=</span><span class="mf">0.045</span><span class="p">,</span><span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.07</span><span class="p">,</span><span class="n">max_depth</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span><span class="n">min_child_weight</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span><span class="n">reg_alpha</span><span class="o">=</span><span class="mf">0.65</span><span class="p">,</span><span class="n">reg_lambda</span><span class="o">=</span><span class="mf">0.45</span><span class="p">,</span><span class="n">subsample</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span><span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span><span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
 	<span class="n">bn_models_name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">bn_models</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">estimator</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span>
-	<span class="n">bn_models</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="n">MultiOutputRegressor</span><span class="p">(</span><span class="n">estimator</span><span class="o">=</span><span class="n">RandomForestRegressor</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span><span class="n">max_depth</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span><span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span><span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+	<span class="n">bn_models</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="n">MultiOutputRegressor</span><span class="p">(</span><span class="n">estimator</span><span class="o">=</span><span class="n">RandomForestRegressor</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span><span class="n">max_depth</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span><span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span><span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
 	<span class="n">bn_models_name</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">bn_models</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">estimator</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span>
 	<span class="n">bn_models</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">=</span><span class="n">MultiOutputRegressor</span><span class="p">(</span><span class="n">estimator</span><span class="o">=</span><span class="n">SVR</span><span class="p">(</span><span class="n">kernel</span><span class="o">=</span><span class="s1">&#39;rbf&#39;</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=.</span><span class="mi">1</span><span class="p">))</span>
 	<span class="n">bn_models_name</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">bn_models</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">estimator</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span>
@@ -272,6 +276,7 @@
 	<span class="n">bnoutput_r2</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">bn_models</span><span class="p">),</span><span class="n">assembly_kccs</span><span class="p">))</span>
 
 	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">bn_models</span><span class="p">)):</span>
+		<span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
 		<span class="n">model</span><span class="o">=</span><span class="n">bn_models</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
 		<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span><span class="n">y_train</span><span class="p">)</span>
 		<span class="n">y_pred</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
@@ -327,7 +332,7 @@
 	<span class="n">train_path</span><span class="o">=</span><span class="s1">&#39;../trained_models/&#39;</span><span class="o">+</span><span class="n">part_type</span>
 	<span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">train_path</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-	<span class="n">bm_path</span><span class="o">=</span><span class="n">train_path</span><span class="o">+</span><span class="s1">&#39;/benchmarking&#39;</span>
+	<span class="n">bm_path</span><span class="o">=</span><span class="n">train_path</span><span class="o">+</span><span class="s1">&#39;/benchmarking/&#39;</span>
 	<span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">bm_path</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Initializing the Assembly System and Measurement System....&#39;</span><span class="p">)</span>
@@ -356,6 +361,7 @@
 	<span class="n">mr_bnoutput_r2</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">runs</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">bn_models</span><span class="p">),</span><span class="n">assembly_kccs</span><span class="p">))</span>
 
 	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">runs</span><span class="p">):</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Run ID: &quot;</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
 		<span class="n">bneval_metrics</span><span class="o">=</span><span class="n">benchmarking_models_eval</span><span class="p">(</span><span class="n">bn_models</span><span class="p">,</span><span class="n">point_data</span><span class="p">,</span><span class="n">kcc_dataset</span><span class="p">,</span><span class="n">assembly_kccs</span><span class="p">,</span><span class="n">bm_path</span><span class="p">,</span><span class="n">split_ratio</span><span class="p">)</span>
 		<span class="n">mr_bnoutput_mae</span><span class="p">[</span><span class="n">i</span><span class="p">,:,:]</span><span class="o">=</span><span class="n">bneval_metrics</span><span class="p">[</span><span class="s2">&quot;Mean Absolute Error&quot;</span><span class="p">]</span>
 		<span class="n">mr_bnoutput_mse</span><span class="p">[</span><span class="n">i</span><span class="p">,:,:]</span><span class="o">=</span><span class="n">bneval_metrics</span><span class="p">[</span><span class="s2">&quot;Mean Squared Error&quot;</span><span class="p">]</span>
@@ -371,6 +377,7 @@
 	<span class="n">std_mr_bn_mse</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">mr_bnoutput_mse</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 	<span class="n">std_mr_bn_rmse</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">mr_bnoutput_rmse</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 	<span class="n">std_mr_bn_r2</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">mr_bnoutput_r2</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
 
 	<span class="n">avg_kcc_mrbn_mae</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">avg_mrbn_mae</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 	<span class="n">avg_kcc_mrbn_mse</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">avg_mrbn_mse</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
@@ -391,7 +398,22 @@
 		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;RMSE: &#39;</span><span class="p">,</span> <span class="n">avg_kcc_mrbn_rmse</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="s1">&#39; RMSE Standard Deviation: &#39;</span><span class="p">,</span> <span class="n">avg_std_kcc_rmse</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
 		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;R2: &#39;</span><span class="p">,</span> <span class="n">avg_kcc_mrbn_r2</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="s1">&#39; R2 Standard Deviation: &#39;</span><span class="p">,</span> <span class="n">avg_std_kcc_r2</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
 
+	<span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">((</span><span class="n">bm_path</span><span class="o">+</span><span class="s2">&quot;avg_kcc_mrbn_mae.csv&quot;</span><span class="p">),</span> <span class="n">avg_kcc_mrbn_mae</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+	<span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">((</span><span class="n">bm_path</span><span class="o">+</span><span class="s2">&quot;avg_kcc_mrbn_rmse.csv&quot;</span><span class="p">),</span> <span class="n">avg_kcc_mrbn_rmse</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+	<span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">((</span><span class="n">bm_path</span><span class="o">+</span><span class="s2">&quot;avg_kcc_mrbn_r2.csv&quot;</span><span class="p">),</span> <span class="n">avg_kcc_mrbn_r2</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
 
+	<span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">((</span><span class="n">bm_path</span><span class="o">+</span><span class="s2">&quot;avg_std_kcc_mae.csv&quot;</span><span class="p">),</span> <span class="n">avg_std_kcc_mae</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+	<span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">((</span><span class="n">bm_path</span><span class="o">+</span><span class="s2">&quot;avg_std_kcc_rmse.csv&quot;</span><span class="p">),</span> <span class="n">avg_std_kcc_rmse</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+	<span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">((</span><span class="n">bm_path</span><span class="o">+</span><span class="s2">&quot;avg_std_kcc_r2.csv&quot;</span><span class="p">),</span> <span class="n">avg_std_kcc_r2</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+
+
+	<span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">((</span><span class="n">bm_path</span><span class="o">+</span><span class="s2">&quot;avg_mrbn_mae.csv&quot;</span><span class="p">),</span> <span class="n">avg_mrbn_mae</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+	<span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">((</span><span class="n">bm_path</span><span class="o">+</span><span class="s2">&quot;avg_mrbn_rmse.csv&quot;</span><span class="p">),</span> <span class="n">avg_mrbn_rmse</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+	<span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">((</span><span class="n">bm_path</span><span class="o">+</span><span class="s2">&quot;avg_mrbn_r2.csv&quot;</span><span class="p">),</span> <span class="n">avg_mrbn_r2</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+
+	<span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">((</span><span class="n">bm_path</span><span class="o">+</span><span class="s2">&quot;std_mrbn_mae.csv&quot;</span><span class="p">),</span> <span class="n">std_mr_bn_mae</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+	<span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">((</span><span class="n">bm_path</span><span class="o">+</span><span class="s2">&quot;std_mrbn_rmse.csv&quot;</span><span class="p">),</span> <span class="n">std_mr_bn_rmse</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+	<span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">((</span><span class="n">bm_path</span><span class="o">+</span><span class="s2">&quot;std_mrbn_r2.csv&quot;</span><span class="p">),</span> <span class="n">std_mr_bn_r2</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
 
 </pre></div>
 

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>dlmfg.core.core_model &mdash; Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</title>
+  <title>dlmfg.core.core_model &mdash; Bayesian Deep Learning For Manufacturing (dlmfg) 2.0.0 documentation</title>
   
 
   
@@ -48,7 +48,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home"> Deep Learning For Manufacturing (dlmfg)
+            <a href="../../../index.html" class="icon icon-home"> Bayesian Deep Learning For Manufacturing (dlmfg)
           
 
           
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                0.0.1
+                2.0.0
               </div>
             
           
@@ -87,14 +87,18 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../real_system_implementation.html">Real System Implementation (3D Optical Scanner: WLS400A)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../lib_config.html">Library Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../data_description.html">Data Description &amp; Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../model_arch.html">Model Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../drl.html">Deep Reinforcement Learning for Control and Correction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../model_selection.html">Model Architecture Selection</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../classes.html">Class Structure: Objects and Methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../kmc.html">Key Measurement Characteristics (KMCs)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../utilities.html">Utilities</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../transfer_learning.html">Transfer Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../transfer_learning.html">Continual and Transfer Learning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../active_learning.html">Active Learning/Adaptive Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../viz.html">Visualization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../case_study_halo.html">Case Study: Positioning and Clamping Variations for Halo</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../case_study_inner_rf.html">Case Study: Door Inner and Hinge Reinforcement Multi-Stage Assembly</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cross_member.html">Case Study: Cross Member Multi-Station Assembly</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../refrences.html">Research and References</a></li>
 </ul>
 
@@ -110,7 +114,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../../index.html">Deep Learning For Manufacturing (dlmfg)</a>
+          <a href="../../../index.html">Bayesian Deep Learning For Manufacturing (dlmfg)</a>
         
       </nav>
 
@@ -200,9 +204,9 @@
 <span class="sd">			:param voxel_channels: The number of voxel channels in the input structure, required to build input to the 3D CNN model</span>
 <span class="sd">			:type voxel_channels: int (required)</span>
 <span class="sd">		&quot;&quot;&quot;</span>
-		<span class="kn">from</span> <span class="nn">keras.layers</span> <span class="kn">import</span> <span class="n">Conv3D</span><span class="p">,</span> <span class="n">MaxPool3D</span><span class="p">,</span> <span class="n">Flatten</span><span class="p">,</span> <span class="n">Dense</span><span class="p">,</span> <span class="n">Dropout</span>
-		<span class="kn">from</span> <span class="nn">keras.models</span> <span class="kn">import</span> <span class="n">Sequential</span>
-		<span class="kn">from</span> <span class="nn">keras</span> <span class="kn">import</span> <span class="n">regularizers</span>
+		<span class="kn">from</span> <span class="nn">tensorflow.keras.layers</span> <span class="kn">import</span> <span class="n">Conv3D</span><span class="p">,</span> <span class="n">MaxPool3D</span><span class="p">,</span> <span class="n">Flatten</span><span class="p">,</span> <span class="n">Dense</span><span class="p">,</span> <span class="n">Dropout</span>
+		<span class="kn">from</span> <span class="nn">tensorflow.keras.models</span> <span class="kn">import</span> <span class="n">Sequential</span>
+		<span class="kn">from</span> <span class="nn">tensorflow.keras</span> <span class="kn">import</span> <span class="n">regularizers</span>
 
 		<span class="k">if</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_type</span><span class="o">==</span><span class="s2">&quot;regression&quot;</span><span class="p">):</span>
 			<span class="n">final_layer_avt</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span>
@@ -216,15 +220,92 @@
 		<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Conv3D</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span><span class="n">strides</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span><span class="n">activation</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">))</span>
 		<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">MaxPool3D</span><span class="p">(</span><span class="n">pool_size</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)))</span>
 		<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Flatten</span><span class="p">())</span>
-		<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span><span class="n">kernel_regularizer</span><span class="o">=</span><span class="n">regularizers</span><span class="o">.</span><span class="n">l2</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">regularizer_coeff</span><span class="p">),</span><span class="n">activation</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">))</span>
+		<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span><span class="n">kernel_regularizer</span><span class="o">=</span><span class="n">regularizers</span><span class="o">.</span><span class="n">l2</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">regularizer_coeff</span><span class="p">),</span><span class="n">activation</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">))</span>
 		<span class="c1">#model.add(Dropout(0.2))</span>
-		<span class="c1">#model.add(Dense(64,kernel_regularizer=regularizers.l2(self.regularizer_coeff),activation=&#39;relu&#39;))</span>
+		<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span><span class="n">kernel_regularizer</span><span class="o">=</span><span class="n">regularizers</span><span class="o">.</span><span class="n">l2</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">regularizer_coeff</span><span class="p">),</span><span class="n">activation</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">))</span>
 		<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_dimension</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="n">final_layer_avt</span><span class="p">))</span>
 		<span class="n">model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">loss</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">loss_function</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;mae&#39;</span><span class="p">])</span>
 
 		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;3D CNN model successfully compiled&quot;</span><span class="p">)</span>
 		<span class="k">return</span> <span class="n">model</span></div>
 
+	<span class="k">def</span> <span class="nf">resnet_3d_cnn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">voxel_dim</span><span class="p">,</span><span class="n">deviation_channels</span><span class="p">,</span><span class="n">w_val</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+
+		<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+		<span class="kn">import</span> <span class="nn">tensorflow.keras.backend</span> <span class="k">as</span> <span class="nn">K</span> 
+		<span class="kn">from</span> <span class="nn">tensorflow.keras.models</span> <span class="kn">import</span> <span class="n">Model</span>
+		<span class="kn">from</span> <span class="nn">tensorflow.keras</span> <span class="kn">import</span> <span class="n">regularizers</span>
+		<span class="kn">from</span> <span class="nn">tensorflow.keras.layers</span> <span class="kn">import</span> <span class="n">Conv3D</span><span class="p">,</span> <span class="n">MaxPooling3D</span><span class="p">,</span> <span class="n">Add</span><span class="p">,</span> <span class="n">BatchNormalization</span><span class="p">,</span> <span class="n">Input</span><span class="p">,</span> <span class="n">LeakyReLU</span><span class="p">,</span><span class="n">Activation</span><span class="p">,</span> <span class="n">Lambda</span><span class="p">,</span> <span class="n">Concatenate</span><span class="p">,</span> <span class="n">Flatten</span><span class="p">,</span> <span class="n">Dense</span><span class="p">,</span><span class="n">UpSampling3D</span><span class="p">,</span><span class="n">GlobalAveragePooling3D</span>
+
+		<span class="k">if</span><span class="p">(</span><span class="n">w_val</span><span class="o">==</span><span class="mi">0</span><span class="p">):</span>
+			<span class="n">w_val</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_dimension</span><span class="p">)</span>
+			<span class="n">w_val</span><span class="p">[:]</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">output_dimension</span>
+
+
+		<span class="k">def</span> <span class="nf">weighted_mse</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+			<span class="k">def</span> <span class="nf">loss</span><span class="p">(</span><span class="n">yTrue</span><span class="p">,</span><span class="n">yPred</span><span class="p">):</span>
+
+				<span class="c1">#val = np.array([0.1,0.1,0.1,0.1,0.1]) </span>
+				<span class="n">w_var</span> <span class="o">=</span> <span class="n">K</span><span class="o">.</span><span class="n">variable</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">val</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">,</span> 
+											 <span class="n">name</span><span class="o">=</span><span class="s1">&#39;weight_vec&#39;</span><span class="p">)</span>
+				<span class="c1">#weight_vec = K.ones_like(yTrue[0,:]) #a simple vector with ones shaped as (60,)</span>
+				<span class="c1">#idx = K.cumsum(ones) #similar to a &#39;range(1,61)&#39;</span>
+
+				<span class="k">return</span> <span class="n">K</span><span class="o">.</span><span class="n">mean</span><span class="p">((</span><span class="n">w_var</span><span class="p">)</span><span class="o">*</span><span class="n">K</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">yTrue</span><span class="o">-</span><span class="n">yPred</span><span class="p">))</span>
+			<span class="k">return</span> <span class="n">loss</span>
+
+		<span class="n">input_size</span><span class="o">=</span><span class="p">(</span><span class="n">voxel_dim</span><span class="p">,</span><span class="n">voxel_dim</span><span class="p">,</span><span class="n">voxel_dim</span><span class="p">,</span><span class="n">deviation_channels</span><span class="p">)</span>
+		<span class="n">inputs</span> <span class="o">=</span> <span class="n">Input</span><span class="p">(</span><span class="n">input_size</span><span class="p">)</span>
+		<span class="n">x</span> <span class="o">=</span> <span class="n">inputs</span>
+		<span class="n">y</span> <span class="o">=</span> <span class="n">Conv3D</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">),</span><span class="n">strides</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;conv_block_1&quot;</span><span class="p">)(</span><span class="n">x</span><span class="p">)</span>
+		<span class="n">res1</span><span class="o">=</span><span class="n">y</span>
+		
+		<span class="n">y</span> <span class="o">=</span> <span class="n">LeakyReLU</span><span class="p">()(</span><span class="n">y</span><span class="p">)</span>
+		<span class="n">y</span> <span class="o">=</span> <span class="n">Conv3D</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span><span class="n">strides</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">padding</span><span class="o">=</span><span class="s1">&#39;same&#39;</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;conv_block_2&quot;</span><span class="p">)(</span><span class="n">y</span><span class="p">)</span>
+		<span class="n">y</span> <span class="o">=</span> <span class="n">LeakyReLU</span><span class="p">()(</span><span class="n">y</span><span class="p">)</span>
+		<span class="n">y</span> <span class="o">=</span> <span class="n">Conv3D</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span><span class="n">strides</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">padding</span><span class="o">=</span><span class="s1">&#39;same&#39;</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;conv_block_3&quot;</span><span class="p">)(</span><span class="n">y</span><span class="p">)</span>
+		<span class="n">y</span> <span class="o">=</span> <span class="n">Add</span><span class="p">()([</span><span class="n">res1</span><span class="p">,</span> <span class="n">y</span><span class="p">])</span>
+		<span class="n">y</span> <span class="o">=</span> <span class="n">LeakyReLU</span><span class="p">()(</span><span class="n">y</span><span class="p">)</span>
+		
+		<span class="n">y</span> <span class="o">=</span> <span class="n">Conv3D</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span><span class="n">strides</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;conv_block_4&quot;</span><span class="p">)(</span><span class="n">y</span><span class="p">)</span>
+		<span class="n">res2</span><span class="o">=</span><span class="n">y</span>
+		<span class="n">y</span> <span class="o">=</span> <span class="n">LeakyReLU</span><span class="p">()(</span><span class="n">y</span><span class="p">)</span>
+		
+		<span class="n">y</span> <span class="o">=</span> <span class="n">Conv3D</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span><span class="n">strides</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">padding</span><span class="o">=</span><span class="s1">&#39;same&#39;</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;conv_block_5&quot;</span><span class="p">)(</span><span class="n">y</span><span class="p">)</span>
+		<span class="n">y</span> <span class="o">=</span> <span class="n">LeakyReLU</span><span class="p">()(</span><span class="n">y</span><span class="p">)</span>
+		
+		<span class="n">y</span> <span class="o">=</span> <span class="n">Conv3D</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span><span class="n">strides</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">padding</span><span class="o">=</span><span class="s1">&#39;same&#39;</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;conv_block_6&quot;</span><span class="p">)(</span><span class="n">y</span><span class="p">)</span>
+		<span class="n">y</span> <span class="o">=</span> <span class="n">Add</span><span class="p">()([</span><span class="n">res2</span><span class="p">,</span> <span class="n">y</span><span class="p">])</span>
+		<span class="n">y</span> <span class="o">=</span> <span class="n">LeakyReLU</span><span class="p">()(</span><span class="n">y</span><span class="p">)</span>
+		
+		<span class="n">y</span> <span class="o">=</span> <span class="n">Conv3D</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span><span class="n">strides</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;conv_block_7&quot;</span><span class="p">)(</span><span class="n">y</span><span class="p">)</span>
+		<span class="n">res3</span><span class="o">=</span><span class="n">y</span>
+		<span class="n">y</span> <span class="o">=</span> <span class="n">LeakyReLU</span><span class="p">()(</span><span class="n">y</span><span class="p">)</span>
+		
+		<span class="n">y</span> <span class="o">=</span> <span class="n">Conv3D</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span><span class="n">strides</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span><span class="n">padding</span><span class="o">=</span><span class="s1">&#39;same&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;conv_block_8&quot;</span><span class="p">)(</span><span class="n">y</span><span class="p">)</span>
+		<span class="n">y</span> <span class="o">=</span> <span class="n">LeakyReLU</span><span class="p">()(</span><span class="n">y</span><span class="p">)</span>
+		
+		<span class="n">y</span> <span class="o">=</span> <span class="n">Conv3D</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span><span class="n">strides</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span><span class="n">padding</span><span class="o">=</span><span class="s1">&#39;same&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;conv_block_9&quot;</span><span class="p">)(</span><span class="n">y</span><span class="p">)</span>
+		
+		<span class="n">y</span> <span class="o">=</span> <span class="n">Add</span><span class="p">()([</span><span class="n">res3</span><span class="p">,</span> <span class="n">y</span><span class="p">])</span>
+		<span class="n">y</span> <span class="o">=</span> <span class="n">LeakyReLU</span><span class="p">()(</span><span class="n">y</span><span class="p">)</span>
+		
+		<span class="n">y</span><span class="o">=</span><span class="n">Flatten</span><span class="p">()(</span><span class="n">y</span><span class="p">)</span>
+		
+		<span class="n">y</span><span class="o">=</span><span class="n">Dense</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span><span class="n">kernel_regularizer</span><span class="o">=</span><span class="n">regularizers</span><span class="o">.</span><span class="n">l2</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">regularizer_coeff</span><span class="p">),</span><span class="n">activation</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">)(</span><span class="n">y</span><span class="p">)</span>
+		<span class="n">y</span><span class="o">=</span><span class="n">Dense</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span><span class="n">kernel_regularizer</span><span class="o">=</span><span class="n">regularizers</span><span class="o">.</span><span class="n">l2</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">regularizer_coeff</span><span class="p">),</span><span class="n">activation</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">)(</span><span class="n">y</span><span class="p">)</span>
+		<span class="n">output</span><span class="o">=</span><span class="n">Dense</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_dimension</span><span class="p">)(</span><span class="n">y</span><span class="p">)</span>
+		
+		<span class="n">model</span><span class="o">=</span><span class="n">Model</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">outputs</span><span class="o">=</span><span class="n">output</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Res_3D_CNN&#39;</span><span class="p">)</span>
+		
+		<span class="n">model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">loss</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">loss_function</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;mae&#39;</span><span class="p">])</span>
+		
+		<span class="c1">#print(model.summary())</span>
+		
+		<span class="k">return</span> <span class="n">model</span>
+
+	
+		
 <div class="viewcode-block" id="DLModel.cnn_model_3d_tl"><a class="viewcode-back" href="../../../deep_learning.html#dlmfg.core.core_model.DLModel.cnn_model_3d_tl">[docs]</a>	<span class="k">def</span> <span class="nf">cnn_model_3d_tl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">voxel_dim</span><span class="p">,</span><span class="n">deviation_channels</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;Build the 3D Model with GlobalMAxPooling3D instead of flatten, this enables input for different voxel dimensions, to be used when the model needs to be leveraged for transfer learning with different size input</span>
 
@@ -234,9 +315,9 @@
 <span class="sd">			:param voxel_channels: The number of voxel channels in the input structure, required to build input to the 3D CNN model</span>
 <span class="sd">			:type voxel_channels: int (required)</span>
 <span class="sd">		&quot;&quot;&quot;</span>
-		<span class="kn">from</span> <span class="nn">keras.layers</span> <span class="kn">import</span> <span class="n">Conv3D</span><span class="p">,</span> <span class="n">MaxPool3D</span><span class="p">,</span> <span class="n">Flatten</span><span class="p">,</span> <span class="n">Dense</span><span class="p">,</span> <span class="n">Dropout</span><span class="p">,</span> <span class="n">Input</span>
-		<span class="kn">from</span> <span class="nn">keras.models</span> <span class="kn">import</span> <span class="n">Model</span>
-		<span class="kn">from</span> <span class="nn">keras</span> <span class="kn">import</span> <span class="n">regularizers</span>
+		<span class="kn">from</span> <span class="nn">tensorflow.keras.layers</span> <span class="kn">import</span> <span class="n">Conv3D</span><span class="p">,</span> <span class="n">MaxPool3D</span><span class="p">,</span> <span class="n">Flatten</span><span class="p">,</span> <span class="n">Dense</span><span class="p">,</span> <span class="n">Dropout</span><span class="p">,</span> <span class="n">Input</span>
+		<span class="kn">from</span> <span class="nn">tensorflow.keras.models</span> <span class="kn">import</span> <span class="n">Model</span>
+		<span class="kn">from</span> <span class="nn">tensorflow.keras</span> <span class="kn">import</span> <span class="n">regularizers</span>
 
 		<span class="n">inputs</span> <span class="o">=</span> <span class="n">Input</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span><span class="kc">None</span><span class="p">,</span><span class="kc">None</span><span class="p">,</span><span class="mi">3</span><span class="p">,))</span>
 		<span class="n">cnn3d_1</span><span class="o">=</span><span class="n">Conv3D</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span><span class="n">strides</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span><span class="n">activation</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">)(</span><span class="n">inputs</span><span class="p">)</span>
@@ -268,13 +349,13 @@
 			<span class="n">final_layer_avt</span><span class="o">=</span><span class="s1">&#39;softmax&#39;</span>
 
 		<span class="k">def</span> <span class="nf">myloss</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">):</span>
-		    <span class="n">prediction</span> <span class="o">=</span> <span class="n">y_pred</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">output_dimension</span><span class="p">]</span>
-		    <span class="n">log_variance</span> <span class="o">=</span> <span class="n">y_pred</span><span class="p">[:,</span><span class="bp">self</span><span class="o">.</span><span class="n">output_dimension</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">output_dimension</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
-		    <span class="n">loss</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_mean</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">tf</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">log_variance</span><span class="p">)</span> <span class="o">*</span> <span class="n">tf</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">y_true</span> <span class="o">-</span> <span class="n">prediction</span><span class="p">))</span><span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">log_variance</span><span class="p">)</span>
-		    <span class="k">return</span> <span class="n">loss</span>
+			<span class="n">prediction</span> <span class="o">=</span> <span class="n">y_pred</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">output_dimension</span><span class="p">]</span>
+			<span class="n">log_variance</span> <span class="o">=</span> <span class="n">y_pred</span><span class="p">[:,</span><span class="bp">self</span><span class="o">.</span><span class="n">output_dimension</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">output_dimension</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+			<span class="n">loss</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_mean</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">tf</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">log_variance</span><span class="p">)</span> <span class="o">*</span> <span class="n">tf</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">y_true</span> <span class="o">-</span> <span class="n">prediction</span><span class="p">))</span><span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">log_variance</span><span class="p">)</span>
+			<span class="k">return</span> <span class="n">loss</span>
 		
-		<span class="kn">from</span> <span class="nn">keras.layers</span> <span class="kn">import</span> <span class="n">Conv3D</span><span class="p">,</span> <span class="n">MaxPool3D</span><span class="p">,</span> <span class="n">Flatten</span><span class="p">,</span> <span class="n">Dense</span>
-		<span class="kn">from</span> <span class="nn">keras.models</span> <span class="kn">import</span> <span class="n">Sequential</span>
+		<span class="kn">from</span> <span class="nn">tensorflow.keras.layers</span> <span class="kn">import</span> <span class="n">Conv3D</span><span class="p">,</span> <span class="n">MaxPool3D</span><span class="p">,</span> <span class="n">Flatten</span><span class="p">,</span> <span class="n">Dense</span>
+		<span class="kn">from</span> <span class="nn">tensorflow.keras.models</span> <span class="kn">import</span> <span class="n">Sequential</span>
 
 		<span class="n">model</span> <span class="o">=</span> <span class="n">Sequential</span><span class="p">()</span>
 		<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Conv3D</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span><span class="n">strides</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span><span class="n">activation</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">,</span><span class="n">input_shape</span><span class="o">=</span><span class="p">(</span><span class="n">voxel_dim</span><span class="p">,</span><span class="n">voxel_dim</span><span class="p">,</span><span class="n">voxel_dim</span><span class="p">,</span><span class="n">deviation_channels</span><span class="p">)))</span>
@@ -308,8 +389,8 @@
 
 		<span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_type</span><span class="o">==</span><span class="s2">&quot;regression&quot;</span><span class="p">,</span><span class="s2">&quot;Mixture Density Network Should be a Regression Model&quot;</span>
 		
-		<span class="kn">from</span> <span class="nn">keras.layers</span> <span class="kn">import</span> <span class="n">Conv3D</span><span class="p">,</span> <span class="n">MaxPool3D</span><span class="p">,</span> <span class="n">Flatten</span><span class="p">,</span> <span class="n">Dense</span>
-		<span class="kn">from</span> <span class="nn">keras.models</span> <span class="kn">import</span> <span class="n">Sequential</span>
+		<span class="kn">from</span> <span class="nn">tensorflow.keras.layers</span> <span class="kn">import</span> <span class="n">Conv3D</span><span class="p">,</span> <span class="n">MaxPool3D</span><span class="p">,</span> <span class="n">Flatten</span><span class="p">,</span> <span class="n">Dense</span>
+		<span class="kn">from</span> <span class="nn">tensorflow.keras.models</span> <span class="kn">import</span> <span class="n">Sequential</span>
 		<span class="kn">import</span> <span class="nn">mdn</span>
 
 		<span class="n">model</span> <span class="o">=</span> <span class="n">Sequential</span><span class="p">()</span>

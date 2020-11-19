@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>dlmfg.transfer_learning.tl_core &mdash; Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</title>
+  <title>dlmfg.transfer_learning.tl_core &mdash; Bayesian Deep Learning For Manufacturing (dlmfg) 2.0.0 documentation</title>
   
 
   
@@ -48,7 +48,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home"> Deep Learning For Manufacturing (dlmfg)
+            <a href="../../../index.html" class="icon icon-home"> Bayesian Deep Learning For Manufacturing (dlmfg)
           
 
           
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                0.0.1
+                2.0.0
               </div>
             
           
@@ -87,14 +87,18 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../real_system_implementation.html">Real System Implementation (3D Optical Scanner: WLS400A)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../lib_config.html">Library Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../data_description.html">Data Description &amp; Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../model_arch.html">Model Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../drl.html">Deep Reinforcement Learning for Control and Correction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../model_selection.html">Model Architecture Selection</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../classes.html">Class Structure: Objects and Methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../kmc.html">Key Measurement Characteristics (KMCs)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../utilities.html">Utilities</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../transfer_learning.html">Transfer Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../transfer_learning.html">Continual and Transfer Learning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../active_learning.html">Active Learning/Adaptive Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../viz.html">Visualization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../case_study_halo.html">Case Study: Positioning and Clamping Variations for Halo</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../case_study_inner_rf.html">Case Study: Door Inner and Hinge Reinforcement Multi-Stage Assembly</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cross_member.html">Case Study: Cross Member Multi-Station Assembly</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../refrences.html">Research and References</a></li>
 </ul>
 
@@ -110,7 +114,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../../index.html">Deep Learning For Manufacturing (dlmfg)</a>
+          <a href="../../../index.html">Bayesian Deep Learning For Manufacturing (dlmfg)</a>
         
       </nav>
 
@@ -259,7 +263,7 @@
 		<span class="k">def</span> <span class="nf">weighted_dice_coefficient_loss</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">):</span>
 			<span class="k">return</span> <span class="o">-</span><span class="n">weighted_dice_coefficient</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
 
-		<span class="n">model_path</span><span class="o">=</span><span class="s1">&#39;../pre_trained_models/&#39;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">tl_base</span>
+		<span class="n">model_path</span><span class="o">=</span><span class="s1">&#39;../pre_trained_models/deterministic_models/&#39;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">tl_base</span>
 		
 		<span class="k">if</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tl_base</span><span class="o">==</span><span class="s1">&#39;unet_3d.h5&#39;</span><span class="p">):</span>
 			<span class="n">base_model</span><span class="o">=</span><span class="n">load_model</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span><span class="n">custom_objects</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;InstanceNormalization&#39;</span><span class="p">:</span> <span class="n">InstanceNormalization</span><span class="p">,</span><span class="s1">&#39;weighted_dice_coefficient_loss&#39;</span><span class="p">:</span><span class="n">weighted_dice_coefficient_loss</span><span class="p">})</span>
@@ -312,6 +316,13 @@
 		<span class="n">model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">loss</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">loss_function</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;mae&#39;</span><span class="p">])</span>
 
 		<span class="k">return</span> <span class="n">model</span></div>
+
+
+	<span class="k">def</span> <span class="nf">full_fine_tune</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">model</span><span class="p">):</span>
+
+		<span class="n">model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">loss</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">loss_function</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;mae&#39;</span><span class="p">])</span>
+
+		<span class="k">return</span> <span class="n">model</span>
 
 <div class="viewcode-block" id="TransferLearning.set_variable_learning_rates"><a class="viewcode-back" href="../../../transfer_learning.html#dlmfg.transfer_learning.tl_core.TransferLearning.set_variable_learning_rates">[docs]</a>	<span class="k">def</span> <span class="nf">set_variable_learning_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">model</span><span class="p">,</span><span class="n">conv_layer_m</span><span class="p">,</span><span class="n">dense_layer_m</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;The set_fixed_params function is used to freeze the weights of the convolution layer if the initial part of the network is to be used only as a feature extractor</span>
@@ -464,7 +475,7 @@
 
 	
 	<span class="n">train_model</span><span class="o">=</span><span class="n">TrainModel</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span><span class="n">epocs</span><span class="p">,</span><span class="n">split_ratio</span><span class="p">)</span>
-	<span class="n">trained_model</span><span class="p">,</span><span class="n">eval_metrics</span><span class="p">,</span><span class="n">accuracy_metrics_df</span><span class="o">=</span><span class="n">train_model</span><span class="o">.</span><span class="n">run_train_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="n">input_conv_data</span><span class="p">[:,:,:,:,</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">],</span><span class="n">kcc_subset_dump</span><span class="p">,</span><span class="n">model_path</span><span class="p">,</span><span class="n">logs_path</span><span class="p">,</span><span class="n">plots_path</span><span class="p">,</span><span class="n">activate_tensorboard</span><span class="p">,</span><span class="n">tl_type</span><span class="o">=</span><span class="n">tl_type</span><span class="p">)</span>
+	<span class="n">trained_model</span><span class="p">,</span><span class="n">eval_metrics</span><span class="p">,</span><span class="n">accuracy_metrics_df</span><span class="o">=</span><span class="n">train_model</span><span class="o">.</span><span class="n">run_train_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="n">input_conv_data</span><span class="p">,</span><span class="n">kcc_subset_dump</span><span class="p">,</span><span class="n">model_path</span><span class="p">,</span><span class="n">logs_path</span><span class="p">,</span><span class="n">plots_path</span><span class="p">,</span><span class="n">activate_tensorboard</span><span class="p">,</span><span class="n">tl_type</span><span class="o">=</span><span class="n">tl_type</span><span class="p">)</span>
 
 	<span class="n">accuracy_metrics_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">logs_path</span><span class="o">+</span><span class="s1">&#39;/tl_metrics.csv&#39;</span><span class="p">)</span>
 	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Transfer Learning Based Model Training Complete..&quot;</span><span class="p">)</span>

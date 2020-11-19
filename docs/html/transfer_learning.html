@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Transfer Learning &mdash; Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</title>
+  <title>Continual and Transfer Learning &mdash; Bayesian Deep Learning For Manufacturing (dlmfg) 2.0.0 documentation</title>
   
 
   
@@ -50,7 +50,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> Deep Learning For Manufacturing (dlmfg)
+            <a href="index.html" class="icon icon-home"> Bayesian Deep Learning For Manufacturing (dlmfg)
           
 
           
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                0.0.1
+                2.0.0
               </div>
             
           
@@ -89,14 +89,18 @@
 <li class="toctree-l1"><a class="reference internal" href="real_system_implementation.html">Real System Implementation (3D Optical Scanner: WLS400A)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="lib_config.html">Library Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_description.html">Data Description &amp; Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_arch.html">Model Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="drl.html">Deep Reinforcement Learning for Control and Correction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_selection.html">Model Architecture Selection</a></li>
 <li class="toctree-l1"><a class="reference internal" href="classes.html">Class Structure: Objects and Methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="kmc.html">Key Measurement Characteristics (KMCs)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utilities.html">Utilities</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Transfer Learning</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Continual and Transfer Learning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="active_learning.html">Active Learning/Adaptive Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="viz.html">Visualization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="case_study_halo.html">Case Study: Positioning and Clamping Variations for Halo</a></li>
 <li class="toctree-l1"><a class="reference internal" href="case_study_inner_rf.html">Case Study: Door Inner and Hinge Reinforcement Multi-Stage Assembly</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cross_member.html">Case Study: Cross Member Multi-Station Assembly</a></li>
 <li class="toctree-l1"><a class="reference internal" href="refrences.html">Research and References</a></li>
 </ul>
 
@@ -112,7 +116,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">Deep Learning For Manufacturing (dlmfg)</a>
+          <a href="index.html">Bayesian Deep Learning For Manufacturing (dlmfg)</a>
         
       </nav>
 
@@ -143,7 +147,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Transfer Learning</li>
+      <li>Continual and Transfer Learning</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -162,9 +166,10 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="transfer-learning">
-<h1>Transfer Learning<a class="headerlink" href="#transfer-learning" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="continual-and-transfer-learning">
+<h1>Continual and Transfer Learning<a class="headerlink" href="#continual-and-transfer-learning" title="Permalink to this headline">¶</a></h1>
 <ul class="simple">
+<li><p>The <a class="reference external" href="https://github.com/sumitsinha/Deep_Learning_for_Manufacturing/tree/master/continual_learning">continual learning</a>  module leverages <a class="reference external" href="https://arxiv.org/abs/1906.02425">uncertainty guided continual learning</a> to incrementally train assembly case studies with the learning rate of each parameter fine-tuned by parameter standard deviation</p></li>
 <li><p>The <strong>Transfer Learning</strong> module is built considering the fact that across different case studies in manufacturing there will be similar deviation patterns that occur in each case study. Within sheet metal assembly systems clamp movement, repositioning errors, joining errors have a similar deviation signature that once learned can be leveraged across different case studies. Similar logic follows for other manufacturing applications such as stamping, machining, additive manufacturing etc. Initial tests done by us have given extremely promising results when transferring case studies between sheet metal manufacturing systems.</p></li>
 <li><p>Given the success of Transfer Learning in fields such as radiology, medical scan segmentation using state of the art architectures such as Mask R-CNN, the work inspires to do the same when it comes to 3D point cloud learning.</p></li>
 <li><p>The work aims to reproduce similar results on manufacturing 3D cloud-of-point using key 3D CNN architectures developed for Object detection and Medical segmentation by leveraging architectures such as Voxnet, 3D U-Net</p></li>
@@ -194,15 +199,15 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>tl_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – Type of transfer learning to be done, full fine-tune, partial fine-tune, feature extraction</p></li>
-<li><p><strong>tl_base</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – The base model to be used for model</p></li>
-<li><p><strong>tl_app</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – The application for transfer learning</p></li>
-<li><p><strong>model_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – The type of model, regression or classification</p></li>
-<li><p><strong>output_dimension</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – The number of KCCs for the case study to which the pre-trained model is to be transfered, to be used to reinitialize the last layer</p></li>
+<li><p><strong>tl_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – Type of transfer learning to be done, full fine-tune, partial fine-tune, feature extraction</p></li>
+<li><p><strong>tl_base</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – The base model to be used for model</p></li>
+<li><p><strong>tl_app</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – The application for transfer learning</p></li>
+<li><p><strong>model_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – The type of model, regression or classification</p></li>
+<li><p><strong>output_dimension</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – The number of KCCs for the case study to which the pre-trained model is to be transfered, to be used to reinitialize the last layer</p></li>
 <li><p><strong>optimizer</strong> (<em>keras.optimizer</em><em> (</em><em>required</em><em>)</em>) – The optimizer to be used for model training (<a class="reference external" href="https://keras.io/optimizers/">https://keras.io/optimizers/</a>)</p></li>
 <li><p><strong>loss_function</strong> (<em>keras.losses</em><em> (</em><em>required</em><em>)</em>) – The loss function to be used for model training (<a class="reference external" href="https://keras.io/losses/">https://keras.io/losses/</a>)</p></li>
-<li><p><strong>regularizer_coeff</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em> (</em><em>required</em><em>)</em>) – The regularization coefficient for L2 norm regularization of the fully connected layer (<a class="reference external" href="https://keras.io/regularizers/">https://keras.io/regularizers/</a>)</p></li>
-<li><p><strong>output_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – The type of model, regression or classification</p></li>
+<li><p><strong>regularizer_coeff</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em> (</em><em>required</em><em>)</em>) – The regularization coefficient for L2 norm regularization of the fully connected layer (<a class="reference external" href="https://keras.io/regularizers/">https://keras.io/regularizers/</a>)</p></li>
+<li><p><strong>output_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – The type of model, regression or classification</p></li>
 </ul>
 </dd>
 </dl>
@@ -262,8 +267,8 @@
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>model</strong> (<em>keras.model</em><em> (</em><em>required</em><em>)</em>) – keras model with preset parameters</p></li>
-<li><p><strong>conv_layer_m</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>(</em><em>required</em><em>)</em>) – Learning rate multiplier for convolution layer</p></li>
-<li><p><strong>dense_layer_m</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>(</em><em>required</em><em>)</em>) – Learning rate multiplier for dense layer</p></li>
+<li><p><strong>conv_layer_m</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em>(</em><em>required</em><em>)</em>) – Learning rate multiplier for convolution layer</p></li>
+<li><p><strong>dense_layer_m</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em>(</em><em>required</em><em>)</em>) – Learning rate multiplier for dense layer</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>

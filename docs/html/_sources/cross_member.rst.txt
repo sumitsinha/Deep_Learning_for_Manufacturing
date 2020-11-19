@@ -1,0 +1,17 @@
+Case Study: Cross Member Multi-Station Assembly
+==========================================================================
+
+
+* Overview
+
+----------------
+
+.. figure:: cross_member.png
+   :align:   center
+
+   *Fig 1: Cross Member Assembly*
+
+
+* The details for the case study parameters, object shape error patterns, results and implementation can be found in the document linked below
+
+:download:`Case Study: Cross Member Assembly <cross_member.pdf>` 

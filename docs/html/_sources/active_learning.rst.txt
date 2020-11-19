@@ -3,13 +3,11 @@ Active Learning/Adaptive Sampling
 
 The active learning/adaptive sampling is used to create a feedback loop between the deep learning model and VRM simulator. This enables faster training convergence as the model generates a set of process parameters based on the regions that have maximum uncertainty. This is done iteratively till the model performance on unseen data is above the set threshold. Given training sample generation from the multi-fidelity simulator is a time taking computation heavy process the active learning strategy has significant impact on reduction of computation resources and time. The aim of this is to have a continuous learning system that can adapt to dynamic changes within a system and learn continuously so that model performance does not diminish with time.
 
-.. figure:: sampling.png
+.. figure:: framework.png
    :align:   center
 
    *Fig 1: Active learning strategy for faster training*
 
-.. warning::
-    The active learning module is still under development currently only the initial sampling strategy functions are used to generate samples to given as input to the VRM
 
 .. automodule:: dlmfg.active_learning.sampling_system
  :members:

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>dlmfg.core.metrics_eval &mdash; Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</title>
+  <title>dlmfg.core.metrics_eval &mdash; Bayesian Deep Learning For Manufacturing (dlmfg) 2.0.0 documentation</title>
   
 
   
@@ -48,7 +48,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home"> Deep Learning For Manufacturing (dlmfg)
+            <a href="../../../index.html" class="icon icon-home"> Bayesian Deep Learning For Manufacturing (dlmfg)
           
 
           
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                0.0.1
+                2.0.0
               </div>
             
           
@@ -87,14 +87,18 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../real_system_implementation.html">Real System Implementation (3D Optical Scanner: WLS400A)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../lib_config.html">Library Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../data_description.html">Data Description &amp; Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../model_arch.html">Model Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../drl.html">Deep Reinforcement Learning for Control and Correction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../model_selection.html">Model Architecture Selection</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../classes.html">Class Structure: Objects and Methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../kmc.html">Key Measurement Characteristics (KMCs)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../utilities.html">Utilities</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../transfer_learning.html">Transfer Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../transfer_learning.html">Continual and Transfer Learning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../active_learning.html">Active Learning/Adaptive Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../viz.html">Visualization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../case_study_halo.html">Case Study: Positioning and Clamping Variations for Halo</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../case_study_inner_rf.html">Case Study: Door Inner and Hinge Reinforcement Multi-Stage Assembly</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cross_member.html">Case Study: Cross Member Multi-Station Assembly</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../refrences.html">Research and References</a></li>
 </ul>
 
@@ -110,7 +114,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../../index.html">Deep Learning For Manufacturing (dlmfg)</a>
+          <a href="../../../index.html">Bayesian Deep Learning For Manufacturing (dlmfg)</a>
         
       </nav>
 
@@ -164,6 +168,8 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;../config&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="MetricsEval"><a class="viewcode-back" href="../../../metrics_eval.html#dlmfg.core.metrics_eval.MetricsEval">[docs]</a><span class="k">class</span> <span class="nc">MetricsEval</span><span class="p">:</span>
 	<span class="sd">&quot;&quot;&quot;MetricsEval Class</span>
@@ -191,35 +197,171 @@
 <span class="sd">		&quot;&quot;&quot;</span>
 
 		<span class="n">kcc_dim</span><span class="o">=</span><span class="n">test_y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-
+		
+		<span class="kn">import</span> <span class="nn">kcc_config</span> <span class="k">as</span> <span class="nn">kcc_config</span>
+		<span class="c1">#kcc_struct=kcc_config.get_kcc_struct()</span>
+		<span class="n">kcc_struct</span><span class="o">=</span><span class="n">kcc_config</span><span class="o">.</span><span class="n">kcc_struct</span>
 		<span class="c1"># Calculating Regression Based Evaluation Metrics</span>
 		<span class="n">mae_KCCs</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">kcc_dim</span><span class="p">))</span>
 		<span class="n">mse_KCCs</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">kcc_dim</span><span class="p">))</span>
 		<span class="n">r2_KCCs</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">kcc_dim</span><span class="p">))</span>
-
+		<span class="c1">#print(kcc_struct)</span>
 		<span class="n">kcc_id</span><span class="o">=</span><span class="p">[]</span>
-
-		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">kcc_dim</span><span class="p">):</span>  
-		    <span class="n">kcc_name</span><span class="o">=</span><span class="s2">&quot;KCC_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
-		    <span class="n">kcc_id</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">kcc_name</span><span class="p">)</span>
-		    
+		
+		<span class="k">for</span> <span class="n">kcc</span> <span class="ow">in</span> <span class="n">kcc_struct</span><span class="p">:</span>
+			
+			<span class="k">if</span><span class="p">(</span><span class="n">kcc</span><span class="p">[</span><span class="s1">&#39;kcc_type&#39;</span><span class="p">]</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span>
+				<span class="n">kcc_name</span><span class="o">=</span><span class="n">kcc</span><span class="p">[</span><span class="s1">&#39;kcc_id&#39;</span><span class="p">]</span>
+				<span class="n">kcc_id</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">kcc_name</span><span class="p">)</span>
+			
 		<span class="n">mae_KCCs</span><span class="o">=</span><span class="n">metrics</span><span class="o">.</span><span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">predicted_y</span><span class="p">,</span> <span class="n">test_y</span><span class="p">,</span><span class="n">multioutput</span><span class="o">=</span><span class="s1">&#39;raw_values&#39;</span><span class="p">)</span>
 		<span class="n">mse_KCCs</span><span class="o">=</span><span class="n">metrics</span><span class="o">.</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">predicted_y</span><span class="p">,</span> <span class="n">test_y</span><span class="p">,</span><span class="n">multioutput</span><span class="o">=</span><span class="s1">&#39;raw_values&#39;</span><span class="p">)</span>
 		<span class="n">r2_KCCs</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">r2_score</span><span class="p">(</span><span class="n">predicted_y</span><span class="p">,</span> <span class="n">test_y</span><span class="p">,</span><span class="n">multioutput</span><span class="o">=</span><span class="s1">&#39;raw_values&#39;</span><span class="p">)</span>
 
+		<span class="c1">#print(kcc_id)</span>
 		<span class="n">rmse_KCCs</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mse_KCCs</span><span class="p">)</span>
 		<span class="n">eval_metrics</span><span class="o">=</span> <span class="p">{</span>
+			<span class="s2">&quot;KCC_ID&quot;</span><span class="p">:</span><span class="n">kcc_id</span><span class="p">,</span>
 			<span class="s2">&quot;Mean Absolute Error&quot;</span> <span class="p">:</span> <span class="n">mae_KCCs</span><span class="p">,</span>
 			<span class="s2">&quot;Mean Squared Error&quot;</span> <span class="p">:</span> <span class="n">mse_KCCs</span><span class="p">,</span>
 			<span class="s2">&quot;Root Mean Squared Error&quot;</span> <span class="p">:</span> <span class="n">rmse_KCCs</span><span class="p">,</span>
 			<span class="s2">&quot;R Squared&quot;</span> <span class="p">:</span> <span class="n">r2_KCCs</span>
 		<span class="p">}</span>
-		
-		<span class="n">accuracy_metrics_df</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;KCC_ID&#39;</span><span class="p">:</span><span class="n">kcc_id</span><span class="p">,</span><span class="s1">&#39;MAE&#39;</span><span class="p">:</span><span class="n">mae_KCCs</span><span class="p">,</span><span class="s1">&#39;MSE&#39;</span><span class="p">:</span><span class="n">mse_KCCs</span><span class="p">,</span><span class="s1">&#39;RMSE&#39;</span><span class="p">:</span><span class="n">rmse_KCCs</span><span class="p">,</span><span class="s1">&#39;R2&#39;</span><span class="p">:</span><span class="n">r2_KCCs</span><span class="p">},</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;KCC_ID&#39;</span><span class="p">,</span><span class="s1">&#39;MAE&#39;</span><span class="p">,</span><span class="s1">&#39;MSE&#39;</span><span class="p">,</span><span class="s1">&#39;RMSE&#39;</span><span class="p">,</span><span class="s1">&#39;R2&#39;</span><span class="p">])</span>
-		<span class="c1">#accuracy_metrics_df.to_csv(logs_path+&#39;/metrics.csv&#39;) #moved to function call</span>
-		<span class="k">return</span> <span class="n">eval_metrics</span><span class="p">,</span><span class="n">accuracy_metrics_df</span>
 
-		<span class="k">def</span> <span class="nf">metrics_eval_aleatoric_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">predicted_y</span><span class="p">,</span> <span class="n">test_y</span><span class="p">,</span><span class="n">logs_path</span><span class="p">):</span>
+		<span class="c1">#print(len(kcc_id),len(mae_KCCs),len(mae_KCCs),len(rmse_KCCs),len(r2_KCCs))</span>
+		<span class="c1">#print(eval_metrics)</span>
+		<span class="n">accuracy_metrics_df</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">eval_metrics</span><span class="p">)</span>
+		<span class="n">accuracy_metrics_df</span><span class="o">=</span><span class="n">accuracy_metrics_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;KCC_ID&#39;</span><span class="p">)</span>
+		<span class="c1">#accuracy_metrics_df.to_csv(logs_path+&#39;/metrics.csv&#39;) #moved to function call</span>
+		<span class="k">return</span> <span class="n">eval_metrics</span><span class="p">,</span><span class="n">accuracy_metrics_df</span></div>
+
+<div class="viewcode-block" id="MetricsEval.metrics_eval_classification"><a class="viewcode-back" href="../../../metrics_eval.html#dlmfg.core.metrics_eval.MetricsEval.metrics_eval_classification">[docs]</a>	<span class="k">def</span> <span class="nf">metrics_eval_classification</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">y_pred</span><span class="p">,</span> <span class="n">y_true</span><span class="p">,</span><span class="n">logs_path</span><span class="p">,</span><span class="n">run_id</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Get predicted and actual value for all KCCs and return regression metrics namely: Mean Absolute Error, Mean Squared Error, Root Mean Squared Error, R-Squared Value</span>
+<span class="sd">			</span>
+<span class="sd">			:param predicted_y: predicted values for the process parameters </span>
+<span class="sd">			:type conn_str: numpy.array [test_samples*kccs] (required)</span>
+
+<span class="sd">			:param predicted_y: actual values for the process parameters </span>
+<span class="sd">			:type conn_str: numpy.array [test_samples*kccs] (required)</span>
+
+<span class="sd">			:param logs_path: Logs path to save the evaluation metrics</span>
+<span class="sd">			:type logs_path: str (required)</span>
+
+<span class="sd">			:returns: dictionary of all metrics for each KCC</span>
+<span class="sd">			:rtype: dict</span>
+
+<span class="sd">			:returns: dataframe of all metrics for each KCC</span>
+<span class="sd">			:rtype: pandas.dataframe</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+
+		<span class="n">kcc_dim</span><span class="o">=</span><span class="n">y_true</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+		
+		<span class="kn">import</span> <span class="nn">kcc_config</span> <span class="k">as</span> <span class="nn">kcc_config</span>
+		<span class="n">kcc_struct</span><span class="o">=</span><span class="n">kcc_config</span><span class="o">.</span><span class="n">get_kcc_struct</span><span class="p">()</span>
+		<span class="c1"># Calculating Regression Based Evaluation Metrics</span>
+
+		<span class="n">kcc_id</span><span class="o">=</span><span class="p">[]</span>
+		
+		<span class="k">for</span> <span class="n">kcc</span> <span class="ow">in</span> <span class="n">kcc_struct</span><span class="p">:</span>
+			<span class="k">if</span><span class="p">(</span><span class="n">kcc</span><span class="p">[</span><span class="s1">&#39;kcc_type&#39;</span><span class="p">]</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span>
+				<span class="n">kcc_name</span><span class="o">=</span><span class="n">kcc</span><span class="p">[</span><span class="s1">&#39;kcc_id&#39;</span><span class="p">]</span>
+				<span class="n">kcc_id</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">kcc_name</span><span class="p">)</span>
+			
+		<span class="n">acc_kccs</span><span class="o">=</span><span class="p">[]</span>
+		<span class="n">f1_kccs</span><span class="o">=</span><span class="p">[]</span>
+		<span class="n">pre_kccs</span><span class="o">=</span><span class="p">[]</span>
+		<span class="n">recall_kccs</span><span class="o">=</span><span class="p">[]</span>
+		<span class="n">roc_auc_kccs</span><span class="o">=</span><span class="p">[]</span>
+		<span class="n">kappa_kccs</span><span class="o">=</span><span class="p">[]</span>
+
+		<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">accuracy_score</span><span class="p">,</span><span class="n">f1_score</span><span class="p">,</span><span class="n">precision_score</span><span class="p">,</span><span class="n">recall_score</span><span class="p">,</span><span class="n">roc_auc_score</span><span class="p">,</span><span class="n">cohen_kappa_score</span>
+
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">y_true</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+			
+			<span class="c1">#Binary Prediction arrray</span>
+			<span class="n">y_pred_bin</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">y_pred</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+			
+			<span class="n">acc_kccs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">[:,</span><span class="n">i</span><span class="p">],</span><span class="n">y_pred_bin</span><span class="p">))</span>
+			<span class="n">f1_kccs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f1_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">[:,</span><span class="n">i</span><span class="p">],</span><span class="n">y_pred_bin</span><span class="p">))</span>
+			<span class="n">pre_kccs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">precision_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">[:,</span><span class="n">i</span><span class="p">],</span><span class="n">y_pred_bin</span><span class="p">))</span>
+			<span class="n">recall_kccs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">recall_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">[:,</span><span class="n">i</span><span class="p">],</span><span class="n">y_pred_bin</span><span class="p">))</span>
+			<span class="n">kappa_kccs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cohen_kappa_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">[:,</span><span class="n">i</span><span class="p">],</span><span class="n">y_pred_bin</span><span class="p">))</span>
+			
+			<span class="c1">#Probablity based Scoring</span>
+			<span class="n">roc_auc_kccs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">roc_auc_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">[:,</span><span class="n">i</span><span class="p">],</span><span class="n">y_pred</span><span class="p">[:,</span><span class="n">i</span><span class="p">]))</span>
+
+		<span class="n">eval_metrics</span><span class="o">=</span> <span class="p">{</span>
+			<span class="s2">&quot;KCC_ID&quot;</span><span class="p">:</span><span class="n">kcc_id</span><span class="p">,</span>
+			<span class="s2">&quot;Accuracy&quot;</span> <span class="p">:</span> <span class="n">acc_kccs</span><span class="p">,</span>
+			<span class="s2">&quot;F1&quot;</span> <span class="p">:</span> <span class="n">f1_kccs</span><span class="p">,</span>
+			<span class="s2">&quot;Precision&quot;</span> <span class="p">:</span> <span class="n">pre_kccs</span><span class="p">,</span>
+			<span class="s2">&quot;Recall&quot;</span> <span class="p">:</span> <span class="n">recall_kccs</span><span class="p">,</span>
+			<span class="s2">&quot;ROC_AUC&quot;</span><span class="p">:</span><span class="n">roc_auc_kccs</span><span class="p">,</span>
+			<span class="s2">&quot;Kappa&quot;</span><span class="p">:</span><span class="n">kappa_kccs</span>
+		<span class="p">}</span>
+		
+		<span class="n">accuracy_metrics_df</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">eval_metrics</span><span class="p">)</span>
+		<span class="n">accuracy_metrics_df</span><span class="o">=</span><span class="n">accuracy_metrics_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;KCC_ID&#39;</span><span class="p">)</span>
+		<span class="c1">#accuracy_metrics_df.to_csv(logs_path+&#39;/metrics.csv&#39;) #moved to function call</span>
+		<span class="k">return</span> <span class="n">eval_metrics</span><span class="p">,</span><span class="n">accuracy_metrics_df</span></div>
+
+<div class="viewcode-block" id="MetricsEval.metrics_eval_cop"><a class="viewcode-back" href="../../../metrics_eval.html#dlmfg.core.metrics_eval.MetricsEval.metrics_eval_cop">[docs]</a>	<span class="k">def</span> <span class="nf">metrics_eval_cop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">predicted_y</span><span class="p">,</span> <span class="n">test_y</span><span class="p">,</span><span class="n">logs_path</span><span class="p">,</span><span class="n">run_id</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Get predicted and actual value for all KCCs and return regression metrics namely: Mean Absolute Error, Mean Squared Error, Root Mean Squared Error, R-Squared Value</span>
+<span class="sd">			</span>
+<span class="sd">			:param predicted_y: predicted values for the process parameters </span>
+<span class="sd">			:type conn_str: numpy.array [test_samples*kccs] (required)</span>
+
+<span class="sd">			:param predicted_y: actual values for the process parameters </span>
+<span class="sd">			:type conn_str: numpy.array [test_samples*kccs] (required)</span>
+
+<span class="sd">			:param logs_path: Logs path to save the evaluation metrics</span>
+<span class="sd">			:type logs_path: str (required)</span>
+
+<span class="sd">			:returns: dictionary of all metrics for each KCC</span>
+<span class="sd">			:rtype: dict</span>
+
+<span class="sd">			:returns: dataframe of all metrics for each KCC</span>
+<span class="sd">			:rtype: pandas.dataframe</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+
+		<span class="n">kcc_dim</span><span class="o">=</span><span class="n">test_y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+		
+		<span class="n">mae_KCCs</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">kcc_dim</span><span class="p">))</span>
+		<span class="n">mse_KCCs</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">kcc_dim</span><span class="p">))</span>
+		<span class="n">r2_KCCs</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">kcc_dim</span><span class="p">))</span>
+   
+		<span class="n">mae_KCCs</span><span class="o">=</span><span class="n">metrics</span><span class="o">.</span><span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">predicted_y</span><span class="p">,</span> <span class="n">test_y</span><span class="p">,</span><span class="n">multioutput</span><span class="o">=</span><span class="s1">&#39;raw_values&#39;</span><span class="p">)</span>
+		<span class="n">mse_KCCs</span><span class="o">=</span><span class="n">metrics</span><span class="o">.</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">predicted_y</span><span class="p">,</span> <span class="n">test_y</span><span class="p">,</span><span class="n">multioutput</span><span class="o">=</span><span class="s1">&#39;raw_values&#39;</span><span class="p">)</span>
+		<span class="n">r2_KCCs</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">r2_score</span><span class="p">(</span><span class="n">predicted_y</span><span class="p">,</span> <span class="n">test_y</span><span class="p">,</span><span class="n">multioutput</span><span class="o">=</span><span class="s1">&#39;raw_values&#39;</span><span class="p">)</span>
+
+		<span class="n">rmse_KCCs</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mse_KCCs</span><span class="p">)</span>
+		
+		<span class="n">r2_adjusted</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">kcc_dim</span><span class="p">)</span>
+
+		<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">kcc_dim</span><span class="p">)):</span>
+			<span class="n">y_cop_test_flat</span><span class="o">=</span><span class="n">test_y</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span>
+			<span class="n">y_cop_pred_flat</span><span class="o">=</span><span class="n">predicted_y</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span>
+			<span class="n">combined_array</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">y_cop_test_flat</span><span class="p">,</span><span class="n">y_cop_pred_flat</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+			<span class="n">filtered_array</span><span class="o">=</span><span class="n">combined_array</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">combined_array</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)]</span>
+			<span class="n">y_cop_test_vector</span><span class="o">=</span><span class="n">filtered_array</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">]</span>
+			<span class="n">y_cop_pred_vector</span><span class="o">=</span><span class="n">filtered_array</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+			<span class="c1">#print(y_cop_pred_vector.shape)</span>
+			<span class="n">r2_adjusted</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">r2_score</span><span class="p">(</span><span class="n">y_cop_test_vector</span><span class="p">,</span><span class="n">y_cop_pred_vector</span><span class="p">,</span><span class="n">multioutput</span><span class="o">=</span><span class="s1">&#39;raw_values&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+		
+		<span class="n">eval_metrics</span><span class="o">=</span> <span class="p">{</span>
+			<span class="s2">&quot;Mean Absolute Error&quot;</span> <span class="p">:</span> <span class="n">mae_KCCs</span><span class="p">,</span>
+			<span class="s2">&quot;Mean Squared Error&quot;</span> <span class="p">:</span> <span class="n">mse_KCCs</span><span class="p">,</span>
+			<span class="s2">&quot;Root Mean Squared Error&quot;</span> <span class="p">:</span> <span class="n">rmse_KCCs</span><span class="p">,</span>
+			<span class="s2">&quot;R Squared&quot;</span> <span class="p">:</span> <span class="n">r2_KCCs</span><span class="p">,</span>
+			<span class="s2">&quot;R Squared Adjusted&quot;</span> <span class="p">:</span> <span class="n">r2_adjusted</span>
+		<span class="p">}</span>
+		
+		<span class="n">accuracy_metrics_df</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;MAE&#39;</span><span class="p">:</span><span class="n">mae_KCCs</span><span class="p">,</span><span class="s1">&#39;MSE&#39;</span><span class="p">:</span><span class="n">mse_KCCs</span><span class="p">,</span><span class="s1">&#39;RMSE&#39;</span><span class="p">:</span><span class="n">rmse_KCCs</span><span class="p">,</span><span class="s1">&#39;R2&#39;</span><span class="p">:</span><span class="n">r2_KCCs</span><span class="p">,</span><span class="s2">&quot;R2_Adjusted&quot;</span><span class="p">:</span><span class="n">r2_adjusted</span><span class="p">},</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;MAE&#39;</span><span class="p">,</span><span class="s1">&#39;MSE&#39;</span><span class="p">,</span><span class="s1">&#39;RMSE&#39;</span><span class="p">,</span><span class="s1">&#39;R2&#39;</span><span class="p">,</span><span class="s2">&quot;R2_Adjusted&quot;</span><span class="p">])</span>
+		<span class="c1">#accuracy_metrics_df.to_csv(logs_path+&#39;/metrics.csv&#39;) #moved to function call</span>
+		<span class="k">return</span> <span class="n">eval_metrics</span><span class="p">,</span><span class="n">accuracy_metrics_df</span></div>
+		
+	<span class="k">def</span> <span class="nf">metrics_eval_aleatoric_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">predicted_y</span><span class="p">,</span> <span class="n">test_y</span><span class="p">,</span><span class="n">logs_path</span><span class="p">):</span>
 
 			<span class="n">kcc_dim</span><span class="o">=</span><span class="n">test_y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 			<span class="n">log_variance</span><span class="o">=</span><span class="n">y_pred</span><span class="p">[:,</span><span class="n">kcc_dim</span><span class="p">]</span>
@@ -236,9 +378,9 @@
 			<span class="n">kcc_id</span><span class="o">=</span><span class="p">[]</span>
 
 			<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">kcc_dim</span><span class="p">):</span>  
-			    <span class="n">kcc_name</span><span class="o">=</span><span class="s2">&quot;KCC_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
-			    <span class="n">kcc_id</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">kcc_name</span><span class="p">)</span>
-		    
+				<span class="n">kcc_name</span><span class="o">=</span><span class="s2">&quot;KCC_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+				<span class="n">kcc_id</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">kcc_name</span><span class="p">)</span>
+			
 			<span class="n">mae_KCCs</span><span class="o">=</span><span class="n">metrics</span><span class="o">.</span><span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">predicted_y_sub</span><span class="p">,</span> <span class="n">test_y</span><span class="p">,</span><span class="n">multioutput</span><span class="o">=</span><span class="s1">&#39;raw_values&#39;</span><span class="p">)</span>
 			<span class="n">mse_KCCs</span><span class="o">=</span><span class="n">metrics</span><span class="o">.</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">predicted_y_sub</span><span class="p">,</span> <span class="n">test_y</span><span class="p">,</span><span class="n">multioutput</span><span class="o">=</span><span class="s1">&#39;raw_values&#39;</span><span class="p">)</span>
 			<span class="n">r2_KCCs</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">r2_score</span><span class="p">(</span><span class="n">predicted_y_sub</span><span class="p">,</span> <span class="n">test_y</span><span class="p">,</span><span class="n">multioutput</span><span class="o">=</span><span class="s1">&#39;raw_values&#39;</span><span class="p">)</span>
@@ -256,7 +398,7 @@
 			<span class="n">accuracy_metrics_df</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;KCC_ID&#39;</span><span class="p">:</span><span class="n">kcc_id</span><span class="p">,</span><span class="s1">&#39;MAE&#39;</span><span class="p">:</span><span class="n">mae_KCCs</span><span class="p">,</span><span class="s1">&#39;MSE&#39;</span><span class="p">:</span><span class="n">mse_KCCs</span><span class="p">,</span><span class="s1">&#39;RMSE&#39;</span><span class="p">:</span><span class="n">rmse_KCCs</span><span class="p">,</span><span class="s1">&#39;R2&#39;</span><span class="p">:</span><span class="n">r2_KCCs</span><span class="p">})</span>
 			<span class="n">accuracy_metrics_df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;KCC_ID&#39;</span><span class="p">,</span><span class="s1">&#39;MAE&#39;</span><span class="p">,</span><span class="s1">&#39;MSE&#39;</span><span class="p">,</span><span class="s1">&#39;RMSE&#39;</span><span class="p">,</span><span class="s1">&#39;R2&#39;</span><span class="p">]</span>
 			<span class="n">accuracy_metrics_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">logs_path</span><span class="o">+</span><span class="s1">&#39;/metrics.csv&#39;</span><span class="p">)</span>
-			<span class="k">return</span> <span class="n">eval_metrics</span></div></div>
+			<span class="k">return</span> <span class="n">eval_metrics</span></div>
 </pre></div>
 
            </div>

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Deep Learning Class &mdash; Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</title>
+  <title>Deep Learning Class &mdash; Bayesian Deep Learning For Manufacturing (dlmfg) 2.0.0 documentation</title>
   
 
   
@@ -50,7 +50,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> Deep Learning For Manufacturing (dlmfg)
+            <a href="index.html" class="icon icon-home"> Bayesian Deep Learning For Manufacturing (dlmfg)
           
 
           
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                0.0.1
+                2.0.0
               </div>
             
           
@@ -117,7 +117,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">Deep Learning For Manufacturing (dlmfg)</a>
+          <a href="index.html">Bayesian Deep Learning For Manufacturing (dlmfg)</a>
         
       </nav>
 
@@ -179,12 +179,12 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>model_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – Type of model to be used for training 3D CNN with MSE loss, 3D CNN with hetreoskedastic aleatoric loss, 3D CNN with a mixture density network (GMM) output</p></li>
-<li><p><strong>output_dimension</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – Number of output nodes for the network equal to number of KCCs for the assembly in case MSE is used as loss function</p></li>
+<li><p><strong>model_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – Type of model to be used for training 3D CNN with MSE loss, 3D CNN with hetreoskedastic aleatoric loss, 3D CNN with a mixture density network (GMM) output</p></li>
+<li><p><strong>output_dimension</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – Number of output nodes for the network equal to number of KCCs for the assembly in case MSE is used as loss function</p></li>
 <li><p><strong>optimizer</strong> (<em>keras.optimizer</em><em> (</em><em>required</em><em>)</em>) – The optimizer to be used while model training, refer: <a class="reference external" href="https://keras.io/optimizers/">https://keras.io/optimizers/</a> for more information</p></li>
 <li><p><strong>loss_function</strong> (<em>keras.losses</em><em> (</em><em>required</em><em>)</em>) – The loss function to be optimized by training the model, refer: <a class="reference external" href="https://keras.io/losses/">https://keras.io/losses/</a> for more information</p></li>
-<li><p><strong>regularizer_coeff</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em> (</em><em>required</em><em>)</em>) – The L2 norm regularization coefficient value used in the penultimate fully connected layer of the model, refer: <a class="reference external" href="https://keras.io/regularizers/">https://keras.io/regularizers/</a> for more information</p></li>
-<li><p><strong>output_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – The output type of the model which can be regression or classification, this is used to define the output layer of the model, defaults to regression (classification: softmax, regression: linear)</p></li>
+<li><p><strong>regularizer_coeff</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em> (</em><em>required</em><em>)</em>) – The L2 norm regularization coefficient value used in the penultimate fully connected layer of the model, refer: <a class="reference external" href="https://keras.io/regularizers/">https://keras.io/regularizers/</a> for more information</p></li>
+<li><p><strong>output_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – The output type of the model which can be regression or classification, this is used to define the output layer of the model, defaults to regression (classification: softmax, regression: linear)</p></li>
 </ul>
 </dd>
 </dl>
@@ -195,8 +195,8 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>voxel_dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – The voxel dimension of the input, required to build input to the 3D CNN model</p></li>
-<li><p><strong>voxel_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – The number of voxel channels in the input structure, required to build input to the 3D CNN model</p></li>
+<li><p><strong>voxel_dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – The voxel dimension of the input, required to build input to the 3D CNN model</p></li>
+<li><p><strong>voxel_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – The number of voxel channels in the input structure, required to build input to the 3D CNN model</p></li>
 </ul>
 </dd>
 </dl>
@@ -209,8 +209,8 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>voxel_dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – The voxel dimension of the input, required to build input to the 3D CNN model</p></li>
-<li><p><strong>voxel_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – The number of voxel channels in the input structure, required to build input to the 3D CNN model</p></li>
+<li><p><strong>voxel_dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – The voxel dimension of the input, required to build input to the 3D CNN model</p></li>
+<li><p><strong>voxel_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – The number of voxel channels in the input structure, required to build input to the 3D CNN model</p></li>
 </ul>
 </dd>
 </dl>
@@ -226,9 +226,9 @@ refer <a class="reference external" href="https://arxiv.org/pdf/1709.02249.pdf">
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>voxel_dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – The voxel dimension of the input, reuired to build input to the 3D CNN model</p></li>
-<li><p><strong>voxel_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – The number of voxel channels in the input structure, required to build input to the 3D CNN model</p></li>
-<li><p><strong>number_of_mixtures</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – The number of mixtures in the Gaussian Mixture Model output, defaults to 5, can be increased if higher collinearity is expected</p></li>
+<li><p><strong>voxel_dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – The voxel dimension of the input, reuired to build input to the 3D CNN model</p></li>
+<li><p><strong>voxel_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – The number of voxel channels in the input structure, required to build input to the 3D CNN model</p></li>
+<li><p><strong>number_of_mixtures</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – The number of mixtures in the Gaussian Mixture Model output, defaults to 5, can be increased if higher collinearity is expected</p></li>
 </ul>
 </dd>
 </dl>
@@ -241,8 +241,8 @@ refer <a class="reference external" href="https://arxiv.org/pdf/1709.02249.pdf">
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>voxel_dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – The voxel dimension of the input, required to build input to the 3D CNN model</p></li>
-<li><p><strong>voxel_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – The number of voxel channels in the input structure, required to build input to the 3D CNN model</p></li>
+<li><p><strong>voxel_dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – The voxel dimension of the input, required to build input to the 3D CNN model</p></li>
+<li><p><strong>voxel_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – The number of voxel channels in the input structure, required to build input to the 3D CNN model</p></li>
 </ul>
 </dd>
 </dl>

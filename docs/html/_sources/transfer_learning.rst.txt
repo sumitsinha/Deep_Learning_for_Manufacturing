@@ -1,5 +1,7 @@
-Transfer Learning
-============================
+Continual and Transfer Learning
+=====================================
+
+* The `continual learning <https://github.com/sumitsinha/Deep_Learning_for_Manufacturing/tree/master/continual_learning>`_  module leverages `uncertainty guided continual learning <https://arxiv.org/abs/1906.02425>`_ to incrementally train assembly case studies with the learning rate of each parameter fine-tuned by parameter standard deviation 
 
 * The **Transfer Learning** module is built considering the fact that across different case studies in manufacturing there will be similar deviation patterns that occur in each case study. Within sheet metal assembly systems clamp movement, repositioning errors, joining errors have a similar deviation signature that once learned can be leveraged across different case studies. Similar logic follows for other manufacturing applications such as stamping, machining, additive manufacturing etc. Initial tests done by us have given extremely promising results when transferring case studies between sheet metal manufacturing systems.
 

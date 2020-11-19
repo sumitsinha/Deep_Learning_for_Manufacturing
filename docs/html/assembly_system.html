@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Assembly System Class &mdash; Deep Learning For Manufacturing (dlmfg) 0.0.1 documentation</title>
+  <title>Assembly System Class &mdash; Bayesian Deep Learning For Manufacturing (dlmfg) 2.0.0 documentation</title>
   
 
   
@@ -50,7 +50,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> Deep Learning For Manufacturing (dlmfg)
+            <a href="index.html" class="icon icon-home"> Bayesian Deep Learning For Manufacturing (dlmfg)
           
 
           
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                0.0.1
+                2.0.0
               </div>
             
           
@@ -117,7 +117,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">Deep Learning For Manufacturing (dlmfg)</a>
+          <a href="index.html">Bayesian Deep Learning For Manufacturing (dlmfg)</a>
         
       </nav>
 
@@ -179,8 +179,8 @@
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>assembly_type</strong> – Type of assembly Single-Station/Multi-Station</p></li>
-<li><p><strong>assembly_kccs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – Number of KCCs for the assembly</p></li>
-<li><p><strong>assembly_kpis</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – Number of Kpis for the assembly</p></li>
+<li><p><strong>assembly_kccs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – Number of KCCs for the assembly</p></li>
+<li><p><strong>assembly_kpis</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> (</em><em>required</em><em>)</em>) – Number of Kpis for the assembly</p></li>
 </ul>
 </dd>
 </dl>
@@ -206,7 +206,7 @@
 <dd><p>Import nominal cloud-of-point of the assembly from a text/csv file</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>file_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – Name of the input file</p>
+<dd class="field-odd"><p><strong>file_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – Name of the input file</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>numpy array of nominal COP</p>
@@ -224,8 +224,8 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>conn_str</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – Connection String for Database</p></li>
-<li><p><strong>table_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – Name of table in the database</p></li>
+<li><p><strong>conn_str</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – Connection String for Database</p></li>
+<li><p><strong>table_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> (</em><em>required</em><em>)</em>) – Name of table in the database</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -246,9 +246,9 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>noise_level</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em> (</em><em>required</em><em>)</em>) – The level of artificial noise to be added to simulated data, typically set to 0.1 mm from the measurement system class depending on the scanner</p></li>
-<li><p><strong>noise_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em> (</em><em>optional</em><em>)</em>) – The type of noise to be added, can be Gaussian or uniform , for Gaussian noise_level is set as standard deviation and mean as zero for uniform the min and max are set -noise_level and +noise_level respectively</p></li>
-<li><p><strong>convergency_flag</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> (</em><em>optional</em><em>)</em>) – Flag to denote if the simulation model had converged while simulating, is set to 1 by default</p></li>
+<li><p><strong>noise_level</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em> (</em><em>required</em><em>)</em>) – The level of artificial noise to be added to simulated data, typically set to 0.1 mm from the measurement system class depending on the scanner</p></li>
+<li><p><strong>noise_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> (</em><em>optional</em><em>)</em>) – The type of noise to be added, can be Gaussian or uniform , for Gaussian noise_level is set as standard deviation and mean as zero for uniform the min and max are set -noise_level and +noise_level respectively</p></li>
+<li><p><strong>convergency_flag</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> (</em><em>optional</em><em>)</em>) – Flag to denote if the simulation model had converged while simulating, is set to 1 by default</p></li>
 </ul>
 </dd>
 </dl>
@@ -261,14 +261,14 @@
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>cop_data</strong> (<em>np_array</em><em> [</em><em>point_dim</em><em>,</em><em>3</em><em>] </em><em>(</em><em>required</em><em>)</em>) – CoP data for a given sample</p></li>
-<li><p><strong>kpi_params</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em> (</em><em>optional</em><em>)</em>) – Various parameters required to calculate the KPI, can be blank if no parameters are required to calculate KPI from CoP</p></li>
+<li><p><strong>kpi_params</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a><em> (</em><em>optional</em><em>)</em>) – Various parameters required to calculate the KPI, can be blank if no parameters are required to calculate KPI from CoP</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>list of multivariate KPIs for the given CoP</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)">list</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)">list</a></p>
 </dd>
 </dl>
 </dd></dl>

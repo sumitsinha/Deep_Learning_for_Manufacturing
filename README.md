@@ -53,9 +53,10 @@ The complete documentation and other ongoing research can be found here: [**Docu
 4.  [**Matlab Python Integration**](https://github.com/sumitsinha/Deep_Learning_for_Manufacturing/tree/master/cae_simulations) to enable low latency connection between multi-physics manufacturing environments (Matlab) and TensorFlow based DDPG agents
 5.  [**Multi-Physics Manufacturing System Simulations**](https://github.com/sumitsinha/Deep_Learning_for_Manufacturing/tree/master/cae_simulations/cae_matlab) to generate custom datasets for various fault scenarios using Variation Response Method (VRM) kernel
 6.  [**Uncertainty guided continual learning**](https://github.com/sumitsinha/Deep_Learning_for_Manufacturing/tree/master/continual_learning) to enable life long/incremental training for multiple case studies
-7.  [**Exploratory notebooks**](https://github.com/sumitsinha/Deep_Learning_for_Manufacturing/tree/master/assembly_eda_studies) for various case studies
-8. [**3D Gradient-weighted Class Activation Maps**](https://github.com/sumitsinha/Deep_Learning_for_Manufacturing/blob/master/core/u_net_model_deploy_multi_output.py) for interpretability of deep learning models 
-9.  [**Datasets for Industrial multi-station case studies**](https://github.com/sumitsinha/Deep_Learning_for_Manufacturing/tree/master/pre_trained_models) for training and benchmarking deep learning models 
+7.  [**Automated Model Selection**](https://github.com/sumitsinha/Deep_Learning_for_Manufacturing/tree/master/model_selection) using Keras Tuner that enables hyperparameter optimization and benchmarking for various deep learning architectures
+8.  [**Exploratory notebooks**](https://github.com/sumitsinha/Deep_Learning_for_Manufacturing/tree/master/assembly_eda_studies) for various case studies
+9. [**3D Gradient-weighted Class Activation Maps**](https://github.com/sumitsinha/Deep_Learning_for_Manufacturing/blob/master/core/u_net_model_deploy_multi_output.py) for interpretability of deep learning models 
+10.  [**Datasets for Industrial multi-station case studies**](https://github.com/sumitsinha/Deep_Learning_for_Manufacturing/tree/master/pre_trained_models) for training and benchmarking deep learning models 
 
 
 ## Installation

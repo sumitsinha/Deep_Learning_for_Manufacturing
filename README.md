@@ -209,6 +209,17 @@ Benchmarking of the model is done against various deep learning and machine lear
 
 ![OSER Benchmarking](https://github.com/sumitsinha/Deep_Learning_for_Manufacturing/blob/master/resources/benchmarking/benchmarking.png)
 
+## Decoder Outputs
+The segmentations outputs for the Bayesian 3D U-Net model enables estimation of dimensional quality of products in between stages and stations of the process.
+
+![Real-Valued Segmentation Maps](https://github.com/sumitsinha/Deep_Learning_for_Manufacturing/blob/master/resources/segmentation_maps/decoder.png)
+
+## Model Interpretability
+3D Grad-weighted Class Activation Maps (3D Grad-CAMS) for each level of the encoder provides insights into the working of the model and integrate a measure of trust in all estimates.
+
+![Encoder 3D Grad-CAMs](https://github.com/sumitsinha/Deep_Learning_for_Manufacturing/blob/master/resources/segmentation_maps/encoder.png)
+
+
 ##### Please cite work as:
 
     Sinha, S., Glorieux, E., Franciosa, P., & Ceglarek, D. (2019, June). 3D convolutional neural networks to estimate assembly process parameters using 3D point-clouds. In Multimodal Sensing: Technologies and Applications (Vol. 11059, p. 110590B). International Society for Optics and Photonics.

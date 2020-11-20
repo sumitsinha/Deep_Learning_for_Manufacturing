@@ -1,0 +1,13 @@
+3D U-Net Segmentation
+========================================
+
+*  The 3D U-Net segmentation capabilities are leveraged to estimate the product dimensional quality in between stations and stages of the manufacturing system
+
+
+----------------
+
+
+.. figure:: decoder.png
+   :align:   center
+
+   *Fig 1: Bayesian 3D U-Net Segmentation Outputs*

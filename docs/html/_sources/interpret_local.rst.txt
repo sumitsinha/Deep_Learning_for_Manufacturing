@@ -1,0 +1,70 @@
+3D U-Net Architecture Local Interpretability
+===================================================
+
+*  Interpretability for each estimate if done leveraging 3D GRAD-CAMs for each level of the encoder for different types of root cause
+
+
+----------------
+
+
+*  Part Variation Root Cause
+
+
+
+.. figure:: interpret_1.png
+   :align:   center
+
+   *Fig 1: Part Variation Root Cause*
+
+
+----------------
+
+
+*  Positioning Root Cause
+
+
+
+.. figure:: interpret_2.png
+   :align:   center
+
+   *Fig 1: Positioning Root Cause*
+
+
+----------------
+
+
+*  Clamping Root Cause
+
+
+
+.. figure:: interpret_3.png
+   :align:   center
+
+   *Fig 1: Clamping Root Cause*
+
+
+
+----------------
+
+
+*  Joining Root Cause
+
+
+
+.. figure:: interpret_4.png
+   :align:   center
+
+   *Fig 1: Joining Root Cause*
+
+
+----------------
+
+
+*  Part Variation and Clamping Root Causes
+
+
+
+.. figure:: interpret_5.png
+   :align:   center
+
+   *Fig 1: Part Variation and Clamping Root Causes*

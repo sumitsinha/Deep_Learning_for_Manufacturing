@@ -1,0 +1,71 @@
+3D U-Net Architecture Global Interpretability
+===================================================
+
+*  Interpretability is achieved using 3D Gradient-Weighted Class Activation Maps (3D Grad-CAMs) for all layers within the architecture. Outputs for various functional elements are shown below.
+
+
+----------------
+
+
+*  Object shape error voxelization
+
+
+
+.. figure:: voxel.png
+   :align:   center
+
+   *Fig 1: Object shape error voxelization*
+
+
+----------------
+
+
+*  Encoder with down-sampling kernels
+
+
+
+.. figure:: encoder.png
+   :align:   center
+
+   *Fig 1: Encoder with down-sampling kernels*
+
+
+----------------
+
+
+*  Decoder with up-sampling kernels
+
+
+
+.. figure:: decoder_interpret.png
+   :align:   center
+
+   *Fig 1: Decoder with up-sampling kernels*
+
+
+
+----------------
+
+
+*  Attention gate
+
+
+
+.. figure:: attention.png
+   :align:   center
+
+   *Fig 1: Attention gate*
+
+
+----------------
+
+
+*  Residual connections
+
+
+
+.. figure:: residuals.png
+   :align:   center
+
+   *Fig 1: Residual connections*
+

@@ -38,6 +38,9 @@ Contents
    drl
    model_selection
    bayes
+   interpret
+   interpret_local
+   segment
    classes
    kmc
    utilities

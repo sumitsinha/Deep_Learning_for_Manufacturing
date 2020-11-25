@@ -50,11 +50,7 @@ end
 addpath(genpath(fao_src));
 %
 fprintf('     Installing Kinematics code...\n');
-kine_src=fullfile(cd,'KINEMATICS (src)');
-if ~exist(kine_src,'dir')
-    warning('Installation of VRM (error): failed to locate "KINEMATICS (src)" folder!')
-end
-addpath(genpath(kine_src));
+
 %
 % install GUI
 fprintf('     Installing GUI code...\n');

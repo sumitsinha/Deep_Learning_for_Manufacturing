@@ -16,25 +16,11 @@
 #Importing Required Modules
 from scipy.io import loadmat
 import tensorflow as tf
-import sonnet as snt
-import graph_nets as gn
 from tqdm import tqdm
-
-print("TensorFlow version {}".format(tf.__version__))
-print("Sonnet version {}".format(snt.__version__))
-
-from graph_nets import blocks
-from graph_nets import graphs
-from graph_nets import modules
-from graph_nets import utils_np
-from graph_nets import utils_tf
-
 import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
-import sonnet as snt
 import tensorflow as tf
-
 import stellargraph as sg
 import pathlib
 import numpy as np
@@ -72,24 +58,15 @@ from training_viz import TrainViz
 from metrics_eval import MetricsEval
 
 
-# In[3]:
-
-
 #Extracting Mesh Connectivity
-
 adj_mat=loadmat('./resources/adj_mat.mat')
 adj_csr=adj_mat['adj_mat'].tocsr()
 adj_csr_n = adj_csr.nonzero()
 sparserows = adj_csr_n [0]
 sparsecols = adj_csr_n [1]
 
-edges = pd.DataFrame(
-    {"source":sparserows , "target": sparsecols}
-)
-edges
+edges = pd.DataFrame({"source":sparserows , "target": sparsecols})
 
-
-# In[4]:
 
 
 print('Parsing from Assembly Config File....')
@@ -118,9 +95,6 @@ test_kcc_files=config.assembly_system['test_kcc_files']
 print('Parsing Complete....')
 
 
-# In[5]:
-
-
 #added for hybrid model
 categorical_kccs=config.assembly_system['categorical_kccs']
 
@@ -136,8 +110,6 @@ loss_func=cftrain.model_parameters['loss_func']
 regularizer_coeff=cftrain.model_parameters['regularizer_coeff']
 activate_tensorboard=cftrain.model_parameters['activate_tensorboard']
 
-
-# In[6]:
 
 
 print('Creating file Structure....')
@@ -159,9 +131,6 @@ pathlib.Path(logs_path).mkdir(parents=True, exist_ok=True)
 
 plots_path=train_path+'/plots'
 pathlib.Path(plots_path).mkdir(parents=True, exist_ok=True)
-
-
-# In[7]:
 
 
 #Objects of Measurement System, Assembly System, Get Inference Data
@@ -223,6 +192,7 @@ else:
 
 #Creating Feature Matrix
 pp_dim=0
+
 feature_dim=voxel_channels+pp_dim
 feature_matrix=np.zeros((len(input_dataset[0]),point_dim,feature_dim))
 
@@ -238,45 +208,29 @@ print(feature_matrix.shape)
 
 #Creating feature matrix for one graph
 def create_node_df(feature_matrix):
-    node_data = pd.DataFrame(
-    {"x_dev": feature_matrix[:,0], "y_dev": feature_matrix[:,1],"z_dev": feature_matrix[:,2]})
+    node_data = pd.DataFrame({"x_dev": feature_matrix[:,0], "y_dev": feature_matrix[:,1],"z_dev": feature_matrix[:,2]})
     
     return node_data
 
-#node_df=create_node_df(feature_matrix[0,:,:])
-#node_df
-
-
-# In[11]:
 
 
 #create Stellar Graph Instance
 from stellargraph import StellarGraph
 
-graphs_x=[]
+graphs_x=[None]*len(feature_matrix)
 
-for i in tqdm(range(len(feature_matrix))):
+for i in tqdm(range(10)):
     #edges are constant
     #Node features are to be extracted
     node_df=create_node_df(feature_matrix[i,:,:])
+    
+    #print(type(node_df),type(edges))
     graph_mesh = StellarGraph(node_df,edges)
     
-    graphs_x.append(graph_mesh)
-
-
-# In[12]:
+    graphs_x[i]=graph_mesh
 
 
 graph_labels=kcc_dataset
-
-
-# In[13]:
-
-
-#Add code for scaling all outputs
-
-
-# In[14]:
 
 
 G = nx.Graph()
@@ -284,7 +238,6 @@ for i in range(len(sparsecols)):
     G.add_edge(sparserows[i], sparsecols[i])
 
 
-# In[15]:
 
 
 #Plotting Graph for Testing
@@ -315,8 +268,6 @@ def save_graph(graph,file_name):
 #save_graph(G,"cross_member.pdf")
 
 
-# In[16]:
-
 
 import stellargraph as sg
 from sklearn import model_selection
@@ -327,7 +278,6 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.losses import binary_crossentropy
 from tensorflow.keras.callbacks import EarlyStopping
-
 
 
 
@@ -392,7 +342,7 @@ def create_deep_graph_model(generator):
 train_graphs, test_graphs = model_selection.train_test_split(graph_labels, train_size=0.8, test_size=None)
 
 #Create generators
-gen = PaddedGraphGenerator(graphs=graphs)
+gen = PaddedGraphGenerator(graphs=graphs_x)
 
 train_gen = gen.flow(
     list(train_graphs.index - 1),
@@ -413,7 +363,7 @@ epochs = 200  # maximum number of training epochs
 
 checkpointer = tf.keras.callbacks.ModelCheckpoint(model_path, verbose=1, save_best_only='loss',save_weights_only=True,restore_best_weights=True)
 
-history = model.fit(train_gen, epochs=epochs, ,verbose=1, validation_data=test_gen, shuffle=True,callbacks=[checkpointer])
+history = model.fit(train_gen, epochs=epochs ,verbose=1, validation_data=test_gen, shuffle=True,callbacks=[checkpointer])
 
 print("Training Complete!")
 

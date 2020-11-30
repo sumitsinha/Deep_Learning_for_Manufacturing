@@ -97,8 +97,8 @@ assembly_system = {
         'nominal_cop_filename':'cross_member_nominal_cop.csv',
         'data_folder':'../datasets/cross_member_assembly',
         'kcc_folder':'../active_learning/sample_input/cross_member_assembly',
-        'kcc_files':['cross_member_samples_interpret.csv'],
-        'test_kcc_files':['cross_member_samples_interpret.csv'],
+        'kcc_files':['cross_member_samples_datagen2.csv'],
+        'test_kcc_files':['cross_member_samples_test1.csv'],
         'data_files_x':['DX_stage_13_hybrid_1.csv','DX_stage_13_hybrid_2.csv','DX_stage_13_hybrid_3.csv'],
         'data_files_y':['DY_stage_13_hybrid_1.csv','DY_stage_13_hybrid_2.csv','DY_stage_13_hybrid_3.csv'],
         'data_files_z':['DZ_stage_13_hybrid_1.csv','DZ_stage_13_hybrid_2.csv','DZ_stage_13_hybrid_3.csv'],
@@ -108,12 +108,12 @@ assembly_system = {
         }
 
 encode_decode_construct = {     
-        'input_data_files_x':['DX_stage_13_hybrid_1.csv','DX_stage_13_hybrid_2.csv','DX_stage_13_hybrid_3.csv'],
-        'input_data_files_y':['DY_stage_13_hybrid_1.csv','DY_stage_13_hybrid_2.csv','DY_stage_13_hybrid_3.csv'],
-        'input_data_files_z':['DZ_stage_13_hybrid_1.csv','DZ_stage_13_hybrid_2.csv','DZ_stage_13_hybrid_3.csv'],
-        'input_test_data_files_x':['DX_crossmember_interpret_pat_11.csv'],
-        'input_test_data_files_y':['DY_crossmember_interpret_pat_11.csv'],
-        'input_test_data_files_z':['DZ_crossmember_interpret_pat_11.csv'],
+        'input_data_files_x':['DX_crossmember_datagen2_11.csv'],
+        'input_data_files_y':['DY_crossmember_datagen2_11.csv'],
+        'input_data_files_z':['DZ_crossmember_datagen2_11.csv'],
+        'input_test_data_files_x':['DX_crossmember_test1_11.csv'],
+        'input_test_data_files_y':['DY_crossmember_test1_11.csv'],
+        'input_test_data_files_z':['DZ_crossmember_test1_11.csv'],
 
         'output_data_files_x':['DX_crossmember_test1_3.csv'],
         'output_data_files_y':['DY_crossmember_test1_3.csv'],

@@ -219,7 +219,7 @@ from stellargraph import StellarGraph
 
 graphs_x=[None]*len(feature_matrix)
 
-for i in tqdm(range(10)):
+for i in tqdm(range(len(feature_matrix))):
     #edges are constant
     #Node features are to be extracted
     node_df=create_node_df(feature_matrix[i,:,:])
@@ -232,40 +232,7 @@ for i in tqdm(range(10)):
 
 graph_labels=kcc_dataset
 
-
-G = nx.Graph()
-for i in range(len(sparsecols)):
-    G.add_edge(sparserows[i], sparsecols[i])
-
-
-
-
-#Plotting Graph for Testing
-from matplotlib import pylab
-import networkx as nx
-
-def save_graph(graph,file_name):
-    #initialze Figure
-    plt.figure(num=None, figsize=(20, 20), dpi=80)
-    plt.axis('off')
-    fig = plt.figure(1)
-    pos = nx.spring_layout(graph)
-    nx.draw_networkx_nodes(graph,pos)
-    nx.draw_networkx_edges(graph,pos)
-    nx.draw_networkx_labels(graph,pos)
-
-    cut = 1.00
-    xmax = cut * max(xx for xx, yy in pos.values())
-    ymax = cut * max(yy for xx, yy in pos.values())
-    plt.xlim(0, xmax)
-    plt.ylim(0, ymax)
-
-    plt.savefig(file_name,bbox_inches="tight")
-    pylab.close()
-    del fig
-
-#Assuming that the graph g has nodes and edges entered
-#save_graph(G,"cross_member.pdf")
+print("Graph Labels prepared..")
 
 
 
@@ -305,7 +272,7 @@ def create_deep_graph_model(generator):
     
     from stellargraph.layer import DeepGraphCNN
     from tensorflow.keras.layers import Dense, Conv1D, MaxPool1D, Dropout, Flatten
-    
+    from tensorflow.python.keras.optimizers import TFOptimizer
     k = 35  # the number of rows for the output tensor
     layer_sizes = [32, 32, 32, 1]
 
@@ -338,20 +305,29 @@ def create_deep_graph_model(generator):
     return model
 
 
+
+print("spliting ..")
 #Split Dataset
 train_graphs, test_graphs = model_selection.train_test_split(graph_labels, train_size=0.8, test_size=None)
 
+print("split completed ..")
 #Create generators
-gen = PaddedGraphGenerator(graphs=graphs_x)
+print("creating generator ..")
+generator = PaddedGraphGenerator(graphs=graphs_x)
 
-train_gen = gen.flow(
+print("creating Graph CNN model Structure ..")
+model=create_deep_graph_model(generator)
+
+print("creating train generator ..")
+train_gen = generator.flow(
     list(train_graphs.index - 1),
     targets=train_graphs.values,
-    batch_size=50,
+    batch_size=10,
     symmetric_normalization=False,
 )
 
-test_gen = gen.flow(
+print("creating test generator ..")
+test_gen = generator.flow(
     list(test_graphs.index - 1),
     targets=test_graphs.values,
     batch_size=1,
@@ -361,6 +337,7 @@ test_gen = gen.flow(
 epochs = 200  # maximum number of training epochs
 #batch_size=10
 
+print("Training...")
 checkpointer = tf.keras.callbacks.ModelCheckpoint(model_path, verbose=1, save_best_only='loss',save_weights_only=True,restore_best_weights=True)
 
 history = model.fit(train_gen, epochs=epochs ,verbose=1, validation_data=test_gen, shuffle=True,callbacks=[checkpointer])

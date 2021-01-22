@@ -178,10 +178,10 @@ class Bayes_DLModel:
 		from tensorflow.keras.utils import plot_model
 
 		#Testing 
-		reg_kccs=self.output_dimension-categorical_kccs
+		#reg_kccs=self.output_dimension-categorical_kccs
 		
 		#Testing
-		#reg_kccs=15-categorical_kccs
+		reg_kccs=148-categorical_kccs
 
 		# Probabalistic Losses
 		negloglik = lambda y, rv_y: -rv_y.log_prob(y)
@@ -280,10 +280,13 @@ class Bayes_DLModel:
 
 		feature_vector_reg=Conv(reg_kccs, 1, padding='same', activation=final_activation, name='Process_Parameter_Reg_output')(x)
 		process_parameter_reg=GlobalAveragePooling3D()(feature_vector_reg)
-		
+		#process_parameter_reg=tfp.layers.DenseFlipout(64,kernel_divergence_fn=kl_divergence_function)(process_parameter_reg)
+		#process_parameter_reg=tfp.layers.DenseFlipout(123,kernel_divergence_fn=kl_divergence_function)(process_parameter_reg)
+
 		feature_vector_cla=Conv(categorical_kccs, 1, padding='same', activation=final_activation, name='Process_Parameter_Cla_output')(x)
 		process_parameter_cla=GlobalAveragePooling3D()(feature_vector_cla)
-		
+		#process_parameter_cla=tfp.layers.DenseFlipout(64,kernel_divergence_fn=kl_divergence_function)(process_parameter_cla)
+		#process_parameter_cla=tfp.layers.DenseFlipout(25,kernel_divergence_fn=kl_divergence_function)(process_parameter_cla)
 		#feature_categorical=Flatten()(feature_vector)
 		#reg_output=tfp.layers.DenseFlipout(output_dimension,kernel_divergence_fn=kl_divergence_function)(process_parameter)
 		
@@ -347,4 +350,4 @@ class Bayes_DLModel:
 
 if (__name__=="__main__"):
 	print('Bayesian Deep Learning Class')
-	#bayes_unet_model_3d_hybrid(10,32,4,voxel_dim=64,deviation_channels=3,output_heads=2)
+	bayes_unet_model_3d_hybrid(16,4,25,voxel_dim=64,deviation_channels=3,output_heads=2)

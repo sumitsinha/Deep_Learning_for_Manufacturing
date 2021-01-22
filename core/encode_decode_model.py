@@ -636,7 +636,7 @@ class Encode_Decode_Model:
 		model=Model(inputs, outputs=output_list, name='Res-UNet_Attention_Hybrid')
 		
 		print("U-Net Based 3D Encoder Decoder Model Compiled")
-		#print(model.summary())
+		print(model.summary())
 		#plot_model(model,to_file='unet_3D_multi_output_attention_hybrid.png',show_shapes=True, show_layer_names=True)
 	
 		model.compile(optimizer=tf.keras.optimizers.Adam(),experimental_run_tf_function=False,loss=overall_loss_dict,metrics=overall_metrics_dict,loss_weights=overall_loss_weights)
@@ -730,7 +730,7 @@ class Encode_Decode_Model:
 			model.compile(loss=loss_list, optimizer=tf.keras.optimizers.Adam(),experimental_run_tf_function=False, metrics=[tf.keras.metrics.MeanAbsoluteError(),tf.keras.metrics.Accuracy()])
 			
 			#plot_model(model,to_file='resnet_3d_cnn_hybrid.png',show_shapes=True, show_layer_names=True)
-			#print(model.summary())
+			print(model.summary())
 			
 			return model
 

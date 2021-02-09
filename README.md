@@ -33,12 +33,14 @@ The library can be used across various domains such as assembly systems, stampin
 ## Published Work 
 The published work can be found below: 
 
+* [**Object Shape Error Response using Bayesian 3D Convolutional Neural Networks for Assembly Systems with Compliant Parts**](https://ieeexplore.ieee.org/document/9286512)
+
 * [**3D convolutional neural networks to estimate assembly process parameters using 3D point-clouds**](https://www.researchgate.net/publication/333942071_3D_convolutional_neural_networks_to_estimate_assembly_process_parameters_using_3D_point-clouds)
 
 * [**Deep learning enhanced digital twin for closed loop in-process quality improvement**](https://www.sciencedirect.com/science/article/abs/pii/S0007850620301323)
 
 
-*Two follow up papers are currently under review are expected by Jan 2021*
+*Two follow up papers are currently under review are expected by March 2021*
 
 
 ## Documentation

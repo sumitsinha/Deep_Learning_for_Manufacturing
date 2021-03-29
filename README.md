@@ -35,7 +35,9 @@ The library can be used across various domains such as assembly systems, stampin
 [**Computer Aided Engineering Dataset for model training and testing using Variation Response Method (VRM) can be found here**](https://zenodo.org/record/4537219#.YCacFuj7RPY)
 
 ## Published Work 
-The published work can be found below: 
+The published works can be found below: 
+
+* [**Building a Scalable and Interpretable Bayesian Deep Learning Framework for Quality Control of Free Form Surfaces**](https://ieeexplore.ieee.org/document/9386067)
 
 * [**Object Shape Error Response using Bayesian 3D Convolutional Neural Networks for Assembly Systems with Compliant Parts**](https://ieeexplore.ieee.org/document/9286512)
 
@@ -46,7 +48,7 @@ The published work can be found below:
 * [**Deep learning enhanced digital twin for closed loop in-process quality improvement**](https://www.sciencedirect.com/science/article/abs/pii/S0007850620301323)
 
 
-*Two follow up papers are currently under review are expected by March 2021*
+*Two follow up papers are currently under review are expected by April 2021*
 
 
 ## Documentation
